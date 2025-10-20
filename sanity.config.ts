@@ -17,8 +17,14 @@ import { apiVersion, dataset, projectId, studioUrl } from "@/sanity/lib/api";
 import { pageStructure, singletonPlugin } from "@/sanity/plugins/settings";
 import { assistWithPresets } from "@/sanity/plugins/assist";
 import author from "@/sanity/schemas/documents/author";
+import category from "@/sanity/schemas/documents/category";
+import comment from "@/sanity/schemas/documents/comment";
 import post from "@/sanity/schemas/documents/post";
 import settings from "@/sanity/schemas/singletons/settings";
+import tag from "@/sanity/schemas/documents/tag";
+import topic from "@/sanity/schemas/documents/topic";
+import blockContent from "@/sanity/schemas/objects/blockContent";
+import seo from "@/sanity/schemas/objects/seo";
 import { resolveHref } from "@/sanity/lib/utils";
 
 const homeLocation = {
@@ -37,6 +43,13 @@ export default defineConfig({
       // Documents
       post,
       author,
+      category,
+      comment,
+      tag,
+      topic,
+      // Objects
+      blockContent,
+      seo,
     ],
   },
   plugins: [
