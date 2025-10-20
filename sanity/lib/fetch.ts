@@ -56,3 +56,21 @@ export async function sanityFetch<const QueryString extends string>({
     next: { revalidate: 60 },
   });
 }
+
+/**
+ * Used to fetch data during static generation (generateStaticParams, etc.)
+ * This function doesn't use draft mode and always fetches published content.
+ */
+export async function sanityFetchStatic<const QueryString extends string>({
+  query,
+  params = {},
+}: {
+  query: QueryString;
+  params?: QueryParams | Promise<QueryParams>;
+}) {
+  return client.fetch(query, await params, {
+    perspective: "published",
+    useCdn: true,
+    next: { revalidate: 60 },
+  });
+}

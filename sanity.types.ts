@@ -13,59 +13,122 @@
  */
 
 // Source: schema.json
-export type SanityImagePaletteSwatch = {
-  _type: "sanity.imagePaletteSwatch";
-  background?: string;
-  foreground?: string;
-  population?: number;
-  title?: string;
-};
+export type BlockContent = Array<{
+  children?: Array<{
+    marks?: Array<string>;
+    text?: string;
+    _type: "span";
+    _key: string;
+  }>;
+  style?: "normal" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "blockquote";
+  listItem?: "bullet" | "number";
+  markDefs?: Array<{
+    href?: string;
+    _type: "link";
+    _key: string;
+  }>;
+  level?: number;
+  _type: "block";
+  _key: string;
+} | {
+  asset?: {
+    _ref: string;
+    _type: "reference";
+    _weak?: boolean;
+    [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+  };
+  media?: unknown;
+  hotspot?: SanityImageHotspot;
+  crop?: SanityImageCrop;
+  alt?: string;
+  _type: "image";
+  _key: string;
+}>;
 
-export type SanityImagePalette = {
-  _type: "sanity.imagePalette";
-  darkMuted?: SanityImagePaletteSwatch;
-  lightVibrant?: SanityImagePaletteSwatch;
-  darkVibrant?: SanityImagePaletteSwatch;
-  vibrant?: SanityImagePaletteSwatch;
-  dominant?: SanityImagePaletteSwatch;
-  lightMuted?: SanityImagePaletteSwatch;
-  muted?: SanityImagePaletteSwatch;
-};
-
-export type SanityImageDimensions = {
-  _type: "sanity.imageDimensions";
-  height?: number;
-  width?: number;
-  aspectRatio?: number;
-};
-
-export type SanityFileAsset = {
+export type Topic = {
   _id: string;
-  _type: "sanity.fileAsset";
+  _type: "topic";
   _createdAt: string;
   _updatedAt: string;
   _rev: string;
-  originalFilename?: string;
-  label?: string;
   title?: string;
+  slug?: Slug;
+  kind?: "person" | "organization" | "place" | "event" | "team";
+  image?: {
+    asset?: {
+      _ref: string;
+      _type: "reference";
+      _weak?: boolean;
+      [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+    };
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    alt?: string;
+    _type: "image";
+  };
   description?: string;
-  altText?: string;
-  sha1hash?: string;
-  extension?: string;
-  mimeType?: string;
-  size?: number;
-  assetId?: string;
-  uploadId?: string;
-  path?: string;
-  url?: string;
-  source?: SanityAssetSourceData;
 };
 
-export type Geopoint = {
-  _type: "geopoint";
-  lat?: number;
-  lng?: number;
-  alt?: number;
+export type Tag = {
+  _id: string;
+  _type: "tag";
+  _createdAt: string;
+  _updatedAt: string;
+  _rev: string;
+  title?: string;
+  slug?: Slug;
+  description?: string;
+  aliases?: Array<string>;
+  emoji?: string;
+  color?: string;
+  order?: number;
+  featured?: boolean;
+  hidden?: boolean;
+  deprecated?: boolean;
+  redirectTo?: {
+    _ref: string;
+    _type: "reference";
+    _weak?: boolean;
+    [internalGroqTypeReferenceTo]?: "tag";
+  };
+  analyticsKey?: string;
+};
+
+export type Comment = {
+  _id: string;
+  _type: "comment";
+  _createdAt: string;
+  _updatedAt: string;
+  _rev: string;
+  name?: string;
+  approved?: boolean;
+  email?: string;
+  comment?: string;
+  post?: {
+    _ref: string;
+    _type: "reference";
+    _weak?: boolean;
+    [internalGroqTypeReferenceTo]?: "post";
+  };
+  parent?: {
+    _ref: string;
+    _type: "reference";
+    _weak?: boolean;
+    [internalGroqTypeReferenceTo]?: "comment";
+  };
+  status?: "pending" | "approved" | "rejected" | "flagged" | "spam";
+  moderatorNote?: string;
+  pinned?: boolean;
+  reports?: number;
+  likes?: number;
+  createdAt?: string;
+  updatedAt?: string;
+  ip?: string;
+  userAgent?: string;
+  referrer?: string;
+  pageUrl?: string;
+  consent?: boolean;
 };
 
 export type Post = {
@@ -74,9 +137,38 @@ export type Post = {
   _createdAt: string;
   _updatedAt: string;
   _rev: string;
+  category?: {
+    _ref: string;
+    _type: "reference";
+    _weak?: boolean;
+    [internalGroqTypeReferenceTo]?: "category";
+  };
+  tags?: Array<{
+    _ref: string;
+    _type: "reference";
+    _weak?: boolean;
+    _key: string;
+    [internalGroqTypeReferenceTo]?: "tag";
+  }>;
   title?: string;
+  excerpt?: string;
+  coverImage?: {
+    asset?: {
+      _ref: string;
+      _type: "reference";
+      _weak?: boolean;
+      [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+    };
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    alt?: string;
+    _type: "image";
+  };
+  epigraph?: string;
+  imageSource?: string;
   slug?: Slug;
-  content?: Array<{
+  bodyTextOne?: Array<{
     children?: Array<{
       marks?: Array<string>;
       text?: string;
@@ -94,26 +186,194 @@ export type Post = {
     _type: "block";
     _key: string;
   }>;
-  excerpt?: string;
-  coverImage?: {
+  bodyImageOne?: {
     asset?: {
       _ref: string;
       _type: "reference";
       _weak?: boolean;
       [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
     };
+    media?: unknown;
     hotspot?: SanityImageHotspot;
     crop?: SanityImageCrop;
     alt?: string;
+    epigraph?: string;
+    imageSource?: string;
     _type: "image";
   };
+  bodyTextTwo?: Array<{
+    children?: Array<{
+      marks?: Array<string>;
+      text?: string;
+      _type: "span";
+      _key: string;
+    }>;
+    style?: "normal" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "blockquote";
+    listItem?: "bullet" | "number";
+    markDefs?: Array<{
+      href?: string;
+      _type: "link";
+      _key: string;
+    }>;
+    level?: number;
+    _type: "block";
+    _key: string;
+  }>;
+  bodyImageTwo?: {
+    asset?: {
+      _ref: string;
+      _type: "reference";
+      _weak?: boolean;
+      [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+    };
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    alt?: string;
+    epigraph?: string;
+    imageSource?: string;
+    _type: "image";
+  };
+  bodyTextThree?: Array<{
+    children?: Array<{
+      marks?: Array<string>;
+      text?: string;
+      _type: "span";
+      _key: string;
+    }>;
+    style?: "normal" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "blockquote";
+    listItem?: "bullet" | "number";
+    markDefs?: Array<{
+      href?: string;
+      _type: "link";
+      _key: string;
+    }>;
+    level?: number;
+    _type: "block";
+    _key: string;
+  }>;
+  bodyImageThree?: {
+    asset?: {
+      _ref: string;
+      _type: "reference";
+      _weak?: boolean;
+      [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+    };
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    alt?: string;
+    epigraph?: string;
+    imageSource?: string;
+    _type: "image";
+  };
+  bodyTextFour?: Array<{
+    children?: Array<{
+      marks?: Array<string>;
+      text?: string;
+      _type: "span";
+      _key: string;
+    }>;
+    style?: "normal" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "blockquote";
+    listItem?: "bullet" | "number";
+    markDefs?: Array<{
+      href?: string;
+      _type: "link";
+      _key: string;
+    }>;
+    level?: number;
+    _type: "block";
+    _key: string;
+  }>;
+  bodyImageFour?: {
+    asset?: {
+      _ref: string;
+      _type: "reference";
+      _weak?: boolean;
+      [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+    };
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    alt?: string;
+    epigraph?: string;
+    imageSource?: string;
+    _type: "image";
+  };
+  bodyTextFive?: Array<{
+    children?: Array<{
+      marks?: Array<string>;
+      text?: string;
+      _type: "span";
+      _key: string;
+    }>;
+    style?: "normal" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "blockquote";
+    listItem?: "bullet" | "number";
+    markDefs?: Array<{
+      href?: string;
+      _type: "link";
+      _key: string;
+    }>;
+    level?: number;
+    _type: "block";
+    _key: string;
+  }>;
+  bodyImageFive?: {
+    asset?: {
+      _ref: string;
+      _type: "reference";
+      _weak?: boolean;
+      [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+    };
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    alt?: string;
+    epigraph?: string;
+    imageSource?: string;
+    _type: "image";
+  };
+  bodyImages?: Array<{
+    image?: {
+      asset?: {
+        _ref: string;
+        _type: "reference";
+        _weak?: boolean;
+        [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+      };
+      media?: unknown;
+      hotspot?: SanityImageHotspot;
+      crop?: SanityImageCrop;
+      _type: "image";
+    };
+    epigraph?: string;
+    imageSource?: string;
+    _type: "bodyImage";
+    _key: string;
+  }>;
   date?: string;
+  status?: "draft" | "scheduled" | "published";
+  publishedAt?: string;
+  updatedAt?: string;
   author?: {
     _ref: string;
     _type: "reference";
     _weak?: boolean;
     [internalGroqTypeReferenceTo]?: "author";
   };
+  comments?: Array<{
+    _ref: string;
+    _type: "reference";
+    _weak?: boolean;
+    _key: string;
+    [internalGroqTypeReferenceTo]?: "comment";
+  }>;
+  featured?: boolean;
+  priority?: number;
+  readTime?: number;
+  labels?: Array<string>;
+  bodyRich?: BlockContent;
+  seo?: Seo;
 };
 
 export type Author = {
@@ -130,17 +390,86 @@ export type Author = {
       _weak?: boolean;
       [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
     };
+    media?: unknown;
     hotspot?: SanityImageHotspot;
     crop?: SanityImageCrop;
     alt?: string;
     _type: "image";
   };
+  slug?: Slug;
+  title?: string;
+  pronouns?: string;
+  shortBio?: string;
+  bio?: BlockContent;
+  location?: string;
+  email?: string;
+  website?: string;
+  twitter?: string;
+  instagram?: string;
+  linkedin?: string;
+  youtube?: string;
+  featured?: boolean;
+  active?: boolean;
+  order?: number;
+  seo?: Seo;
 };
 
-export type Slug = {
-  _type: "slug";
-  current?: string;
-  source?: string;
+export type Category = {
+  _id: string;
+  _type: "category";
+  _createdAt: string;
+  _updatedAt: string;
+  _rev: string;
+  name?: string;
+  slug?: Slug;
+  parent?: {
+    _ref: string;
+    _type: "reference";
+    _weak?: boolean;
+    [internalGroqTypeReferenceTo]?: "category";
+  };
+  description?: string;
+  hero?: {
+    asset?: {
+      _ref: string;
+      _type: "reference";
+      _weak?: boolean;
+      [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+    };
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    alt?: string;
+    _type: "image";
+  };
+  emoji?: string;
+  color?: string;
+  navTitle?: string;
+  order?: number;
+  featured?: boolean;
+  hidden?: boolean;
+  layout?: "standard" | "grid" | "magazine";
+  seo?: Seo;
+};
+
+export type Seo = {
+  _type: "seo";
+  title?: string;
+  description?: string;
+  ogImage?: {
+    asset?: {
+      _ref: string;
+      _type: "reference";
+      _weak?: boolean;
+      [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+    };
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    alt?: string;
+    _type: "image";
+  };
+  canonicalUrl?: string;
 };
 
 export type Settings = {
@@ -193,69 +522,13 @@ export type Settings = {
       _weak?: boolean;
       [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
     };
+    media?: unknown;
     hotspot?: SanityImageHotspot;
     crop?: SanityImageCrop;
     alt?: string;
     metadataBase?: string;
     _type: "image";
   };
-};
-
-export type SanityImageCrop = {
-  _type: "sanity.imageCrop";
-  top?: number;
-  bottom?: number;
-  left?: number;
-  right?: number;
-};
-
-export type SanityImageHotspot = {
-  _type: "sanity.imageHotspot";
-  x?: number;
-  y?: number;
-  height?: number;
-  width?: number;
-};
-
-export type SanityImageAsset = {
-  _id: string;
-  _type: "sanity.imageAsset";
-  _createdAt: string;
-  _updatedAt: string;
-  _rev: string;
-  originalFilename?: string;
-  label?: string;
-  title?: string;
-  description?: string;
-  altText?: string;
-  sha1hash?: string;
-  extension?: string;
-  mimeType?: string;
-  size?: number;
-  assetId?: string;
-  uploadId?: string;
-  path?: string;
-  url?: string;
-  metadata?: SanityImageMetadata;
-  source?: SanityAssetSourceData;
-};
-
-export type SanityAssetSourceData = {
-  _type: "sanity.assetSourceData";
-  name?: string;
-  id?: string;
-  url?: string;
-};
-
-export type SanityImageMetadata = {
-  _type: "sanity.imageMetadata";
-  location?: Geopoint;
-  dimensions?: SanityImageDimensions;
-  palette?: SanityImagePalette;
-  lqip?: string;
-  blurHash?: string;
-  hasAlpha?: boolean;
-  isOpaque?: boolean;
 };
 
 export type SanityAssistInstructionTask = {
@@ -269,21 +542,17 @@ export type SanityAssistInstructionTask = {
 
 export type SanityAssistTaskStatus = {
   _type: "sanity.assist.task.status";
-  tasks?: Array<
-    {
-      _key: string;
-    } & SanityAssistInstructionTask
-  >;
+  tasks?: Array<{
+    _key: string;
+  } & SanityAssistInstructionTask>;
 };
 
 export type SanityAssistSchemaTypeAnnotations = {
   _type: "sanity.assist.schemaType.annotations";
   title?: string;
-  fields?: Array<
-    {
-      _key: string;
-    } & SanityAssistSchemaTypeField
-  >;
+  fields?: Array<{
+    _key: string;
+  } & SanityAssistSchemaTypeField>;
 };
 
 export type SanityAssistOutputType = {
@@ -336,23 +605,18 @@ export type SanityAssistInstructionUserInput = {
 };
 
 export type SanityAssistInstructionPrompt = Array<{
-  children?: Array<
-    | {
-        marks?: Array<string>;
-        text?: string;
-        _type: "span";
-        _key: string;
-      }
-    | ({
-        _key: string;
-      } & SanityAssistInstructionFieldRef)
-    | ({
-        _key: string;
-      } & SanityAssistInstructionContext)
-    | ({
-        _key: string;
-      } & SanityAssistInstructionUserInput)
-  >;
+  children?: Array<{
+    marks?: Array<string>;
+    text?: string;
+    _type: "span";
+    _key: string;
+  } | {
+    _key: string;
+  } & SanityAssistInstructionFieldRef | {
+    _key: string;
+  } & SanityAssistInstructionContext | {
+    _key: string;
+  } & SanityAssistInstructionUserInput>;
   style?: "normal";
   listItem?: never;
   markDefs?: null;
@@ -373,53 +637,140 @@ export type SanityAssistInstruction = {
   title?: string;
   userId?: string;
   createdById?: string;
-  output?: Array<
-    | ({
-        _key: string;
-      } & SanityAssistOutputField)
-    | ({
-        _key: string;
-      } & SanityAssistOutputType)
-  >;
+  output?: Array<{
+    _key: string;
+  } & SanityAssistOutputField | {
+    _key: string;
+  } & SanityAssistOutputType>;
 };
 
 export type SanityAssistSchemaTypeField = {
   _type: "sanity.assist.schemaType.field";
   path?: string;
-  instructions?: Array<
-    {
-      _key: string;
-    } & SanityAssistInstruction
-  >;
+  instructions?: Array<{
+    _key: string;
+  } & SanityAssistInstruction>;
 };
 
-export type AllSanitySchemaTypes =
-  | SanityImagePaletteSwatch
-  | SanityImagePalette
-  | SanityImageDimensions
-  | SanityFileAsset
-  | Geopoint
-  | Post
-  | Author
-  | Slug
-  | Settings
-  | SanityImageCrop
-  | SanityImageHotspot
-  | SanityImageAsset
-  | SanityAssetSourceData
-  | SanityImageMetadata
-  | SanityAssistInstructionTask
-  | SanityAssistTaskStatus
-  | SanityAssistSchemaTypeAnnotations
-  | SanityAssistOutputType
-  | SanityAssistOutputField
-  | SanityAssistInstructionContext
-  | AssistInstructionContext
-  | SanityAssistInstructionUserInput
-  | SanityAssistInstructionPrompt
-  | SanityAssistInstructionFieldRef
-  | SanityAssistInstruction
-  | SanityAssistSchemaTypeField;
+export type SanityImagePaletteSwatch = {
+  _type: "sanity.imagePaletteSwatch";
+  background?: string;
+  foreground?: string;
+  population?: number;
+  title?: string;
+};
+
+export type SanityImagePalette = {
+  _type: "sanity.imagePalette";
+  darkMuted?: SanityImagePaletteSwatch;
+  lightVibrant?: SanityImagePaletteSwatch;
+  darkVibrant?: SanityImagePaletteSwatch;
+  vibrant?: SanityImagePaletteSwatch;
+  dominant?: SanityImagePaletteSwatch;
+  lightMuted?: SanityImagePaletteSwatch;
+  muted?: SanityImagePaletteSwatch;
+};
+
+export type SanityImageDimensions = {
+  _type: "sanity.imageDimensions";
+  height?: number;
+  width?: number;
+  aspectRatio?: number;
+};
+
+export type SanityImageHotspot = {
+  _type: "sanity.imageHotspot";
+  x?: number;
+  y?: number;
+  height?: number;
+  width?: number;
+};
+
+export type SanityImageCrop = {
+  _type: "sanity.imageCrop";
+  top?: number;
+  bottom?: number;
+  left?: number;
+  right?: number;
+};
+
+export type SanityFileAsset = {
+  _id: string;
+  _type: "sanity.fileAsset";
+  _createdAt: string;
+  _updatedAt: string;
+  _rev: string;
+  originalFilename?: string;
+  label?: string;
+  title?: string;
+  description?: string;
+  altText?: string;
+  sha1hash?: string;
+  extension?: string;
+  mimeType?: string;
+  size?: number;
+  assetId?: string;
+  uploadId?: string;
+  path?: string;
+  url?: string;
+  source?: SanityAssetSourceData;
+};
+
+export type SanityImageAsset = {
+  _id: string;
+  _type: "sanity.imageAsset";
+  _createdAt: string;
+  _updatedAt: string;
+  _rev: string;
+  originalFilename?: string;
+  label?: string;
+  title?: string;
+  description?: string;
+  altText?: string;
+  sha1hash?: string;
+  extension?: string;
+  mimeType?: string;
+  size?: number;
+  assetId?: string;
+  uploadId?: string;
+  path?: string;
+  url?: string;
+  metadata?: SanityImageMetadata;
+  source?: SanityAssetSourceData;
+};
+
+export type SanityImageMetadata = {
+  _type: "sanity.imageMetadata";
+  location?: Geopoint;
+  dimensions?: SanityImageDimensions;
+  palette?: SanityImagePalette;
+  lqip?: string;
+  blurHash?: string;
+  hasAlpha?: boolean;
+  isOpaque?: boolean;
+};
+
+export type Geopoint = {
+  _type: "geopoint";
+  lat?: number;
+  lng?: number;
+  alt?: number;
+};
+
+export type Slug = {
+  _type: "slug";
+  current?: string;
+  source?: string;
+};
+
+export type SanityAssetSourceData = {
+  _type: "sanity.assetSourceData";
+  name?: string;
+  id?: string;
+  url?: string;
+};
+
+export type AllSanitySchemaTypes = BlockContent | Topic | Tag | Comment | Post | Author | Category | Seo | Settings | SanityAssistInstructionTask | SanityAssistTaskStatus | SanityAssistSchemaTypeAnnotations | SanityAssistOutputType | SanityAssistOutputField | SanityAssistInstructionContext | AssistInstructionContext | SanityAssistInstructionUserInput | SanityAssistInstructionPrompt | SanityAssistInstructionFieldRef | SanityAssistInstruction | SanityAssistSchemaTypeField | SanityImagePaletteSwatch | SanityImagePalette | SanityImageDimensions | SanityImageHotspot | SanityImageCrop | SanityFileAsset | SanityImageAsset | SanityImageMetadata | Geopoint | Slug | SanityAssetSourceData;
 export declare const internalGroqTypeReferenceTo: unique symbol;
 // Source: ./sanity/lib/queries.ts
 // Variable: settingsQuery
@@ -474,6 +825,7 @@ export type SettingsQueryResult = {
       _weak?: boolean;
       [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
     };
+    media?: unknown;
     hotspot?: SanityImageHotspot;
     crop?: SanityImageCrop;
     alt?: string;
@@ -482,9 +834,74 @@ export type SettingsQueryResult = {
   };
 } | null;
 // Variable: heroQuery
-// Query: *[_type == "post" && defined(slug.current)] | order(date desc, _updatedAt desc) [0] {    content,      _id,  "status": select(_originalId in path("drafts.**") => "draft", "published"),  "title": coalesce(title, "Untitled"),  "slug": slug.current,  excerpt,  coverImage,  "date": coalesce(date, _updatedAt),  "author": author->{"name": coalesce(name, "Anonymous"), picture},  }
+// Query: *[_type == "post" && defined(slug.current)] | order(date desc, _updatedAt desc) [0] {      _id,  _type,  "status": select(_originalId in path("drafts.**") => "draft", "published"),  "title": coalesce(title, "Untitled"),  "slug": slug.current,  excerpt,  epigraph,  imageSource,  coverImage,  // Keep legacy "date" for existing UI; prefer publishedAt elsewhere  "date": coalesce(date, _updatedAt),  publishedAt,  priority,  featured,  // Ensure complete author or nothing  "author": select(    defined(author->name) => {      "name": coalesce(author->name, "Anonymous"),      "picture": author->picture    }  ),  // Category shape your UI expects  "category": select(    defined(category->name) && defined(category->slug.current) => {      "title": category->name,      "slug": category->slug.current    }  ),  // Tags now use tag.title (not name)  "tags": tags[]->{title, "slug": slug.current},  // Body chunks & images  "bodyImages": bodyImages[]{ "image": image, epigraph, imageSource },  bodyTextOne,  bodyTextTwo,  bodyTextThree,  bodyTextFour,  bodyTextFive,  bodyImageOne,  bodyImageTwo,  bodyImageThree,  bodyImageFour,  bodyImageFive  }
 export type HeroQueryResult = {
-  content: Array<{
+  _id: string;
+  _type: "post";
+  status: "draft" | "published";
+  title: string | "Untitled";
+  slug: string | null;
+  excerpt: string | null;
+  epigraph: string | null;
+  imageSource: string | null;
+  coverImage: {
+    asset?: {
+      _ref: string;
+      _type: "reference";
+      _weak?: boolean;
+      [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+    };
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    alt?: string;
+    _type: "image";
+  } | null;
+  date: string;
+  publishedAt: string | null;
+  priority: number | null;
+  featured: boolean | null;
+  author: {
+    name: string | "Anonymous";
+    picture: {
+      asset?: {
+        _ref: string;
+        _type: "reference";
+        _weak?: boolean;
+        [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+      };
+      media?: unknown;
+      hotspot?: SanityImageHotspot;
+      crop?: SanityImageCrop;
+      alt?: string;
+      _type: "image";
+    } | null;
+  };
+  category: {
+    title: string | null;
+    slug: string | null;
+  };
+  tags: Array<{
+    title: string | null;
+    slug: string | null;
+  }> | null;
+  bodyImages: Array<{
+    image: {
+      asset?: {
+        _ref: string;
+        _type: "reference";
+        _weak?: boolean;
+        [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+      };
+      media?: unknown;
+      hotspot?: SanityImageHotspot;
+      crop?: SanityImageCrop;
+      _type: "image";
+    } | null;
+    epigraph: string | null;
+    imageSource: string | null;
+  }> | null;
+  bodyTextOne: Array<{
     children?: Array<{
       marks?: Array<string>;
       text?: string;
@@ -502,48 +919,165 @@ export type HeroQueryResult = {
     _type: "block";
     _key: string;
   }> | null;
-  _id: string;
-  status: "draft" | "published";
-  title: string | "Untitled";
-  slug: string | null;
-  excerpt: string | null;
-  coverImage: {
+  bodyTextTwo: Array<{
+    children?: Array<{
+      marks?: Array<string>;
+      text?: string;
+      _type: "span";
+      _key: string;
+    }>;
+    style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
+    listItem?: "bullet" | "number";
+    markDefs?: Array<{
+      href?: string;
+      _type: "link";
+      _key: string;
+    }>;
+    level?: number;
+    _type: "block";
+    _key: string;
+  }> | null;
+  bodyTextThree: Array<{
+    children?: Array<{
+      marks?: Array<string>;
+      text?: string;
+      _type: "span";
+      _key: string;
+    }>;
+    style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
+    listItem?: "bullet" | "number";
+    markDefs?: Array<{
+      href?: string;
+      _type: "link";
+      _key: string;
+    }>;
+    level?: number;
+    _type: "block";
+    _key: string;
+  }> | null;
+  bodyTextFour: Array<{
+    children?: Array<{
+      marks?: Array<string>;
+      text?: string;
+      _type: "span";
+      _key: string;
+    }>;
+    style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
+    listItem?: "bullet" | "number";
+    markDefs?: Array<{
+      href?: string;
+      _type: "link";
+      _key: string;
+    }>;
+    level?: number;
+    _type: "block";
+    _key: string;
+  }> | null;
+  bodyTextFive: Array<{
+    children?: Array<{
+      marks?: Array<string>;
+      text?: string;
+      _type: "span";
+      _key: string;
+    }>;
+    style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
+    listItem?: "bullet" | "number";
+    markDefs?: Array<{
+      href?: string;
+      _type: "link";
+      _key: string;
+    }>;
+    level?: number;
+    _type: "block";
+    _key: string;
+  }> | null;
+  bodyImageOne: {
     asset?: {
       _ref: string;
       _type: "reference";
       _weak?: boolean;
       [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
     };
+    media?: unknown;
     hotspot?: SanityImageHotspot;
     crop?: SanityImageCrop;
     alt?: string;
+    epigraph?: string;
+    imageSource?: string;
     _type: "image";
   } | null;
-  date: string;
-  author: {
-    name: string | "Anonymous";
-    picture: {
-      asset?: {
-        _ref: string;
-        _type: "reference";
-        _weak?: boolean;
-        [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
-      };
-      hotspot?: SanityImageHotspot;
-      crop?: SanityImageCrop;
-      alt?: string;
-      _type: "image";
-    } | null;
+  bodyImageTwo: {
+    asset?: {
+      _ref: string;
+      _type: "reference";
+      _weak?: boolean;
+      [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+    };
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    alt?: string;
+    epigraph?: string;
+    imageSource?: string;
+    _type: "image";
+  } | null;
+  bodyImageThree: {
+    asset?: {
+      _ref: string;
+      _type: "reference";
+      _weak?: boolean;
+      [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+    };
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    alt?: string;
+    epigraph?: string;
+    imageSource?: string;
+    _type: "image";
+  } | null;
+  bodyImageFour: {
+    asset?: {
+      _ref: string;
+      _type: "reference";
+      _weak?: boolean;
+      [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+    };
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    alt?: string;
+    epigraph?: string;
+    imageSource?: string;
+    _type: "image";
+  } | null;
+  bodyImageFive: {
+    asset?: {
+      _ref: string;
+      _type: "reference";
+      _weak?: boolean;
+      [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+    };
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    alt?: string;
+    epigraph?: string;
+    imageSource?: string;
+    _type: "image";
   } | null;
 } | null;
 // Variable: moreStoriesQuery
-// Query: *[_type == "post" && _id != $skip && defined(slug.current)] | order(date desc, _updatedAt desc) [0...$limit] {      _id,  "status": select(_originalId in path("drafts.**") => "draft", "published"),  "title": coalesce(title, "Untitled"),  "slug": slug.current,  excerpt,  coverImage,  "date": coalesce(date, _updatedAt),  "author": author->{"name": coalesce(name, "Anonymous"), picture},  }
+// Query: *[_type == "post" && _id != $skip && defined(slug.current)] | order(date desc, _updatedAt desc) [0...$limit] {      _id,  _type,  "status": select(_originalId in path("drafts.**") => "draft", "published"),  "title": coalesce(title, "Untitled"),  "slug": slug.current,  excerpt,  epigraph,  imageSource,  coverImage,  // Keep legacy "date" for existing UI; prefer publishedAt elsewhere  "date": coalesce(date, _updatedAt),  publishedAt,  priority,  featured,  // Ensure complete author or nothing  "author": select(    defined(author->name) => {      "name": coalesce(author->name, "Anonymous"),      "picture": author->picture    }  ),  // Category shape your UI expects  "category": select(    defined(category->name) && defined(category->slug.current) => {      "title": category->name,      "slug": category->slug.current    }  ),  // Tags now use tag.title (not name)  "tags": tags[]->{title, "slug": slug.current},  // Body chunks & images  "bodyImages": bodyImages[]{ "image": image, epigraph, imageSource },  bodyTextOne,  bodyTextTwo,  bodyTextThree,  bodyTextFour,  bodyTextFive,  bodyImageOne,  bodyImageTwo,  bodyImageThree,  bodyImageFour,  bodyImageFive  }
 export type MoreStoriesQueryResult = Array<{
   _id: string;
+  _type: "post";
   status: "draft" | "published";
   title: string | "Untitled";
   slug: string | null;
   excerpt: string | null;
+  epigraph: string | null;
+  imageSource: string | null;
   coverImage: {
     asset?: {
       _ref: string;
@@ -551,12 +1085,16 @@ export type MoreStoriesQueryResult = Array<{
       _weak?: boolean;
       [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
     };
+    media?: unknown;
     hotspot?: SanityImageHotspot;
     crop?: SanityImageCrop;
     alt?: string;
     _type: "image";
   } | null;
   date: string;
+  publishedAt: string | null;
+  priority: number | null;
+  featured: boolean | null;
   author: {
     name: string | "Anonymous";
     picture: {
@@ -566,17 +1104,38 @@ export type MoreStoriesQueryResult = Array<{
         _weak?: boolean;
         [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
       };
+      media?: unknown;
       hotspot?: SanityImageHotspot;
       crop?: SanityImageCrop;
       alt?: string;
       _type: "image";
     } | null;
-  } | null;
-}>;
-// Variable: postQuery
-// Query: *[_type == "post" && slug.current == $slug] [0] {    content,      _id,  "status": select(_originalId in path("drafts.**") => "draft", "published"),  "title": coalesce(title, "Untitled"),  "slug": slug.current,  excerpt,  coverImage,  "date": coalesce(date, _updatedAt),  "author": author->{"name": coalesce(name, "Anonymous"), picture},  }
-export type PostQueryResult = {
-  content: Array<{
+  };
+  category: {
+    title: string | null;
+    slug: string | null;
+  };
+  tags: Array<{
+    title: string | null;
+    slug: string | null;
+  }> | null;
+  bodyImages: Array<{
+    image: {
+      asset?: {
+        _ref: string;
+        _type: "reference";
+        _weak?: boolean;
+        [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+      };
+      media?: unknown;
+      hotspot?: SanityImageHotspot;
+      crop?: SanityImageCrop;
+      _type: "image";
+    } | null;
+    epigraph: string | null;
+    imageSource: string | null;
+  }> | null;
+  bodyTextOne: Array<{
     children?: Array<{
       marks?: Array<string>;
       text?: string;
@@ -594,11 +1153,165 @@ export type PostQueryResult = {
     _type: "block";
     _key: string;
   }> | null;
+  bodyTextTwo: Array<{
+    children?: Array<{
+      marks?: Array<string>;
+      text?: string;
+      _type: "span";
+      _key: string;
+    }>;
+    style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
+    listItem?: "bullet" | "number";
+    markDefs?: Array<{
+      href?: string;
+      _type: "link";
+      _key: string;
+    }>;
+    level?: number;
+    _type: "block";
+    _key: string;
+  }> | null;
+  bodyTextThree: Array<{
+    children?: Array<{
+      marks?: Array<string>;
+      text?: string;
+      _type: "span";
+      _key: string;
+    }>;
+    style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
+    listItem?: "bullet" | "number";
+    markDefs?: Array<{
+      href?: string;
+      _type: "link";
+      _key: string;
+    }>;
+    level?: number;
+    _type: "block";
+    _key: string;
+  }> | null;
+  bodyTextFour: Array<{
+    children?: Array<{
+      marks?: Array<string>;
+      text?: string;
+      _type: "span";
+      _key: string;
+    }>;
+    style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
+    listItem?: "bullet" | "number";
+    markDefs?: Array<{
+      href?: string;
+      _type: "link";
+      _key: string;
+    }>;
+    level?: number;
+    _type: "block";
+    _key: string;
+  }> | null;
+  bodyTextFive: Array<{
+    children?: Array<{
+      marks?: Array<string>;
+      text?: string;
+      _type: "span";
+      _key: string;
+    }>;
+    style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
+    listItem?: "bullet" | "number";
+    markDefs?: Array<{
+      href?: string;
+      _type: "link";
+      _key: string;
+    }>;
+    level?: number;
+    _type: "block";
+    _key: string;
+  }> | null;
+  bodyImageOne: {
+    asset?: {
+      _ref: string;
+      _type: "reference";
+      _weak?: boolean;
+      [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+    };
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    alt?: string;
+    epigraph?: string;
+    imageSource?: string;
+    _type: "image";
+  } | null;
+  bodyImageTwo: {
+    asset?: {
+      _ref: string;
+      _type: "reference";
+      _weak?: boolean;
+      [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+    };
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    alt?: string;
+    epigraph?: string;
+    imageSource?: string;
+    _type: "image";
+  } | null;
+  bodyImageThree: {
+    asset?: {
+      _ref: string;
+      _type: "reference";
+      _weak?: boolean;
+      [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+    };
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    alt?: string;
+    epigraph?: string;
+    imageSource?: string;
+    _type: "image";
+  } | null;
+  bodyImageFour: {
+    asset?: {
+      _ref: string;
+      _type: "reference";
+      _weak?: boolean;
+      [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+    };
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    alt?: string;
+    epigraph?: string;
+    imageSource?: string;
+    _type: "image";
+  } | null;
+  bodyImageFive: {
+    asset?: {
+      _ref: string;
+      _type: "reference";
+      _weak?: boolean;
+      [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+    };
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    alt?: string;
+    epigraph?: string;
+    imageSource?: string;
+    _type: "image";
+  } | null;
+}>;
+// Variable: postQuery
+// Query: *[_type == "post" && slug.current == $slug] [0] {      _id,  _type,  "status": select(_originalId in path("drafts.**") => "draft", "published"),  "title": coalesce(title, "Untitled"),  "slug": slug.current,  excerpt,  epigraph,  imageSource,  coverImage,  // Keep legacy "date" for existing UI; prefer publishedAt elsewhere  "date": coalesce(date, _updatedAt),  publishedAt,  priority,  featured,  // Ensure complete author or nothing  "author": select(    defined(author->name) => {      "name": coalesce(author->name, "Anonymous"),      "picture": author->picture    }  ),  // Category shape your UI expects  "category": select(    defined(category->name) && defined(category->slug.current) => {      "title": category->name,      "slug": category->slug.current    }  ),  // Tags now use tag.title (not name)  "tags": tags[]->{title, "slug": slug.current},  // Body chunks & images  "bodyImages": bodyImages[]{ "image": image, epigraph, imageSource },  bodyTextOne,  bodyTextTwo,  bodyTextThree,  bodyTextFour,  bodyTextFive,  bodyImageOne,  bodyImageTwo,  bodyImageThree,  bodyImageFour,  bodyImageFive  }
+export type PostQueryResult = {
   _id: string;
+  _type: "post";
   status: "draft" | "published";
   title: string | "Untitled";
   slug: string | null;
   excerpt: string | null;
+  epigraph: string | null;
+  imageSource: string | null;
   coverImage: {
     asset?: {
       _ref: string;
@@ -606,12 +1319,16 @@ export type PostQueryResult = {
       _weak?: boolean;
       [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
     };
+    media?: unknown;
     hotspot?: SanityImageHotspot;
     crop?: SanityImageCrop;
     alt?: string;
     _type: "image";
   } | null;
   date: string;
+  publishedAt: string | null;
+  priority: number | null;
+  featured: boolean | null;
   author: {
     name: string | "Anonymous";
     picture: {
@@ -621,29 +1338,3578 @@ export type PostQueryResult = {
         _weak?: boolean;
         [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
       };
+      media?: unknown;
       hotspot?: SanityImageHotspot;
       crop?: SanityImageCrop;
       alt?: string;
       _type: "image";
     } | null;
+  };
+  category: {
+    title: string | null;
+    slug: string | null;
+  };
+  tags: Array<{
+    title: string | null;
+    slug: string | null;
+  }> | null;
+  bodyImages: Array<{
+    image: {
+      asset?: {
+        _ref: string;
+        _type: "reference";
+        _weak?: boolean;
+        [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+      };
+      media?: unknown;
+      hotspot?: SanityImageHotspot;
+      crop?: SanityImageCrop;
+      _type: "image";
+    } | null;
+    epigraph: string | null;
+    imageSource: string | null;
+  }> | null;
+  bodyTextOne: Array<{
+    children?: Array<{
+      marks?: Array<string>;
+      text?: string;
+      _type: "span";
+      _key: string;
+    }>;
+    style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
+    listItem?: "bullet" | "number";
+    markDefs?: Array<{
+      href?: string;
+      _type: "link";
+      _key: string;
+    }>;
+    level?: number;
+    _type: "block";
+    _key: string;
+  }> | null;
+  bodyTextTwo: Array<{
+    children?: Array<{
+      marks?: Array<string>;
+      text?: string;
+      _type: "span";
+      _key: string;
+    }>;
+    style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
+    listItem?: "bullet" | "number";
+    markDefs?: Array<{
+      href?: string;
+      _type: "link";
+      _key: string;
+    }>;
+    level?: number;
+    _type: "block";
+    _key: string;
+  }> | null;
+  bodyTextThree: Array<{
+    children?: Array<{
+      marks?: Array<string>;
+      text?: string;
+      _type: "span";
+      _key: string;
+    }>;
+    style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
+    listItem?: "bullet" | "number";
+    markDefs?: Array<{
+      href?: string;
+      _type: "link";
+      _key: string;
+    }>;
+    level?: number;
+    _type: "block";
+    _key: string;
+  }> | null;
+  bodyTextFour: Array<{
+    children?: Array<{
+      marks?: Array<string>;
+      text?: string;
+      _type: "span";
+      _key: string;
+    }>;
+    style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
+    listItem?: "bullet" | "number";
+    markDefs?: Array<{
+      href?: string;
+      _type: "link";
+      _key: string;
+    }>;
+    level?: number;
+    _type: "block";
+    _key: string;
+  }> | null;
+  bodyTextFive: Array<{
+    children?: Array<{
+      marks?: Array<string>;
+      text?: string;
+      _type: "span";
+      _key: string;
+    }>;
+    style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
+    listItem?: "bullet" | "number";
+    markDefs?: Array<{
+      href?: string;
+      _type: "link";
+      _key: string;
+    }>;
+    level?: number;
+    _type: "block";
+    _key: string;
+  }> | null;
+  bodyImageOne: {
+    asset?: {
+      _ref: string;
+      _type: "reference";
+      _weak?: boolean;
+      [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+    };
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    alt?: string;
+    epigraph?: string;
+    imageSource?: string;
+    _type: "image";
+  } | null;
+  bodyImageTwo: {
+    asset?: {
+      _ref: string;
+      _type: "reference";
+      _weak?: boolean;
+      [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+    };
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    alt?: string;
+    epigraph?: string;
+    imageSource?: string;
+    _type: "image";
+  } | null;
+  bodyImageThree: {
+    asset?: {
+      _ref: string;
+      _type: "reference";
+      _weak?: boolean;
+      [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+    };
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    alt?: string;
+    epigraph?: string;
+    imageSource?: string;
+    _type: "image";
+  } | null;
+  bodyImageFour: {
+    asset?: {
+      _ref: string;
+      _type: "reference";
+      _weak?: boolean;
+      [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+    };
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    alt?: string;
+    epigraph?: string;
+    imageSource?: string;
+    _type: "image";
+  } | null;
+  bodyImageFive: {
+    asset?: {
+      _ref: string;
+      _type: "reference";
+      _weak?: boolean;
+      [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+    };
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    alt?: string;
+    epigraph?: string;
+    imageSource?: string;
+    _type: "image";
   } | null;
 } | null;
-
-// Source: ./app/(blog)/posts/[slug]/page.tsx
-// Variable: postSlugs
-// Query: *[_type == "post" && defined(slug.current)]{"slug": slug.current}
-export type PostSlugsResult = Array<{
+// Variable: indexQuery
+// Query: *[_type == "post"] | order(date desc, _updatedAt desc) {      _id,  _type,  "status": select(_originalId in path("drafts.**") => "draft", "published"),  "title": coalesce(title, "Untitled"),  "slug": slug.current,  excerpt,  epigraph,  imageSource,  coverImage,  // Keep legacy "date" for existing UI; prefer publishedAt elsewhere  "date": coalesce(date, _updatedAt),  publishedAt,  priority,  featured,  // Ensure complete author or nothing  "author": select(    defined(author->name) => {      "name": coalesce(author->name, "Anonymous"),      "picture": author->picture    }  ),  // Category shape your UI expects  "category": select(    defined(category->name) && defined(category->slug.current) => {      "title": category->name,      "slug": category->slug.current    }  ),  // Tags now use tag.title (not name)  "tags": tags[]->{title, "slug": slug.current},  // Body chunks & images  "bodyImages": bodyImages[]{ "image": image, epigraph, imageSource },  bodyTextOne,  bodyTextTwo,  bodyTextThree,  bodyTextFour,  bodyTextFive,  bodyImageOne,  bodyImageTwo,  bodyImageThree,  bodyImageFour,  bodyImageFive  }
+export type IndexQueryResult = Array<{
+  _id: string;
+  _type: "post";
+  status: "draft" | "published";
+  title: string | "Untitled";
   slug: string | null;
+  excerpt: string | null;
+  epigraph: string | null;
+  imageSource: string | null;
+  coverImage: {
+    asset?: {
+      _ref: string;
+      _type: "reference";
+      _weak?: boolean;
+      [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+    };
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    alt?: string;
+    _type: "image";
+  } | null;
+  date: string;
+  publishedAt: string | null;
+  priority: number | null;
+  featured: boolean | null;
+  author: {
+    name: string | "Anonymous";
+    picture: {
+      asset?: {
+        _ref: string;
+        _type: "reference";
+        _weak?: boolean;
+        [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+      };
+      media?: unknown;
+      hotspot?: SanityImageHotspot;
+      crop?: SanityImageCrop;
+      alt?: string;
+      _type: "image";
+    } | null;
+  };
+  category: {
+    title: string | null;
+    slug: string | null;
+  };
+  tags: Array<{
+    title: string | null;
+    slug: string | null;
+  }> | null;
+  bodyImages: Array<{
+    image: {
+      asset?: {
+        _ref: string;
+        _type: "reference";
+        _weak?: boolean;
+        [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+      };
+      media?: unknown;
+      hotspot?: SanityImageHotspot;
+      crop?: SanityImageCrop;
+      _type: "image";
+    } | null;
+    epigraph: string | null;
+    imageSource: string | null;
+  }> | null;
+  bodyTextOne: Array<{
+    children?: Array<{
+      marks?: Array<string>;
+      text?: string;
+      _type: "span";
+      _key: string;
+    }>;
+    style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
+    listItem?: "bullet" | "number";
+    markDefs?: Array<{
+      href?: string;
+      _type: "link";
+      _key: string;
+    }>;
+    level?: number;
+    _type: "block";
+    _key: string;
+  }> | null;
+  bodyTextTwo: Array<{
+    children?: Array<{
+      marks?: Array<string>;
+      text?: string;
+      _type: "span";
+      _key: string;
+    }>;
+    style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
+    listItem?: "bullet" | "number";
+    markDefs?: Array<{
+      href?: string;
+      _type: "link";
+      _key: string;
+    }>;
+    level?: number;
+    _type: "block";
+    _key: string;
+  }> | null;
+  bodyTextThree: Array<{
+    children?: Array<{
+      marks?: Array<string>;
+      text?: string;
+      _type: "span";
+      _key: string;
+    }>;
+    style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
+    listItem?: "bullet" | "number";
+    markDefs?: Array<{
+      href?: string;
+      _type: "link";
+      _key: string;
+    }>;
+    level?: number;
+    _type: "block";
+    _key: string;
+  }> | null;
+  bodyTextFour: Array<{
+    children?: Array<{
+      marks?: Array<string>;
+      text?: string;
+      _type: "span";
+      _key: string;
+    }>;
+    style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
+    listItem?: "bullet" | "number";
+    markDefs?: Array<{
+      href?: string;
+      _type: "link";
+      _key: string;
+    }>;
+    level?: number;
+    _type: "block";
+    _key: string;
+  }> | null;
+  bodyTextFive: Array<{
+    children?: Array<{
+      marks?: Array<string>;
+      text?: string;
+      _type: "span";
+      _key: string;
+    }>;
+    style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
+    listItem?: "bullet" | "number";
+    markDefs?: Array<{
+      href?: string;
+      _type: "link";
+      _key: string;
+    }>;
+    level?: number;
+    _type: "block";
+    _key: string;
+  }> | null;
+  bodyImageOne: {
+    asset?: {
+      _ref: string;
+      _type: "reference";
+      _weak?: boolean;
+      [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+    };
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    alt?: string;
+    epigraph?: string;
+    imageSource?: string;
+    _type: "image";
+  } | null;
+  bodyImageTwo: {
+    asset?: {
+      _ref: string;
+      _type: "reference";
+      _weak?: boolean;
+      [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+    };
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    alt?: string;
+    epigraph?: string;
+    imageSource?: string;
+    _type: "image";
+  } | null;
+  bodyImageThree: {
+    asset?: {
+      _ref: string;
+      _type: "reference";
+      _weak?: boolean;
+      [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+    };
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    alt?: string;
+    epigraph?: string;
+    imageSource?: string;
+    _type: "image";
+  } | null;
+  bodyImageFour: {
+    asset?: {
+      _ref: string;
+      _type: "reference";
+      _weak?: boolean;
+      [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+    };
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    alt?: string;
+    epigraph?: string;
+    imageSource?: string;
+    _type: "image";
+  } | null;
+  bodyImageFive: {
+    asset?: {
+      _ref: string;
+      _type: "reference";
+      _weak?: boolean;
+      [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+    };
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    alt?: string;
+    epigraph?: string;
+    imageSource?: string;
+    _type: "image";
+  } | null;
 }>;
+// Variable: postQueryWithRelated
+// Query: {  "post": *[_type == "post" && slug.current == $slug] | order(_updatedAt desc) [0] {      _id,  _type,  "status": select(_originalId in path("drafts.**") => "draft", "published"),  "title": coalesce(title, "Untitled"),  "slug": slug.current,  excerpt,  epigraph,  imageSource,  coverImage,  // Keep legacy "date" for existing UI; prefer publishedAt elsewhere  "date": coalesce(date, _updatedAt),  publishedAt,  priority,  featured,  // Ensure complete author or nothing  "author": select(    defined(author->name) => {      "name": coalesce(author->name, "Anonymous"),      "picture": author->picture    }  ),  // Category shape your UI expects  "category": select(    defined(category->name) && defined(category->slug.current) => {      "title": category->name,      "slug": category->slug.current    }  ),  // Tags now use tag.title (not name)  "tags": tags[]->{title, "slug": slug.current},  // Body chunks & images  "bodyImages": bodyImages[]{ "image": image, epigraph, imageSource },  bodyTextOne,  bodyTextTwo,  bodyTextThree,  bodyTextFour,  bodyTextFive,  bodyImageOne,  bodyImageTwo,  bodyImageThree,  bodyImageFour,  bodyImageFive  },  "latestNews": *[_type == "post" && slug.current != $slug] | order(date desc, _updatedAt desc) [0...6] {      _id,  _type,  "status": select(_originalId in path("drafts.**") => "draft", "published"),  "title": coalesce(title, "Untitled"),  "slug": slug.current,  excerpt,  epigraph,  imageSource,  coverImage,  // Keep legacy "date" for existing UI; prefer publishedAt elsewhere  "date": coalesce(date, _updatedAt),  publishedAt,  priority,  featured,  // Ensure complete author or nothing  "author": select(    defined(author->name) => {      "name": coalesce(author->name, "Anonymous"),      "picture": author->picture    }  ),  // Category shape your UI expects  "category": select(    defined(category->name) && defined(category->slug.current) => {      "title": category->name,      "slug": category->slug.current    }  ),  // Tags now use tag.title (not name)  "tags": tags[]->{title, "slug": slug.current},  // Body chunks & images  "bodyImages": bodyImages[]{ "image": image, epigraph, imageSource },  bodyTextOne,  bodyTextTwo,  bodyTextThree,  bodyTextFour,  bodyTextFive,  bodyImageOne,  bodyImageTwo,  bodyImageThree,  bodyImageFour,  bodyImageFive  },  "morePosts": *[_type == "post" && slug.current != $slug] | order(date desc, _updatedAt desc) [4...8] {      _id,  _type,  "status": select(_originalId in path("drafts.**") => "draft", "published"),  "title": coalesce(title, "Untitled"),  "slug": slug.current,  excerpt,  epigraph,  imageSource,  coverImage,  // Keep legacy "date" for existing UI; prefer publishedAt elsewhere  "date": coalesce(date, _updatedAt),  publishedAt,  priority,  featured,  // Ensure complete author or nothing  "author": select(    defined(author->name) => {      "name": coalesce(author->name, "Anonymous"),      "picture": author->picture    }  ),  // Category shape your UI expects  "category": select(    defined(category->name) && defined(category->slug.current) => {      "title": category->name,      "slug": category->slug.current    }  ),  // Tags now use tag.title (not name)  "tags": tags[]->{title, "slug": slug.current},  // Body chunks & images  "bodyImages": bodyImages[]{ "image": image, epigraph, imageSource },  bodyTextOne,  bodyTextTwo,  bodyTextThree,  bodyTextFour,  bodyTextFive,  bodyImageOne,  bodyImageTwo,  bodyImageThree,  bodyImageFour,  bodyImageFive  },  "nextArticles": *[_type == "post" && slug.current != $slug] | order(date desc, _updatedAt desc) [8...11] {      _id,  _type,  "status": select(_originalId in path("drafts.**") => "draft", "published"),  "title": coalesce(title, "Untitled"),  "slug": slug.current,  excerpt,  epigraph,  imageSource,  coverImage,  // Keep legacy "date" for existing UI; prefer publishedAt elsewhere  "date": coalesce(date, _updatedAt),  publishedAt,  priority,  featured,  // Ensure complete author or nothing  "author": select(    defined(author->name) => {      "name": coalesce(author->name, "Anonymous"),      "picture": author->picture    }  ),  // Category shape your UI expects  "category": select(    defined(category->name) && defined(category->slug.current) => {      "title": category->name,      "slug": category->slug.current    }  ),  // Tags now use tag.title (not name)  "tags": tags[]->{title, "slug": slug.current},  // Body chunks & images  "bodyImages": bodyImages[]{ "image": image, epigraph, imageSource },  bodyTextOne,  bodyTextTwo,  bodyTextThree,  bodyTextFour,  bodyTextFive,  bodyImageOne,  bodyImageTwo,  bodyImageThree,  bodyImageFour,  bodyImageFive  }}
+export type PostQueryWithRelatedResult = {
+  post: {
+    _id: string;
+    _type: "post";
+    status: "draft" | "published";
+    title: string | "Untitled";
+    slug: string | null;
+    excerpt: string | null;
+    epigraph: string | null;
+    imageSource: string | null;
+    coverImage: {
+      asset?: {
+        _ref: string;
+        _type: "reference";
+        _weak?: boolean;
+        [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+      };
+      media?: unknown;
+      hotspot?: SanityImageHotspot;
+      crop?: SanityImageCrop;
+      alt?: string;
+      _type: "image";
+    } | null;
+    date: string;
+    publishedAt: string | null;
+    priority: number | null;
+    featured: boolean | null;
+    author: {
+      name: string | "Anonymous";
+      picture: {
+        asset?: {
+          _ref: string;
+          _type: "reference";
+          _weak?: boolean;
+          [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+        };
+        media?: unknown;
+        hotspot?: SanityImageHotspot;
+        crop?: SanityImageCrop;
+        alt?: string;
+        _type: "image";
+      } | null;
+    };
+    category: {
+      title: string | null;
+      slug: string | null;
+    };
+    tags: Array<{
+      title: string | null;
+      slug: string | null;
+    }> | null;
+    bodyImages: Array<{
+      image: {
+        asset?: {
+          _ref: string;
+          _type: "reference";
+          _weak?: boolean;
+          [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+        };
+        media?: unknown;
+        hotspot?: SanityImageHotspot;
+        crop?: SanityImageCrop;
+        _type: "image";
+      } | null;
+      epigraph: string | null;
+      imageSource: string | null;
+    }> | null;
+    bodyTextOne: Array<{
+      children?: Array<{
+        marks?: Array<string>;
+        text?: string;
+        _type: "span";
+        _key: string;
+      }>;
+      style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
+      listItem?: "bullet" | "number";
+      markDefs?: Array<{
+        href?: string;
+        _type: "link";
+        _key: string;
+      }>;
+      level?: number;
+      _type: "block";
+      _key: string;
+    }> | null;
+    bodyTextTwo: Array<{
+      children?: Array<{
+        marks?: Array<string>;
+        text?: string;
+        _type: "span";
+        _key: string;
+      }>;
+      style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
+      listItem?: "bullet" | "number";
+      markDefs?: Array<{
+        href?: string;
+        _type: "link";
+        _key: string;
+      }>;
+      level?: number;
+      _type: "block";
+      _key: string;
+    }> | null;
+    bodyTextThree: Array<{
+      children?: Array<{
+        marks?: Array<string>;
+        text?: string;
+        _type: "span";
+        _key: string;
+      }>;
+      style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
+      listItem?: "bullet" | "number";
+      markDefs?: Array<{
+        href?: string;
+        _type: "link";
+        _key: string;
+      }>;
+      level?: number;
+      _type: "block";
+      _key: string;
+    }> | null;
+    bodyTextFour: Array<{
+      children?: Array<{
+        marks?: Array<string>;
+        text?: string;
+        _type: "span";
+        _key: string;
+      }>;
+      style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
+      listItem?: "bullet" | "number";
+      markDefs?: Array<{
+        href?: string;
+        _type: "link";
+        _key: string;
+      }>;
+      level?: number;
+      _type: "block";
+      _key: string;
+    }> | null;
+    bodyTextFive: Array<{
+      children?: Array<{
+        marks?: Array<string>;
+        text?: string;
+        _type: "span";
+        _key: string;
+      }>;
+      style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
+      listItem?: "bullet" | "number";
+      markDefs?: Array<{
+        href?: string;
+        _type: "link";
+        _key: string;
+      }>;
+      level?: number;
+      _type: "block";
+      _key: string;
+    }> | null;
+    bodyImageOne: {
+      asset?: {
+        _ref: string;
+        _type: "reference";
+        _weak?: boolean;
+        [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+      };
+      media?: unknown;
+      hotspot?: SanityImageHotspot;
+      crop?: SanityImageCrop;
+      alt?: string;
+      epigraph?: string;
+      imageSource?: string;
+      _type: "image";
+    } | null;
+    bodyImageTwo: {
+      asset?: {
+        _ref: string;
+        _type: "reference";
+        _weak?: boolean;
+        [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+      };
+      media?: unknown;
+      hotspot?: SanityImageHotspot;
+      crop?: SanityImageCrop;
+      alt?: string;
+      epigraph?: string;
+      imageSource?: string;
+      _type: "image";
+    } | null;
+    bodyImageThree: {
+      asset?: {
+        _ref: string;
+        _type: "reference";
+        _weak?: boolean;
+        [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+      };
+      media?: unknown;
+      hotspot?: SanityImageHotspot;
+      crop?: SanityImageCrop;
+      alt?: string;
+      epigraph?: string;
+      imageSource?: string;
+      _type: "image";
+    } | null;
+    bodyImageFour: {
+      asset?: {
+        _ref: string;
+        _type: "reference";
+        _weak?: boolean;
+        [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+      };
+      media?: unknown;
+      hotspot?: SanityImageHotspot;
+      crop?: SanityImageCrop;
+      alt?: string;
+      epigraph?: string;
+      imageSource?: string;
+      _type: "image";
+    } | null;
+    bodyImageFive: {
+      asset?: {
+        _ref: string;
+        _type: "reference";
+        _weak?: boolean;
+        [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+      };
+      media?: unknown;
+      hotspot?: SanityImageHotspot;
+      crop?: SanityImageCrop;
+      alt?: string;
+      epigraph?: string;
+      imageSource?: string;
+      _type: "image";
+    } | null;
+  } | null;
+  latestNews: Array<{
+    _id: string;
+    _type: "post";
+    status: "draft" | "published";
+    title: string | "Untitled";
+    slug: string | null;
+    excerpt: string | null;
+    epigraph: string | null;
+    imageSource: string | null;
+    coverImage: {
+      asset?: {
+        _ref: string;
+        _type: "reference";
+        _weak?: boolean;
+        [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+      };
+      media?: unknown;
+      hotspot?: SanityImageHotspot;
+      crop?: SanityImageCrop;
+      alt?: string;
+      _type: "image";
+    } | null;
+    date: string;
+    publishedAt: string | null;
+    priority: number | null;
+    featured: boolean | null;
+    author: {
+      name: string | "Anonymous";
+      picture: {
+        asset?: {
+          _ref: string;
+          _type: "reference";
+          _weak?: boolean;
+          [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+        };
+        media?: unknown;
+        hotspot?: SanityImageHotspot;
+        crop?: SanityImageCrop;
+        alt?: string;
+        _type: "image";
+      } | null;
+    };
+    category: {
+      title: string | null;
+      slug: string | null;
+    };
+    tags: Array<{
+      title: string | null;
+      slug: string | null;
+    }> | null;
+    bodyImages: Array<{
+      image: {
+        asset?: {
+          _ref: string;
+          _type: "reference";
+          _weak?: boolean;
+          [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+        };
+        media?: unknown;
+        hotspot?: SanityImageHotspot;
+        crop?: SanityImageCrop;
+        _type: "image";
+      } | null;
+      epigraph: string | null;
+      imageSource: string | null;
+    }> | null;
+    bodyTextOne: Array<{
+      children?: Array<{
+        marks?: Array<string>;
+        text?: string;
+        _type: "span";
+        _key: string;
+      }>;
+      style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
+      listItem?: "bullet" | "number";
+      markDefs?: Array<{
+        href?: string;
+        _type: "link";
+        _key: string;
+      }>;
+      level?: number;
+      _type: "block";
+      _key: string;
+    }> | null;
+    bodyTextTwo: Array<{
+      children?: Array<{
+        marks?: Array<string>;
+        text?: string;
+        _type: "span";
+        _key: string;
+      }>;
+      style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
+      listItem?: "bullet" | "number";
+      markDefs?: Array<{
+        href?: string;
+        _type: "link";
+        _key: string;
+      }>;
+      level?: number;
+      _type: "block";
+      _key: string;
+    }> | null;
+    bodyTextThree: Array<{
+      children?: Array<{
+        marks?: Array<string>;
+        text?: string;
+        _type: "span";
+        _key: string;
+      }>;
+      style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
+      listItem?: "bullet" | "number";
+      markDefs?: Array<{
+        href?: string;
+        _type: "link";
+        _key: string;
+      }>;
+      level?: number;
+      _type: "block";
+      _key: string;
+    }> | null;
+    bodyTextFour: Array<{
+      children?: Array<{
+        marks?: Array<string>;
+        text?: string;
+        _type: "span";
+        _key: string;
+      }>;
+      style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
+      listItem?: "bullet" | "number";
+      markDefs?: Array<{
+        href?: string;
+        _type: "link";
+        _key: string;
+      }>;
+      level?: number;
+      _type: "block";
+      _key: string;
+    }> | null;
+    bodyTextFive: Array<{
+      children?: Array<{
+        marks?: Array<string>;
+        text?: string;
+        _type: "span";
+        _key: string;
+      }>;
+      style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
+      listItem?: "bullet" | "number";
+      markDefs?: Array<{
+        href?: string;
+        _type: "link";
+        _key: string;
+      }>;
+      level?: number;
+      _type: "block";
+      _key: string;
+    }> | null;
+    bodyImageOne: {
+      asset?: {
+        _ref: string;
+        _type: "reference";
+        _weak?: boolean;
+        [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+      };
+      media?: unknown;
+      hotspot?: SanityImageHotspot;
+      crop?: SanityImageCrop;
+      alt?: string;
+      epigraph?: string;
+      imageSource?: string;
+      _type: "image";
+    } | null;
+    bodyImageTwo: {
+      asset?: {
+        _ref: string;
+        _type: "reference";
+        _weak?: boolean;
+        [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+      };
+      media?: unknown;
+      hotspot?: SanityImageHotspot;
+      crop?: SanityImageCrop;
+      alt?: string;
+      epigraph?: string;
+      imageSource?: string;
+      _type: "image";
+    } | null;
+    bodyImageThree: {
+      asset?: {
+        _ref: string;
+        _type: "reference";
+        _weak?: boolean;
+        [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+      };
+      media?: unknown;
+      hotspot?: SanityImageHotspot;
+      crop?: SanityImageCrop;
+      alt?: string;
+      epigraph?: string;
+      imageSource?: string;
+      _type: "image";
+    } | null;
+    bodyImageFour: {
+      asset?: {
+        _ref: string;
+        _type: "reference";
+        _weak?: boolean;
+        [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+      };
+      media?: unknown;
+      hotspot?: SanityImageHotspot;
+      crop?: SanityImageCrop;
+      alt?: string;
+      epigraph?: string;
+      imageSource?: string;
+      _type: "image";
+    } | null;
+    bodyImageFive: {
+      asset?: {
+        _ref: string;
+        _type: "reference";
+        _weak?: boolean;
+        [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+      };
+      media?: unknown;
+      hotspot?: SanityImageHotspot;
+      crop?: SanityImageCrop;
+      alt?: string;
+      epigraph?: string;
+      imageSource?: string;
+      _type: "image";
+    } | null;
+  }>;
+  morePosts: Array<{
+    _id: string;
+    _type: "post";
+    status: "draft" | "published";
+    title: string | "Untitled";
+    slug: string | null;
+    excerpt: string | null;
+    epigraph: string | null;
+    imageSource: string | null;
+    coverImage: {
+      asset?: {
+        _ref: string;
+        _type: "reference";
+        _weak?: boolean;
+        [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+      };
+      media?: unknown;
+      hotspot?: SanityImageHotspot;
+      crop?: SanityImageCrop;
+      alt?: string;
+      _type: "image";
+    } | null;
+    date: string;
+    publishedAt: string | null;
+    priority: number | null;
+    featured: boolean | null;
+    author: {
+      name: string | "Anonymous";
+      picture: {
+        asset?: {
+          _ref: string;
+          _type: "reference";
+          _weak?: boolean;
+          [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+        };
+        media?: unknown;
+        hotspot?: SanityImageHotspot;
+        crop?: SanityImageCrop;
+        alt?: string;
+        _type: "image";
+      } | null;
+    };
+    category: {
+      title: string | null;
+      slug: string | null;
+    };
+    tags: Array<{
+      title: string | null;
+      slug: string | null;
+    }> | null;
+    bodyImages: Array<{
+      image: {
+        asset?: {
+          _ref: string;
+          _type: "reference";
+          _weak?: boolean;
+          [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+        };
+        media?: unknown;
+        hotspot?: SanityImageHotspot;
+        crop?: SanityImageCrop;
+        _type: "image";
+      } | null;
+      epigraph: string | null;
+      imageSource: string | null;
+    }> | null;
+    bodyTextOne: Array<{
+      children?: Array<{
+        marks?: Array<string>;
+        text?: string;
+        _type: "span";
+        _key: string;
+      }>;
+      style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
+      listItem?: "bullet" | "number";
+      markDefs?: Array<{
+        href?: string;
+        _type: "link";
+        _key: string;
+      }>;
+      level?: number;
+      _type: "block";
+      _key: string;
+    }> | null;
+    bodyTextTwo: Array<{
+      children?: Array<{
+        marks?: Array<string>;
+        text?: string;
+        _type: "span";
+        _key: string;
+      }>;
+      style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
+      listItem?: "bullet" | "number";
+      markDefs?: Array<{
+        href?: string;
+        _type: "link";
+        _key: string;
+      }>;
+      level?: number;
+      _type: "block";
+      _key: string;
+    }> | null;
+    bodyTextThree: Array<{
+      children?: Array<{
+        marks?: Array<string>;
+        text?: string;
+        _type: "span";
+        _key: string;
+      }>;
+      style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
+      listItem?: "bullet" | "number";
+      markDefs?: Array<{
+        href?: string;
+        _type: "link";
+        _key: string;
+      }>;
+      level?: number;
+      _type: "block";
+      _key: string;
+    }> | null;
+    bodyTextFour: Array<{
+      children?: Array<{
+        marks?: Array<string>;
+        text?: string;
+        _type: "span";
+        _key: string;
+      }>;
+      style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
+      listItem?: "bullet" | "number";
+      markDefs?: Array<{
+        href?: string;
+        _type: "link";
+        _key: string;
+      }>;
+      level?: number;
+      _type: "block";
+      _key: string;
+    }> | null;
+    bodyTextFive: Array<{
+      children?: Array<{
+        marks?: Array<string>;
+        text?: string;
+        _type: "span";
+        _key: string;
+      }>;
+      style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
+      listItem?: "bullet" | "number";
+      markDefs?: Array<{
+        href?: string;
+        _type: "link";
+        _key: string;
+      }>;
+      level?: number;
+      _type: "block";
+      _key: string;
+    }> | null;
+    bodyImageOne: {
+      asset?: {
+        _ref: string;
+        _type: "reference";
+        _weak?: boolean;
+        [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+      };
+      media?: unknown;
+      hotspot?: SanityImageHotspot;
+      crop?: SanityImageCrop;
+      alt?: string;
+      epigraph?: string;
+      imageSource?: string;
+      _type: "image";
+    } | null;
+    bodyImageTwo: {
+      asset?: {
+        _ref: string;
+        _type: "reference";
+        _weak?: boolean;
+        [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+      };
+      media?: unknown;
+      hotspot?: SanityImageHotspot;
+      crop?: SanityImageCrop;
+      alt?: string;
+      epigraph?: string;
+      imageSource?: string;
+      _type: "image";
+    } | null;
+    bodyImageThree: {
+      asset?: {
+        _ref: string;
+        _type: "reference";
+        _weak?: boolean;
+        [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+      };
+      media?: unknown;
+      hotspot?: SanityImageHotspot;
+      crop?: SanityImageCrop;
+      alt?: string;
+      epigraph?: string;
+      imageSource?: string;
+      _type: "image";
+    } | null;
+    bodyImageFour: {
+      asset?: {
+        _ref: string;
+        _type: "reference";
+        _weak?: boolean;
+        [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+      };
+      media?: unknown;
+      hotspot?: SanityImageHotspot;
+      crop?: SanityImageCrop;
+      alt?: string;
+      epigraph?: string;
+      imageSource?: string;
+      _type: "image";
+    } | null;
+    bodyImageFive: {
+      asset?: {
+        _ref: string;
+        _type: "reference";
+        _weak?: boolean;
+        [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+      };
+      media?: unknown;
+      hotspot?: SanityImageHotspot;
+      crop?: SanityImageCrop;
+      alt?: string;
+      epigraph?: string;
+      imageSource?: string;
+      _type: "image";
+    } | null;
+  }>;
+  nextArticles: Array<{
+    _id: string;
+    _type: "post";
+    status: "draft" | "published";
+    title: string | "Untitled";
+    slug: string | null;
+    excerpt: string | null;
+    epigraph: string | null;
+    imageSource: string | null;
+    coverImage: {
+      asset?: {
+        _ref: string;
+        _type: "reference";
+        _weak?: boolean;
+        [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+      };
+      media?: unknown;
+      hotspot?: SanityImageHotspot;
+      crop?: SanityImageCrop;
+      alt?: string;
+      _type: "image";
+    } | null;
+    date: string;
+    publishedAt: string | null;
+    priority: number | null;
+    featured: boolean | null;
+    author: {
+      name: string | "Anonymous";
+      picture: {
+        asset?: {
+          _ref: string;
+          _type: "reference";
+          _weak?: boolean;
+          [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+        };
+        media?: unknown;
+        hotspot?: SanityImageHotspot;
+        crop?: SanityImageCrop;
+        alt?: string;
+        _type: "image";
+      } | null;
+    };
+    category: {
+      title: string | null;
+      slug: string | null;
+    };
+    tags: Array<{
+      title: string | null;
+      slug: string | null;
+    }> | null;
+    bodyImages: Array<{
+      image: {
+        asset?: {
+          _ref: string;
+          _type: "reference";
+          _weak?: boolean;
+          [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+        };
+        media?: unknown;
+        hotspot?: SanityImageHotspot;
+        crop?: SanityImageCrop;
+        _type: "image";
+      } | null;
+      epigraph: string | null;
+      imageSource: string | null;
+    }> | null;
+    bodyTextOne: Array<{
+      children?: Array<{
+        marks?: Array<string>;
+        text?: string;
+        _type: "span";
+        _key: string;
+      }>;
+      style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
+      listItem?: "bullet" | "number";
+      markDefs?: Array<{
+        href?: string;
+        _type: "link";
+        _key: string;
+      }>;
+      level?: number;
+      _type: "block";
+      _key: string;
+    }> | null;
+    bodyTextTwo: Array<{
+      children?: Array<{
+        marks?: Array<string>;
+        text?: string;
+        _type: "span";
+        _key: string;
+      }>;
+      style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
+      listItem?: "bullet" | "number";
+      markDefs?: Array<{
+        href?: string;
+        _type: "link";
+        _key: string;
+      }>;
+      level?: number;
+      _type: "block";
+      _key: string;
+    }> | null;
+    bodyTextThree: Array<{
+      children?: Array<{
+        marks?: Array<string>;
+        text?: string;
+        _type: "span";
+        _key: string;
+      }>;
+      style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
+      listItem?: "bullet" | "number";
+      markDefs?: Array<{
+        href?: string;
+        _type: "link";
+        _key: string;
+      }>;
+      level?: number;
+      _type: "block";
+      _key: string;
+    }> | null;
+    bodyTextFour: Array<{
+      children?: Array<{
+        marks?: Array<string>;
+        text?: string;
+        _type: "span";
+        _key: string;
+      }>;
+      style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
+      listItem?: "bullet" | "number";
+      markDefs?: Array<{
+        href?: string;
+        _type: "link";
+        _key: string;
+      }>;
+      level?: number;
+      _type: "block";
+      _key: string;
+    }> | null;
+    bodyTextFive: Array<{
+      children?: Array<{
+        marks?: Array<string>;
+        text?: string;
+        _type: "span";
+        _key: string;
+      }>;
+      style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
+      listItem?: "bullet" | "number";
+      markDefs?: Array<{
+        href?: string;
+        _type: "link";
+        _key: string;
+      }>;
+      level?: number;
+      _type: "block";
+      _key: string;
+    }> | null;
+    bodyImageOne: {
+      asset?: {
+        _ref: string;
+        _type: "reference";
+        _weak?: boolean;
+        [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+      };
+      media?: unknown;
+      hotspot?: SanityImageHotspot;
+      crop?: SanityImageCrop;
+      alt?: string;
+      epigraph?: string;
+      imageSource?: string;
+      _type: "image";
+    } | null;
+    bodyImageTwo: {
+      asset?: {
+        _ref: string;
+        _type: "reference";
+        _weak?: boolean;
+        [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+      };
+      media?: unknown;
+      hotspot?: SanityImageHotspot;
+      crop?: SanityImageCrop;
+      alt?: string;
+      epigraph?: string;
+      imageSource?: string;
+      _type: "image";
+    } | null;
+    bodyImageThree: {
+      asset?: {
+        _ref: string;
+        _type: "reference";
+        _weak?: boolean;
+        [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+      };
+      media?: unknown;
+      hotspot?: SanityImageHotspot;
+      crop?: SanityImageCrop;
+      alt?: string;
+      epigraph?: string;
+      imageSource?: string;
+      _type: "image";
+    } | null;
+    bodyImageFour: {
+      asset?: {
+        _ref: string;
+        _type: "reference";
+        _weak?: boolean;
+        [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+      };
+      media?: unknown;
+      hotspot?: SanityImageHotspot;
+      crop?: SanityImageCrop;
+      alt?: string;
+      epigraph?: string;
+      imageSource?: string;
+      _type: "image";
+    } | null;
+    bodyImageFive: {
+      asset?: {
+        _ref: string;
+        _type: "reference";
+        _weak?: boolean;
+        [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+      };
+      media?: unknown;
+      hotspot?: SanityImageHotspot;
+      crop?: SanityImageCrop;
+      alt?: string;
+      epigraph?: string;
+      imageSource?: string;
+      _type: "image";
+    } | null;
+  }>;
+};
+// Variable: postSlugsQuery
+// Query: *[_type == "post" && defined(slug.current)][].slug.current
+export type PostSlugsQueryResult = Array<string | null>;
+// Variable: postBySlugQuery
+// Query: *[_type == "post" && slug.current == $slug][0] {      _id,  _type,  "status": select(_originalId in path("drafts.**") => "draft", "published"),  "title": coalesce(title, "Untitled"),  "slug": slug.current,  excerpt,  epigraph,  imageSource,  coverImage,  // Keep legacy "date" for existing UI; prefer publishedAt elsewhere  "date": coalesce(date, _updatedAt),  publishedAt,  priority,  featured,  // Ensure complete author or nothing  "author": select(    defined(author->name) => {      "name": coalesce(author->name, "Anonymous"),      "picture": author->picture    }  ),  // Category shape your UI expects  "category": select(    defined(category->name) && defined(category->slug.current) => {      "title": category->name,      "slug": category->slug.current    }  ),  // Tags now use tag.title (not name)  "tags": tags[]->{title, "slug": slug.current},  // Body chunks & images  "bodyImages": bodyImages[]{ "image": image, epigraph, imageSource },  bodyTextOne,  bodyTextTwo,  bodyTextThree,  bodyTextFour,  bodyTextFive,  bodyImageOne,  bodyImageTwo,  bodyImageThree,  bodyImageFour,  bodyImageFive  }
+export type PostBySlugQueryResult = {
+  _id: string;
+  _type: "post";
+  status: "draft" | "published";
+  title: string | "Untitled";
+  slug: string | null;
+  excerpt: string | null;
+  epigraph: string | null;
+  imageSource: string | null;
+  coverImage: {
+    asset?: {
+      _ref: string;
+      _type: "reference";
+      _weak?: boolean;
+      [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+    };
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    alt?: string;
+    _type: "image";
+  } | null;
+  date: string;
+  publishedAt: string | null;
+  priority: number | null;
+  featured: boolean | null;
+  author: {
+    name: string | "Anonymous";
+    picture: {
+      asset?: {
+        _ref: string;
+        _type: "reference";
+        _weak?: boolean;
+        [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+      };
+      media?: unknown;
+      hotspot?: SanityImageHotspot;
+      crop?: SanityImageCrop;
+      alt?: string;
+      _type: "image";
+    } | null;
+  };
+  category: {
+    title: string | null;
+    slug: string | null;
+  };
+  tags: Array<{
+    title: string | null;
+    slug: string | null;
+  }> | null;
+  bodyImages: Array<{
+    image: {
+      asset?: {
+        _ref: string;
+        _type: "reference";
+        _weak?: boolean;
+        [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+      };
+      media?: unknown;
+      hotspot?: SanityImageHotspot;
+      crop?: SanityImageCrop;
+      _type: "image";
+    } | null;
+    epigraph: string | null;
+    imageSource: string | null;
+  }> | null;
+  bodyTextOne: Array<{
+    children?: Array<{
+      marks?: Array<string>;
+      text?: string;
+      _type: "span";
+      _key: string;
+    }>;
+    style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
+    listItem?: "bullet" | "number";
+    markDefs?: Array<{
+      href?: string;
+      _type: "link";
+      _key: string;
+    }>;
+    level?: number;
+    _type: "block";
+    _key: string;
+  }> | null;
+  bodyTextTwo: Array<{
+    children?: Array<{
+      marks?: Array<string>;
+      text?: string;
+      _type: "span";
+      _key: string;
+    }>;
+    style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
+    listItem?: "bullet" | "number";
+    markDefs?: Array<{
+      href?: string;
+      _type: "link";
+      _key: string;
+    }>;
+    level?: number;
+    _type: "block";
+    _key: string;
+  }> | null;
+  bodyTextThree: Array<{
+    children?: Array<{
+      marks?: Array<string>;
+      text?: string;
+      _type: "span";
+      _key: string;
+    }>;
+    style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
+    listItem?: "bullet" | "number";
+    markDefs?: Array<{
+      href?: string;
+      _type: "link";
+      _key: string;
+    }>;
+    level?: number;
+    _type: "block";
+    _key: string;
+  }> | null;
+  bodyTextFour: Array<{
+    children?: Array<{
+      marks?: Array<string>;
+      text?: string;
+      _type: "span";
+      _key: string;
+    }>;
+    style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
+    listItem?: "bullet" | "number";
+    markDefs?: Array<{
+      href?: string;
+      _type: "link";
+      _key: string;
+    }>;
+    level?: number;
+    _type: "block";
+    _key: string;
+  }> | null;
+  bodyTextFive: Array<{
+    children?: Array<{
+      marks?: Array<string>;
+      text?: string;
+      _type: "span";
+      _key: string;
+    }>;
+    style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
+    listItem?: "bullet" | "number";
+    markDefs?: Array<{
+      href?: string;
+      _type: "link";
+      _key: string;
+    }>;
+    level?: number;
+    _type: "block";
+    _key: string;
+  }> | null;
+  bodyImageOne: {
+    asset?: {
+      _ref: string;
+      _type: "reference";
+      _weak?: boolean;
+      [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+    };
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    alt?: string;
+    epigraph?: string;
+    imageSource?: string;
+    _type: "image";
+  } | null;
+  bodyImageTwo: {
+    asset?: {
+      _ref: string;
+      _type: "reference";
+      _weak?: boolean;
+      [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+    };
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    alt?: string;
+    epigraph?: string;
+    imageSource?: string;
+    _type: "image";
+  } | null;
+  bodyImageThree: {
+    asset?: {
+      _ref: string;
+      _type: "reference";
+      _weak?: boolean;
+      [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+    };
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    alt?: string;
+    epigraph?: string;
+    imageSource?: string;
+    _type: "image";
+  } | null;
+  bodyImageFour: {
+    asset?: {
+      _ref: string;
+      _type: "reference";
+      _weak?: boolean;
+      [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+    };
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    alt?: string;
+    epigraph?: string;
+    imageSource?: string;
+    _type: "image";
+  } | null;
+  bodyImageFive: {
+    asset?: {
+      _ref: string;
+      _type: "reference";
+      _weak?: boolean;
+      [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+    };
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    alt?: string;
+    epigraph?: string;
+    imageSource?: string;
+    _type: "image";
+  } | null;
+} | null;
+// Variable: postsByCategoryQuery
+// Query: *[_type == "post" && category->slug.current == $categorySlug] | order(date desc, _updatedAt desc) {      _id,  _type,  "status": select(_originalId in path("drafts.**") => "draft", "published"),  "title": coalesce(title, "Untitled"),  "slug": slug.current,  excerpt,  epigraph,  imageSource,  coverImage,  // Keep legacy "date" for existing UI; prefer publishedAt elsewhere  "date": coalesce(date, _updatedAt),  publishedAt,  priority,  featured,  // Ensure complete author or nothing  "author": select(    defined(author->name) => {      "name": coalesce(author->name, "Anonymous"),      "picture": author->picture    }  ),  // Category shape your UI expects  "category": select(    defined(category->name) && defined(category->slug.current) => {      "title": category->name,      "slug": category->slug.current    }  ),  // Tags now use tag.title (not name)  "tags": tags[]->{title, "slug": slug.current},  // Body chunks & images  "bodyImages": bodyImages[]{ "image": image, epigraph, imageSource },  bodyTextOne,  bodyTextTwo,  bodyTextThree,  bodyTextFour,  bodyTextFive,  bodyImageOne,  bodyImageTwo,  bodyImageThree,  bodyImageFour,  bodyImageFive  }
+export type PostsByCategoryQueryResult = Array<{
+  _id: string;
+  _type: "post";
+  status: "draft" | "published";
+  title: string | "Untitled";
+  slug: string | null;
+  excerpt: string | null;
+  epigraph: string | null;
+  imageSource: string | null;
+  coverImage: {
+    asset?: {
+      _ref: string;
+      _type: "reference";
+      _weak?: boolean;
+      [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+    };
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    alt?: string;
+    _type: "image";
+  } | null;
+  date: string;
+  publishedAt: string | null;
+  priority: number | null;
+  featured: boolean | null;
+  author: {
+    name: string | "Anonymous";
+    picture: {
+      asset?: {
+        _ref: string;
+        _type: "reference";
+        _weak?: boolean;
+        [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+      };
+      media?: unknown;
+      hotspot?: SanityImageHotspot;
+      crop?: SanityImageCrop;
+      alt?: string;
+      _type: "image";
+    } | null;
+  };
+  category: {
+    title: string | null;
+    slug: string | null;
+  };
+  tags: Array<{
+    title: string | null;
+    slug: string | null;
+  }> | null;
+  bodyImages: Array<{
+    image: {
+      asset?: {
+        _ref: string;
+        _type: "reference";
+        _weak?: boolean;
+        [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+      };
+      media?: unknown;
+      hotspot?: SanityImageHotspot;
+      crop?: SanityImageCrop;
+      _type: "image";
+    } | null;
+    epigraph: string | null;
+    imageSource: string | null;
+  }> | null;
+  bodyTextOne: Array<{
+    children?: Array<{
+      marks?: Array<string>;
+      text?: string;
+      _type: "span";
+      _key: string;
+    }>;
+    style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
+    listItem?: "bullet" | "number";
+    markDefs?: Array<{
+      href?: string;
+      _type: "link";
+      _key: string;
+    }>;
+    level?: number;
+    _type: "block";
+    _key: string;
+  }> | null;
+  bodyTextTwo: Array<{
+    children?: Array<{
+      marks?: Array<string>;
+      text?: string;
+      _type: "span";
+      _key: string;
+    }>;
+    style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
+    listItem?: "bullet" | "number";
+    markDefs?: Array<{
+      href?: string;
+      _type: "link";
+      _key: string;
+    }>;
+    level?: number;
+    _type: "block";
+    _key: string;
+  }> | null;
+  bodyTextThree: Array<{
+    children?: Array<{
+      marks?: Array<string>;
+      text?: string;
+      _type: "span";
+      _key: string;
+    }>;
+    style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
+    listItem?: "bullet" | "number";
+    markDefs?: Array<{
+      href?: string;
+      _type: "link";
+      _key: string;
+    }>;
+    level?: number;
+    _type: "block";
+    _key: string;
+  }> | null;
+  bodyTextFour: Array<{
+    children?: Array<{
+      marks?: Array<string>;
+      text?: string;
+      _type: "span";
+      _key: string;
+    }>;
+    style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
+    listItem?: "bullet" | "number";
+    markDefs?: Array<{
+      href?: string;
+      _type: "link";
+      _key: string;
+    }>;
+    level?: number;
+    _type: "block";
+    _key: string;
+  }> | null;
+  bodyTextFive: Array<{
+    children?: Array<{
+      marks?: Array<string>;
+      text?: string;
+      _type: "span";
+      _key: string;
+    }>;
+    style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
+    listItem?: "bullet" | "number";
+    markDefs?: Array<{
+      href?: string;
+      _type: "link";
+      _key: string;
+    }>;
+    level?: number;
+    _type: "block";
+    _key: string;
+  }> | null;
+  bodyImageOne: {
+    asset?: {
+      _ref: string;
+      _type: "reference";
+      _weak?: boolean;
+      [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+    };
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    alt?: string;
+    epigraph?: string;
+    imageSource?: string;
+    _type: "image";
+  } | null;
+  bodyImageTwo: {
+    asset?: {
+      _ref: string;
+      _type: "reference";
+      _weak?: boolean;
+      [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+    };
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    alt?: string;
+    epigraph?: string;
+    imageSource?: string;
+    _type: "image";
+  } | null;
+  bodyImageThree: {
+    asset?: {
+      _ref: string;
+      _type: "reference";
+      _weak?: boolean;
+      [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+    };
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    alt?: string;
+    epigraph?: string;
+    imageSource?: string;
+    _type: "image";
+  } | null;
+  bodyImageFour: {
+    asset?: {
+      _ref: string;
+      _type: "reference";
+      _weak?: boolean;
+      [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+    };
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    alt?: string;
+    epigraph?: string;
+    imageSource?: string;
+    _type: "image";
+  } | null;
+  bodyImageFive: {
+    asset?: {
+      _ref: string;
+      _type: "reference";
+      _weak?: boolean;
+      [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+    };
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    alt?: string;
+    epigraph?: string;
+    imageSource?: string;
+    _type: "image";
+  } | null;
+}>;
+// Variable: categorySlugsQuery
+// Query: *[_type == "category" && defined(slug.current)]{ "slug": slug.current, name }
+export type CategorySlugsQueryResult = Array<{
+  slug: string | null;
+  name: string | null;
+}>;
+// Variable: allCategoriesQuery
+// Query: *[_type == "category" && defined(slug.current)] | order(name asc) {    "slug": slug.current,    name  }
+export type AllCategoriesQueryResult = Array<{
+  slug: string | null;
+  name: string | null;
+}>;
+// Variable: tagSlugsQuery
+// Query: *[_type == "tag" && defined(slug.current)]{ "slug": slug.current, title }
+export type TagSlugsQueryResult = Array<{
+  slug: string | null;
+  title: string | null;
+}>;
+// Variable: postsByTagQuery
+// Query: *[_type == "post" && $tagSlug in tags[]->slug.current] | order(date desc, _updatedAt desc) {      _id,  _type,  "status": select(_originalId in path("drafts.**") => "draft", "published"),  "title": coalesce(title, "Untitled"),  "slug": slug.current,  excerpt,  epigraph,  imageSource,  coverImage,  // Keep legacy "date" for existing UI; prefer publishedAt elsewhere  "date": coalesce(date, _updatedAt),  publishedAt,  priority,  featured,  // Ensure complete author or nothing  "author": select(    defined(author->name) => {      "name": coalesce(author->name, "Anonymous"),      "picture": author->picture    }  ),  // Category shape your UI expects  "category": select(    defined(category->name) && defined(category->slug.current) => {      "title": category->name,      "slug": category->slug.current    }  ),  // Tags now use tag.title (not name)  "tags": tags[]->{title, "slug": slug.current},  // Body chunks & images  "bodyImages": bodyImages[]{ "image": image, epigraph, imageSource },  bodyTextOne,  bodyTextTwo,  bodyTextThree,  bodyTextFour,  bodyTextFive,  bodyImageOne,  bodyImageTwo,  bodyImageThree,  bodyImageFour,  bodyImageFive  }
+export type PostsByTagQueryResult = Array<{
+  _id: string;
+  _type: "post";
+  status: "draft" | "published";
+  title: string | "Untitled";
+  slug: string | null;
+  excerpt: string | null;
+  epigraph: string | null;
+  imageSource: string | null;
+  coverImage: {
+    asset?: {
+      _ref: string;
+      _type: "reference";
+      _weak?: boolean;
+      [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+    };
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    alt?: string;
+    _type: "image";
+  } | null;
+  date: string;
+  publishedAt: string | null;
+  priority: number | null;
+  featured: boolean | null;
+  author: {
+    name: string | "Anonymous";
+    picture: {
+      asset?: {
+        _ref: string;
+        _type: "reference";
+        _weak?: boolean;
+        [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+      };
+      media?: unknown;
+      hotspot?: SanityImageHotspot;
+      crop?: SanityImageCrop;
+      alt?: string;
+      _type: "image";
+    } | null;
+  };
+  category: {
+    title: string | null;
+    slug: string | null;
+  };
+  tags: Array<{
+    title: string | null;
+    slug: string | null;
+  }> | null;
+  bodyImages: Array<{
+    image: {
+      asset?: {
+        _ref: string;
+        _type: "reference";
+        _weak?: boolean;
+        [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+      };
+      media?: unknown;
+      hotspot?: SanityImageHotspot;
+      crop?: SanityImageCrop;
+      _type: "image";
+    } | null;
+    epigraph: string | null;
+    imageSource: string | null;
+  }> | null;
+  bodyTextOne: Array<{
+    children?: Array<{
+      marks?: Array<string>;
+      text?: string;
+      _type: "span";
+      _key: string;
+    }>;
+    style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
+    listItem?: "bullet" | "number";
+    markDefs?: Array<{
+      href?: string;
+      _type: "link";
+      _key: string;
+    }>;
+    level?: number;
+    _type: "block";
+    _key: string;
+  }> | null;
+  bodyTextTwo: Array<{
+    children?: Array<{
+      marks?: Array<string>;
+      text?: string;
+      _type: "span";
+      _key: string;
+    }>;
+    style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
+    listItem?: "bullet" | "number";
+    markDefs?: Array<{
+      href?: string;
+      _type: "link";
+      _key: string;
+    }>;
+    level?: number;
+    _type: "block";
+    _key: string;
+  }> | null;
+  bodyTextThree: Array<{
+    children?: Array<{
+      marks?: Array<string>;
+      text?: string;
+      _type: "span";
+      _key: string;
+    }>;
+    style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
+    listItem?: "bullet" | "number";
+    markDefs?: Array<{
+      href?: string;
+      _type: "link";
+      _key: string;
+    }>;
+    level?: number;
+    _type: "block";
+    _key: string;
+  }> | null;
+  bodyTextFour: Array<{
+    children?: Array<{
+      marks?: Array<string>;
+      text?: string;
+      _type: "span";
+      _key: string;
+    }>;
+    style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
+    listItem?: "bullet" | "number";
+    markDefs?: Array<{
+      href?: string;
+      _type: "link";
+      _key: string;
+    }>;
+    level?: number;
+    _type: "block";
+    _key: string;
+  }> | null;
+  bodyTextFive: Array<{
+    children?: Array<{
+      marks?: Array<string>;
+      text?: string;
+      _type: "span";
+      _key: string;
+    }>;
+    style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
+    listItem?: "bullet" | "number";
+    markDefs?: Array<{
+      href?: string;
+      _type: "link";
+      _key: string;
+    }>;
+    level?: number;
+    _type: "block";
+    _key: string;
+  }> | null;
+  bodyImageOne: {
+    asset?: {
+      _ref: string;
+      _type: "reference";
+      _weak?: boolean;
+      [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+    };
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    alt?: string;
+    epigraph?: string;
+    imageSource?: string;
+    _type: "image";
+  } | null;
+  bodyImageTwo: {
+    asset?: {
+      _ref: string;
+      _type: "reference";
+      _weak?: boolean;
+      [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+    };
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    alt?: string;
+    epigraph?: string;
+    imageSource?: string;
+    _type: "image";
+  } | null;
+  bodyImageThree: {
+    asset?: {
+      _ref: string;
+      _type: "reference";
+      _weak?: boolean;
+      [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+    };
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    alt?: string;
+    epigraph?: string;
+    imageSource?: string;
+    _type: "image";
+  } | null;
+  bodyImageFour: {
+    asset?: {
+      _ref: string;
+      _type: "reference";
+      _weak?: boolean;
+      [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+    };
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    alt?: string;
+    epigraph?: string;
+    imageSource?: string;
+    _type: "image";
+  } | null;
+  bodyImageFive: {
+    asset?: {
+      _ref: string;
+      _type: "reference";
+      _weak?: boolean;
+      [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+    };
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    alt?: string;
+    epigraph?: string;
+    imageSource?: string;
+    _type: "image";
+  } | null;
+}>;
+// Variable: authorQuery
+// Query: *[_type == "author" && slug.current == $slug][0] {    name,    picture,    "posts": *[_type == "post" && author->slug.current == $slug] | order(date desc, _updatedAt desc) {        _id,  _type,  "status": select(_originalId in path("drafts.**") => "draft", "published"),  "title": coalesce(title, "Untitled"),  "slug": slug.current,  excerpt,  epigraph,  imageSource,  coverImage,  // Keep legacy "date" for existing UI; prefer publishedAt elsewhere  "date": coalesce(date, _updatedAt),  publishedAt,  priority,  featured,  // Ensure complete author or nothing  "author": select(    defined(author->name) => {      "name": coalesce(author->name, "Anonymous"),      "picture": author->picture    }  ),  // Category shape your UI expects  "category": select(    defined(category->name) && defined(category->slug.current) => {      "title": category->name,      "slug": category->slug.current    }  ),  // Tags now use tag.title (not name)  "tags": tags[]->{title, "slug": slug.current},  // Body chunks & images  "bodyImages": bodyImages[]{ "image": image, epigraph, imageSource },  bodyTextOne,  bodyTextTwo,  bodyTextThree,  bodyTextFour,  bodyTextFive,  bodyImageOne,  bodyImageTwo,  bodyImageThree,  bodyImageFour,  bodyImageFive    }  }
+export type AuthorQueryResult = {
+  name: string | null;
+  picture: {
+    asset?: {
+      _ref: string;
+      _type: "reference";
+      _weak?: boolean;
+      [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+    };
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    alt?: string;
+    _type: "image";
+  } | null;
+  posts: Array<{
+    _id: string;
+    _type: "post";
+    status: "draft" | "published";
+    title: string | "Untitled";
+    slug: string | null;
+    excerpt: string | null;
+    epigraph: string | null;
+    imageSource: string | null;
+    coverImage: {
+      asset?: {
+        _ref: string;
+        _type: "reference";
+        _weak?: boolean;
+        [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+      };
+      media?: unknown;
+      hotspot?: SanityImageHotspot;
+      crop?: SanityImageCrop;
+      alt?: string;
+      _type: "image";
+    } | null;
+    date: string;
+    publishedAt: string | null;
+    priority: number | null;
+    featured: boolean | null;
+    author: {
+      name: string | "Anonymous";
+      picture: {
+        asset?: {
+          _ref: string;
+          _type: "reference";
+          _weak?: boolean;
+          [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+        };
+        media?: unknown;
+        hotspot?: SanityImageHotspot;
+        crop?: SanityImageCrop;
+        alt?: string;
+        _type: "image";
+      } | null;
+    };
+    category: {
+      title: string | null;
+      slug: string | null;
+    };
+    tags: Array<{
+      title: string | null;
+      slug: string | null;
+    }> | null;
+    bodyImages: Array<{
+      image: {
+        asset?: {
+          _ref: string;
+          _type: "reference";
+          _weak?: boolean;
+          [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+        };
+        media?: unknown;
+        hotspot?: SanityImageHotspot;
+        crop?: SanityImageCrop;
+        _type: "image";
+      } | null;
+      epigraph: string | null;
+      imageSource: string | null;
+    }> | null;
+    bodyTextOne: Array<{
+      children?: Array<{
+        marks?: Array<string>;
+        text?: string;
+        _type: "span";
+        _key: string;
+      }>;
+      style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
+      listItem?: "bullet" | "number";
+      markDefs?: Array<{
+        href?: string;
+        _type: "link";
+        _key: string;
+      }>;
+      level?: number;
+      _type: "block";
+      _key: string;
+    }> | null;
+    bodyTextTwo: Array<{
+      children?: Array<{
+        marks?: Array<string>;
+        text?: string;
+        _type: "span";
+        _key: string;
+      }>;
+      style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
+      listItem?: "bullet" | "number";
+      markDefs?: Array<{
+        href?: string;
+        _type: "link";
+        _key: string;
+      }>;
+      level?: number;
+      _type: "block";
+      _key: string;
+    }> | null;
+    bodyTextThree: Array<{
+      children?: Array<{
+        marks?: Array<string>;
+        text?: string;
+        _type: "span";
+        _key: string;
+      }>;
+      style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
+      listItem?: "bullet" | "number";
+      markDefs?: Array<{
+        href?: string;
+        _type: "link";
+        _key: string;
+      }>;
+      level?: number;
+      _type: "block";
+      _key: string;
+    }> | null;
+    bodyTextFour: Array<{
+      children?: Array<{
+        marks?: Array<string>;
+        text?: string;
+        _type: "span";
+        _key: string;
+      }>;
+      style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
+      listItem?: "bullet" | "number";
+      markDefs?: Array<{
+        href?: string;
+        _type: "link";
+        _key: string;
+      }>;
+      level?: number;
+      _type: "block";
+      _key: string;
+    }> | null;
+    bodyTextFive: Array<{
+      children?: Array<{
+        marks?: Array<string>;
+        text?: string;
+        _type: "span";
+        _key: string;
+      }>;
+      style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
+      listItem?: "bullet" | "number";
+      markDefs?: Array<{
+        href?: string;
+        _type: "link";
+        _key: string;
+      }>;
+      level?: number;
+      _type: "block";
+      _key: string;
+    }> | null;
+    bodyImageOne: {
+      asset?: {
+        _ref: string;
+        _type: "reference";
+        _weak?: boolean;
+        [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+      };
+      media?: unknown;
+      hotspot?: SanityImageHotspot;
+      crop?: SanityImageCrop;
+      alt?: string;
+      epigraph?: string;
+      imageSource?: string;
+      _type: "image";
+    } | null;
+    bodyImageTwo: {
+      asset?: {
+        _ref: string;
+        _type: "reference";
+        _weak?: boolean;
+        [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+      };
+      media?: unknown;
+      hotspot?: SanityImageHotspot;
+      crop?: SanityImageCrop;
+      alt?: string;
+      epigraph?: string;
+      imageSource?: string;
+      _type: "image";
+    } | null;
+    bodyImageThree: {
+      asset?: {
+        _ref: string;
+        _type: "reference";
+        _weak?: boolean;
+        [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+      };
+      media?: unknown;
+      hotspot?: SanityImageHotspot;
+      crop?: SanityImageCrop;
+      alt?: string;
+      epigraph?: string;
+      imageSource?: string;
+      _type: "image";
+    } | null;
+    bodyImageFour: {
+      asset?: {
+        _ref: string;
+        _type: "reference";
+        _weak?: boolean;
+        [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+      };
+      media?: unknown;
+      hotspot?: SanityImageHotspot;
+      crop?: SanityImageCrop;
+      alt?: string;
+      epigraph?: string;
+      imageSource?: string;
+      _type: "image";
+    } | null;
+    bodyImageFive: {
+      asset?: {
+        _ref: string;
+        _type: "reference";
+        _weak?: boolean;
+        [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+      };
+      media?: unknown;
+      hotspot?: SanityImageHotspot;
+      crop?: SanityImageCrop;
+      alt?: string;
+      epigraph?: string;
+      imageSource?: string;
+      _type: "image";
+    } | null;
+  }>;
+} | null;
+// Variable: authorSlugsQuery
+// Query: *[_type == "author" && defined(slug.current)][].slug.current
+export type AuthorSlugsQueryResult = Array<string | null>;
+// Variable: commentsQuery
+// Query: *[_type == "comment" && post->slug.current == $postSlug && approved == true] | order(_createdAt desc) {    name, email, comment, _createdAt  }
+export type CommentsQueryResult = Array<{
+  name: string | null;
+  email: string | null;
+  comment: string | null;
+  _createdAt: string;
+}>;
+// Variable: fourthSectionQuery
+// Query: *[_type == "post" && category->slug.current == $categorySlug] | order(date desc, _updatedAt desc) [0...4] {      _id,  _type,  "status": select(_originalId in path("drafts.**") => "draft", "published"),  "title": coalesce(title, "Untitled"),  "slug": slug.current,  excerpt,  epigraph,  imageSource,  coverImage,  // Keep legacy "date" for existing UI; prefer publishedAt elsewhere  "date": coalesce(date, _updatedAt),  publishedAt,  priority,  featured,  // Ensure complete author or nothing  "author": select(    defined(author->name) => {      "name": coalesce(author->name, "Anonymous"),      "picture": author->picture    }  ),  // Category shape your UI expects  "category": select(    defined(category->name) && defined(category->slug.current) => {      "title": category->name,      "slug": category->slug.current    }  ),  // Tags now use tag.title (not name)  "tags": tags[]->{title, "slug": slug.current},  // Body chunks & images  "bodyImages": bodyImages[]{ "image": image, epigraph, imageSource },  bodyTextOne,  bodyTextTwo,  bodyTextThree,  bodyTextFour,  bodyTextFive,  bodyImageOne,  bodyImageTwo,  bodyImageThree,  bodyImageFour,  bodyImageFive  }
+export type FourthSectionQueryResult = Array<{
+  _id: string;
+  _type: "post";
+  status: "draft" | "published";
+  title: string | "Untitled";
+  slug: string | null;
+  excerpt: string | null;
+  epigraph: string | null;
+  imageSource: string | null;
+  coverImage: {
+    asset?: {
+      _ref: string;
+      _type: "reference";
+      _weak?: boolean;
+      [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+    };
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    alt?: string;
+    _type: "image";
+  } | null;
+  date: string;
+  publishedAt: string | null;
+  priority: number | null;
+  featured: boolean | null;
+  author: {
+    name: string | "Anonymous";
+    picture: {
+      asset?: {
+        _ref: string;
+        _type: "reference";
+        _weak?: boolean;
+        [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+      };
+      media?: unknown;
+      hotspot?: SanityImageHotspot;
+      crop?: SanityImageCrop;
+      alt?: string;
+      _type: "image";
+    } | null;
+  };
+  category: {
+    title: string | null;
+    slug: string | null;
+  };
+  tags: Array<{
+    title: string | null;
+    slug: string | null;
+  }> | null;
+  bodyImages: Array<{
+    image: {
+      asset?: {
+        _ref: string;
+        _type: "reference";
+        _weak?: boolean;
+        [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+      };
+      media?: unknown;
+      hotspot?: SanityImageHotspot;
+      crop?: SanityImageCrop;
+      _type: "image";
+    } | null;
+    epigraph: string | null;
+    imageSource: string | null;
+  }> | null;
+  bodyTextOne: Array<{
+    children?: Array<{
+      marks?: Array<string>;
+      text?: string;
+      _type: "span";
+      _key: string;
+    }>;
+    style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
+    listItem?: "bullet" | "number";
+    markDefs?: Array<{
+      href?: string;
+      _type: "link";
+      _key: string;
+    }>;
+    level?: number;
+    _type: "block";
+    _key: string;
+  }> | null;
+  bodyTextTwo: Array<{
+    children?: Array<{
+      marks?: Array<string>;
+      text?: string;
+      _type: "span";
+      _key: string;
+    }>;
+    style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
+    listItem?: "bullet" | "number";
+    markDefs?: Array<{
+      href?: string;
+      _type: "link";
+      _key: string;
+    }>;
+    level?: number;
+    _type: "block";
+    _key: string;
+  }> | null;
+  bodyTextThree: Array<{
+    children?: Array<{
+      marks?: Array<string>;
+      text?: string;
+      _type: "span";
+      _key: string;
+    }>;
+    style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
+    listItem?: "bullet" | "number";
+    markDefs?: Array<{
+      href?: string;
+      _type: "link";
+      _key: string;
+    }>;
+    level?: number;
+    _type: "block";
+    _key: string;
+  }> | null;
+  bodyTextFour: Array<{
+    children?: Array<{
+      marks?: Array<string>;
+      text?: string;
+      _type: "span";
+      _key: string;
+    }>;
+    style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
+    listItem?: "bullet" | "number";
+    markDefs?: Array<{
+      href?: string;
+      _type: "link";
+      _key: string;
+    }>;
+    level?: number;
+    _type: "block";
+    _key: string;
+  }> | null;
+  bodyTextFive: Array<{
+    children?: Array<{
+      marks?: Array<string>;
+      text?: string;
+      _type: "span";
+      _key: string;
+    }>;
+    style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
+    listItem?: "bullet" | "number";
+    markDefs?: Array<{
+      href?: string;
+      _type: "link";
+      _key: string;
+    }>;
+    level?: number;
+    _type: "block";
+    _key: string;
+  }> | null;
+  bodyImageOne: {
+    asset?: {
+      _ref: string;
+      _type: "reference";
+      _weak?: boolean;
+      [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+    };
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    alt?: string;
+    epigraph?: string;
+    imageSource?: string;
+    _type: "image";
+  } | null;
+  bodyImageTwo: {
+    asset?: {
+      _ref: string;
+      _type: "reference";
+      _weak?: boolean;
+      [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+    };
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    alt?: string;
+    epigraph?: string;
+    imageSource?: string;
+    _type: "image";
+  } | null;
+  bodyImageThree: {
+    asset?: {
+      _ref: string;
+      _type: "reference";
+      _weak?: boolean;
+      [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+    };
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    alt?: string;
+    epigraph?: string;
+    imageSource?: string;
+    _type: "image";
+  } | null;
+  bodyImageFour: {
+    asset?: {
+      _ref: string;
+      _type: "reference";
+      _weak?: boolean;
+      [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+    };
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    alt?: string;
+    epigraph?: string;
+    imageSource?: string;
+    _type: "image";
+  } | null;
+  bodyImageFive: {
+    asset?: {
+      _ref: string;
+      _type: "reference";
+      _weak?: boolean;
+      [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+    };
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    alt?: string;
+    epigraph?: string;
+    imageSource?: string;
+    _type: "image";
+  } | null;
+}>;
+// Variable: thirdSectionQuery
+// Query: *[_type == "post" && category->slug.current == $categorySlug] | order(date desc, _updatedAt desc) [0...4] {      _id,  _type,  "status": select(_originalId in path("drafts.**") => "draft", "published"),  "title": coalesce(title, "Untitled"),  "slug": slug.current,  excerpt,  epigraph,  imageSource,  coverImage,  // Keep legacy "date" for existing UI; prefer publishedAt elsewhere  "date": coalesce(date, _updatedAt),  publishedAt,  priority,  featured,  // Ensure complete author or nothing  "author": select(    defined(author->name) => {      "name": coalesce(author->name, "Anonymous"),      "picture": author->picture    }  ),  // Category shape your UI expects  "category": select(    defined(category->name) && defined(category->slug.current) => {      "title": category->name,      "slug": category->slug.current    }  ),  // Tags now use tag.title (not name)  "tags": tags[]->{title, "slug": slug.current},  // Body chunks & images  "bodyImages": bodyImages[]{ "image": image, epigraph, imageSource },  bodyTextOne,  bodyTextTwo,  bodyTextThree,  bodyTextFour,  bodyTextFive,  bodyImageOne,  bodyImageTwo,  bodyImageThree,  bodyImageFour,  bodyImageFive  }
+export type ThirdSectionQueryResult = Array<{
+  _id: string;
+  _type: "post";
+  status: "draft" | "published";
+  title: string | "Untitled";
+  slug: string | null;
+  excerpt: string | null;
+  epigraph: string | null;
+  imageSource: string | null;
+  coverImage: {
+    asset?: {
+      _ref: string;
+      _type: "reference";
+      _weak?: boolean;
+      [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+    };
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    alt?: string;
+    _type: "image";
+  } | null;
+  date: string;
+  publishedAt: string | null;
+  priority: number | null;
+  featured: boolean | null;
+  author: {
+    name: string | "Anonymous";
+    picture: {
+      asset?: {
+        _ref: string;
+        _type: "reference";
+        _weak?: boolean;
+        [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+      };
+      media?: unknown;
+      hotspot?: SanityImageHotspot;
+      crop?: SanityImageCrop;
+      alt?: string;
+      _type: "image";
+    } | null;
+  };
+  category: {
+    title: string | null;
+    slug: string | null;
+  };
+  tags: Array<{
+    title: string | null;
+    slug: string | null;
+  }> | null;
+  bodyImages: Array<{
+    image: {
+      asset?: {
+        _ref: string;
+        _type: "reference";
+        _weak?: boolean;
+        [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+      };
+      media?: unknown;
+      hotspot?: SanityImageHotspot;
+      crop?: SanityImageCrop;
+      _type: "image";
+    } | null;
+    epigraph: string | null;
+    imageSource: string | null;
+  }> | null;
+  bodyTextOne: Array<{
+    children?: Array<{
+      marks?: Array<string>;
+      text?: string;
+      _type: "span";
+      _key: string;
+    }>;
+    style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
+    listItem?: "bullet" | "number";
+    markDefs?: Array<{
+      href?: string;
+      _type: "link";
+      _key: string;
+    }>;
+    level?: number;
+    _type: "block";
+    _key: string;
+  }> | null;
+  bodyTextTwo: Array<{
+    children?: Array<{
+      marks?: Array<string>;
+      text?: string;
+      _type: "span";
+      _key: string;
+    }>;
+    style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
+    listItem?: "bullet" | "number";
+    markDefs?: Array<{
+      href?: string;
+      _type: "link";
+      _key: string;
+    }>;
+    level?: number;
+    _type: "block";
+    _key: string;
+  }> | null;
+  bodyTextThree: Array<{
+    children?: Array<{
+      marks?: Array<string>;
+      text?: string;
+      _type: "span";
+      _key: string;
+    }>;
+    style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
+    listItem?: "bullet" | "number";
+    markDefs?: Array<{
+      href?: string;
+      _type: "link";
+      _key: string;
+    }>;
+    level?: number;
+    _type: "block";
+    _key: string;
+  }> | null;
+  bodyTextFour: Array<{
+    children?: Array<{
+      marks?: Array<string>;
+      text?: string;
+      _type: "span";
+      _key: string;
+    }>;
+    style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
+    listItem?: "bullet" | "number";
+    markDefs?: Array<{
+      href?: string;
+      _type: "link";
+      _key: string;
+    }>;
+    level?: number;
+    _type: "block";
+    _key: string;
+  }> | null;
+  bodyTextFive: Array<{
+    children?: Array<{
+      marks?: Array<string>;
+      text?: string;
+      _type: "span";
+      _key: string;
+    }>;
+    style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
+    listItem?: "bullet" | "number";
+    markDefs?: Array<{
+      href?: string;
+      _type: "link";
+      _key: string;
+    }>;
+    level?: number;
+    _type: "block";
+    _key: string;
+  }> | null;
+  bodyImageOne: {
+    asset?: {
+      _ref: string;
+      _type: "reference";
+      _weak?: boolean;
+      [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+    };
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    alt?: string;
+    epigraph?: string;
+    imageSource?: string;
+    _type: "image";
+  } | null;
+  bodyImageTwo: {
+    asset?: {
+      _ref: string;
+      _type: "reference";
+      _weak?: boolean;
+      [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+    };
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    alt?: string;
+    epigraph?: string;
+    imageSource?: string;
+    _type: "image";
+  } | null;
+  bodyImageThree: {
+    asset?: {
+      _ref: string;
+      _type: "reference";
+      _weak?: boolean;
+      [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+    };
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    alt?: string;
+    epigraph?: string;
+    imageSource?: string;
+    _type: "image";
+  } | null;
+  bodyImageFour: {
+    asset?: {
+      _ref: string;
+      _type: "reference";
+      _weak?: boolean;
+      [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+    };
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    alt?: string;
+    epigraph?: string;
+    imageSource?: string;
+    _type: "image";
+  } | null;
+  bodyImageFive: {
+    asset?: {
+      _ref: string;
+      _type: "reference";
+      _weak?: boolean;
+      [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+    };
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    alt?: string;
+    epigraph?: string;
+    imageSource?: string;
+    _type: "image";
+  } | null;
+}>;
+// Variable: mostReadQuery
+// Query: *[_type == "post"] | order(date desc, _updatedAt desc) [0...5] {      _id,  _type,  "status": select(_originalId in path("drafts.**") => "draft", "published"),  "title": coalesce(title, "Untitled"),  "slug": slug.current,  excerpt,  epigraph,  imageSource,  coverImage,  // Keep legacy "date" for existing UI; prefer publishedAt elsewhere  "date": coalesce(date, _updatedAt),  publishedAt,  priority,  featured,  // Ensure complete author or nothing  "author": select(    defined(author->name) => {      "name": coalesce(author->name, "Anonymous"),      "picture": author->picture    }  ),  // Category shape your UI expects  "category": select(    defined(category->name) && defined(category->slug.current) => {      "title": category->name,      "slug": category->slug.current    }  ),  // Tags now use tag.title (not name)  "tags": tags[]->{title, "slug": slug.current},  // Body chunks & images  "bodyImages": bodyImages[]{ "image": image, epigraph, imageSource },  bodyTextOne,  bodyTextTwo,  bodyTextThree,  bodyTextFour,  bodyTextFive,  bodyImageOne,  bodyImageTwo,  bodyImageThree,  bodyImageFour,  bodyImageFive  }
+export type MostReadQueryResult = Array<{
+  _id: string;
+  _type: "post";
+  status: "draft" | "published";
+  title: string | "Untitled";
+  slug: string | null;
+  excerpt: string | null;
+  epigraph: string | null;
+  imageSource: string | null;
+  coverImage: {
+    asset?: {
+      _ref: string;
+      _type: "reference";
+      _weak?: boolean;
+      [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+    };
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    alt?: string;
+    _type: "image";
+  } | null;
+  date: string;
+  publishedAt: string | null;
+  priority: number | null;
+  featured: boolean | null;
+  author: {
+    name: string | "Anonymous";
+    picture: {
+      asset?: {
+        _ref: string;
+        _type: "reference";
+        _weak?: boolean;
+        [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+      };
+      media?: unknown;
+      hotspot?: SanityImageHotspot;
+      crop?: SanityImageCrop;
+      alt?: string;
+      _type: "image";
+    } | null;
+  };
+  category: {
+    title: string | null;
+    slug: string | null;
+  };
+  tags: Array<{
+    title: string | null;
+    slug: string | null;
+  }> | null;
+  bodyImages: Array<{
+    image: {
+      asset?: {
+        _ref: string;
+        _type: "reference";
+        _weak?: boolean;
+        [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+      };
+      media?: unknown;
+      hotspot?: SanityImageHotspot;
+      crop?: SanityImageCrop;
+      _type: "image";
+    } | null;
+    epigraph: string | null;
+    imageSource: string | null;
+  }> | null;
+  bodyTextOne: Array<{
+    children?: Array<{
+      marks?: Array<string>;
+      text?: string;
+      _type: "span";
+      _key: string;
+    }>;
+    style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
+    listItem?: "bullet" | "number";
+    markDefs?: Array<{
+      href?: string;
+      _type: "link";
+      _key: string;
+    }>;
+    level?: number;
+    _type: "block";
+    _key: string;
+  }> | null;
+  bodyTextTwo: Array<{
+    children?: Array<{
+      marks?: Array<string>;
+      text?: string;
+      _type: "span";
+      _key: string;
+    }>;
+    style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
+    listItem?: "bullet" | "number";
+    markDefs?: Array<{
+      href?: string;
+      _type: "link";
+      _key: string;
+    }>;
+    level?: number;
+    _type: "block";
+    _key: string;
+  }> | null;
+  bodyTextThree: Array<{
+    children?: Array<{
+      marks?: Array<string>;
+      text?: string;
+      _type: "span";
+      _key: string;
+    }>;
+    style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
+    listItem?: "bullet" | "number";
+    markDefs?: Array<{
+      href?: string;
+      _type: "link";
+      _key: string;
+    }>;
+    level?: number;
+    _type: "block";
+    _key: string;
+  }> | null;
+  bodyTextFour: Array<{
+    children?: Array<{
+      marks?: Array<string>;
+      text?: string;
+      _type: "span";
+      _key: string;
+    }>;
+    style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
+    listItem?: "bullet" | "number";
+    markDefs?: Array<{
+      href?: string;
+      _type: "link";
+      _key: string;
+    }>;
+    level?: number;
+    _type: "block";
+    _key: string;
+  }> | null;
+  bodyTextFive: Array<{
+    children?: Array<{
+      marks?: Array<string>;
+      text?: string;
+      _type: "span";
+      _key: string;
+    }>;
+    style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
+    listItem?: "bullet" | "number";
+    markDefs?: Array<{
+      href?: string;
+      _type: "link";
+      _key: string;
+    }>;
+    level?: number;
+    _type: "block";
+    _key: string;
+  }> | null;
+  bodyImageOne: {
+    asset?: {
+      _ref: string;
+      _type: "reference";
+      _weak?: boolean;
+      [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+    };
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    alt?: string;
+    epigraph?: string;
+    imageSource?: string;
+    _type: "image";
+  } | null;
+  bodyImageTwo: {
+    asset?: {
+      _ref: string;
+      _type: "reference";
+      _weak?: boolean;
+      [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+    };
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    alt?: string;
+    epigraph?: string;
+    imageSource?: string;
+    _type: "image";
+  } | null;
+  bodyImageThree: {
+    asset?: {
+      _ref: string;
+      _type: "reference";
+      _weak?: boolean;
+      [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+    };
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    alt?: string;
+    epigraph?: string;
+    imageSource?: string;
+    _type: "image";
+  } | null;
+  bodyImageFour: {
+    asset?: {
+      _ref: string;
+      _type: "reference";
+      _weak?: boolean;
+      [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+    };
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    alt?: string;
+    epigraph?: string;
+    imageSource?: string;
+    _type: "image";
+  } | null;
+  bodyImageFive: {
+    asset?: {
+      _ref: string;
+      _type: "reference";
+      _weak?: boolean;
+      [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+    };
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    alt?: string;
+    epigraph?: string;
+    imageSource?: string;
+    _type: "image";
+  } | null;
+}>;
+// Variable: sixthSectionQuery
+// Query: *[_type == "post" && category->slug.current == $categorySlug] | order(date desc, _updatedAt desc) [0...20] {      _id,  _type,  "status": select(_originalId in path("drafts.**") => "draft", "published"),  "title": coalesce(title, "Untitled"),  "slug": slug.current,  excerpt,  epigraph,  imageSource,  coverImage,  // Keep legacy "date" for existing UI; prefer publishedAt elsewhere  "date": coalesce(date, _updatedAt),  publishedAt,  priority,  featured,  // Ensure complete author or nothing  "author": select(    defined(author->name) => {      "name": coalesce(author->name, "Anonymous"),      "picture": author->picture    }  ),  // Category shape your UI expects  "category": select(    defined(category->name) && defined(category->slug.current) => {      "title": category->name,      "slug": category->slug.current    }  ),  // Tags now use tag.title (not name)  "tags": tags[]->{title, "slug": slug.current},  // Body chunks & images  "bodyImages": bodyImages[]{ "image": image, epigraph, imageSource },  bodyTextOne,  bodyTextTwo,  bodyTextThree,  bodyTextFour,  bodyTextFive,  bodyImageOne,  bodyImageTwo,  bodyImageThree,  bodyImageFour,  bodyImageFive  }
+export type SixthSectionQueryResult = Array<{
+  _id: string;
+  _type: "post";
+  status: "draft" | "published";
+  title: string | "Untitled";
+  slug: string | null;
+  excerpt: string | null;
+  epigraph: string | null;
+  imageSource: string | null;
+  coverImage: {
+    asset?: {
+      _ref: string;
+      _type: "reference";
+      _weak?: boolean;
+      [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+    };
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    alt?: string;
+    _type: "image";
+  } | null;
+  date: string;
+  publishedAt: string | null;
+  priority: number | null;
+  featured: boolean | null;
+  author: {
+    name: string | "Anonymous";
+    picture: {
+      asset?: {
+        _ref: string;
+        _type: "reference";
+        _weak?: boolean;
+        [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+      };
+      media?: unknown;
+      hotspot?: SanityImageHotspot;
+      crop?: SanityImageCrop;
+      alt?: string;
+      _type: "image";
+    } | null;
+  };
+  category: {
+    title: string | null;
+    slug: string | null;
+  };
+  tags: Array<{
+    title: string | null;
+    slug: string | null;
+  }> | null;
+  bodyImages: Array<{
+    image: {
+      asset?: {
+        _ref: string;
+        _type: "reference";
+        _weak?: boolean;
+        [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+      };
+      media?: unknown;
+      hotspot?: SanityImageHotspot;
+      crop?: SanityImageCrop;
+      _type: "image";
+    } | null;
+    epigraph: string | null;
+    imageSource: string | null;
+  }> | null;
+  bodyTextOne: Array<{
+    children?: Array<{
+      marks?: Array<string>;
+      text?: string;
+      _type: "span";
+      _key: string;
+    }>;
+    style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
+    listItem?: "bullet" | "number";
+    markDefs?: Array<{
+      href?: string;
+      _type: "link";
+      _key: string;
+    }>;
+    level?: number;
+    _type: "block";
+    _key: string;
+  }> | null;
+  bodyTextTwo: Array<{
+    children?: Array<{
+      marks?: Array<string>;
+      text?: string;
+      _type: "span";
+      _key: string;
+    }>;
+    style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
+    listItem?: "bullet" | "number";
+    markDefs?: Array<{
+      href?: string;
+      _type: "link";
+      _key: string;
+    }>;
+    level?: number;
+    _type: "block";
+    _key: string;
+  }> | null;
+  bodyTextThree: Array<{
+    children?: Array<{
+      marks?: Array<string>;
+      text?: string;
+      _type: "span";
+      _key: string;
+    }>;
+    style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
+    listItem?: "bullet" | "number";
+    markDefs?: Array<{
+      href?: string;
+      _type: "link";
+      _key: string;
+    }>;
+    level?: number;
+    _type: "block";
+    _key: string;
+  }> | null;
+  bodyTextFour: Array<{
+    children?: Array<{
+      marks?: Array<string>;
+      text?: string;
+      _type: "span";
+      _key: string;
+    }>;
+    style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
+    listItem?: "bullet" | "number";
+    markDefs?: Array<{
+      href?: string;
+      _type: "link";
+      _key: string;
+    }>;
+    level?: number;
+    _type: "block";
+    _key: string;
+  }> | null;
+  bodyTextFive: Array<{
+    children?: Array<{
+      marks?: Array<string>;
+      text?: string;
+      _type: "span";
+      _key: string;
+    }>;
+    style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
+    listItem?: "bullet" | "number";
+    markDefs?: Array<{
+      href?: string;
+      _type: "link";
+      _key: string;
+    }>;
+    level?: number;
+    _type: "block";
+    _key: string;
+  }> | null;
+  bodyImageOne: {
+    asset?: {
+      _ref: string;
+      _type: "reference";
+      _weak?: boolean;
+      [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+    };
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    alt?: string;
+    epigraph?: string;
+    imageSource?: string;
+    _type: "image";
+  } | null;
+  bodyImageTwo: {
+    asset?: {
+      _ref: string;
+      _type: "reference";
+      _weak?: boolean;
+      [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+    };
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    alt?: string;
+    epigraph?: string;
+    imageSource?: string;
+    _type: "image";
+  } | null;
+  bodyImageThree: {
+    asset?: {
+      _ref: string;
+      _type: "reference";
+      _weak?: boolean;
+      [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+    };
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    alt?: string;
+    epigraph?: string;
+    imageSource?: string;
+    _type: "image";
+  } | null;
+  bodyImageFour: {
+    asset?: {
+      _ref: string;
+      _type: "reference";
+      _weak?: boolean;
+      [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+    };
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    alt?: string;
+    epigraph?: string;
+    imageSource?: string;
+    _type: "image";
+  } | null;
+  bodyImageFive: {
+    asset?: {
+      _ref: string;
+      _type: "reference";
+      _weak?: boolean;
+      [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+    };
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    alt?: string;
+    epigraph?: string;
+    imageSource?: string;
+    _type: "image";
+  } | null;
+}>;
+// Variable: searchAllQuery
+// Query: {  "posts": *[_type == "post" && status == "published" && defined(publishedAt) && publishedAt <= now() && (  title match $term ||  excerpt match $term ||  epigraph match $term ||  pt::text(bodyRich) match $term ||  pt::text(bodyTextOne) match $term ||  pt::text(bodyTextTwo) match $term ||  pt::text(bodyTextThree) match $term ||  pt::text(bodyTextFour) match $term ||  pt::text(bodyTextFive) match $term ||  category->name match $term ||  tags[]->title match $term ||  author->name match $term)] | order(publishedAt desc) [0...$postLimit] {      _id,  _type,  "status": select(_originalId in path("drafts.**") => "draft", "published"),  "title": coalesce(title, "Untitled"),  "slug": slug.current,  excerpt,  epigraph,  imageSource,  coverImage,  // Keep legacy "date" for existing UI; prefer publishedAt elsewhere  "date": coalesce(date, _updatedAt),  publishedAt,  priority,  featured,  // Ensure complete author or nothing  "author": select(    defined(author->name) => {      "name": coalesce(author->name, "Anonymous"),      "picture": author->picture    }  ),  // Category shape your UI expects  "category": select(    defined(category->name) && defined(category->slug.current) => {      "title": category->name,      "slug": category->slug.current    }  ),  // Tags now use tag.title (not name)  "tags": tags[]->{title, "slug": slug.current},  // Body chunks & images  "bodyImages": bodyImages[]{ "image": image, epigraph, imageSource },  bodyTextOne,  bodyTextTwo,  bodyTextThree,  bodyTextFour,  bodyTextFive,  bodyImageOne,  bodyImageTwo,  bodyImageThree,  bodyImageFour,  bodyImageFive  },  "tags": *[_type == "tag" && (    title match $term ||    description match $term ||    $term in aliases  )] | order(order asc, title asc) [0...$tagLimit] {    _id,    title,    "slug": slug.current,    description,    emoji,    color,    featured  },  "topics": *[_type == "topic" && (    title match $term ||    description match $term  )] | order(title asc) [0...$topicLimit] {    _id,    title,    "slug": slug.current,    kind,    description,    image  }}
+export type SearchAllQueryResult = {
+  posts: Array<{
+    _id: string;
+    _type: "post";
+    status: "draft" | "published";
+    title: string | "Untitled";
+    slug: string | null;
+    excerpt: string | null;
+    epigraph: string | null;
+    imageSource: string | null;
+    coverImage: {
+      asset?: {
+        _ref: string;
+        _type: "reference";
+        _weak?: boolean;
+        [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+      };
+      media?: unknown;
+      hotspot?: SanityImageHotspot;
+      crop?: SanityImageCrop;
+      alt?: string;
+      _type: "image";
+    } | null;
+    date: string;
+    publishedAt: string | null;
+    priority: number | null;
+    featured: boolean | null;
+    author: {
+      name: string | "Anonymous";
+      picture: {
+        asset?: {
+          _ref: string;
+          _type: "reference";
+          _weak?: boolean;
+          [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+        };
+        media?: unknown;
+        hotspot?: SanityImageHotspot;
+        crop?: SanityImageCrop;
+        alt?: string;
+        _type: "image";
+      } | null;
+    };
+    category: {
+      title: string | null;
+      slug: string | null;
+    };
+    tags: Array<{
+      title: string | null;
+      slug: string | null;
+    }> | null;
+    bodyImages: Array<{
+      image: {
+        asset?: {
+          _ref: string;
+          _type: "reference";
+          _weak?: boolean;
+          [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+        };
+        media?: unknown;
+        hotspot?: SanityImageHotspot;
+        crop?: SanityImageCrop;
+        _type: "image";
+      } | null;
+      epigraph: string | null;
+      imageSource: string | null;
+    }> | null;
+    bodyTextOne: Array<{
+      children?: Array<{
+        marks?: Array<string>;
+        text?: string;
+        _type: "span";
+        _key: string;
+      }>;
+      style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
+      listItem?: "bullet" | "number";
+      markDefs?: Array<{
+        href?: string;
+        _type: "link";
+        _key: string;
+      }>;
+      level?: number;
+      _type: "block";
+      _key: string;
+    }> | null;
+    bodyTextTwo: Array<{
+      children?: Array<{
+        marks?: Array<string>;
+        text?: string;
+        _type: "span";
+        _key: string;
+      }>;
+      style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
+      listItem?: "bullet" | "number";
+      markDefs?: Array<{
+        href?: string;
+        _type: "link";
+        _key: string;
+      }>;
+      level?: number;
+      _type: "block";
+      _key: string;
+    }> | null;
+    bodyTextThree: Array<{
+      children?: Array<{
+        marks?: Array<string>;
+        text?: string;
+        _type: "span";
+        _key: string;
+      }>;
+      style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
+      listItem?: "bullet" | "number";
+      markDefs?: Array<{
+        href?: string;
+        _type: "link";
+        _key: string;
+      }>;
+      level?: number;
+      _type: "block";
+      _key: string;
+    }> | null;
+    bodyTextFour: Array<{
+      children?: Array<{
+        marks?: Array<string>;
+        text?: string;
+        _type: "span";
+        _key: string;
+      }>;
+      style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
+      listItem?: "bullet" | "number";
+      markDefs?: Array<{
+        href?: string;
+        _type: "link";
+        _key: string;
+      }>;
+      level?: number;
+      _type: "block";
+      _key: string;
+    }> | null;
+    bodyTextFive: Array<{
+      children?: Array<{
+        marks?: Array<string>;
+        text?: string;
+        _type: "span";
+        _key: string;
+      }>;
+      style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
+      listItem?: "bullet" | "number";
+      markDefs?: Array<{
+        href?: string;
+        _type: "link";
+        _key: string;
+      }>;
+      level?: number;
+      _type: "block";
+      _key: string;
+    }> | null;
+    bodyImageOne: {
+      asset?: {
+        _ref: string;
+        _type: "reference";
+        _weak?: boolean;
+        [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+      };
+      media?: unknown;
+      hotspot?: SanityImageHotspot;
+      crop?: SanityImageCrop;
+      alt?: string;
+      epigraph?: string;
+      imageSource?: string;
+      _type: "image";
+    } | null;
+    bodyImageTwo: {
+      asset?: {
+        _ref: string;
+        _type: "reference";
+        _weak?: boolean;
+        [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+      };
+      media?: unknown;
+      hotspot?: SanityImageHotspot;
+      crop?: SanityImageCrop;
+      alt?: string;
+      epigraph?: string;
+      imageSource?: string;
+      _type: "image";
+    } | null;
+    bodyImageThree: {
+      asset?: {
+        _ref: string;
+        _type: "reference";
+        _weak?: boolean;
+        [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+      };
+      media?: unknown;
+      hotspot?: SanityImageHotspot;
+      crop?: SanityImageCrop;
+      alt?: string;
+      epigraph?: string;
+      imageSource?: string;
+      _type: "image";
+    } | null;
+    bodyImageFour: {
+      asset?: {
+        _ref: string;
+        _type: "reference";
+        _weak?: boolean;
+        [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+      };
+      media?: unknown;
+      hotspot?: SanityImageHotspot;
+      crop?: SanityImageCrop;
+      alt?: string;
+      epigraph?: string;
+      imageSource?: string;
+      _type: "image";
+    } | null;
+    bodyImageFive: {
+      asset?: {
+        _ref: string;
+        _type: "reference";
+        _weak?: boolean;
+        [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+      };
+      media?: unknown;
+      hotspot?: SanityImageHotspot;
+      crop?: SanityImageCrop;
+      alt?: string;
+      epigraph?: string;
+      imageSource?: string;
+      _type: "image";
+    } | null;
+  }>;
+  tags: Array<{
+    _id: string;
+    title: string | null;
+    slug: string | null;
+    description: string | null;
+    emoji: string | null;
+    color: string | null;
+    featured: boolean | null;
+  }>;
+  topics: Array<{
+    _id: string;
+    title: string | null;
+    slug: string | null;
+    kind: "event" | "organization" | "person" | "place" | "team" | null;
+    description: string | null;
+    image: {
+      asset?: {
+        _ref: string;
+        _type: "reference";
+        _weak?: boolean;
+        [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+      };
+      media?: unknown;
+      hotspot?: SanityImageHotspot;
+      crop?: SanityImageCrop;
+      alt?: string;
+      _type: "image";
+    } | null;
+  }>;
+};
 
 // Query TypeMap
 import "@sanity/client";
 declare module "@sanity/client" {
   interface SanityQueries {
-    '*[_type == "settings"][0]': SettingsQueryResult;
-    '\n  *[_type == "post" && defined(slug.current)] | order(date desc, _updatedAt desc) [0] {\n    content,\n    \n  _id,\n  "status": select(_originalId in path("drafts.**") => "draft", "published"),\n  "title": coalesce(title, "Untitled"),\n  "slug": slug.current,\n  excerpt,\n  coverImage,\n  "date": coalesce(date, _updatedAt),\n  "author": author->{"name": coalesce(name, "Anonymous"), picture},\n\n  }\n': HeroQueryResult;
-    '\n  *[_type == "post" && _id != $skip && defined(slug.current)] | order(date desc, _updatedAt desc) [0...$limit] {\n    \n  _id,\n  "status": select(_originalId in path("drafts.**") => "draft", "published"),\n  "title": coalesce(title, "Untitled"),\n  "slug": slug.current,\n  excerpt,\n  coverImage,\n  "date": coalesce(date, _updatedAt),\n  "author": author->{"name": coalesce(name, "Anonymous"), picture},\n\n  }\n': MoreStoriesQueryResult;
-    '\n  *[_type == "post" && slug.current == $slug] [0] {\n    content,\n    \n  _id,\n  "status": select(_originalId in path("drafts.**") => "draft", "published"),\n  "title": coalesce(title, "Untitled"),\n  "slug": slug.current,\n  excerpt,\n  coverImage,\n  "date": coalesce(date, _updatedAt),\n  "author": author->{"name": coalesce(name, "Anonymous"), picture},\n\n  }\n': PostQueryResult;
-    '*[_type == "post" && defined(slug.current)]{"slug": slug.current}': PostSlugsResult;
+    "*[_type == \"settings\"][0]": SettingsQueryResult;
+    "\n  *[_type == \"post\" && defined(slug.current)] | order(date desc, _updatedAt desc) [0] {\n    \n  _id,\n  _type,\n  \"status\": select(_originalId in path(\"drafts.**\") => \"draft\", \"published\"),\n  \"title\": coalesce(title, \"Untitled\"),\n  \"slug\": slug.current,\n  excerpt,\n  epigraph,\n  imageSource,\n  coverImage,\n  // Keep legacy \"date\" for existing UI; prefer publishedAt elsewhere\n  \"date\": coalesce(date, _updatedAt),\n  publishedAt,\n  priority,\n  featured,\n\n  // Ensure complete author or nothing\n  \"author\": select(\n    defined(author->name) => {\n      \"name\": coalesce(author->name, \"Anonymous\"),\n      \"picture\": author->picture\n    }\n  ),\n\n  // Category shape your UI expects\n  \"category\": select(\n    defined(category->name) && defined(category->slug.current) => {\n      \"title\": category->name,\n      \"slug\": category->slug.current\n    }\n  ),\n\n  // Tags now use tag.title (not name)\n  \"tags\": tags[]->{title, \"slug\": slug.current},\n\n  // Body chunks & images\n  \"bodyImages\": bodyImages[]{ \"image\": image, epigraph, imageSource },\n  bodyTextOne,\n  bodyTextTwo,\n  bodyTextThree,\n  bodyTextFour,\n  bodyTextFive,\n  bodyImageOne,\n  bodyImageTwo,\n  bodyImageThree,\n  bodyImageFour,\n  bodyImageFive\n\n  }\n": HeroQueryResult;
+    "\n  *[_type == \"post\" && _id != $skip && defined(slug.current)] | order(date desc, _updatedAt desc) [0...$limit] {\n    \n  _id,\n  _type,\n  \"status\": select(_originalId in path(\"drafts.**\") => \"draft\", \"published\"),\n  \"title\": coalesce(title, \"Untitled\"),\n  \"slug\": slug.current,\n  excerpt,\n  epigraph,\n  imageSource,\n  coverImage,\n  // Keep legacy \"date\" for existing UI; prefer publishedAt elsewhere\n  \"date\": coalesce(date, _updatedAt),\n  publishedAt,\n  priority,\n  featured,\n\n  // Ensure complete author or nothing\n  \"author\": select(\n    defined(author->name) => {\n      \"name\": coalesce(author->name, \"Anonymous\"),\n      \"picture\": author->picture\n    }\n  ),\n\n  // Category shape your UI expects\n  \"category\": select(\n    defined(category->name) && defined(category->slug.current) => {\n      \"title\": category->name,\n      \"slug\": category->slug.current\n    }\n  ),\n\n  // Tags now use tag.title (not name)\n  \"tags\": tags[]->{title, \"slug\": slug.current},\n\n  // Body chunks & images\n  \"bodyImages\": bodyImages[]{ \"image\": image, epigraph, imageSource },\n  bodyTextOne,\n  bodyTextTwo,\n  bodyTextThree,\n  bodyTextFour,\n  bodyTextFive,\n  bodyImageOne,\n  bodyImageTwo,\n  bodyImageThree,\n  bodyImageFour,\n  bodyImageFive\n\n  }\n": MoreStoriesQueryResult;
+    "\n  *[_type == \"post\" && slug.current == $slug] [0] {\n    \n  _id,\n  _type,\n  \"status\": select(_originalId in path(\"drafts.**\") => \"draft\", \"published\"),\n  \"title\": coalesce(title, \"Untitled\"),\n  \"slug\": slug.current,\n  excerpt,\n  epigraph,\n  imageSource,\n  coverImage,\n  // Keep legacy \"date\" for existing UI; prefer publishedAt elsewhere\n  \"date\": coalesce(date, _updatedAt),\n  publishedAt,\n  priority,\n  featured,\n\n  // Ensure complete author or nothing\n  \"author\": select(\n    defined(author->name) => {\n      \"name\": coalesce(author->name, \"Anonymous\"),\n      \"picture\": author->picture\n    }\n  ),\n\n  // Category shape your UI expects\n  \"category\": select(\n    defined(category->name) && defined(category->slug.current) => {\n      \"title\": category->name,\n      \"slug\": category->slug.current\n    }\n  ),\n\n  // Tags now use tag.title (not name)\n  \"tags\": tags[]->{title, \"slug\": slug.current},\n\n  // Body chunks & images\n  \"bodyImages\": bodyImages[]{ \"image\": image, epigraph, imageSource },\n  bodyTextOne,\n  bodyTextTwo,\n  bodyTextThree,\n  bodyTextFour,\n  bodyTextFive,\n  bodyImageOne,\n  bodyImageTwo,\n  bodyImageThree,\n  bodyImageFour,\n  bodyImageFive\n\n  }\n": PostQueryResult;
+    "\n  *[_type == \"post\"] | order(date desc, _updatedAt desc) {\n    \n  _id,\n  _type,\n  \"status\": select(_originalId in path(\"drafts.**\") => \"draft\", \"published\"),\n  \"title\": coalesce(title, \"Untitled\"),\n  \"slug\": slug.current,\n  excerpt,\n  epigraph,\n  imageSource,\n  coverImage,\n  // Keep legacy \"date\" for existing UI; prefer publishedAt elsewhere\n  \"date\": coalesce(date, _updatedAt),\n  publishedAt,\n  priority,\n  featured,\n\n  // Ensure complete author or nothing\n  \"author\": select(\n    defined(author->name) => {\n      \"name\": coalesce(author->name, \"Anonymous\"),\n      \"picture\": author->picture\n    }\n  ),\n\n  // Category shape your UI expects\n  \"category\": select(\n    defined(category->name) && defined(category->slug.current) => {\n      \"title\": category->name,\n      \"slug\": category->slug.current\n    }\n  ),\n\n  // Tags now use tag.title (not name)\n  \"tags\": tags[]->{title, \"slug\": slug.current},\n\n  // Body chunks & images\n  \"bodyImages\": bodyImages[]{ \"image\": image, epigraph, imageSource },\n  bodyTextOne,\n  bodyTextTwo,\n  bodyTextThree,\n  bodyTextFour,\n  bodyTextFive,\n  bodyImageOne,\n  bodyImageTwo,\n  bodyImageThree,\n  bodyImageFour,\n  bodyImageFive\n\n  }\n": IndexQueryResult;
+    "\n{\n  \"post\": *[_type == \"post\" && slug.current == $slug] | order(_updatedAt desc) [0] {\n    \n  _id,\n  _type,\n  \"status\": select(_originalId in path(\"drafts.**\") => \"draft\", \"published\"),\n  \"title\": coalesce(title, \"Untitled\"),\n  \"slug\": slug.current,\n  excerpt,\n  epigraph,\n  imageSource,\n  coverImage,\n  // Keep legacy \"date\" for existing UI; prefer publishedAt elsewhere\n  \"date\": coalesce(date, _updatedAt),\n  publishedAt,\n  priority,\n  featured,\n\n  // Ensure complete author or nothing\n  \"author\": select(\n    defined(author->name) => {\n      \"name\": coalesce(author->name, \"Anonymous\"),\n      \"picture\": author->picture\n    }\n  ),\n\n  // Category shape your UI expects\n  \"category\": select(\n    defined(category->name) && defined(category->slug.current) => {\n      \"title\": category->name,\n      \"slug\": category->slug.current\n    }\n  ),\n\n  // Tags now use tag.title (not name)\n  \"tags\": tags[]->{title, \"slug\": slug.current},\n\n  // Body chunks & images\n  \"bodyImages\": bodyImages[]{ \"image\": image, epigraph, imageSource },\n  bodyTextOne,\n  bodyTextTwo,\n  bodyTextThree,\n  bodyTextFour,\n  bodyTextFive,\n  bodyImageOne,\n  bodyImageTwo,\n  bodyImageThree,\n  bodyImageFour,\n  bodyImageFive\n\n  },\n  \"latestNews\": *[_type == \"post\" && slug.current != $slug] | order(date desc, _updatedAt desc) [0...6] {\n    \n  _id,\n  _type,\n  \"status\": select(_originalId in path(\"drafts.**\") => \"draft\", \"published\"),\n  \"title\": coalesce(title, \"Untitled\"),\n  \"slug\": slug.current,\n  excerpt,\n  epigraph,\n  imageSource,\n  coverImage,\n  // Keep legacy \"date\" for existing UI; prefer publishedAt elsewhere\n  \"date\": coalesce(date, _updatedAt),\n  publishedAt,\n  priority,\n  featured,\n\n  // Ensure complete author or nothing\n  \"author\": select(\n    defined(author->name) => {\n      \"name\": coalesce(author->name, \"Anonymous\"),\n      \"picture\": author->picture\n    }\n  ),\n\n  // Category shape your UI expects\n  \"category\": select(\n    defined(category->name) && defined(category->slug.current) => {\n      \"title\": category->name,\n      \"slug\": category->slug.current\n    }\n  ),\n\n  // Tags now use tag.title (not name)\n  \"tags\": tags[]->{title, \"slug\": slug.current},\n\n  // Body chunks & images\n  \"bodyImages\": bodyImages[]{ \"image\": image, epigraph, imageSource },\n  bodyTextOne,\n  bodyTextTwo,\n  bodyTextThree,\n  bodyTextFour,\n  bodyTextFive,\n  bodyImageOne,\n  bodyImageTwo,\n  bodyImageThree,\n  bodyImageFour,\n  bodyImageFive\n\n  },\n  \"morePosts\": *[_type == \"post\" && slug.current != $slug] | order(date desc, _updatedAt desc) [4...8] {\n    \n  _id,\n  _type,\n  \"status\": select(_originalId in path(\"drafts.**\") => \"draft\", \"published\"),\n  \"title\": coalesce(title, \"Untitled\"),\n  \"slug\": slug.current,\n  excerpt,\n  epigraph,\n  imageSource,\n  coverImage,\n  // Keep legacy \"date\" for existing UI; prefer publishedAt elsewhere\n  \"date\": coalesce(date, _updatedAt),\n  publishedAt,\n  priority,\n  featured,\n\n  // Ensure complete author or nothing\n  \"author\": select(\n    defined(author->name) => {\n      \"name\": coalesce(author->name, \"Anonymous\"),\n      \"picture\": author->picture\n    }\n  ),\n\n  // Category shape your UI expects\n  \"category\": select(\n    defined(category->name) && defined(category->slug.current) => {\n      \"title\": category->name,\n      \"slug\": category->slug.current\n    }\n  ),\n\n  // Tags now use tag.title (not name)\n  \"tags\": tags[]->{title, \"slug\": slug.current},\n\n  // Body chunks & images\n  \"bodyImages\": bodyImages[]{ \"image\": image, epigraph, imageSource },\n  bodyTextOne,\n  bodyTextTwo,\n  bodyTextThree,\n  bodyTextFour,\n  bodyTextFive,\n  bodyImageOne,\n  bodyImageTwo,\n  bodyImageThree,\n  bodyImageFour,\n  bodyImageFive\n\n  },\n  \"nextArticles\": *[_type == \"post\" && slug.current != $slug] | order(date desc, _updatedAt desc) [8...11] {\n    \n  _id,\n  _type,\n  \"status\": select(_originalId in path(\"drafts.**\") => \"draft\", \"published\"),\n  \"title\": coalesce(title, \"Untitled\"),\n  \"slug\": slug.current,\n  excerpt,\n  epigraph,\n  imageSource,\n  coverImage,\n  // Keep legacy \"date\" for existing UI; prefer publishedAt elsewhere\n  \"date\": coalesce(date, _updatedAt),\n  publishedAt,\n  priority,\n  featured,\n\n  // Ensure complete author or nothing\n  \"author\": select(\n    defined(author->name) => {\n      \"name\": coalesce(author->name, \"Anonymous\"),\n      \"picture\": author->picture\n    }\n  ),\n\n  // Category shape your UI expects\n  \"category\": select(\n    defined(category->name) && defined(category->slug.current) => {\n      \"title\": category->name,\n      \"slug\": category->slug.current\n    }\n  ),\n\n  // Tags now use tag.title (not name)\n  \"tags\": tags[]->{title, \"slug\": slug.current},\n\n  // Body chunks & images\n  \"bodyImages\": bodyImages[]{ \"image\": image, epigraph, imageSource },\n  bodyTextOne,\n  bodyTextTwo,\n  bodyTextThree,\n  bodyTextFour,\n  bodyTextFive,\n  bodyImageOne,\n  bodyImageTwo,\n  bodyImageThree,\n  bodyImageFour,\n  bodyImageFive\n\n  }\n}\n": PostQueryWithRelatedResult;
+    "\n  *[_type == \"post\" && defined(slug.current)][].slug.current\n": PostSlugsQueryResult;
+    "\n  *[_type == \"post\" && slug.current == $slug][0] {\n    \n  _id,\n  _type,\n  \"status\": select(_originalId in path(\"drafts.**\") => \"draft\", \"published\"),\n  \"title\": coalesce(title, \"Untitled\"),\n  \"slug\": slug.current,\n  excerpt,\n  epigraph,\n  imageSource,\n  coverImage,\n  // Keep legacy \"date\" for existing UI; prefer publishedAt elsewhere\n  \"date\": coalesce(date, _updatedAt),\n  publishedAt,\n  priority,\n  featured,\n\n  // Ensure complete author or nothing\n  \"author\": select(\n    defined(author->name) => {\n      \"name\": coalesce(author->name, \"Anonymous\"),\n      \"picture\": author->picture\n    }\n  ),\n\n  // Category shape your UI expects\n  \"category\": select(\n    defined(category->name) && defined(category->slug.current) => {\n      \"title\": category->name,\n      \"slug\": category->slug.current\n    }\n  ),\n\n  // Tags now use tag.title (not name)\n  \"tags\": tags[]->{title, \"slug\": slug.current},\n\n  // Body chunks & images\n  \"bodyImages\": bodyImages[]{ \"image\": image, epigraph, imageSource },\n  bodyTextOne,\n  bodyTextTwo,\n  bodyTextThree,\n  bodyTextFour,\n  bodyTextFive,\n  bodyImageOne,\n  bodyImageTwo,\n  bodyImageThree,\n  bodyImageFour,\n  bodyImageFive\n\n  }\n": PostBySlugQueryResult;
+    "\n  *[_type == \"post\" && category->slug.current == $categorySlug] | order(date desc, _updatedAt desc) {\n    \n  _id,\n  _type,\n  \"status\": select(_originalId in path(\"drafts.**\") => \"draft\", \"published\"),\n  \"title\": coalesce(title, \"Untitled\"),\n  \"slug\": slug.current,\n  excerpt,\n  epigraph,\n  imageSource,\n  coverImage,\n  // Keep legacy \"date\" for existing UI; prefer publishedAt elsewhere\n  \"date\": coalesce(date, _updatedAt),\n  publishedAt,\n  priority,\n  featured,\n\n  // Ensure complete author or nothing\n  \"author\": select(\n    defined(author->name) => {\n      \"name\": coalesce(author->name, \"Anonymous\"),\n      \"picture\": author->picture\n    }\n  ),\n\n  // Category shape your UI expects\n  \"category\": select(\n    defined(category->name) && defined(category->slug.current) => {\n      \"title\": category->name,\n      \"slug\": category->slug.current\n    }\n  ),\n\n  // Tags now use tag.title (not name)\n  \"tags\": tags[]->{title, \"slug\": slug.current},\n\n  // Body chunks & images\n  \"bodyImages\": bodyImages[]{ \"image\": image, epigraph, imageSource },\n  bodyTextOne,\n  bodyTextTwo,\n  bodyTextThree,\n  bodyTextFour,\n  bodyTextFive,\n  bodyImageOne,\n  bodyImageTwo,\n  bodyImageThree,\n  bodyImageFour,\n  bodyImageFive\n\n  }\n": PostsByCategoryQueryResult;
+    "\n  *[_type == \"category\" && defined(slug.current)]{ \"slug\": slug.current, name }\n": CategorySlugsQueryResult;
+    "\n  *[_type == \"category\" && defined(slug.current)] | order(name asc) {\n    \"slug\": slug.current,\n    name\n  }\n": AllCategoriesQueryResult;
+    "\n  *[_type == \"tag\" && defined(slug.current)]{ \"slug\": slug.current, title }\n": TagSlugsQueryResult;
+    "\n  *[_type == \"post\" && $tagSlug in tags[]->slug.current] | order(date desc, _updatedAt desc) {\n    \n  _id,\n  _type,\n  \"status\": select(_originalId in path(\"drafts.**\") => \"draft\", \"published\"),\n  \"title\": coalesce(title, \"Untitled\"),\n  \"slug\": slug.current,\n  excerpt,\n  epigraph,\n  imageSource,\n  coverImage,\n  // Keep legacy \"date\" for existing UI; prefer publishedAt elsewhere\n  \"date\": coalesce(date, _updatedAt),\n  publishedAt,\n  priority,\n  featured,\n\n  // Ensure complete author or nothing\n  \"author\": select(\n    defined(author->name) => {\n      \"name\": coalesce(author->name, \"Anonymous\"),\n      \"picture\": author->picture\n    }\n  ),\n\n  // Category shape your UI expects\n  \"category\": select(\n    defined(category->name) && defined(category->slug.current) => {\n      \"title\": category->name,\n      \"slug\": category->slug.current\n    }\n  ),\n\n  // Tags now use tag.title (not name)\n  \"tags\": tags[]->{title, \"slug\": slug.current},\n\n  // Body chunks & images\n  \"bodyImages\": bodyImages[]{ \"image\": image, epigraph, imageSource },\n  bodyTextOne,\n  bodyTextTwo,\n  bodyTextThree,\n  bodyTextFour,\n  bodyTextFive,\n  bodyImageOne,\n  bodyImageTwo,\n  bodyImageThree,\n  bodyImageFour,\n  bodyImageFive\n\n  }\n": PostsByTagQueryResult;
+    "\n  *[_type == \"author\" && slug.current == $slug][0] {\n    name,\n    picture,\n    \"posts\": *[_type == \"post\" && author->slug.current == $slug] | order(date desc, _updatedAt desc) {\n      \n  _id,\n  _type,\n  \"status\": select(_originalId in path(\"drafts.**\") => \"draft\", \"published\"),\n  \"title\": coalesce(title, \"Untitled\"),\n  \"slug\": slug.current,\n  excerpt,\n  epigraph,\n  imageSource,\n  coverImage,\n  // Keep legacy \"date\" for existing UI; prefer publishedAt elsewhere\n  \"date\": coalesce(date, _updatedAt),\n  publishedAt,\n  priority,\n  featured,\n\n  // Ensure complete author or nothing\n  \"author\": select(\n    defined(author->name) => {\n      \"name\": coalesce(author->name, \"Anonymous\"),\n      \"picture\": author->picture\n    }\n  ),\n\n  // Category shape your UI expects\n  \"category\": select(\n    defined(category->name) && defined(category->slug.current) => {\n      \"title\": category->name,\n      \"slug\": category->slug.current\n    }\n  ),\n\n  // Tags now use tag.title (not name)\n  \"tags\": tags[]->{title, \"slug\": slug.current},\n\n  // Body chunks & images\n  \"bodyImages\": bodyImages[]{ \"image\": image, epigraph, imageSource },\n  bodyTextOne,\n  bodyTextTwo,\n  bodyTextThree,\n  bodyTextFour,\n  bodyTextFive,\n  bodyImageOne,\n  bodyImageTwo,\n  bodyImageThree,\n  bodyImageFour,\n  bodyImageFive\n\n    }\n  }\n": AuthorQueryResult;
+    "\n  *[_type == \"author\" && defined(slug.current)][].slug.current\n": AuthorSlugsQueryResult;
+    "\n  *[_type == \"comment\" && post->slug.current == $postSlug && approved == true] | order(_createdAt desc) {\n    name, email, comment, _createdAt\n  }\n": CommentsQueryResult;
+    "\n  *[_type == \"post\" && category->slug.current == $categorySlug] | order(date desc, _updatedAt desc) [0...4] {\n    \n  _id,\n  _type,\n  \"status\": select(_originalId in path(\"drafts.**\") => \"draft\", \"published\"),\n  \"title\": coalesce(title, \"Untitled\"),\n  \"slug\": slug.current,\n  excerpt,\n  epigraph,\n  imageSource,\n  coverImage,\n  // Keep legacy \"date\" for existing UI; prefer publishedAt elsewhere\n  \"date\": coalesce(date, _updatedAt),\n  publishedAt,\n  priority,\n  featured,\n\n  // Ensure complete author or nothing\n  \"author\": select(\n    defined(author->name) => {\n      \"name\": coalesce(author->name, \"Anonymous\"),\n      \"picture\": author->picture\n    }\n  ),\n\n  // Category shape your UI expects\n  \"category\": select(\n    defined(category->name) && defined(category->slug.current) => {\n      \"title\": category->name,\n      \"slug\": category->slug.current\n    }\n  ),\n\n  // Tags now use tag.title (not name)\n  \"tags\": tags[]->{title, \"slug\": slug.current},\n\n  // Body chunks & images\n  \"bodyImages\": bodyImages[]{ \"image\": image, epigraph, imageSource },\n  bodyTextOne,\n  bodyTextTwo,\n  bodyTextThree,\n  bodyTextFour,\n  bodyTextFive,\n  bodyImageOne,\n  bodyImageTwo,\n  bodyImageThree,\n  bodyImageFour,\n  bodyImageFive\n\n  }\n": FourthSectionQueryResult | ThirdSectionQueryResult;
+    "\n  *[_type == \"post\"] | order(date desc, _updatedAt desc) [0...5] {\n    \n  _id,\n  _type,\n  \"status\": select(_originalId in path(\"drafts.**\") => \"draft\", \"published\"),\n  \"title\": coalesce(title, \"Untitled\"),\n  \"slug\": slug.current,\n  excerpt,\n  epigraph,\n  imageSource,\n  coverImage,\n  // Keep legacy \"date\" for existing UI; prefer publishedAt elsewhere\n  \"date\": coalesce(date, _updatedAt),\n  publishedAt,\n  priority,\n  featured,\n\n  // Ensure complete author or nothing\n  \"author\": select(\n    defined(author->name) => {\n      \"name\": coalesce(author->name, \"Anonymous\"),\n      \"picture\": author->picture\n    }\n  ),\n\n  // Category shape your UI expects\n  \"category\": select(\n    defined(category->name) && defined(category->slug.current) => {\n      \"title\": category->name,\n      \"slug\": category->slug.current\n    }\n  ),\n\n  // Tags now use tag.title (not name)\n  \"tags\": tags[]->{title, \"slug\": slug.current},\n\n  // Body chunks & images\n  \"bodyImages\": bodyImages[]{ \"image\": image, epigraph, imageSource },\n  bodyTextOne,\n  bodyTextTwo,\n  bodyTextThree,\n  bodyTextFour,\n  bodyTextFive,\n  bodyImageOne,\n  bodyImageTwo,\n  bodyImageThree,\n  bodyImageFour,\n  bodyImageFive\n\n  }\n": MostReadQueryResult;
+    "\n  *[_type == \"post\" && category->slug.current == $categorySlug] | order(date desc, _updatedAt desc) [0...20] {\n    \n  _id,\n  _type,\n  \"status\": select(_originalId in path(\"drafts.**\") => \"draft\", \"published\"),\n  \"title\": coalesce(title, \"Untitled\"),\n  \"slug\": slug.current,\n  excerpt,\n  epigraph,\n  imageSource,\n  coverImage,\n  // Keep legacy \"date\" for existing UI; prefer publishedAt elsewhere\n  \"date\": coalesce(date, _updatedAt),\n  publishedAt,\n  priority,\n  featured,\n\n  // Ensure complete author or nothing\n  \"author\": select(\n    defined(author->name) => {\n      \"name\": coalesce(author->name, \"Anonymous\"),\n      \"picture\": author->picture\n    }\n  ),\n\n  // Category shape your UI expects\n  \"category\": select(\n    defined(category->name) && defined(category->slug.current) => {\n      \"title\": category->name,\n      \"slug\": category->slug.current\n    }\n  ),\n\n  // Tags now use tag.title (not name)\n  \"tags\": tags[]->{title, \"slug\": slug.current},\n\n  // Body chunks & images\n  \"bodyImages\": bodyImages[]{ \"image\": image, epigraph, imageSource },\n  bodyTextOne,\n  bodyTextTwo,\n  bodyTextThree,\n  bodyTextFour,\n  bodyTextFive,\n  bodyImageOne,\n  bodyImageTwo,\n  bodyImageThree,\n  bodyImageFour,\n  bodyImageFive\n\n  }\n": SixthSectionQueryResult;
+    "\n{\n  \"posts\": *[_type == \"post\" && status == \"published\" && defined(publishedAt) && publishedAt <= now() && (\n  title match $term ||\n  excerpt match $term ||\n  epigraph match $term ||\n  pt::text(bodyRich) match $term ||\n  pt::text(bodyTextOne) match $term ||\n  pt::text(bodyTextTwo) match $term ||\n  pt::text(bodyTextThree) match $term ||\n  pt::text(bodyTextFour) match $term ||\n  pt::text(bodyTextFive) match $term ||\n  category->name match $term ||\n  tags[]->title match $term ||\n  author->name match $term\n)] | order(publishedAt desc) [0...$postLimit] {\n    \n  _id,\n  _type,\n  \"status\": select(_originalId in path(\"drafts.**\") => \"draft\", \"published\"),\n  \"title\": coalesce(title, \"Untitled\"),\n  \"slug\": slug.current,\n  excerpt,\n  epigraph,\n  imageSource,\n  coverImage,\n  // Keep legacy \"date\" for existing UI; prefer publishedAt elsewhere\n  \"date\": coalesce(date, _updatedAt),\n  publishedAt,\n  priority,\n  featured,\n\n  // Ensure complete author or nothing\n  \"author\": select(\n    defined(author->name) => {\n      \"name\": coalesce(author->name, \"Anonymous\"),\n      \"picture\": author->picture\n    }\n  ),\n\n  // Category shape your UI expects\n  \"category\": select(\n    defined(category->name) && defined(category->slug.current) => {\n      \"title\": category->name,\n      \"slug\": category->slug.current\n    }\n  ),\n\n  // Tags now use tag.title (not name)\n  \"tags\": tags[]->{title, \"slug\": slug.current},\n\n  // Body chunks & images\n  \"bodyImages\": bodyImages[]{ \"image\": image, epigraph, imageSource },\n  bodyTextOne,\n  bodyTextTwo,\n  bodyTextThree,\n  bodyTextFour,\n  bodyTextFive,\n  bodyImageOne,\n  bodyImageTwo,\n  bodyImageThree,\n  bodyImageFour,\n  bodyImageFive\n\n  },\n  \"tags\": *[_type == \"tag\" && (\n    title match $term ||\n    description match $term ||\n    $term in aliases\n  )] | order(order asc, title asc) [0...$tagLimit] {\n    _id,\n    title,\n    \"slug\": slug.current,\n    description,\n    emoji,\n    color,\n    featured\n  },\n  \"topics\": *[_type == \"topic\" && (\n    title match $term ||\n    description match $term\n  )] | order(title asc) [0...$topicLimit] {\n    _id,\n    title,\n    \"slug\": slug.current,\n    kind,\n    description,\n    image\n  }\n}\n": SearchAllQueryResult;
   }
 }

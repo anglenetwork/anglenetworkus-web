@@ -1,6 +1,7 @@
 import "../globals.css";
 
 import { Inter } from "next/font/google";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -10,14 +11,21 @@ const inter = Inter({
 
 export { metadata, viewport } from "next-sanity/studio";
 
-export default function RootLayout({
+// This layout completely overrides the root layout for Sanity Studio routes
+export default function SanityStudioLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
   return (
     <html lang="en" className={inter.variable}>
-      <body className="min-h-screen">{children}</body>
+      <head>
+        <title>Sanity Studio</title>
+      </head>
+      <body className="min-h-screen">
+        {children}
+        <SpeedInsights />
+      </body>
     </html>
   );
 }
