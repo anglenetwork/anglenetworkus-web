@@ -14,7 +14,12 @@ import {
   postBySlugQuery,
   postQueryWithRelated,
   postQueryWithCategoryRelated,
+  latestNews4Query,
+  popularReadsTrendingQuery,
+  popularReadsFallbackQuery,
 } from "@/sanity/lib/queries";
+import TrackViewClient from "./TrackViewClient";
+import CategoryViewTracker from "./CategoryViewTracker";
 
 // page.tsx (add near the top, after imports)
 type HeaderCategory = { title: string; slug: string };
@@ -104,6 +109,23 @@ async function getPostData(slug: string) {
     params: { slug },
   });
 
+  // Fetch sidebar rails in parallel (independent of category presence)
+  const [latestOverall, trendingReads] = await Promise.all([
+    client.fetch(latestNews4Query, { currentPostId: postData._id }),
+    client.fetch(popularReadsTrendingQuery, { currentPostId: postData._id }),
+  ]);
+
+  // Use fallback if no trending data or all posts have 0 views
+  const hasViews = trendingReads?.some((post: any) => post.views7d > 0);
+  console.log("Trending reads raw data:", trendingReads);
+  console.log("Has views check:", hasViews);
+
+  const popularReads = hasViews
+    ? trendingReads
+    : await client.fetch(popularReadsFallbackQuery, {
+        currentPostId: postData._id,
+      });
+
   if (!postData || !postData.category) {
     // Fallback to general related articles if no category
     const data = await sanityFetch({
@@ -114,7 +136,8 @@ async function getPostData(slug: string) {
     return {
       post: data.post,
       latestNews: data.latestNews || [],
-      newsForYou: data.latestNews || [], // Use latestNews as fallback for newsForYou
+      newsForYou: latestOverall || [],
+      popularReads: popularReads || [],
       nextArticles: data.nextArticles || [],
     };
   }
@@ -131,7 +154,8 @@ async function getPostData(slug: string) {
   return {
     post: data.post,
     latestNews: data.latestNews || [],
-    newsForYou: data.newsForYou || [],
+    newsForYou: latestOverall || [],
+    popularReads: popularReads || [],
     nextArticles: data.categoryArticles || [],
   };
 }
@@ -142,7 +166,7 @@ export default async function PostPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const { post, latestNews, newsForYou, nextArticles } =
+  const { post, latestNews, newsForYou, popularReads, nextArticles } =
     await getPostData(slug);
 
   if (!post) {
@@ -156,12 +180,42 @@ export default async function PostPage({
   const validNewsForYou = newsForYou.filter(
     (post) => post.slug !== null
   ) as any[];
+  const validPopularReads = popularReads.filter(
+    (post) => post.slug !== null
+  ) as any[];
   const validNextArticles = nextArticles.filter(
     (post) => post.slug !== null
   ) as any[];
 
+  // Debug: Log post data
+  console.log("Post data:", { _id: post._id, title: post.title });
+  console.log("Popular reads data:", popularReads);
+  console.log(
+    "Has views:",
+    popularReads?.some((p: any) => p.views7d > 0)
+  );
+  console.log(
+    "View counts:",
+    popularReads?.map((p: any) => ({
+      title: p.title,
+      hasViews: p.hasViews,
+      views7d: p.views7d,
+      views30d: p.views30d,
+      viewsAll: p.viewsAll,
+      totalScore: p.totalScore,
+    }))
+  );
+
   return (
     <div className="min-h-screen">
+      {/* Track view (client) */}
+      <TrackViewClient postId={post._id} />
+
+      {/* Track category view (client) */}
+      {post.category?.slug && (
+        <CategoryViewTracker categorySlug={post.category.slug} />
+      )}
+
       <div className="container mx-auto px-4 lg:px-40 py-4 border-2 border-lime-500">
         <article className="mt-4 lg:mt-8">
           {/* <PostHeader
@@ -219,10 +273,12 @@ export default async function PostPage({
               />
             </div>
             <div className="flex flex-col col-span-1 lg:col-span-4 gap-8">
+              {/* Popular Reads (trending) */}
               <PostSelectedNews
-                latestNews={validLatestNews}
+                latestNews={validPopularReads}
                 title="Popular Reads"
               />
+              {/* News for You (latest overall) */}
               <PostSelectedNews
                 latestNews={validNewsForYou}
                 title="News for You"

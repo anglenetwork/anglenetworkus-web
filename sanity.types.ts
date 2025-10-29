@@ -93,42 +93,7 @@ export type Tag = {
     [internalGroqTypeReferenceTo]?: "tag";
   };
   analyticsKey?: string;
-};
-
-export type Comment = {
-  _id: string;
-  _type: "comment";
-  _createdAt: string;
-  _updatedAt: string;
-  _rev: string;
-  name?: string;
-  approved?: boolean;
-  email?: string;
-  comment?: string;
-  post?: {
-    _ref: string;
-    _type: "reference";
-    _weak?: boolean;
-    [internalGroqTypeReferenceTo]?: "post";
-  };
-  parent?: {
-    _ref: string;
-    _type: "reference";
-    _weak?: boolean;
-    [internalGroqTypeReferenceTo]?: "comment";
-  };
-  status?: "pending" | "approved" | "rejected" | "flagged" | "spam";
-  moderatorNote?: string;
-  pinned?: boolean;
-  reports?: number;
-  likes?: number;
-  createdAt?: string;
-  updatedAt?: string;
-  ip?: string;
-  userAgent?: string;
-  referrer?: string;
-  pageUrl?: string;
-  consent?: boolean;
+  views?: number;
 };
 
 export type Post = {
@@ -361,16 +326,12 @@ export type Post = {
     _weak?: boolean;
     [internalGroqTypeReferenceTo]?: "author";
   };
-  comments?: Array<{
-    _ref: string;
-    _type: "reference";
-    _weak?: boolean;
-    _key: string;
-    [internalGroqTypeReferenceTo]?: "comment";
-  }>;
   featured?: boolean;
   priority?: number;
   readTime?: number;
+  viewsAll?: number;
+  views30d?: number;
+  views7d?: number;
   labels?: Array<string>;
   bodyRich?: BlockContent;
   seo?: Seo;
@@ -450,6 +411,7 @@ export type Category = {
   hidden?: boolean;
   layout?: "standard" | "grid" | "magazine";
   seo?: Seo;
+  views?: number;
 };
 
 export type Seo = {
@@ -770,7 +732,7 @@ export type SanityAssetSourceData = {
   url?: string;
 };
 
-export type AllSanitySchemaTypes = BlockContent | Topic | Tag | Comment | Post | Author | Category | Seo | Settings | SanityAssistInstructionTask | SanityAssistTaskStatus | SanityAssistSchemaTypeAnnotations | SanityAssistOutputType | SanityAssistOutputField | SanityAssistInstructionContext | AssistInstructionContext | SanityAssistInstructionUserInput | SanityAssistInstructionPrompt | SanityAssistInstructionFieldRef | SanityAssistInstruction | SanityAssistSchemaTypeField | SanityImagePaletteSwatch | SanityImagePalette | SanityImageDimensions | SanityImageHotspot | SanityImageCrop | SanityFileAsset | SanityImageAsset | SanityImageMetadata | Geopoint | Slug | SanityAssetSourceData;
+export type AllSanitySchemaTypes = BlockContent | Topic | Tag | Post | Author | Category | Seo | Settings | SanityAssistInstructionTask | SanityAssistTaskStatus | SanityAssistSchemaTypeAnnotations | SanityAssistOutputType | SanityAssistOutputField | SanityAssistInstructionContext | AssistInstructionContext | SanityAssistInstructionUserInput | SanityAssistInstructionPrompt | SanityAssistInstructionFieldRef | SanityAssistInstruction | SanityAssistSchemaTypeField | SanityImagePaletteSwatch | SanityImagePalette | SanityImageDimensions | SanityImageHotspot | SanityImageCrop | SanityFileAsset | SanityImageAsset | SanityImageMetadata | Geopoint | Slug | SanityAssetSourceData;
 export declare const internalGroqTypeReferenceTo: unique symbol;
 // Source: ./sanity/lib/queries.ts
 // Variable: settingsQuery
@@ -834,7 +796,7 @@ export type SettingsQueryResult = {
   };
 } | null;
 // Variable: heroQuery
-// Query: *[_type == "post" && defined(slug.current)] | order(date desc, _updatedAt desc) [0] {      _id,  _type,  "status": select(_originalId in path("drafts.**") => "draft", "published"),  "title": coalesce(title, "Untitled"),  "slug": slug.current,  excerpt,  epigraph,  imageSource,  coverImage,  // Keep legacy "date" for existing UI; prefer publishedAt elsewhere  "date": coalesce(date, _updatedAt),  publishedAt,  priority,  featured,  // Ensure complete author or nothing  "author": select(    defined(author->name) => {      "name": coalesce(author->name, "Anonymous"),      "picture": author->picture    }  ),  // Category shape your UI expects  "category": select(    defined(category->name) && defined(category->slug.current) => {      "title": category->name,      "slug": category->slug.current    }  ),  // Tags now use tag.title (not name)  "tags": tags[]->{title, "slug": slug.current},  // Body chunks & images  "bodyImages": bodyImages[]{ "image": image, epigraph, imageSource },  bodyTextOne,  bodyTextTwo,  bodyTextThree,  bodyTextFour,  bodyTextFive,  bodyImageOne,  bodyImageTwo,  bodyImageThree,  bodyImageFour,  bodyImageFive  }
+// Query: *[_type == "post" && defined(slug.current)] | order(date desc, _updatedAt desc) [0] {      _id,  _type,  "status": select(_originalId in path("drafts.**") => "draft", "published"),  "title": coalesce(title, "Untitled"),  "slug": slug.current,  excerpt,  epigraph,  imageSource,  coverImage,  "date": coalesce(date, _updatedAt),  publishedAt,  priority,  featured,  "author": select(    defined(author->name) => {      "name": coalesce(author->name, "Anonymous"),      "picture": author->picture    }  ),  "category": select(    defined(category->name) && defined(category->slug.current) => {      "title": category->name,      "slug": category->slug.current    }  ),  // Support both tag.title and category.name during transition  "tags": tags[]->{    "title": coalesce(title, name),    "slug": slug.current  },  "bodyImages": bodyImages[]{ "image": image, epigraph, imageSource },  bodyTextOne,  bodyTextTwo,  bodyTextThree,  bodyTextFour,  bodyTextFive,  bodyImageOne,  bodyImageTwo,  bodyImageThree,  bodyImageFour,  bodyImageFive  }
 export type HeroQueryResult = {
   _id: string;
   _type: "post";
@@ -1068,7 +1030,7 @@ export type HeroQueryResult = {
   } | null;
 } | null;
 // Variable: moreStoriesQuery
-// Query: *[_type == "post" && _id != $skip && defined(slug.current)] | order(date desc, _updatedAt desc) [0...$limit] {      _id,  _type,  "status": select(_originalId in path("drafts.**") => "draft", "published"),  "title": coalesce(title, "Untitled"),  "slug": slug.current,  excerpt,  epigraph,  imageSource,  coverImage,  // Keep legacy "date" for existing UI; prefer publishedAt elsewhere  "date": coalesce(date, _updatedAt),  publishedAt,  priority,  featured,  // Ensure complete author or nothing  "author": select(    defined(author->name) => {      "name": coalesce(author->name, "Anonymous"),      "picture": author->picture    }  ),  // Category shape your UI expects  "category": select(    defined(category->name) && defined(category->slug.current) => {      "title": category->name,      "slug": category->slug.current    }  ),  // Tags now use tag.title (not name)  "tags": tags[]->{title, "slug": slug.current},  // Body chunks & images  "bodyImages": bodyImages[]{ "image": image, epigraph, imageSource },  bodyTextOne,  bodyTextTwo,  bodyTextThree,  bodyTextFour,  bodyTextFive,  bodyImageOne,  bodyImageTwo,  bodyImageThree,  bodyImageFour,  bodyImageFive  }
+// Query: *[_type == "post" && _id != $skip && defined(slug.current)] | order(date desc, _updatedAt desc) [0...$limit] {      _id,  _type,  "status": select(_originalId in path("drafts.**") => "draft", "published"),  "title": coalesce(title, "Untitled"),  "slug": slug.current,  excerpt,  epigraph,  imageSource,  coverImage,  "date": coalesce(date, _updatedAt),  publishedAt,  priority,  featured,  "author": select(    defined(author->name) => {      "name": coalesce(author->name, "Anonymous"),      "picture": author->picture    }  ),  "category": select(    defined(category->name) && defined(category->slug.current) => {      "title": category->name,      "slug": category->slug.current    }  ),  // Support both tag.title and category.name during transition  "tags": tags[]->{    "title": coalesce(title, name),    "slug": slug.current  },  "bodyImages": bodyImages[]{ "image": image, epigraph, imageSource },  bodyTextOne,  bodyTextTwo,  bodyTextThree,  bodyTextFour,  bodyTextFive,  bodyImageOne,  bodyImageTwo,  bodyImageThree,  bodyImageFour,  bodyImageFive  }
 export type MoreStoriesQueryResult = Array<{
   _id: string;
   _type: "post";
@@ -1302,7 +1264,7 @@ export type MoreStoriesQueryResult = Array<{
   } | null;
 }>;
 // Variable: postQuery
-// Query: *[_type == "post" && slug.current == $slug] [0] {      _id,  _type,  "status": select(_originalId in path("drafts.**") => "draft", "published"),  "title": coalesce(title, "Untitled"),  "slug": slug.current,  excerpt,  epigraph,  imageSource,  coverImage,  // Keep legacy "date" for existing UI; prefer publishedAt elsewhere  "date": coalesce(date, _updatedAt),  publishedAt,  priority,  featured,  // Ensure complete author or nothing  "author": select(    defined(author->name) => {      "name": coalesce(author->name, "Anonymous"),      "picture": author->picture    }  ),  // Category shape your UI expects  "category": select(    defined(category->name) && defined(category->slug.current) => {      "title": category->name,      "slug": category->slug.current    }  ),  // Tags now use tag.title (not name)  "tags": tags[]->{title, "slug": slug.current},  // Body chunks & images  "bodyImages": bodyImages[]{ "image": image, epigraph, imageSource },  bodyTextOne,  bodyTextTwo,  bodyTextThree,  bodyTextFour,  bodyTextFive,  bodyImageOne,  bodyImageTwo,  bodyImageThree,  bodyImageFour,  bodyImageFive  }
+// Query: *[_type == "post" && slug.current == $slug] [0] {      _id,  _type,  "status": select(_originalId in path("drafts.**") => "draft", "published"),  "title": coalesce(title, "Untitled"),  "slug": slug.current,  excerpt,  epigraph,  imageSource,  coverImage,  "date": coalesce(date, _updatedAt),  publishedAt,  priority,  featured,  "author": select(    defined(author->name) => {      "name": coalesce(author->name, "Anonymous"),      "picture": author->picture    }  ),  "category": select(    defined(category->name) && defined(category->slug.current) => {      "title": category->name,      "slug": category->slug.current    }  ),  // Support both tag.title and category.name during transition  "tags": tags[]->{    "title": coalesce(title, name),    "slug": slug.current  },  "bodyImages": bodyImages[]{ "image": image, epigraph, imageSource },  bodyTextOne,  bodyTextTwo,  bodyTextThree,  bodyTextFour,  bodyTextFive,  bodyImageOne,  bodyImageTwo,  bodyImageThree,  bodyImageFour,  bodyImageFive  }
 export type PostQueryResult = {
   _id: string;
   _type: "post";
@@ -1536,7 +1498,7 @@ export type PostQueryResult = {
   } | null;
 } | null;
 // Variable: indexQuery
-// Query: *[_type == "post"] | order(date desc, _updatedAt desc) {      _id,  _type,  "status": select(_originalId in path("drafts.**") => "draft", "published"),  "title": coalesce(title, "Untitled"),  "slug": slug.current,  excerpt,  epigraph,  imageSource,  coverImage,  // Keep legacy "date" for existing UI; prefer publishedAt elsewhere  "date": coalesce(date, _updatedAt),  publishedAt,  priority,  featured,  // Ensure complete author or nothing  "author": select(    defined(author->name) => {      "name": coalesce(author->name, "Anonymous"),      "picture": author->picture    }  ),  // Category shape your UI expects  "category": select(    defined(category->name) && defined(category->slug.current) => {      "title": category->name,      "slug": category->slug.current    }  ),  // Tags now use tag.title (not name)  "tags": tags[]->{title, "slug": slug.current},  // Body chunks & images  "bodyImages": bodyImages[]{ "image": image, epigraph, imageSource },  bodyTextOne,  bodyTextTwo,  bodyTextThree,  bodyTextFour,  bodyTextFive,  bodyImageOne,  bodyImageTwo,  bodyImageThree,  bodyImageFour,  bodyImageFive  }
+// Query: *[_type == "post"] | order(date desc, _updatedAt desc) {      _id,  _type,  "status": select(_originalId in path("drafts.**") => "draft", "published"),  "title": coalesce(title, "Untitled"),  "slug": slug.current,  excerpt,  epigraph,  imageSource,  coverImage,  "date": coalesce(date, _updatedAt),  publishedAt,  priority,  featured,  "author": select(    defined(author->name) => {      "name": coalesce(author->name, "Anonymous"),      "picture": author->picture    }  ),  "category": select(    defined(category->name) && defined(category->slug.current) => {      "title": category->name,      "slug": category->slug.current    }  ),  // Support both tag.title and category.name during transition  "tags": tags[]->{    "title": coalesce(title, name),    "slug": slug.current  },  "bodyImages": bodyImages[]{ "image": image, epigraph, imageSource },  bodyTextOne,  bodyTextTwo,  bodyTextThree,  bodyTextFour,  bodyTextFive,  bodyImageOne,  bodyImageTwo,  bodyImageThree,  bodyImageFour,  bodyImageFive  }
 export type IndexQueryResult = Array<{
   _id: string;
   _type: "post";
@@ -1770,7 +1732,7 @@ export type IndexQueryResult = Array<{
   } | null;
 }>;
 // Variable: postQueryWithRelated
-// Query: {  "post": *[_type == "post" && slug.current == $slug] | order(_updatedAt desc) [0] {      _id,  _type,  "status": select(_originalId in path("drafts.**") => "draft", "published"),  "title": coalesce(title, "Untitled"),  "slug": slug.current,  excerpt,  epigraph,  imageSource,  coverImage,  // Keep legacy "date" for existing UI; prefer publishedAt elsewhere  "date": coalesce(date, _updatedAt),  publishedAt,  priority,  featured,  // Ensure complete author or nothing  "author": select(    defined(author->name) => {      "name": coalesce(author->name, "Anonymous"),      "picture": author->picture    }  ),  // Category shape your UI expects  "category": select(    defined(category->name) && defined(category->slug.current) => {      "title": category->name,      "slug": category->slug.current    }  ),  // Tags now use tag.title (not name)  "tags": tags[]->{title, "slug": slug.current},  // Body chunks & images  "bodyImages": bodyImages[]{ "image": image, epigraph, imageSource },  bodyTextOne,  bodyTextTwo,  bodyTextThree,  bodyTextFour,  bodyTextFive,  bodyImageOne,  bodyImageTwo,  bodyImageThree,  bodyImageFour,  bodyImageFive  },  "latestNews": *[_type == "post" && slug.current != $slug] | order(date desc, _updatedAt desc) [0...6] {      _id,  _type,  "status": select(_originalId in path("drafts.**") => "draft", "published"),  "title": coalesce(title, "Untitled"),  "slug": slug.current,  excerpt,  epigraph,  imageSource,  coverImage,  // Keep legacy "date" for existing UI; prefer publishedAt elsewhere  "date": coalesce(date, _updatedAt),  publishedAt,  priority,  featured,  // Ensure complete author or nothing  "author": select(    defined(author->name) => {      "name": coalesce(author->name, "Anonymous"),      "picture": author->picture    }  ),  // Category shape your UI expects  "category": select(    defined(category->name) && defined(category->slug.current) => {      "title": category->name,      "slug": category->slug.current    }  ),  // Tags now use tag.title (not name)  "tags": tags[]->{title, "slug": slug.current},  // Body chunks & images  "bodyImages": bodyImages[]{ "image": image, epigraph, imageSource },  bodyTextOne,  bodyTextTwo,  bodyTextThree,  bodyTextFour,  bodyTextFive,  bodyImageOne,  bodyImageTwo,  bodyImageThree,  bodyImageFour,  bodyImageFive  },  "morePosts": *[_type == "post" && slug.current != $slug] | order(date desc, _updatedAt desc) [4...8] {      _id,  _type,  "status": select(_originalId in path("drafts.**") => "draft", "published"),  "title": coalesce(title, "Untitled"),  "slug": slug.current,  excerpt,  epigraph,  imageSource,  coverImage,  // Keep legacy "date" for existing UI; prefer publishedAt elsewhere  "date": coalesce(date, _updatedAt),  publishedAt,  priority,  featured,  // Ensure complete author or nothing  "author": select(    defined(author->name) => {      "name": coalesce(author->name, "Anonymous"),      "picture": author->picture    }  ),  // Category shape your UI expects  "category": select(    defined(category->name) && defined(category->slug.current) => {      "title": category->name,      "slug": category->slug.current    }  ),  // Tags now use tag.title (not name)  "tags": tags[]->{title, "slug": slug.current},  // Body chunks & images  "bodyImages": bodyImages[]{ "image": image, epigraph, imageSource },  bodyTextOne,  bodyTextTwo,  bodyTextThree,  bodyTextFour,  bodyTextFive,  bodyImageOne,  bodyImageTwo,  bodyImageThree,  bodyImageFour,  bodyImageFive  },  "nextArticles": *[_type == "post" && slug.current != $slug] | order(date desc, _updatedAt desc) [8...11] {      _id,  _type,  "status": select(_originalId in path("drafts.**") => "draft", "published"),  "title": coalesce(title, "Untitled"),  "slug": slug.current,  excerpt,  epigraph,  imageSource,  coverImage,  // Keep legacy "date" for existing UI; prefer publishedAt elsewhere  "date": coalesce(date, _updatedAt),  publishedAt,  priority,  featured,  // Ensure complete author or nothing  "author": select(    defined(author->name) => {      "name": coalesce(author->name, "Anonymous"),      "picture": author->picture    }  ),  // Category shape your UI expects  "category": select(    defined(category->name) && defined(category->slug.current) => {      "title": category->name,      "slug": category->slug.current    }  ),  // Tags now use tag.title (not name)  "tags": tags[]->{title, "slug": slug.current},  // Body chunks & images  "bodyImages": bodyImages[]{ "image": image, epigraph, imageSource },  bodyTextOne,  bodyTextTwo,  bodyTextThree,  bodyTextFour,  bodyTextFive,  bodyImageOne,  bodyImageTwo,  bodyImageThree,  bodyImageFour,  bodyImageFive  }}
+// Query: {  "post": *[_type == "post" && slug.current == $slug] | order(_updatedAt desc) [0] {      _id,  _type,  "status": select(_originalId in path("drafts.**") => "draft", "published"),  "title": coalesce(title, "Untitled"),  "slug": slug.current,  excerpt,  epigraph,  imageSource,  coverImage,  "date": coalesce(date, _updatedAt),  publishedAt,  priority,  featured,  "author": select(    defined(author->name) => {      "name": coalesce(author->name, "Anonymous"),      "picture": author->picture    }  ),  "category": select(    defined(category->name) && defined(category->slug.current) => {      "title": category->name,      "slug": category->slug.current    }  ),  // Support both tag.title and category.name during transition  "tags": tags[]->{    "title": coalesce(title, name),    "slug": slug.current  },  "bodyImages": bodyImages[]{ "image": image, epigraph, imageSource },  bodyTextOne,  bodyTextTwo,  bodyTextThree,  bodyTextFour,  bodyTextFive,  bodyImageOne,  bodyImageTwo,  bodyImageThree,  bodyImageFour,  bodyImageFive  },  "latestNews": *[_type == "post" && slug.current != $slug] | order(date desc, _updatedAt desc) [0...6] {      _id,  _type,  "status": select(_originalId in path("drafts.**") => "draft", "published"),  "title": coalesce(title, "Untitled"),  "slug": slug.current,  excerpt,  epigraph,  imageSource,  coverImage,  "date": coalesce(date, _updatedAt),  publishedAt,  priority,  featured,  "author": select(    defined(author->name) => {      "name": coalesce(author->name, "Anonymous"),      "picture": author->picture    }  ),  "category": select(    defined(category->name) && defined(category->slug.current) => {      "title": category->name,      "slug": category->slug.current    }  ),  // Support both tag.title and category.name during transition  "tags": tags[]->{    "title": coalesce(title, name),    "slug": slug.current  },  "bodyImages": bodyImages[]{ "image": image, epigraph, imageSource },  bodyTextOne,  bodyTextTwo,  bodyTextThree,  bodyTextFour,  bodyTextFive,  bodyImageOne,  bodyImageTwo,  bodyImageThree,  bodyImageFour,  bodyImageFive  },  "morePosts": *[_type == "post" && slug.current != $slug] | order(date desc, _updatedAt desc) [4...8] {      _id,  _type,  "status": select(_originalId in path("drafts.**") => "draft", "published"),  "title": coalesce(title, "Untitled"),  "slug": slug.current,  excerpt,  epigraph,  imageSource,  coverImage,  "date": coalesce(date, _updatedAt),  publishedAt,  priority,  featured,  "author": select(    defined(author->name) => {      "name": coalesce(author->name, "Anonymous"),      "picture": author->picture    }  ),  "category": select(    defined(category->name) && defined(category->slug.current) => {      "title": category->name,      "slug": category->slug.current    }  ),  // Support both tag.title and category.name during transition  "tags": tags[]->{    "title": coalesce(title, name),    "slug": slug.current  },  "bodyImages": bodyImages[]{ "image": image, epigraph, imageSource },  bodyTextOne,  bodyTextTwo,  bodyTextThree,  bodyTextFour,  bodyTextFive,  bodyImageOne,  bodyImageTwo,  bodyImageThree,  bodyImageFour,  bodyImageFive  },  "nextArticles": *[_type == "post" && slug.current != $slug] | order(date desc, _updatedAt desc) [8...18] {      _id,  _type,  "status": select(_originalId in path("drafts.**") => "draft", "published"),  "title": coalesce(title, "Untitled"),  "slug": slug.current,  excerpt,  epigraph,  imageSource,  coverImage,  "date": coalesce(date, _updatedAt),  publishedAt,  priority,  featured,  "author": select(    defined(author->name) => {      "name": coalesce(author->name, "Anonymous"),      "picture": author->picture    }  ),  "category": select(    defined(category->name) && defined(category->slug.current) => {      "title": category->name,      "slug": category->slug.current    }  ),  // Support both tag.title and category.name during transition  "tags": tags[]->{    "title": coalesce(title, name),    "slug": slug.current  },  "bodyImages": bodyImages[]{ "image": image, epigraph, imageSource },  bodyTextOne,  bodyTextTwo,  bodyTextThree,  bodyTextFour,  bodyTextFive,  bodyImageOne,  bodyImageTwo,  bodyImageThree,  bodyImageFour,  bodyImageFive  }}
 export type PostQueryWithRelatedResult = {
   post: {
     _id: string;
@@ -2701,11 +2663,1175 @@ export type PostQueryWithRelatedResult = {
     } | null;
   }>;
 };
+// Variable: postQueryWithCategoryRelated
+// Query: {  "post": *[_type == "post" && slug.current == $slug] | order(_updatedAt desc) [0] {      _id,  _type,  "status": select(_originalId in path("drafts.**") => "draft", "published"),  "title": coalesce(title, "Untitled"),  "slug": slug.current,  excerpt,  epigraph,  imageSource,  coverImage,  "date": coalesce(date, _updatedAt),  publishedAt,  priority,  featured,  "author": select(    defined(author->name) => {      "name": coalesce(author->name, "Anonymous"),      "picture": author->picture    }  ),  "category": select(    defined(category->name) && defined(category->slug.current) => {      "title": category->name,      "slug": category->slug.current    }  ),  // Support both tag.title and category.name during transition  "tags": tags[]->{    "title": coalesce(title, name),    "slug": slug.current  },  "bodyImages": bodyImages[]{ "image": image, epigraph, imageSource },  bodyTextOne,  bodyTextTwo,  bodyTextThree,  bodyTextFour,  bodyTextFive,  bodyImageOne,  bodyImageTwo,  bodyImageThree,  bodyImageFour,  bodyImageFive  },  "latestNews": *[_type == "post" && slug.current != $slug] | order(date desc, _updatedAt desc) [0...6] {      _id,  _type,  "status": select(_originalId in path("drafts.**") => "draft", "published"),  "title": coalesce(title, "Untitled"),  "slug": slug.current,  excerpt,  epigraph,  imageSource,  coverImage,  "date": coalesce(date, _updatedAt),  publishedAt,  priority,  featured,  "author": select(    defined(author->name) => {      "name": coalesce(author->name, "Anonymous"),      "picture": author->picture    }  ),  "category": select(    defined(category->name) && defined(category->slug.current) => {      "title": category->name,      "slug": category->slug.current    }  ),  // Support both tag.title and category.name during transition  "tags": tags[]->{    "title": coalesce(title, name),    "slug": slug.current  },  "bodyImages": bodyImages[]{ "image": image, epigraph, imageSource },  bodyTextOne,  bodyTextTwo,  bodyTextThree,  bodyTextFour,  bodyTextFive,  bodyImageOne,  bodyImageTwo,  bodyImageThree,  bodyImageFour,  bodyImageFive  },  "morePosts": *[_type == "post" && slug.current != $slug] | order(date desc, _updatedAt desc) [4...8] {      _id,  _type,  "status": select(_originalId in path("drafts.**") => "draft", "published"),  "title": coalesce(title, "Untitled"),  "slug": slug.current,  excerpt,  epigraph,  imageSource,  coverImage,  "date": coalesce(date, _updatedAt),  publishedAt,  priority,  featured,  "author": select(    defined(author->name) => {      "name": coalesce(author->name, "Anonymous"),      "picture": author->picture    }  ),  "category": select(    defined(category->name) && defined(category->slug.current) => {      "title": category->name,      "slug": category->slug.current    }  ),  // Support both tag.title and category.name during transition  "tags": tags[]->{    "title": coalesce(title, name),    "slug": slug.current  },  "bodyImages": bodyImages[]{ "image": image, epigraph, imageSource },  bodyTextOne,  bodyTextTwo,  bodyTextThree,  bodyTextFour,  bodyTextFive,  bodyImageOne,  bodyImageTwo,  bodyImageThree,  bodyImageFour,  bodyImageFive  },  "newsForYou": *[_type == "post" && slug.current != $slug] | order(date desc, _updatedAt desc) [0...4] {      _id,  _type,  "status": select(_originalId in path("drafts.**") => "draft", "published"),  "title": coalesce(title, "Untitled"),  "slug": slug.current,  excerpt,  epigraph,  imageSource,  coverImage,  "date": coalesce(date, _updatedAt),  publishedAt,  priority,  featured,  "author": select(    defined(author->name) => {      "name": coalesce(author->name, "Anonymous"),      "picture": author->picture    }  ),  "category": select(    defined(category->name) && defined(category->slug.current) => {      "title": category->name,      "slug": category->slug.current    }  ),  // Support both tag.title and category.name during transition  "tags": tags[]->{    "title": coalesce(title, name),    "slug": slug.current  },  "bodyImages": bodyImages[]{ "image": image, epigraph, imageSource },  bodyTextOne,  bodyTextTwo,  bodyTextThree,  bodyTextFour,  bodyTextFive,  bodyImageOne,  bodyImageTwo,  bodyImageThree,  bodyImageFour,  bodyImageFive  },  "categoryArticles": *[_type == "post" && slug.current != $slug && category->slug.current == $categorySlug] | order(date desc, _updatedAt desc) [0...6] {      _id,  _type,  "status": select(_originalId in path("drafts.**") => "draft", "published"),  "title": coalesce(title, "Untitled"),  "slug": slug.current,  excerpt,  epigraph,  imageSource,  coverImage,  "date": coalesce(date, _updatedAt),  publishedAt,  priority,  featured,  "author": select(    defined(author->name) => {      "name": coalesce(author->name, "Anonymous"),      "picture": author->picture    }  ),  "category": select(    defined(category->name) && defined(category->slug.current) => {      "title": category->name,      "slug": category->slug.current    }  ),  // Support both tag.title and category.name during transition  "tags": tags[]->{    "title": coalesce(title, name),    "slug": slug.current  },  "bodyImages": bodyImages[]{ "image": image, epigraph, imageSource },  bodyTextOne,  bodyTextTwo,  bodyTextThree,  bodyTextFour,  bodyTextFive,  bodyImageOne,  bodyImageTwo,  bodyImageThree,  bodyImageFour,  bodyImageFive  }}
+export type PostQueryWithCategoryRelatedResult = {
+  post: {
+    _id: string;
+    _type: "post";
+    status: "draft" | "published";
+    title: string | "Untitled";
+    slug: string | null;
+    excerpt: string | null;
+    epigraph: string | null;
+    imageSource: string | null;
+    coverImage: {
+      asset?: {
+        _ref: string;
+        _type: "reference";
+        _weak?: boolean;
+        [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+      };
+      media?: unknown;
+      hotspot?: SanityImageHotspot;
+      crop?: SanityImageCrop;
+      alt?: string;
+      _type: "image";
+    } | null;
+    date: string;
+    publishedAt: string | null;
+    priority: number | null;
+    featured: boolean | null;
+    author: {
+      name: string | "Anonymous";
+      picture: {
+        asset?: {
+          _ref: string;
+          _type: "reference";
+          _weak?: boolean;
+          [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+        };
+        media?: unknown;
+        hotspot?: SanityImageHotspot;
+        crop?: SanityImageCrop;
+        alt?: string;
+        _type: "image";
+      } | null;
+    };
+    category: {
+      title: string | null;
+      slug: string | null;
+    };
+    tags: Array<{
+      title: string | null;
+      slug: string | null;
+    }> | null;
+    bodyImages: Array<{
+      image: {
+        asset?: {
+          _ref: string;
+          _type: "reference";
+          _weak?: boolean;
+          [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+        };
+        media?: unknown;
+        hotspot?: SanityImageHotspot;
+        crop?: SanityImageCrop;
+        _type: "image";
+      } | null;
+      epigraph: string | null;
+      imageSource: string | null;
+    }> | null;
+    bodyTextOne: Array<{
+      children?: Array<{
+        marks?: Array<string>;
+        text?: string;
+        _type: "span";
+        _key: string;
+      }>;
+      style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
+      listItem?: "bullet" | "number";
+      markDefs?: Array<{
+        href?: string;
+        _type: "link";
+        _key: string;
+      }>;
+      level?: number;
+      _type: "block";
+      _key: string;
+    }> | null;
+    bodyTextTwo: Array<{
+      children?: Array<{
+        marks?: Array<string>;
+        text?: string;
+        _type: "span";
+        _key: string;
+      }>;
+      style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
+      listItem?: "bullet" | "number";
+      markDefs?: Array<{
+        href?: string;
+        _type: "link";
+        _key: string;
+      }>;
+      level?: number;
+      _type: "block";
+      _key: string;
+    }> | null;
+    bodyTextThree: Array<{
+      children?: Array<{
+        marks?: Array<string>;
+        text?: string;
+        _type: "span";
+        _key: string;
+      }>;
+      style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
+      listItem?: "bullet" | "number";
+      markDefs?: Array<{
+        href?: string;
+        _type: "link";
+        _key: string;
+      }>;
+      level?: number;
+      _type: "block";
+      _key: string;
+    }> | null;
+    bodyTextFour: Array<{
+      children?: Array<{
+        marks?: Array<string>;
+        text?: string;
+        _type: "span";
+        _key: string;
+      }>;
+      style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
+      listItem?: "bullet" | "number";
+      markDefs?: Array<{
+        href?: string;
+        _type: "link";
+        _key: string;
+      }>;
+      level?: number;
+      _type: "block";
+      _key: string;
+    }> | null;
+    bodyTextFive: Array<{
+      children?: Array<{
+        marks?: Array<string>;
+        text?: string;
+        _type: "span";
+        _key: string;
+      }>;
+      style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
+      listItem?: "bullet" | "number";
+      markDefs?: Array<{
+        href?: string;
+        _type: "link";
+        _key: string;
+      }>;
+      level?: number;
+      _type: "block";
+      _key: string;
+    }> | null;
+    bodyImageOne: {
+      asset?: {
+        _ref: string;
+        _type: "reference";
+        _weak?: boolean;
+        [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+      };
+      media?: unknown;
+      hotspot?: SanityImageHotspot;
+      crop?: SanityImageCrop;
+      alt?: string;
+      epigraph?: string;
+      imageSource?: string;
+      _type: "image";
+    } | null;
+    bodyImageTwo: {
+      asset?: {
+        _ref: string;
+        _type: "reference";
+        _weak?: boolean;
+        [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+      };
+      media?: unknown;
+      hotspot?: SanityImageHotspot;
+      crop?: SanityImageCrop;
+      alt?: string;
+      epigraph?: string;
+      imageSource?: string;
+      _type: "image";
+    } | null;
+    bodyImageThree: {
+      asset?: {
+        _ref: string;
+        _type: "reference";
+        _weak?: boolean;
+        [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+      };
+      media?: unknown;
+      hotspot?: SanityImageHotspot;
+      crop?: SanityImageCrop;
+      alt?: string;
+      epigraph?: string;
+      imageSource?: string;
+      _type: "image";
+    } | null;
+    bodyImageFour: {
+      asset?: {
+        _ref: string;
+        _type: "reference";
+        _weak?: boolean;
+        [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+      };
+      media?: unknown;
+      hotspot?: SanityImageHotspot;
+      crop?: SanityImageCrop;
+      alt?: string;
+      epigraph?: string;
+      imageSource?: string;
+      _type: "image";
+    } | null;
+    bodyImageFive: {
+      asset?: {
+        _ref: string;
+        _type: "reference";
+        _weak?: boolean;
+        [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+      };
+      media?: unknown;
+      hotspot?: SanityImageHotspot;
+      crop?: SanityImageCrop;
+      alt?: string;
+      epigraph?: string;
+      imageSource?: string;
+      _type: "image";
+    } | null;
+  } | null;
+  latestNews: Array<{
+    _id: string;
+    _type: "post";
+    status: "draft" | "published";
+    title: string | "Untitled";
+    slug: string | null;
+    excerpt: string | null;
+    epigraph: string | null;
+    imageSource: string | null;
+    coverImage: {
+      asset?: {
+        _ref: string;
+        _type: "reference";
+        _weak?: boolean;
+        [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+      };
+      media?: unknown;
+      hotspot?: SanityImageHotspot;
+      crop?: SanityImageCrop;
+      alt?: string;
+      _type: "image";
+    } | null;
+    date: string;
+    publishedAt: string | null;
+    priority: number | null;
+    featured: boolean | null;
+    author: {
+      name: string | "Anonymous";
+      picture: {
+        asset?: {
+          _ref: string;
+          _type: "reference";
+          _weak?: boolean;
+          [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+        };
+        media?: unknown;
+        hotspot?: SanityImageHotspot;
+        crop?: SanityImageCrop;
+        alt?: string;
+        _type: "image";
+      } | null;
+    };
+    category: {
+      title: string | null;
+      slug: string | null;
+    };
+    tags: Array<{
+      title: string | null;
+      slug: string | null;
+    }> | null;
+    bodyImages: Array<{
+      image: {
+        asset?: {
+          _ref: string;
+          _type: "reference";
+          _weak?: boolean;
+          [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+        };
+        media?: unknown;
+        hotspot?: SanityImageHotspot;
+        crop?: SanityImageCrop;
+        _type: "image";
+      } | null;
+      epigraph: string | null;
+      imageSource: string | null;
+    }> | null;
+    bodyTextOne: Array<{
+      children?: Array<{
+        marks?: Array<string>;
+        text?: string;
+        _type: "span";
+        _key: string;
+      }>;
+      style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
+      listItem?: "bullet" | "number";
+      markDefs?: Array<{
+        href?: string;
+        _type: "link";
+        _key: string;
+      }>;
+      level?: number;
+      _type: "block";
+      _key: string;
+    }> | null;
+    bodyTextTwo: Array<{
+      children?: Array<{
+        marks?: Array<string>;
+        text?: string;
+        _type: "span";
+        _key: string;
+      }>;
+      style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
+      listItem?: "bullet" | "number";
+      markDefs?: Array<{
+        href?: string;
+        _type: "link";
+        _key: string;
+      }>;
+      level?: number;
+      _type: "block";
+      _key: string;
+    }> | null;
+    bodyTextThree: Array<{
+      children?: Array<{
+        marks?: Array<string>;
+        text?: string;
+        _type: "span";
+        _key: string;
+      }>;
+      style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
+      listItem?: "bullet" | "number";
+      markDefs?: Array<{
+        href?: string;
+        _type: "link";
+        _key: string;
+      }>;
+      level?: number;
+      _type: "block";
+      _key: string;
+    }> | null;
+    bodyTextFour: Array<{
+      children?: Array<{
+        marks?: Array<string>;
+        text?: string;
+        _type: "span";
+        _key: string;
+      }>;
+      style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
+      listItem?: "bullet" | "number";
+      markDefs?: Array<{
+        href?: string;
+        _type: "link";
+        _key: string;
+      }>;
+      level?: number;
+      _type: "block";
+      _key: string;
+    }> | null;
+    bodyTextFive: Array<{
+      children?: Array<{
+        marks?: Array<string>;
+        text?: string;
+        _type: "span";
+        _key: string;
+      }>;
+      style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
+      listItem?: "bullet" | "number";
+      markDefs?: Array<{
+        href?: string;
+        _type: "link";
+        _key: string;
+      }>;
+      level?: number;
+      _type: "block";
+      _key: string;
+    }> | null;
+    bodyImageOne: {
+      asset?: {
+        _ref: string;
+        _type: "reference";
+        _weak?: boolean;
+        [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+      };
+      media?: unknown;
+      hotspot?: SanityImageHotspot;
+      crop?: SanityImageCrop;
+      alt?: string;
+      epigraph?: string;
+      imageSource?: string;
+      _type: "image";
+    } | null;
+    bodyImageTwo: {
+      asset?: {
+        _ref: string;
+        _type: "reference";
+        _weak?: boolean;
+        [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+      };
+      media?: unknown;
+      hotspot?: SanityImageHotspot;
+      crop?: SanityImageCrop;
+      alt?: string;
+      epigraph?: string;
+      imageSource?: string;
+      _type: "image";
+    } | null;
+    bodyImageThree: {
+      asset?: {
+        _ref: string;
+        _type: "reference";
+        _weak?: boolean;
+        [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+      };
+      media?: unknown;
+      hotspot?: SanityImageHotspot;
+      crop?: SanityImageCrop;
+      alt?: string;
+      epigraph?: string;
+      imageSource?: string;
+      _type: "image";
+    } | null;
+    bodyImageFour: {
+      asset?: {
+        _ref: string;
+        _type: "reference";
+        _weak?: boolean;
+        [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+      };
+      media?: unknown;
+      hotspot?: SanityImageHotspot;
+      crop?: SanityImageCrop;
+      alt?: string;
+      epigraph?: string;
+      imageSource?: string;
+      _type: "image";
+    } | null;
+    bodyImageFive: {
+      asset?: {
+        _ref: string;
+        _type: "reference";
+        _weak?: boolean;
+        [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+      };
+      media?: unknown;
+      hotspot?: SanityImageHotspot;
+      crop?: SanityImageCrop;
+      alt?: string;
+      epigraph?: string;
+      imageSource?: string;
+      _type: "image";
+    } | null;
+  }>;
+  morePosts: Array<{
+    _id: string;
+    _type: "post";
+    status: "draft" | "published";
+    title: string | "Untitled";
+    slug: string | null;
+    excerpt: string | null;
+    epigraph: string | null;
+    imageSource: string | null;
+    coverImage: {
+      asset?: {
+        _ref: string;
+        _type: "reference";
+        _weak?: boolean;
+        [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+      };
+      media?: unknown;
+      hotspot?: SanityImageHotspot;
+      crop?: SanityImageCrop;
+      alt?: string;
+      _type: "image";
+    } | null;
+    date: string;
+    publishedAt: string | null;
+    priority: number | null;
+    featured: boolean | null;
+    author: {
+      name: string | "Anonymous";
+      picture: {
+        asset?: {
+          _ref: string;
+          _type: "reference";
+          _weak?: boolean;
+          [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+        };
+        media?: unknown;
+        hotspot?: SanityImageHotspot;
+        crop?: SanityImageCrop;
+        alt?: string;
+        _type: "image";
+      } | null;
+    };
+    category: {
+      title: string | null;
+      slug: string | null;
+    };
+    tags: Array<{
+      title: string | null;
+      slug: string | null;
+    }> | null;
+    bodyImages: Array<{
+      image: {
+        asset?: {
+          _ref: string;
+          _type: "reference";
+          _weak?: boolean;
+          [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+        };
+        media?: unknown;
+        hotspot?: SanityImageHotspot;
+        crop?: SanityImageCrop;
+        _type: "image";
+      } | null;
+      epigraph: string | null;
+      imageSource: string | null;
+    }> | null;
+    bodyTextOne: Array<{
+      children?: Array<{
+        marks?: Array<string>;
+        text?: string;
+        _type: "span";
+        _key: string;
+      }>;
+      style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
+      listItem?: "bullet" | "number";
+      markDefs?: Array<{
+        href?: string;
+        _type: "link";
+        _key: string;
+      }>;
+      level?: number;
+      _type: "block";
+      _key: string;
+    }> | null;
+    bodyTextTwo: Array<{
+      children?: Array<{
+        marks?: Array<string>;
+        text?: string;
+        _type: "span";
+        _key: string;
+      }>;
+      style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
+      listItem?: "bullet" | "number";
+      markDefs?: Array<{
+        href?: string;
+        _type: "link";
+        _key: string;
+      }>;
+      level?: number;
+      _type: "block";
+      _key: string;
+    }> | null;
+    bodyTextThree: Array<{
+      children?: Array<{
+        marks?: Array<string>;
+        text?: string;
+        _type: "span";
+        _key: string;
+      }>;
+      style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
+      listItem?: "bullet" | "number";
+      markDefs?: Array<{
+        href?: string;
+        _type: "link";
+        _key: string;
+      }>;
+      level?: number;
+      _type: "block";
+      _key: string;
+    }> | null;
+    bodyTextFour: Array<{
+      children?: Array<{
+        marks?: Array<string>;
+        text?: string;
+        _type: "span";
+        _key: string;
+      }>;
+      style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
+      listItem?: "bullet" | "number";
+      markDefs?: Array<{
+        href?: string;
+        _type: "link";
+        _key: string;
+      }>;
+      level?: number;
+      _type: "block";
+      _key: string;
+    }> | null;
+    bodyTextFive: Array<{
+      children?: Array<{
+        marks?: Array<string>;
+        text?: string;
+        _type: "span";
+        _key: string;
+      }>;
+      style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
+      listItem?: "bullet" | "number";
+      markDefs?: Array<{
+        href?: string;
+        _type: "link";
+        _key: string;
+      }>;
+      level?: number;
+      _type: "block";
+      _key: string;
+    }> | null;
+    bodyImageOne: {
+      asset?: {
+        _ref: string;
+        _type: "reference";
+        _weak?: boolean;
+        [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+      };
+      media?: unknown;
+      hotspot?: SanityImageHotspot;
+      crop?: SanityImageCrop;
+      alt?: string;
+      epigraph?: string;
+      imageSource?: string;
+      _type: "image";
+    } | null;
+    bodyImageTwo: {
+      asset?: {
+        _ref: string;
+        _type: "reference";
+        _weak?: boolean;
+        [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+      };
+      media?: unknown;
+      hotspot?: SanityImageHotspot;
+      crop?: SanityImageCrop;
+      alt?: string;
+      epigraph?: string;
+      imageSource?: string;
+      _type: "image";
+    } | null;
+    bodyImageThree: {
+      asset?: {
+        _ref: string;
+        _type: "reference";
+        _weak?: boolean;
+        [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+      };
+      media?: unknown;
+      hotspot?: SanityImageHotspot;
+      crop?: SanityImageCrop;
+      alt?: string;
+      epigraph?: string;
+      imageSource?: string;
+      _type: "image";
+    } | null;
+    bodyImageFour: {
+      asset?: {
+        _ref: string;
+        _type: "reference";
+        _weak?: boolean;
+        [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+      };
+      media?: unknown;
+      hotspot?: SanityImageHotspot;
+      crop?: SanityImageCrop;
+      alt?: string;
+      epigraph?: string;
+      imageSource?: string;
+      _type: "image";
+    } | null;
+    bodyImageFive: {
+      asset?: {
+        _ref: string;
+        _type: "reference";
+        _weak?: boolean;
+        [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+      };
+      media?: unknown;
+      hotspot?: SanityImageHotspot;
+      crop?: SanityImageCrop;
+      alt?: string;
+      epigraph?: string;
+      imageSource?: string;
+      _type: "image";
+    } | null;
+  }>;
+  newsForYou: Array<{
+    _id: string;
+    _type: "post";
+    status: "draft" | "published";
+    title: string | "Untitled";
+    slug: string | null;
+    excerpt: string | null;
+    epigraph: string | null;
+    imageSource: string | null;
+    coverImage: {
+      asset?: {
+        _ref: string;
+        _type: "reference";
+        _weak?: boolean;
+        [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+      };
+      media?: unknown;
+      hotspot?: SanityImageHotspot;
+      crop?: SanityImageCrop;
+      alt?: string;
+      _type: "image";
+    } | null;
+    date: string;
+    publishedAt: string | null;
+    priority: number | null;
+    featured: boolean | null;
+    author: {
+      name: string | "Anonymous";
+      picture: {
+        asset?: {
+          _ref: string;
+          _type: "reference";
+          _weak?: boolean;
+          [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+        };
+        media?: unknown;
+        hotspot?: SanityImageHotspot;
+        crop?: SanityImageCrop;
+        alt?: string;
+        _type: "image";
+      } | null;
+    };
+    category: {
+      title: string | null;
+      slug: string | null;
+    };
+    tags: Array<{
+      title: string | null;
+      slug: string | null;
+    }> | null;
+    bodyImages: Array<{
+      image: {
+        asset?: {
+          _ref: string;
+          _type: "reference";
+          _weak?: boolean;
+          [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+        };
+        media?: unknown;
+        hotspot?: SanityImageHotspot;
+        crop?: SanityImageCrop;
+        _type: "image";
+      } | null;
+      epigraph: string | null;
+      imageSource: string | null;
+    }> | null;
+    bodyTextOne: Array<{
+      children?: Array<{
+        marks?: Array<string>;
+        text?: string;
+        _type: "span";
+        _key: string;
+      }>;
+      style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
+      listItem?: "bullet" | "number";
+      markDefs?: Array<{
+        href?: string;
+        _type: "link";
+        _key: string;
+      }>;
+      level?: number;
+      _type: "block";
+      _key: string;
+    }> | null;
+    bodyTextTwo: Array<{
+      children?: Array<{
+        marks?: Array<string>;
+        text?: string;
+        _type: "span";
+        _key: string;
+      }>;
+      style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
+      listItem?: "bullet" | "number";
+      markDefs?: Array<{
+        href?: string;
+        _type: "link";
+        _key: string;
+      }>;
+      level?: number;
+      _type: "block";
+      _key: string;
+    }> | null;
+    bodyTextThree: Array<{
+      children?: Array<{
+        marks?: Array<string>;
+        text?: string;
+        _type: "span";
+        _key: string;
+      }>;
+      style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
+      listItem?: "bullet" | "number";
+      markDefs?: Array<{
+        href?: string;
+        _type: "link";
+        _key: string;
+      }>;
+      level?: number;
+      _type: "block";
+      _key: string;
+    }> | null;
+    bodyTextFour: Array<{
+      children?: Array<{
+        marks?: Array<string>;
+        text?: string;
+        _type: "span";
+        _key: string;
+      }>;
+      style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
+      listItem?: "bullet" | "number";
+      markDefs?: Array<{
+        href?: string;
+        _type: "link";
+        _key: string;
+      }>;
+      level?: number;
+      _type: "block";
+      _key: string;
+    }> | null;
+    bodyTextFive: Array<{
+      children?: Array<{
+        marks?: Array<string>;
+        text?: string;
+        _type: "span";
+        _key: string;
+      }>;
+      style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
+      listItem?: "bullet" | "number";
+      markDefs?: Array<{
+        href?: string;
+        _type: "link";
+        _key: string;
+      }>;
+      level?: number;
+      _type: "block";
+      _key: string;
+    }> | null;
+    bodyImageOne: {
+      asset?: {
+        _ref: string;
+        _type: "reference";
+        _weak?: boolean;
+        [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+      };
+      media?: unknown;
+      hotspot?: SanityImageHotspot;
+      crop?: SanityImageCrop;
+      alt?: string;
+      epigraph?: string;
+      imageSource?: string;
+      _type: "image";
+    } | null;
+    bodyImageTwo: {
+      asset?: {
+        _ref: string;
+        _type: "reference";
+        _weak?: boolean;
+        [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+      };
+      media?: unknown;
+      hotspot?: SanityImageHotspot;
+      crop?: SanityImageCrop;
+      alt?: string;
+      epigraph?: string;
+      imageSource?: string;
+      _type: "image";
+    } | null;
+    bodyImageThree: {
+      asset?: {
+        _ref: string;
+        _type: "reference";
+        _weak?: boolean;
+        [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+      };
+      media?: unknown;
+      hotspot?: SanityImageHotspot;
+      crop?: SanityImageCrop;
+      alt?: string;
+      epigraph?: string;
+      imageSource?: string;
+      _type: "image";
+    } | null;
+    bodyImageFour: {
+      asset?: {
+        _ref: string;
+        _type: "reference";
+        _weak?: boolean;
+        [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+      };
+      media?: unknown;
+      hotspot?: SanityImageHotspot;
+      crop?: SanityImageCrop;
+      alt?: string;
+      epigraph?: string;
+      imageSource?: string;
+      _type: "image";
+    } | null;
+    bodyImageFive: {
+      asset?: {
+        _ref: string;
+        _type: "reference";
+        _weak?: boolean;
+        [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+      };
+      media?: unknown;
+      hotspot?: SanityImageHotspot;
+      crop?: SanityImageCrop;
+      alt?: string;
+      epigraph?: string;
+      imageSource?: string;
+      _type: "image";
+    } | null;
+  }>;
+  categoryArticles: Array<{
+    _id: string;
+    _type: "post";
+    status: "draft" | "published";
+    title: string | "Untitled";
+    slug: string | null;
+    excerpt: string | null;
+    epigraph: string | null;
+    imageSource: string | null;
+    coverImage: {
+      asset?: {
+        _ref: string;
+        _type: "reference";
+        _weak?: boolean;
+        [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+      };
+      media?: unknown;
+      hotspot?: SanityImageHotspot;
+      crop?: SanityImageCrop;
+      alt?: string;
+      _type: "image";
+    } | null;
+    date: string;
+    publishedAt: string | null;
+    priority: number | null;
+    featured: boolean | null;
+    author: {
+      name: string | "Anonymous";
+      picture: {
+        asset?: {
+          _ref: string;
+          _type: "reference";
+          _weak?: boolean;
+          [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+        };
+        media?: unknown;
+        hotspot?: SanityImageHotspot;
+        crop?: SanityImageCrop;
+        alt?: string;
+        _type: "image";
+      } | null;
+    };
+    category: {
+      title: string | null;
+      slug: string | null;
+    };
+    tags: Array<{
+      title: string | null;
+      slug: string | null;
+    }> | null;
+    bodyImages: Array<{
+      image: {
+        asset?: {
+          _ref: string;
+          _type: "reference";
+          _weak?: boolean;
+          [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+        };
+        media?: unknown;
+        hotspot?: SanityImageHotspot;
+        crop?: SanityImageCrop;
+        _type: "image";
+      } | null;
+      epigraph: string | null;
+      imageSource: string | null;
+    }> | null;
+    bodyTextOne: Array<{
+      children?: Array<{
+        marks?: Array<string>;
+        text?: string;
+        _type: "span";
+        _key: string;
+      }>;
+      style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
+      listItem?: "bullet" | "number";
+      markDefs?: Array<{
+        href?: string;
+        _type: "link";
+        _key: string;
+      }>;
+      level?: number;
+      _type: "block";
+      _key: string;
+    }> | null;
+    bodyTextTwo: Array<{
+      children?: Array<{
+        marks?: Array<string>;
+        text?: string;
+        _type: "span";
+        _key: string;
+      }>;
+      style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
+      listItem?: "bullet" | "number";
+      markDefs?: Array<{
+        href?: string;
+        _type: "link";
+        _key: string;
+      }>;
+      level?: number;
+      _type: "block";
+      _key: string;
+    }> | null;
+    bodyTextThree: Array<{
+      children?: Array<{
+        marks?: Array<string>;
+        text?: string;
+        _type: "span";
+        _key: string;
+      }>;
+      style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
+      listItem?: "bullet" | "number";
+      markDefs?: Array<{
+        href?: string;
+        _type: "link";
+        _key: string;
+      }>;
+      level?: number;
+      _type: "block";
+      _key: string;
+    }> | null;
+    bodyTextFour: Array<{
+      children?: Array<{
+        marks?: Array<string>;
+        text?: string;
+        _type: "span";
+        _key: string;
+      }>;
+      style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
+      listItem?: "bullet" | "number";
+      markDefs?: Array<{
+        href?: string;
+        _type: "link";
+        _key: string;
+      }>;
+      level?: number;
+      _type: "block";
+      _key: string;
+    }> | null;
+    bodyTextFive: Array<{
+      children?: Array<{
+        marks?: Array<string>;
+        text?: string;
+        _type: "span";
+        _key: string;
+      }>;
+      style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
+      listItem?: "bullet" | "number";
+      markDefs?: Array<{
+        href?: string;
+        _type: "link";
+        _key: string;
+      }>;
+      level?: number;
+      _type: "block";
+      _key: string;
+    }> | null;
+    bodyImageOne: {
+      asset?: {
+        _ref: string;
+        _type: "reference";
+        _weak?: boolean;
+        [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+      };
+      media?: unknown;
+      hotspot?: SanityImageHotspot;
+      crop?: SanityImageCrop;
+      alt?: string;
+      epigraph?: string;
+      imageSource?: string;
+      _type: "image";
+    } | null;
+    bodyImageTwo: {
+      asset?: {
+        _ref: string;
+        _type: "reference";
+        _weak?: boolean;
+        [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+      };
+      media?: unknown;
+      hotspot?: SanityImageHotspot;
+      crop?: SanityImageCrop;
+      alt?: string;
+      epigraph?: string;
+      imageSource?: string;
+      _type: "image";
+    } | null;
+    bodyImageThree: {
+      asset?: {
+        _ref: string;
+        _type: "reference";
+        _weak?: boolean;
+        [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+      };
+      media?: unknown;
+      hotspot?: SanityImageHotspot;
+      crop?: SanityImageCrop;
+      alt?: string;
+      epigraph?: string;
+      imageSource?: string;
+      _type: "image";
+    } | null;
+    bodyImageFour: {
+      asset?: {
+        _ref: string;
+        _type: "reference";
+        _weak?: boolean;
+        [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+      };
+      media?: unknown;
+      hotspot?: SanityImageHotspot;
+      crop?: SanityImageCrop;
+      alt?: string;
+      epigraph?: string;
+      imageSource?: string;
+      _type: "image";
+    } | null;
+    bodyImageFive: {
+      asset?: {
+        _ref: string;
+        _type: "reference";
+        _weak?: boolean;
+        [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+      };
+      media?: unknown;
+      hotspot?: SanityImageHotspot;
+      crop?: SanityImageCrop;
+      alt?: string;
+      epigraph?: string;
+      imageSource?: string;
+      _type: "image";
+    } | null;
+  }>;
+};
 // Variable: postSlugsQuery
 // Query: *[_type == "post" && defined(slug.current)][].slug.current
 export type PostSlugsQueryResult = Array<string | null>;
 // Variable: postBySlugQuery
-// Query: *[_type == "post" && slug.current == $slug][0] {      _id,  _type,  "status": select(_originalId in path("drafts.**") => "draft", "published"),  "title": coalesce(title, "Untitled"),  "slug": slug.current,  excerpt,  epigraph,  imageSource,  coverImage,  // Keep legacy "date" for existing UI; prefer publishedAt elsewhere  "date": coalesce(date, _updatedAt),  publishedAt,  priority,  featured,  // Ensure complete author or nothing  "author": select(    defined(author->name) => {      "name": coalesce(author->name, "Anonymous"),      "picture": author->picture    }  ),  // Category shape your UI expects  "category": select(    defined(category->name) && defined(category->slug.current) => {      "title": category->name,      "slug": category->slug.current    }  ),  // Tags now use tag.title (not name)  "tags": tags[]->{title, "slug": slug.current},  // Body chunks & images  "bodyImages": bodyImages[]{ "image": image, epigraph, imageSource },  bodyTextOne,  bodyTextTwo,  bodyTextThree,  bodyTextFour,  bodyTextFive,  bodyImageOne,  bodyImageTwo,  bodyImageThree,  bodyImageFour,  bodyImageFive  }
+// Query: *[_type == "post" && slug.current == $slug][0] {      _id,  _type,  "status": select(_originalId in path("drafts.**") => "draft", "published"),  "title": coalesce(title, "Untitled"),  "slug": slug.current,  excerpt,  epigraph,  imageSource,  coverImage,  "date": coalesce(date, _updatedAt),  publishedAt,  priority,  featured,  "author": select(    defined(author->name) => {      "name": coalesce(author->name, "Anonymous"),      "picture": author->picture    }  ),  "category": select(    defined(category->name) && defined(category->slug.current) => {      "title": category->name,      "slug": category->slug.current    }  ),  // Support both tag.title and category.name during transition  "tags": tags[]->{    "title": coalesce(title, name),    "slug": slug.current  },  "bodyImages": bodyImages[]{ "image": image, epigraph, imageSource },  bodyTextOne,  bodyTextTwo,  bodyTextThree,  bodyTextFour,  bodyTextFive,  bodyImageOne,  bodyImageTwo,  bodyImageThree,  bodyImageFour,  bodyImageFive  }
 export type PostBySlugQueryResult = {
   _id: string;
   _type: "post";
@@ -2939,7 +4065,7 @@ export type PostBySlugQueryResult = {
   } | null;
 } | null;
 // Variable: postsByCategoryQuery
-// Query: *[_type == "post" && category->slug.current == $categorySlug] | order(date desc, _updatedAt desc) {      _id,  _type,  "status": select(_originalId in path("drafts.**") => "draft", "published"),  "title": coalesce(title, "Untitled"),  "slug": slug.current,  excerpt,  epigraph,  imageSource,  coverImage,  // Keep legacy "date" for existing UI; prefer publishedAt elsewhere  "date": coalesce(date, _updatedAt),  publishedAt,  priority,  featured,  // Ensure complete author or nothing  "author": select(    defined(author->name) => {      "name": coalesce(author->name, "Anonymous"),      "picture": author->picture    }  ),  // Category shape your UI expects  "category": select(    defined(category->name) && defined(category->slug.current) => {      "title": category->name,      "slug": category->slug.current    }  ),  // Tags now use tag.title (not name)  "tags": tags[]->{title, "slug": slug.current},  // Body chunks & images  "bodyImages": bodyImages[]{ "image": image, epigraph, imageSource },  bodyTextOne,  bodyTextTwo,  bodyTextThree,  bodyTextFour,  bodyTextFive,  bodyImageOne,  bodyImageTwo,  bodyImageThree,  bodyImageFour,  bodyImageFive  }
+// Query: *[_type == "post" && category->slug.current == $categorySlug] | order(date desc, _updatedAt desc) {      _id,  _type,  "status": select(_originalId in path("drafts.**") => "draft", "published"),  "title": coalesce(title, "Untitled"),  "slug": slug.current,  excerpt,  epigraph,  imageSource,  coverImage,  "date": coalesce(date, _updatedAt),  publishedAt,  priority,  featured,  "author": select(    defined(author->name) => {      "name": coalesce(author->name, "Anonymous"),      "picture": author->picture    }  ),  "category": select(    defined(category->name) && defined(category->slug.current) => {      "title": category->name,      "slug": category->slug.current    }  ),  // Support both tag.title and category.name during transition  "tags": tags[]->{    "title": coalesce(title, name),    "slug": slug.current  },  "bodyImages": bodyImages[]{ "image": image, epigraph, imageSource },  bodyTextOne,  bodyTextTwo,  bodyTextThree,  bodyTextFour,  bodyTextFive,  bodyImageOne,  bodyImageTwo,  bodyImageThree,  bodyImageFour,  bodyImageFive  }
 export type PostsByCategoryQueryResult = Array<{
   _id: string;
   _type: "post";
@@ -3173,16 +4299,39 @@ export type PostsByCategoryQueryResult = Array<{
   } | null;
 }>;
 // Variable: categorySlugsQuery
-// Query: *[_type == "category" && defined(slug.current)]{ "slug": slug.current, name }
+// Query: *[_type == "category" && defined(slug.current)]{ "slug": slug.current, name, views }
 export type CategorySlugsQueryResult = Array<{
   slug: string | null;
   name: string | null;
+  views: number | null;
 }>;
 // Variable: allCategoriesQuery
-// Query: *[_type == "category" && defined(slug.current)] | order(name asc) {    "slug": slug.current,    name  }
+// Query: *[_type == "category" && defined(slug.current)] | order(name asc) {    "slug": slug.current,    name,    views  }
 export type AllCategoriesQueryResult = Array<{
   slug: string | null;
   name: string | null;
+  views: number | null;
+}>;
+// Variable: categoriesByViewsQuery
+// Query: *[_type == "category" && defined(slug.current)] | order(coalesce(views, 0) desc, name asc) {    "slug": slug.current,    name,    views  }
+export type CategoriesByViewsQueryResult = Array<{
+  slug: string | null;
+  name: string | null;
+  views: number | null;
+}>;
+// Variable: topTagsByViewsQuery
+// Query: *[_type == "tag" && defined(slug.current)] | order(coalesce(views, 0) desc, title asc) [0...5] {    "slug": slug.current,    title,    views  }
+export type TopTagsByViewsQueryResult = Array<{
+  slug: string | null;
+  title: string | null;
+  views: number | null;
+}>;
+// Variable: showsTagsByViewsQuery
+// Query: *[_type == "tag" && defined(slug.current)] | order(coalesce(views, 0) desc, title asc) [5...11] {    "slug": slug.current,    title,    views  }
+export type ShowsTagsByViewsQueryResult = Array<{
+  slug: string | null;
+  title: string | null;
+  views: number | null;
 }>;
 // Variable: tagSlugsQuery
 // Query: *[_type == "tag" && defined(slug.current)]{ "slug": slug.current, title }
@@ -3190,8 +4339,27 @@ export type TagSlugsQueryResult = Array<{
   slug: string | null;
   title: string | null;
 }>;
+// Variable: tagBySlugQuery
+// Query: *[_type == "tag" && slug.current == $slug][0] {    _id,    title,    "slug": slug.current,    description,    emoji,    color,    featured,    deprecated,    views,    "redirectTo": redirectTo->{      title,      "slug": slug.current    },    aliases,    order  }
+export type TagBySlugQueryResult = {
+  _id: string;
+  title: string | null;
+  slug: string | null;
+  description: string | null;
+  emoji: string | null;
+  color: string | null;
+  featured: boolean | null;
+  deprecated: boolean | null;
+  views: number | null;
+  redirectTo: {
+    title: string | null;
+    slug: string | null;
+  } | null;
+  aliases: Array<string> | null;
+  order: number | null;
+} | null;
 // Variable: postsByTagQuery
-// Query: *[_type == "post" && $tagSlug in tags[]->slug.current] | order(date desc, _updatedAt desc) {      _id,  _type,  "status": select(_originalId in path("drafts.**") => "draft", "published"),  "title": coalesce(title, "Untitled"),  "slug": slug.current,  excerpt,  epigraph,  imageSource,  coverImage,  // Keep legacy "date" for existing UI; prefer publishedAt elsewhere  "date": coalesce(date, _updatedAt),  publishedAt,  priority,  featured,  // Ensure complete author or nothing  "author": select(    defined(author->name) => {      "name": coalesce(author->name, "Anonymous"),      "picture": author->picture    }  ),  // Category shape your UI expects  "category": select(    defined(category->name) && defined(category->slug.current) => {      "title": category->name,      "slug": category->slug.current    }  ),  // Tags now use tag.title (not name)  "tags": tags[]->{title, "slug": slug.current},  // Body chunks & images  "bodyImages": bodyImages[]{ "image": image, epigraph, imageSource },  bodyTextOne,  bodyTextTwo,  bodyTextThree,  bodyTextFour,  bodyTextFive,  bodyImageOne,  bodyImageTwo,  bodyImageThree,  bodyImageFour,  bodyImageFive  }
+// Query: *[_type == "post" && $tagSlug in tags[]->slug.current] | order(date desc, _updatedAt desc) {      _id,  _type,  "status": select(_originalId in path("drafts.**") => "draft", "published"),  "title": coalesce(title, "Untitled"),  "slug": slug.current,  excerpt,  epigraph,  imageSource,  coverImage,  "date": coalesce(date, _updatedAt),  publishedAt,  priority,  featured,  "author": select(    defined(author->name) => {      "name": coalesce(author->name, "Anonymous"),      "picture": author->picture    }  ),  "category": select(    defined(category->name) && defined(category->slug.current) => {      "title": category->name,      "slug": category->slug.current    }  ),  // Support both tag.title and category.name during transition  "tags": tags[]->{    "title": coalesce(title, name),    "slug": slug.current  },  "bodyImages": bodyImages[]{ "image": image, epigraph, imageSource },  bodyTextOne,  bodyTextTwo,  bodyTextThree,  bodyTextFour,  bodyTextFive,  bodyImageOne,  bodyImageTwo,  bodyImageThree,  bodyImageFour,  bodyImageFive  }
 export type PostsByTagQueryResult = Array<{
   _id: string;
   _type: "post";
@@ -3425,7 +4593,7 @@ export type PostsByTagQueryResult = Array<{
   } | null;
 }>;
 // Variable: authorQuery
-// Query: *[_type == "author" && slug.current == $slug][0] {    name,    picture,    "posts": *[_type == "post" && author->slug.current == $slug] | order(date desc, _updatedAt desc) {        _id,  _type,  "status": select(_originalId in path("drafts.**") => "draft", "published"),  "title": coalesce(title, "Untitled"),  "slug": slug.current,  excerpt,  epigraph,  imageSource,  coverImage,  // Keep legacy "date" for existing UI; prefer publishedAt elsewhere  "date": coalesce(date, _updatedAt),  publishedAt,  priority,  featured,  // Ensure complete author or nothing  "author": select(    defined(author->name) => {      "name": coalesce(author->name, "Anonymous"),      "picture": author->picture    }  ),  // Category shape your UI expects  "category": select(    defined(category->name) && defined(category->slug.current) => {      "title": category->name,      "slug": category->slug.current    }  ),  // Tags now use tag.title (not name)  "tags": tags[]->{title, "slug": slug.current},  // Body chunks & images  "bodyImages": bodyImages[]{ "image": image, epigraph, imageSource },  bodyTextOne,  bodyTextTwo,  bodyTextThree,  bodyTextFour,  bodyTextFive,  bodyImageOne,  bodyImageTwo,  bodyImageThree,  bodyImageFour,  bodyImageFive    }  }
+// Query: *[_type == "author" && slug.current == $slug][0] {    name,    picture,    "posts": *[_type == "post" && author->slug.current == $slug] | order(date desc, _updatedAt desc) {        _id,  _type,  "status": select(_originalId in path("drafts.**") => "draft", "published"),  "title": coalesce(title, "Untitled"),  "slug": slug.current,  excerpt,  epigraph,  imageSource,  coverImage,  "date": coalesce(date, _updatedAt),  publishedAt,  priority,  featured,  "author": select(    defined(author->name) => {      "name": coalesce(author->name, "Anonymous"),      "picture": author->picture    }  ),  "category": select(    defined(category->name) && defined(category->slug.current) => {      "title": category->name,      "slug": category->slug.current    }  ),  // Support both tag.title and category.name during transition  "tags": tags[]->{    "title": coalesce(title, name),    "slug": slug.current  },  "bodyImages": bodyImages[]{ "image": image, epigraph, imageSource },  bodyTextOne,  bodyTextTwo,  bodyTextThree,  bodyTextFour,  bodyTextFive,  bodyImageOne,  bodyImageTwo,  bodyImageThree,  bodyImageFour,  bodyImageFive    }  }
 export type AuthorQueryResult = {
   name: string | null;
   picture: {
@@ -3679,14 +4847,9 @@ export type AuthorQueryResult = {
 export type AuthorSlugsQueryResult = Array<string | null>;
 // Variable: commentsQuery
 // Query: *[_type == "comment" && post->slug.current == $postSlug && approved == true] | order(_createdAt desc) {    name, email, comment, _createdAt  }
-export type CommentsQueryResult = Array<{
-  name: string | null;
-  email: string | null;
-  comment: string | null;
-  _createdAt: string;
-}>;
+export type CommentsQueryResult = Array<never>;
 // Variable: fourthSectionQuery
-// Query: *[_type == "post" && category->slug.current == $categorySlug] | order(date desc, _updatedAt desc) [0...4] {      _id,  _type,  "status": select(_originalId in path("drafts.**") => "draft", "published"),  "title": coalesce(title, "Untitled"),  "slug": slug.current,  excerpt,  epigraph,  imageSource,  coverImage,  // Keep legacy "date" for existing UI; prefer publishedAt elsewhere  "date": coalesce(date, _updatedAt),  publishedAt,  priority,  featured,  // Ensure complete author or nothing  "author": select(    defined(author->name) => {      "name": coalesce(author->name, "Anonymous"),      "picture": author->picture    }  ),  // Category shape your UI expects  "category": select(    defined(category->name) && defined(category->slug.current) => {      "title": category->name,      "slug": category->slug.current    }  ),  // Tags now use tag.title (not name)  "tags": tags[]->{title, "slug": slug.current},  // Body chunks & images  "bodyImages": bodyImages[]{ "image": image, epigraph, imageSource },  bodyTextOne,  bodyTextTwo,  bodyTextThree,  bodyTextFour,  bodyTextFive,  bodyImageOne,  bodyImageTwo,  bodyImageThree,  bodyImageFour,  bodyImageFive  }
+// Query: *[_type == "post" && category->slug.current == $categorySlug] | order(date desc, _updatedAt desc) [0...4] {      _id,  _type,  "status": select(_originalId in path("drafts.**") => "draft", "published"),  "title": coalesce(title, "Untitled"),  "slug": slug.current,  excerpt,  epigraph,  imageSource,  coverImage,  "date": coalesce(date, _updatedAt),  publishedAt,  priority,  featured,  "author": select(    defined(author->name) => {      "name": coalesce(author->name, "Anonymous"),      "picture": author->picture    }  ),  "category": select(    defined(category->name) && defined(category->slug.current) => {      "title": category->name,      "slug": category->slug.current    }  ),  // Support both tag.title and category.name during transition  "tags": tags[]->{    "title": coalesce(title, name),    "slug": slug.current  },  "bodyImages": bodyImages[]{ "image": image, epigraph, imageSource },  bodyTextOne,  bodyTextTwo,  bodyTextThree,  bodyTextFour,  bodyTextFive,  bodyImageOne,  bodyImageTwo,  bodyImageThree,  bodyImageFour,  bodyImageFive  }
 export type FourthSectionQueryResult = Array<{
   _id: string;
   _type: "post";
@@ -3919,8 +5082,476 @@ export type FourthSectionQueryResult = Array<{
     _type: "image";
   } | null;
 }>;
+// Variable: mostViewedQuery
+// Query: *[_type == "post" && category->slug.current == $categorySlug] | order(coalesce(views7d, 0) desc, publishedAt desc) [0...5] {      _id,  _type,  "status": select(_originalId in path("drafts.**") => "draft", "published"),  "title": coalesce(title, "Untitled"),  "slug": slug.current,  excerpt,  epigraph,  imageSource,  coverImage,  "date": coalesce(date, _updatedAt),  publishedAt,  priority,  featured,  "author": select(    defined(author->name) => {      "name": coalesce(author->name, "Anonymous"),      "picture": author->picture    }  ),  "category": select(    defined(category->name) && defined(category->slug.current) => {      "title": category->name,      "slug": category->slug.current    }  ),  // Support both tag.title and category.name during transition  "tags": tags[]->{    "title": coalesce(title, name),    "slug": slug.current  },  "bodyImages": bodyImages[]{ "image": image, epigraph, imageSource },  bodyTextOne,  bodyTextTwo,  bodyTextThree,  bodyTextFour,  bodyTextFive,  bodyImageOne,  bodyImageTwo,  bodyImageThree,  bodyImageFour,  bodyImageFive  }
+export type MostViewedQueryResult = Array<{
+  _id: string;
+  _type: "post";
+  status: "draft" | "published";
+  title: string | "Untitled";
+  slug: string | null;
+  excerpt: string | null;
+  epigraph: string | null;
+  imageSource: string | null;
+  coverImage: {
+    asset?: {
+      _ref: string;
+      _type: "reference";
+      _weak?: boolean;
+      [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+    };
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    alt?: string;
+    _type: "image";
+  } | null;
+  date: string;
+  publishedAt: string | null;
+  priority: number | null;
+  featured: boolean | null;
+  author: {
+    name: string | "Anonymous";
+    picture: {
+      asset?: {
+        _ref: string;
+        _type: "reference";
+        _weak?: boolean;
+        [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+      };
+      media?: unknown;
+      hotspot?: SanityImageHotspot;
+      crop?: SanityImageCrop;
+      alt?: string;
+      _type: "image";
+    } | null;
+  };
+  category: {
+    title: string | null;
+    slug: string | null;
+  };
+  tags: Array<{
+    title: string | null;
+    slug: string | null;
+  }> | null;
+  bodyImages: Array<{
+    image: {
+      asset?: {
+        _ref: string;
+        _type: "reference";
+        _weak?: boolean;
+        [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+      };
+      media?: unknown;
+      hotspot?: SanityImageHotspot;
+      crop?: SanityImageCrop;
+      _type: "image";
+    } | null;
+    epigraph: string | null;
+    imageSource: string | null;
+  }> | null;
+  bodyTextOne: Array<{
+    children?: Array<{
+      marks?: Array<string>;
+      text?: string;
+      _type: "span";
+      _key: string;
+    }>;
+    style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
+    listItem?: "bullet" | "number";
+    markDefs?: Array<{
+      href?: string;
+      _type: "link";
+      _key: string;
+    }>;
+    level?: number;
+    _type: "block";
+    _key: string;
+  }> | null;
+  bodyTextTwo: Array<{
+    children?: Array<{
+      marks?: Array<string>;
+      text?: string;
+      _type: "span";
+      _key: string;
+    }>;
+    style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
+    listItem?: "bullet" | "number";
+    markDefs?: Array<{
+      href?: string;
+      _type: "link";
+      _key: string;
+    }>;
+    level?: number;
+    _type: "block";
+    _key: string;
+  }> | null;
+  bodyTextThree: Array<{
+    children?: Array<{
+      marks?: Array<string>;
+      text?: string;
+      _type: "span";
+      _key: string;
+    }>;
+    style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
+    listItem?: "bullet" | "number";
+    markDefs?: Array<{
+      href?: string;
+      _type: "link";
+      _key: string;
+    }>;
+    level?: number;
+    _type: "block";
+    _key: string;
+  }> | null;
+  bodyTextFour: Array<{
+    children?: Array<{
+      marks?: Array<string>;
+      text?: string;
+      _type: "span";
+      _key: string;
+    }>;
+    style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
+    listItem?: "bullet" | "number";
+    markDefs?: Array<{
+      href?: string;
+      _type: "link";
+      _key: string;
+    }>;
+    level?: number;
+    _type: "block";
+    _key: string;
+  }> | null;
+  bodyTextFive: Array<{
+    children?: Array<{
+      marks?: Array<string>;
+      text?: string;
+      _type: "span";
+      _key: string;
+    }>;
+    style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
+    listItem?: "bullet" | "number";
+    markDefs?: Array<{
+      href?: string;
+      _type: "link";
+      _key: string;
+    }>;
+    level?: number;
+    _type: "block";
+    _key: string;
+  }> | null;
+  bodyImageOne: {
+    asset?: {
+      _ref: string;
+      _type: "reference";
+      _weak?: boolean;
+      [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+    };
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    alt?: string;
+    epigraph?: string;
+    imageSource?: string;
+    _type: "image";
+  } | null;
+  bodyImageTwo: {
+    asset?: {
+      _ref: string;
+      _type: "reference";
+      _weak?: boolean;
+      [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+    };
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    alt?: string;
+    epigraph?: string;
+    imageSource?: string;
+    _type: "image";
+  } | null;
+  bodyImageThree: {
+    asset?: {
+      _ref: string;
+      _type: "reference";
+      _weak?: boolean;
+      [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+    };
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    alt?: string;
+    epigraph?: string;
+    imageSource?: string;
+    _type: "image";
+  } | null;
+  bodyImageFour: {
+    asset?: {
+      _ref: string;
+      _type: "reference";
+      _weak?: boolean;
+      [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+    };
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    alt?: string;
+    epigraph?: string;
+    imageSource?: string;
+    _type: "image";
+  } | null;
+  bodyImageFive: {
+    asset?: {
+      _ref: string;
+      _type: "reference";
+      _weak?: boolean;
+      [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+    };
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    alt?: string;
+    epigraph?: string;
+    imageSource?: string;
+    _type: "image";
+  } | null;
+}>;
+// Variable: thirdLatestArticleQuery
+// Query: *[_type == "post" && category->slug.current == $categorySlug] | order(date desc, _updatedAt desc) [2...3] {      _id,  _type,  "status": select(_originalId in path("drafts.**") => "draft", "published"),  "title": coalesce(title, "Untitled"),  "slug": slug.current,  excerpt,  epigraph,  imageSource,  coverImage,  "date": coalesce(date, _updatedAt),  publishedAt,  priority,  featured,  "author": select(    defined(author->name) => {      "name": coalesce(author->name, "Anonymous"),      "picture": author->picture    }  ),  "category": select(    defined(category->name) && defined(category->slug.current) => {      "title": category->name,      "slug": category->slug.current    }  ),  // Support both tag.title and category.name during transition  "tags": tags[]->{    "title": coalesce(title, name),    "slug": slug.current  },  "bodyImages": bodyImages[]{ "image": image, epigraph, imageSource },  bodyTextOne,  bodyTextTwo,  bodyTextThree,  bodyTextFour,  bodyTextFive,  bodyImageOne,  bodyImageTwo,  bodyImageThree,  bodyImageFour,  bodyImageFive  }
+export type ThirdLatestArticleQueryResult = Array<{
+  _id: string;
+  _type: "post";
+  status: "draft" | "published";
+  title: string | "Untitled";
+  slug: string | null;
+  excerpt: string | null;
+  epigraph: string | null;
+  imageSource: string | null;
+  coverImage: {
+    asset?: {
+      _ref: string;
+      _type: "reference";
+      _weak?: boolean;
+      [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+    };
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    alt?: string;
+    _type: "image";
+  } | null;
+  date: string;
+  publishedAt: string | null;
+  priority: number | null;
+  featured: boolean | null;
+  author: {
+    name: string | "Anonymous";
+    picture: {
+      asset?: {
+        _ref: string;
+        _type: "reference";
+        _weak?: boolean;
+        [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+      };
+      media?: unknown;
+      hotspot?: SanityImageHotspot;
+      crop?: SanityImageCrop;
+      alt?: string;
+      _type: "image";
+    } | null;
+  };
+  category: {
+    title: string | null;
+    slug: string | null;
+  };
+  tags: Array<{
+    title: string | null;
+    slug: string | null;
+  }> | null;
+  bodyImages: Array<{
+    image: {
+      asset?: {
+        _ref: string;
+        _type: "reference";
+        _weak?: boolean;
+        [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+      };
+      media?: unknown;
+      hotspot?: SanityImageHotspot;
+      crop?: SanityImageCrop;
+      _type: "image";
+    } | null;
+    epigraph: string | null;
+    imageSource: string | null;
+  }> | null;
+  bodyTextOne: Array<{
+    children?: Array<{
+      marks?: Array<string>;
+      text?: string;
+      _type: "span";
+      _key: string;
+    }>;
+    style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
+    listItem?: "bullet" | "number";
+    markDefs?: Array<{
+      href?: string;
+      _type: "link";
+      _key: string;
+    }>;
+    level?: number;
+    _type: "block";
+    _key: string;
+  }> | null;
+  bodyTextTwo: Array<{
+    children?: Array<{
+      marks?: Array<string>;
+      text?: string;
+      _type: "span";
+      _key: string;
+    }>;
+    style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
+    listItem?: "bullet" | "number";
+    markDefs?: Array<{
+      href?: string;
+      _type: "link";
+      _key: string;
+    }>;
+    level?: number;
+    _type: "block";
+    _key: string;
+  }> | null;
+  bodyTextThree: Array<{
+    children?: Array<{
+      marks?: Array<string>;
+      text?: string;
+      _type: "span";
+      _key: string;
+    }>;
+    style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
+    listItem?: "bullet" | "number";
+    markDefs?: Array<{
+      href?: string;
+      _type: "link";
+      _key: string;
+    }>;
+    level?: number;
+    _type: "block";
+    _key: string;
+  }> | null;
+  bodyTextFour: Array<{
+    children?: Array<{
+      marks?: Array<string>;
+      text?: string;
+      _type: "span";
+      _key: string;
+    }>;
+    style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
+    listItem?: "bullet" | "number";
+    markDefs?: Array<{
+      href?: string;
+      _type: "link";
+      _key: string;
+    }>;
+    level?: number;
+    _type: "block";
+    _key: string;
+  }> | null;
+  bodyTextFive: Array<{
+    children?: Array<{
+      marks?: Array<string>;
+      text?: string;
+      _type: "span";
+      _key: string;
+    }>;
+    style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
+    listItem?: "bullet" | "number";
+    markDefs?: Array<{
+      href?: string;
+      _type: "link";
+      _key: string;
+    }>;
+    level?: number;
+    _type: "block";
+    _key: string;
+  }> | null;
+  bodyImageOne: {
+    asset?: {
+      _ref: string;
+      _type: "reference";
+      _weak?: boolean;
+      [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+    };
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    alt?: string;
+    epigraph?: string;
+    imageSource?: string;
+    _type: "image";
+  } | null;
+  bodyImageTwo: {
+    asset?: {
+      _ref: string;
+      _type: "reference";
+      _weak?: boolean;
+      [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+    };
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    alt?: string;
+    epigraph?: string;
+    imageSource?: string;
+    _type: "image";
+  } | null;
+  bodyImageThree: {
+    asset?: {
+      _ref: string;
+      _type: "reference";
+      _weak?: boolean;
+      [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+    };
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    alt?: string;
+    epigraph?: string;
+    imageSource?: string;
+    _type: "image";
+  } | null;
+  bodyImageFour: {
+    asset?: {
+      _ref: string;
+      _type: "reference";
+      _weak?: boolean;
+      [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+    };
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    alt?: string;
+    epigraph?: string;
+    imageSource?: string;
+    _type: "image";
+  } | null;
+  bodyImageFive: {
+    asset?: {
+      _ref: string;
+      _type: "reference";
+      _weak?: boolean;
+      [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+    };
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    alt?: string;
+    epigraph?: string;
+    imageSource?: string;
+    _type: "image";
+  } | null;
+}>;
 // Variable: thirdSectionQuery
-// Query: *[_type == "post" && category->slug.current == $categorySlug] | order(date desc, _updatedAt desc) [0...4] {      _id,  _type,  "status": select(_originalId in path("drafts.**") => "draft", "published"),  "title": coalesce(title, "Untitled"),  "slug": slug.current,  excerpt,  epigraph,  imageSource,  coverImage,  // Keep legacy "date" for existing UI; prefer publishedAt elsewhere  "date": coalesce(date, _updatedAt),  publishedAt,  priority,  featured,  // Ensure complete author or nothing  "author": select(    defined(author->name) => {      "name": coalesce(author->name, "Anonymous"),      "picture": author->picture    }  ),  // Category shape your UI expects  "category": select(    defined(category->name) && defined(category->slug.current) => {      "title": category->name,      "slug": category->slug.current    }  ),  // Tags now use tag.title (not name)  "tags": tags[]->{title, "slug": slug.current},  // Body chunks & images  "bodyImages": bodyImages[]{ "image": image, epigraph, imageSource },  bodyTextOne,  bodyTextTwo,  bodyTextThree,  bodyTextFour,  bodyTextFive,  bodyImageOne,  bodyImageTwo,  bodyImageThree,  bodyImageFour,  bodyImageFive  }
+// Query: *[_type == "post" && category->slug.current == $categorySlug] | order(date desc, _updatedAt desc) [0...4] {      _id,  _type,  "status": select(_originalId in path("drafts.**") => "draft", "published"),  "title": coalesce(title, "Untitled"),  "slug": slug.current,  excerpt,  epigraph,  imageSource,  coverImage,  "date": coalesce(date, _updatedAt),  publishedAt,  priority,  featured,  "author": select(    defined(author->name) => {      "name": coalesce(author->name, "Anonymous"),      "picture": author->picture    }  ),  "category": select(    defined(category->name) && defined(category->slug.current) => {      "title": category->name,      "slug": category->slug.current    }  ),  // Support both tag.title and category.name during transition  "tags": tags[]->{    "title": coalesce(title, name),    "slug": slug.current  },  "bodyImages": bodyImages[]{ "image": image, epigraph, imageSource },  bodyTextOne,  bodyTextTwo,  bodyTextThree,  bodyTextFour,  bodyTextFive,  bodyImageOne,  bodyImageTwo,  bodyImageThree,  bodyImageFour,  bodyImageFive  }
 export type ThirdSectionQueryResult = Array<{
   _id: string;
   _type: "post";
@@ -4154,7 +5785,7 @@ export type ThirdSectionQueryResult = Array<{
   } | null;
 }>;
 // Variable: mostReadQuery
-// Query: *[_type == "post"] | order(date desc, _updatedAt desc) [0...5] {      _id,  _type,  "status": select(_originalId in path("drafts.**") => "draft", "published"),  "title": coalesce(title, "Untitled"),  "slug": slug.current,  excerpt,  epigraph,  imageSource,  coverImage,  // Keep legacy "date" for existing UI; prefer publishedAt elsewhere  "date": coalesce(date, _updatedAt),  publishedAt,  priority,  featured,  // Ensure complete author or nothing  "author": select(    defined(author->name) => {      "name": coalesce(author->name, "Anonymous"),      "picture": author->picture    }  ),  // Category shape your UI expects  "category": select(    defined(category->name) && defined(category->slug.current) => {      "title": category->name,      "slug": category->slug.current    }  ),  // Tags now use tag.title (not name)  "tags": tags[]->{title, "slug": slug.current},  // Body chunks & images  "bodyImages": bodyImages[]{ "image": image, epigraph, imageSource },  bodyTextOne,  bodyTextTwo,  bodyTextThree,  bodyTextFour,  bodyTextFive,  bodyImageOne,  bodyImageTwo,  bodyImageThree,  bodyImageFour,  bodyImageFive  }
+// Query: *[_type == "post"] | order(date desc, _updatedAt desc) [0...5] {      _id,  _type,  "status": select(_originalId in path("drafts.**") => "draft", "published"),  "title": coalesce(title, "Untitled"),  "slug": slug.current,  excerpt,  epigraph,  imageSource,  coverImage,  "date": coalesce(date, _updatedAt),  publishedAt,  priority,  featured,  "author": select(    defined(author->name) => {      "name": coalesce(author->name, "Anonymous"),      "picture": author->picture    }  ),  "category": select(    defined(category->name) && defined(category->slug.current) => {      "title": category->name,      "slug": category->slug.current    }  ),  // Support both tag.title and category.name during transition  "tags": tags[]->{    "title": coalesce(title, name),    "slug": slug.current  },  "bodyImages": bodyImages[]{ "image": image, epigraph, imageSource },  bodyTextOne,  bodyTextTwo,  bodyTextThree,  bodyTextFour,  bodyTextFive,  bodyImageOne,  bodyImageTwo,  bodyImageThree,  bodyImageFour,  bodyImageFive  }
 export type MostReadQueryResult = Array<{
   _id: string;
   _type: "post";
@@ -4388,7 +6019,7 @@ export type MostReadQueryResult = Array<{
   } | null;
 }>;
 // Variable: sixthSectionQuery
-// Query: *[_type == "post" && category->slug.current == $categorySlug] | order(date desc, _updatedAt desc) [0...20] {      _id,  _type,  "status": select(_originalId in path("drafts.**") => "draft", "published"),  "title": coalesce(title, "Untitled"),  "slug": slug.current,  excerpt,  epigraph,  imageSource,  coverImage,  // Keep legacy "date" for existing UI; prefer publishedAt elsewhere  "date": coalesce(date, _updatedAt),  publishedAt,  priority,  featured,  // Ensure complete author or nothing  "author": select(    defined(author->name) => {      "name": coalesce(author->name, "Anonymous"),      "picture": author->picture    }  ),  // Category shape your UI expects  "category": select(    defined(category->name) && defined(category->slug.current) => {      "title": category->name,      "slug": category->slug.current    }  ),  // Tags now use tag.title (not name)  "tags": tags[]->{title, "slug": slug.current},  // Body chunks & images  "bodyImages": bodyImages[]{ "image": image, epigraph, imageSource },  bodyTextOne,  bodyTextTwo,  bodyTextThree,  bodyTextFour,  bodyTextFive,  bodyImageOne,  bodyImageTwo,  bodyImageThree,  bodyImageFour,  bodyImageFive  }
+// Query: *[_type == "post" && category->slug.current == $categorySlug] | order(date desc, _updatedAt desc) [0...20] {      _id,  _type,  "status": select(_originalId in path("drafts.**") => "draft", "published"),  "title": coalesce(title, "Untitled"),  "slug": slug.current,  excerpt,  epigraph,  imageSource,  coverImage,  "date": coalesce(date, _updatedAt),  publishedAt,  priority,  featured,  "author": select(    defined(author->name) => {      "name": coalesce(author->name, "Anonymous"),      "picture": author->picture    }  ),  "category": select(    defined(category->name) && defined(category->slug.current) => {      "title": category->name,      "slug": category->slug.current    }  ),  // Support both tag.title and category.name during transition  "tags": tags[]->{    "title": coalesce(title, name),    "slug": slug.current  },  "bodyImages": bodyImages[]{ "image": image, epigraph, imageSource },  bodyTextOne,  bodyTextTwo,  bodyTextThree,  bodyTextFour,  bodyTextFive,  bodyImageOne,  bodyImageTwo,  bodyImageThree,  bodyImageFour,  bodyImageFive  }
 export type SixthSectionQueryResult = Array<{
   _id: string;
   _type: "post";
@@ -4622,7 +6253,7 @@ export type SixthSectionQueryResult = Array<{
   } | null;
 }>;
 // Variable: searchAllQuery
-// Query: {  "posts": *[_type == "post" && status == "published" && defined(publishedAt) && publishedAt <= now() && (  title match $term ||  excerpt match $term ||  epigraph match $term ||  pt::text(bodyRich) match $term ||  pt::text(bodyTextOne) match $term ||  pt::text(bodyTextTwo) match $term ||  pt::text(bodyTextThree) match $term ||  pt::text(bodyTextFour) match $term ||  pt::text(bodyTextFive) match $term ||  category->name match $term ||  tags[]->title match $term ||  author->name match $term)] | order(publishedAt desc) [0...$postLimit] {      _id,  _type,  "status": select(_originalId in path("drafts.**") => "draft", "published"),  "title": coalesce(title, "Untitled"),  "slug": slug.current,  excerpt,  epigraph,  imageSource,  coverImage,  // Keep legacy "date" for existing UI; prefer publishedAt elsewhere  "date": coalesce(date, _updatedAt),  publishedAt,  priority,  featured,  // Ensure complete author or nothing  "author": select(    defined(author->name) => {      "name": coalesce(author->name, "Anonymous"),      "picture": author->picture    }  ),  // Category shape your UI expects  "category": select(    defined(category->name) && defined(category->slug.current) => {      "title": category->name,      "slug": category->slug.current    }  ),  // Tags now use tag.title (not name)  "tags": tags[]->{title, "slug": slug.current},  // Body chunks & images  "bodyImages": bodyImages[]{ "image": image, epigraph, imageSource },  bodyTextOne,  bodyTextTwo,  bodyTextThree,  bodyTextFour,  bodyTextFive,  bodyImageOne,  bodyImageTwo,  bodyImageThree,  bodyImageFour,  bodyImageFive  },  "tags": *[_type == "tag" && (    title match $term ||    description match $term ||    $term in aliases  )] | order(order asc, title asc) [0...$tagLimit] {    _id,    title,    "slug": slug.current,    description,    emoji,    color,    featured  },  "topics": *[_type == "topic" && (    title match $term ||    description match $term  )] | order(title asc) [0...$topicLimit] {    _id,    title,    "slug": slug.current,    kind,    description,    image  }}
+// Query: {  "posts": *[_type == "post" && status == "published" && defined(publishedAt) && publishedAt <= now() && (  title match $term ||  excerpt match $term ||  epigraph match $term ||  pt::text(bodyRich) match $term ||  pt::text(bodyTextOne) match $term ||  pt::text(bodyTextTwo) match $term ||  pt::text(bodyTextThree) match $term ||  pt::text(bodyTextFour) match $term ||  pt::text(bodyTextFive) match $term ||  category->name match $term ||  coalesce(tags[]->title, tags[]->name) match $term ||   // <— supports both  author->name match $term)] | order(publishedAt desc) [0...$postLimit] {      _id,  _type,  "status": select(_originalId in path("drafts.**") => "draft", "published"),  "title": coalesce(title, "Untitled"),  "slug": slug.current,  excerpt,  epigraph,  imageSource,  coverImage,  "date": coalesce(date, _updatedAt),  publishedAt,  priority,  featured,  "author": select(    defined(author->name) => {      "name": coalesce(author->name, "Anonymous"),      "picture": author->picture    }  ),  "category": select(    defined(category->name) && defined(category->slug.current) => {      "title": category->name,      "slug": category->slug.current    }  ),  // Support both tag.title and category.name during transition  "tags": tags[]->{    "title": coalesce(title, name),    "slug": slug.current  },  "bodyImages": bodyImages[]{ "image": image, epigraph, imageSource },  bodyTextOne,  bodyTextTwo,  bodyTextThree,  bodyTextFour,  bodyTextFive,  bodyImageOne,  bodyImageTwo,  bodyImageThree,  bodyImageFour,  bodyImageFive  },  "tags": *[_type == "tag" && (    title match $term ||    description match $term ||    $term in aliases  )] | order(order asc, title asc) [0...$tagLimit] {    _id,    title,    "slug": slug.current,    description,    emoji,    color,    featured,    views  },  "topics": *[_type == "topic" && (    title match $term ||    description match $term  )] | order(title asc) [0...$topicLimit] {    _id,    title,    "slug": slug.current,    kind,    description,    image  }}
 export type SearchAllQueryResult = {
   posts: Array<{
     _id: string;
@@ -4864,6 +6495,7 @@ export type SearchAllQueryResult = {
     emoji: string | null;
     color: string | null;
     featured: boolean | null;
+    views: number | null;
   }>;
   topics: Array<{
     _id: string;
@@ -4886,30 +6518,367 @@ export type SearchAllQueryResult = {
     } | null;
   }>;
 };
+// Variable: eighthSectionQuery
+// Query: *[_type == "category" && slug.current in $categorySlugs] {    "slug": slug.current,    "name": name,    "posts": *[_type == "post" && category->slug.current == slug.current] | order(date desc, _updatedAt desc) [0...3] {        _id,  _type,  "status": select(_originalId in path("drafts.**") => "draft", "published"),  "title": coalesce(title, "Untitled"),  "slug": slug.current,  excerpt,  epigraph,  imageSource,  coverImage,  "date": coalesce(date, _updatedAt),  publishedAt,  priority,  featured,  "author": select(    defined(author->name) => {      "name": coalesce(author->name, "Anonymous"),      "picture": author->picture    }  ),  "category": select(    defined(category->name) && defined(category->slug.current) => {      "title": category->name,      "slug": category->slug.current    }  ),  // Support both tag.title and category.name during transition  "tags": tags[]->{    "title": coalesce(title, name),    "slug": slug.current  },  "bodyImages": bodyImages[]{ "image": image, epigraph, imageSource },  bodyTextOne,  bodyTextTwo,  bodyTextThree,  bodyTextFour,  bodyTextFive,  bodyImageOne,  bodyImageTwo,  bodyImageThree,  bodyImageFour,  bodyImageFive    }  }
+export type EighthSectionQueryResult = Array<{
+  slug: string | null;
+  name: string | null;
+  posts: Array<{
+    _id: string;
+    _type: "post";
+    status: "draft" | "published";
+    title: string | "Untitled";
+    slug: string | null;
+    excerpt: string | null;
+    epigraph: string | null;
+    imageSource: string | null;
+    coverImage: {
+      asset?: {
+        _ref: string;
+        _type: "reference";
+        _weak?: boolean;
+        [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+      };
+      media?: unknown;
+      hotspot?: SanityImageHotspot;
+      crop?: SanityImageCrop;
+      alt?: string;
+      _type: "image";
+    } | null;
+    date: string;
+    publishedAt: string | null;
+    priority: number | null;
+    featured: boolean | null;
+    author: {
+      name: string | "Anonymous";
+      picture: {
+        asset?: {
+          _ref: string;
+          _type: "reference";
+          _weak?: boolean;
+          [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+        };
+        media?: unknown;
+        hotspot?: SanityImageHotspot;
+        crop?: SanityImageCrop;
+        alt?: string;
+        _type: "image";
+      } | null;
+    };
+    category: {
+      title: string | null;
+      slug: string | null;
+    };
+    tags: Array<{
+      title: string | null;
+      slug: string | null;
+    }> | null;
+    bodyImages: Array<{
+      image: {
+        asset?: {
+          _ref: string;
+          _type: "reference";
+          _weak?: boolean;
+          [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+        };
+        media?: unknown;
+        hotspot?: SanityImageHotspot;
+        crop?: SanityImageCrop;
+        _type: "image";
+      } | null;
+      epigraph: string | null;
+      imageSource: string | null;
+    }> | null;
+    bodyTextOne: Array<{
+      children?: Array<{
+        marks?: Array<string>;
+        text?: string;
+        _type: "span";
+        _key: string;
+      }>;
+      style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
+      listItem?: "bullet" | "number";
+      markDefs?: Array<{
+        href?: string;
+        _type: "link";
+        _key: string;
+      }>;
+      level?: number;
+      _type: "block";
+      _key: string;
+    }> | null;
+    bodyTextTwo: Array<{
+      children?: Array<{
+        marks?: Array<string>;
+        text?: string;
+        _type: "span";
+        _key: string;
+      }>;
+      style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
+      listItem?: "bullet" | "number";
+      markDefs?: Array<{
+        href?: string;
+        _type: "link";
+        _key: string;
+      }>;
+      level?: number;
+      _type: "block";
+      _key: string;
+    }> | null;
+    bodyTextThree: Array<{
+      children?: Array<{
+        marks?: Array<string>;
+        text?: string;
+        _type: "span";
+        _key: string;
+      }>;
+      style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
+      listItem?: "bullet" | "number";
+      markDefs?: Array<{
+        href?: string;
+        _type: "link";
+        _key: string;
+      }>;
+      level?: number;
+      _type: "block";
+      _key: string;
+    }> | null;
+    bodyTextFour: Array<{
+      children?: Array<{
+        marks?: Array<string>;
+        text?: string;
+        _type: "span";
+        _key: string;
+      }>;
+      style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
+      listItem?: "bullet" | "number";
+      markDefs?: Array<{
+        href?: string;
+        _type: "link";
+        _key: string;
+      }>;
+      level?: number;
+      _type: "block";
+      _key: string;
+    }> | null;
+    bodyTextFive: Array<{
+      children?: Array<{
+        marks?: Array<string>;
+        text?: string;
+        _type: "span";
+        _key: string;
+      }>;
+      style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
+      listItem?: "bullet" | "number";
+      markDefs?: Array<{
+        href?: string;
+        _type: "link";
+        _key: string;
+      }>;
+      level?: number;
+      _type: "block";
+      _key: string;
+    }> | null;
+    bodyImageOne: {
+      asset?: {
+        _ref: string;
+        _type: "reference";
+        _weak?: boolean;
+        [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+      };
+      media?: unknown;
+      hotspot?: SanityImageHotspot;
+      crop?: SanityImageCrop;
+      alt?: string;
+      epigraph?: string;
+      imageSource?: string;
+      _type: "image";
+    } | null;
+    bodyImageTwo: {
+      asset?: {
+        _ref: string;
+        _type: "reference";
+        _weak?: boolean;
+        [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+      };
+      media?: unknown;
+      hotspot?: SanityImageHotspot;
+      crop?: SanityImageCrop;
+      alt?: string;
+      epigraph?: string;
+      imageSource?: string;
+      _type: "image";
+    } | null;
+    bodyImageThree: {
+      asset?: {
+        _ref: string;
+        _type: "reference";
+        _weak?: boolean;
+        [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+      };
+      media?: unknown;
+      hotspot?: SanityImageHotspot;
+      crop?: SanityImageCrop;
+      alt?: string;
+      epigraph?: string;
+      imageSource?: string;
+      _type: "image";
+    } | null;
+    bodyImageFour: {
+      asset?: {
+        _ref: string;
+        _type: "reference";
+        _weak?: boolean;
+        [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+      };
+      media?: unknown;
+      hotspot?: SanityImageHotspot;
+      crop?: SanityImageCrop;
+      alt?: string;
+      epigraph?: string;
+      imageSource?: string;
+      _type: "image";
+    } | null;
+    bodyImageFive: {
+      asset?: {
+        _ref: string;
+        _type: "reference";
+        _weak?: boolean;
+        [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+      };
+      media?: unknown;
+      hotspot?: SanityImageHotspot;
+      crop?: SanityImageCrop;
+      alt?: string;
+      epigraph?: string;
+      imageSource?: string;
+      _type: "image";
+    } | null;
+  }>;
+}>;
+// Variable: secondSectionQuery
+// Query: *[_type == "category" && slug.current in $categorySlugs] {    "slug": slug.current,    "name": name,    "thirdMostViewed": *[_type == "post" && category->slug.current == slug.current] | order(coalesce(views7d, 0) desc, publishedAt desc) [0...5] {      _id, title, "slug": slug.current, excerpt, coverImage, "date": coalesce(date, _updatedAt), publishedAt,      "author": select(        defined(author->name) => {          "name": coalesce(author->name, "Anonymous"),          "picture": author->picture        }      ),      "category": select(        defined(category->name) && defined(category->slug.current) => {          "title": category->name,          "slug": category->slug.current        }      ),      views7d    },    "thirdLatest": *[_type == "post" && category->slug.current == slug.current] | order(publishedAt desc, _updatedAt desc) [0...5] {      _id, title, "slug": slug.current, excerpt, coverImage, "date": coalesce(date, _updatedAt), publishedAt,      "author": select(        defined(author->name) => {          "name": coalesce(author->name, "Anonymous"),          "picture": author->picture        }      ),      "category": select(        defined(category->name) && defined(category->slug.current) => {          "title": category->name,          "slug": category->slug.current        }      ),      views7d    }  }
+export type SecondSectionQueryResult = Array<{
+  slug: string | null;
+  name: string | null;
+  thirdMostViewed: Array<{
+    _id: string;
+    title: string | null;
+    slug: string | null;
+    excerpt: string | null;
+    coverImage: {
+      asset?: {
+        _ref: string;
+        _type: "reference";
+        _weak?: boolean;
+        [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+      };
+      media?: unknown;
+      hotspot?: SanityImageHotspot;
+      crop?: SanityImageCrop;
+      alt?: string;
+      _type: "image";
+    } | null;
+    date: string;
+    publishedAt: string | null;
+    author: {
+      name: string | "Anonymous";
+      picture: {
+        asset?: {
+          _ref: string;
+          _type: "reference";
+          _weak?: boolean;
+          [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+        };
+        media?: unknown;
+        hotspot?: SanityImageHotspot;
+        crop?: SanityImageCrop;
+        alt?: string;
+        _type: "image";
+      } | null;
+    };
+    category: {
+      title: string | null;
+      slug: string | null;
+    };
+    views7d: number | null;
+  }>;
+  thirdLatest: Array<{
+    _id: string;
+    title: string | null;
+    slug: string | null;
+    excerpt: string | null;
+    coverImage: {
+      asset?: {
+        _ref: string;
+        _type: "reference";
+        _weak?: boolean;
+        [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+      };
+      media?: unknown;
+      hotspot?: SanityImageHotspot;
+      crop?: SanityImageCrop;
+      alt?: string;
+      _type: "image";
+    } | null;
+    date: string;
+    publishedAt: string | null;
+    author: {
+      name: string | "Anonymous";
+      picture: {
+        asset?: {
+          _ref: string;
+          _type: "reference";
+          _weak?: boolean;
+          [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+        };
+        media?: unknown;
+        hotspot?: SanityImageHotspot;
+        crop?: SanityImageCrop;
+        alt?: string;
+        _type: "image";
+      } | null;
+    };
+    category: {
+      title: string | null;
+      slug: string | null;
+    };
+    views7d: number | null;
+  }>;
+}>;
 
 // Query TypeMap
 import "@sanity/client";
 declare module "@sanity/client" {
   interface SanityQueries {
     "*[_type == \"settings\"][0]": SettingsQueryResult;
-    "\n  *[_type == \"post\" && defined(slug.current)] | order(date desc, _updatedAt desc) [0] {\n    \n  _id,\n  _type,\n  \"status\": select(_originalId in path(\"drafts.**\") => \"draft\", \"published\"),\n  \"title\": coalesce(title, \"Untitled\"),\n  \"slug\": slug.current,\n  excerpt,\n  epigraph,\n  imageSource,\n  coverImage,\n  // Keep legacy \"date\" for existing UI; prefer publishedAt elsewhere\n  \"date\": coalesce(date, _updatedAt),\n  publishedAt,\n  priority,\n  featured,\n\n  // Ensure complete author or nothing\n  \"author\": select(\n    defined(author->name) => {\n      \"name\": coalesce(author->name, \"Anonymous\"),\n      \"picture\": author->picture\n    }\n  ),\n\n  // Category shape your UI expects\n  \"category\": select(\n    defined(category->name) && defined(category->slug.current) => {\n      \"title\": category->name,\n      \"slug\": category->slug.current\n    }\n  ),\n\n  // Tags now use tag.title (not name)\n  \"tags\": tags[]->{title, \"slug\": slug.current},\n\n  // Body chunks & images\n  \"bodyImages\": bodyImages[]{ \"image\": image, epigraph, imageSource },\n  bodyTextOne,\n  bodyTextTwo,\n  bodyTextThree,\n  bodyTextFour,\n  bodyTextFive,\n  bodyImageOne,\n  bodyImageTwo,\n  bodyImageThree,\n  bodyImageFour,\n  bodyImageFive\n\n  }\n": HeroQueryResult;
-    "\n  *[_type == \"post\" && _id != $skip && defined(slug.current)] | order(date desc, _updatedAt desc) [0...$limit] {\n    \n  _id,\n  _type,\n  \"status\": select(_originalId in path(\"drafts.**\") => \"draft\", \"published\"),\n  \"title\": coalesce(title, \"Untitled\"),\n  \"slug\": slug.current,\n  excerpt,\n  epigraph,\n  imageSource,\n  coverImage,\n  // Keep legacy \"date\" for existing UI; prefer publishedAt elsewhere\n  \"date\": coalesce(date, _updatedAt),\n  publishedAt,\n  priority,\n  featured,\n\n  // Ensure complete author or nothing\n  \"author\": select(\n    defined(author->name) => {\n      \"name\": coalesce(author->name, \"Anonymous\"),\n      \"picture\": author->picture\n    }\n  ),\n\n  // Category shape your UI expects\n  \"category\": select(\n    defined(category->name) && defined(category->slug.current) => {\n      \"title\": category->name,\n      \"slug\": category->slug.current\n    }\n  ),\n\n  // Tags now use tag.title (not name)\n  \"tags\": tags[]->{title, \"slug\": slug.current},\n\n  // Body chunks & images\n  \"bodyImages\": bodyImages[]{ \"image\": image, epigraph, imageSource },\n  bodyTextOne,\n  bodyTextTwo,\n  bodyTextThree,\n  bodyTextFour,\n  bodyTextFive,\n  bodyImageOne,\n  bodyImageTwo,\n  bodyImageThree,\n  bodyImageFour,\n  bodyImageFive\n\n  }\n": MoreStoriesQueryResult;
-    "\n  *[_type == \"post\" && slug.current == $slug] [0] {\n    \n  _id,\n  _type,\n  \"status\": select(_originalId in path(\"drafts.**\") => \"draft\", \"published\"),\n  \"title\": coalesce(title, \"Untitled\"),\n  \"slug\": slug.current,\n  excerpt,\n  epigraph,\n  imageSource,\n  coverImage,\n  // Keep legacy \"date\" for existing UI; prefer publishedAt elsewhere\n  \"date\": coalesce(date, _updatedAt),\n  publishedAt,\n  priority,\n  featured,\n\n  // Ensure complete author or nothing\n  \"author\": select(\n    defined(author->name) => {\n      \"name\": coalesce(author->name, \"Anonymous\"),\n      \"picture\": author->picture\n    }\n  ),\n\n  // Category shape your UI expects\n  \"category\": select(\n    defined(category->name) && defined(category->slug.current) => {\n      \"title\": category->name,\n      \"slug\": category->slug.current\n    }\n  ),\n\n  // Tags now use tag.title (not name)\n  \"tags\": tags[]->{title, \"slug\": slug.current},\n\n  // Body chunks & images\n  \"bodyImages\": bodyImages[]{ \"image\": image, epigraph, imageSource },\n  bodyTextOne,\n  bodyTextTwo,\n  bodyTextThree,\n  bodyTextFour,\n  bodyTextFive,\n  bodyImageOne,\n  bodyImageTwo,\n  bodyImageThree,\n  bodyImageFour,\n  bodyImageFive\n\n  }\n": PostQueryResult;
-    "\n  *[_type == \"post\"] | order(date desc, _updatedAt desc) {\n    \n  _id,\n  _type,\n  \"status\": select(_originalId in path(\"drafts.**\") => \"draft\", \"published\"),\n  \"title\": coalesce(title, \"Untitled\"),\n  \"slug\": slug.current,\n  excerpt,\n  epigraph,\n  imageSource,\n  coverImage,\n  // Keep legacy \"date\" for existing UI; prefer publishedAt elsewhere\n  \"date\": coalesce(date, _updatedAt),\n  publishedAt,\n  priority,\n  featured,\n\n  // Ensure complete author or nothing\n  \"author\": select(\n    defined(author->name) => {\n      \"name\": coalesce(author->name, \"Anonymous\"),\n      \"picture\": author->picture\n    }\n  ),\n\n  // Category shape your UI expects\n  \"category\": select(\n    defined(category->name) && defined(category->slug.current) => {\n      \"title\": category->name,\n      \"slug\": category->slug.current\n    }\n  ),\n\n  // Tags now use tag.title (not name)\n  \"tags\": tags[]->{title, \"slug\": slug.current},\n\n  // Body chunks & images\n  \"bodyImages\": bodyImages[]{ \"image\": image, epigraph, imageSource },\n  bodyTextOne,\n  bodyTextTwo,\n  bodyTextThree,\n  bodyTextFour,\n  bodyTextFive,\n  bodyImageOne,\n  bodyImageTwo,\n  bodyImageThree,\n  bodyImageFour,\n  bodyImageFive\n\n  }\n": IndexQueryResult;
-    "\n{\n  \"post\": *[_type == \"post\" && slug.current == $slug] | order(_updatedAt desc) [0] {\n    \n  _id,\n  _type,\n  \"status\": select(_originalId in path(\"drafts.**\") => \"draft\", \"published\"),\n  \"title\": coalesce(title, \"Untitled\"),\n  \"slug\": slug.current,\n  excerpt,\n  epigraph,\n  imageSource,\n  coverImage,\n  // Keep legacy \"date\" for existing UI; prefer publishedAt elsewhere\n  \"date\": coalesce(date, _updatedAt),\n  publishedAt,\n  priority,\n  featured,\n\n  // Ensure complete author or nothing\n  \"author\": select(\n    defined(author->name) => {\n      \"name\": coalesce(author->name, \"Anonymous\"),\n      \"picture\": author->picture\n    }\n  ),\n\n  // Category shape your UI expects\n  \"category\": select(\n    defined(category->name) && defined(category->slug.current) => {\n      \"title\": category->name,\n      \"slug\": category->slug.current\n    }\n  ),\n\n  // Tags now use tag.title (not name)\n  \"tags\": tags[]->{title, \"slug\": slug.current},\n\n  // Body chunks & images\n  \"bodyImages\": bodyImages[]{ \"image\": image, epigraph, imageSource },\n  bodyTextOne,\n  bodyTextTwo,\n  bodyTextThree,\n  bodyTextFour,\n  bodyTextFive,\n  bodyImageOne,\n  bodyImageTwo,\n  bodyImageThree,\n  bodyImageFour,\n  bodyImageFive\n\n  },\n  \"latestNews\": *[_type == \"post\" && slug.current != $slug] | order(date desc, _updatedAt desc) [0...6] {\n    \n  _id,\n  _type,\n  \"status\": select(_originalId in path(\"drafts.**\") => \"draft\", \"published\"),\n  \"title\": coalesce(title, \"Untitled\"),\n  \"slug\": slug.current,\n  excerpt,\n  epigraph,\n  imageSource,\n  coverImage,\n  // Keep legacy \"date\" for existing UI; prefer publishedAt elsewhere\n  \"date\": coalesce(date, _updatedAt),\n  publishedAt,\n  priority,\n  featured,\n\n  // Ensure complete author or nothing\n  \"author\": select(\n    defined(author->name) => {\n      \"name\": coalesce(author->name, \"Anonymous\"),\n      \"picture\": author->picture\n    }\n  ),\n\n  // Category shape your UI expects\n  \"category\": select(\n    defined(category->name) && defined(category->slug.current) => {\n      \"title\": category->name,\n      \"slug\": category->slug.current\n    }\n  ),\n\n  // Tags now use tag.title (not name)\n  \"tags\": tags[]->{title, \"slug\": slug.current},\n\n  // Body chunks & images\n  \"bodyImages\": bodyImages[]{ \"image\": image, epigraph, imageSource },\n  bodyTextOne,\n  bodyTextTwo,\n  bodyTextThree,\n  bodyTextFour,\n  bodyTextFive,\n  bodyImageOne,\n  bodyImageTwo,\n  bodyImageThree,\n  bodyImageFour,\n  bodyImageFive\n\n  },\n  \"morePosts\": *[_type == \"post\" && slug.current != $slug] | order(date desc, _updatedAt desc) [4...8] {\n    \n  _id,\n  _type,\n  \"status\": select(_originalId in path(\"drafts.**\") => \"draft\", \"published\"),\n  \"title\": coalesce(title, \"Untitled\"),\n  \"slug\": slug.current,\n  excerpt,\n  epigraph,\n  imageSource,\n  coverImage,\n  // Keep legacy \"date\" for existing UI; prefer publishedAt elsewhere\n  \"date\": coalesce(date, _updatedAt),\n  publishedAt,\n  priority,\n  featured,\n\n  // Ensure complete author or nothing\n  \"author\": select(\n    defined(author->name) => {\n      \"name\": coalesce(author->name, \"Anonymous\"),\n      \"picture\": author->picture\n    }\n  ),\n\n  // Category shape your UI expects\n  \"category\": select(\n    defined(category->name) && defined(category->slug.current) => {\n      \"title\": category->name,\n      \"slug\": category->slug.current\n    }\n  ),\n\n  // Tags now use tag.title (not name)\n  \"tags\": tags[]->{title, \"slug\": slug.current},\n\n  // Body chunks & images\n  \"bodyImages\": bodyImages[]{ \"image\": image, epigraph, imageSource },\n  bodyTextOne,\n  bodyTextTwo,\n  bodyTextThree,\n  bodyTextFour,\n  bodyTextFive,\n  bodyImageOne,\n  bodyImageTwo,\n  bodyImageThree,\n  bodyImageFour,\n  bodyImageFive\n\n  },\n  \"nextArticles\": *[_type == \"post\" && slug.current != $slug] | order(date desc, _updatedAt desc) [8...11] {\n    \n  _id,\n  _type,\n  \"status\": select(_originalId in path(\"drafts.**\") => \"draft\", \"published\"),\n  \"title\": coalesce(title, \"Untitled\"),\n  \"slug\": slug.current,\n  excerpt,\n  epigraph,\n  imageSource,\n  coverImage,\n  // Keep legacy \"date\" for existing UI; prefer publishedAt elsewhere\n  \"date\": coalesce(date, _updatedAt),\n  publishedAt,\n  priority,\n  featured,\n\n  // Ensure complete author or nothing\n  \"author\": select(\n    defined(author->name) => {\n      \"name\": coalesce(author->name, \"Anonymous\"),\n      \"picture\": author->picture\n    }\n  ),\n\n  // Category shape your UI expects\n  \"category\": select(\n    defined(category->name) && defined(category->slug.current) => {\n      \"title\": category->name,\n      \"slug\": category->slug.current\n    }\n  ),\n\n  // Tags now use tag.title (not name)\n  \"tags\": tags[]->{title, \"slug\": slug.current},\n\n  // Body chunks & images\n  \"bodyImages\": bodyImages[]{ \"image\": image, epigraph, imageSource },\n  bodyTextOne,\n  bodyTextTwo,\n  bodyTextThree,\n  bodyTextFour,\n  bodyTextFive,\n  bodyImageOne,\n  bodyImageTwo,\n  bodyImageThree,\n  bodyImageFour,\n  bodyImageFive\n\n  }\n}\n": PostQueryWithRelatedResult;
+    "\n  *[_type == \"post\" && defined(slug.current)] | order(date desc, _updatedAt desc) [0] {\n    \n  _id,\n  _type,\n  \"status\": select(_originalId in path(\"drafts.**\") => \"draft\", \"published\"),\n  \"title\": coalesce(title, \"Untitled\"),\n  \"slug\": slug.current,\n  excerpt,\n  epigraph,\n  imageSource,\n  coverImage,\n  \"date\": coalesce(date, _updatedAt),\n  publishedAt,\n  priority,\n  featured,\n\n  \"author\": select(\n    defined(author->name) => {\n      \"name\": coalesce(author->name, \"Anonymous\"),\n      \"picture\": author->picture\n    }\n  ),\n\n  \"category\": select(\n    defined(category->name) && defined(category->slug.current) => {\n      \"title\": category->name,\n      \"slug\": category->slug.current\n    }\n  ),\n\n  // Support both tag.title and category.name during transition\n  \"tags\": tags[]->{\n    \"title\": coalesce(title, name),\n    \"slug\": slug.current\n  },\n\n  \"bodyImages\": bodyImages[]{ \"image\": image, epigraph, imageSource },\n  bodyTextOne,\n  bodyTextTwo,\n  bodyTextThree,\n  bodyTextFour,\n  bodyTextFive,\n  bodyImageOne,\n  bodyImageTwo,\n  bodyImageThree,\n  bodyImageFour,\n  bodyImageFive\n\n  }\n": HeroQueryResult;
+    "\n  *[_type == \"post\" && _id != $skip && defined(slug.current)] | order(date desc, _updatedAt desc) [0...$limit] {\n    \n  _id,\n  _type,\n  \"status\": select(_originalId in path(\"drafts.**\") => \"draft\", \"published\"),\n  \"title\": coalesce(title, \"Untitled\"),\n  \"slug\": slug.current,\n  excerpt,\n  epigraph,\n  imageSource,\n  coverImage,\n  \"date\": coalesce(date, _updatedAt),\n  publishedAt,\n  priority,\n  featured,\n\n  \"author\": select(\n    defined(author->name) => {\n      \"name\": coalesce(author->name, \"Anonymous\"),\n      \"picture\": author->picture\n    }\n  ),\n\n  \"category\": select(\n    defined(category->name) && defined(category->slug.current) => {\n      \"title\": category->name,\n      \"slug\": category->slug.current\n    }\n  ),\n\n  // Support both tag.title and category.name during transition\n  \"tags\": tags[]->{\n    \"title\": coalesce(title, name),\n    \"slug\": slug.current\n  },\n\n  \"bodyImages\": bodyImages[]{ \"image\": image, epigraph, imageSource },\n  bodyTextOne,\n  bodyTextTwo,\n  bodyTextThree,\n  bodyTextFour,\n  bodyTextFive,\n  bodyImageOne,\n  bodyImageTwo,\n  bodyImageThree,\n  bodyImageFour,\n  bodyImageFive\n\n  }\n": MoreStoriesQueryResult;
+    "\n  *[_type == \"post\" && slug.current == $slug] [0] {\n    \n  _id,\n  _type,\n  \"status\": select(_originalId in path(\"drafts.**\") => \"draft\", \"published\"),\n  \"title\": coalesce(title, \"Untitled\"),\n  \"slug\": slug.current,\n  excerpt,\n  epigraph,\n  imageSource,\n  coverImage,\n  \"date\": coalesce(date, _updatedAt),\n  publishedAt,\n  priority,\n  featured,\n\n  \"author\": select(\n    defined(author->name) => {\n      \"name\": coalesce(author->name, \"Anonymous\"),\n      \"picture\": author->picture\n    }\n  ),\n\n  \"category\": select(\n    defined(category->name) && defined(category->slug.current) => {\n      \"title\": category->name,\n      \"slug\": category->slug.current\n    }\n  ),\n\n  // Support both tag.title and category.name during transition\n  \"tags\": tags[]->{\n    \"title\": coalesce(title, name),\n    \"slug\": slug.current\n  },\n\n  \"bodyImages\": bodyImages[]{ \"image\": image, epigraph, imageSource },\n  bodyTextOne,\n  bodyTextTwo,\n  bodyTextThree,\n  bodyTextFour,\n  bodyTextFive,\n  bodyImageOne,\n  bodyImageTwo,\n  bodyImageThree,\n  bodyImageFour,\n  bodyImageFive\n\n  }\n": PostQueryResult;
+    "\n  *[_type == \"post\"] | order(date desc, _updatedAt desc) {\n    \n  _id,\n  _type,\n  \"status\": select(_originalId in path(\"drafts.**\") => \"draft\", \"published\"),\n  \"title\": coalesce(title, \"Untitled\"),\n  \"slug\": slug.current,\n  excerpt,\n  epigraph,\n  imageSource,\n  coverImage,\n  \"date\": coalesce(date, _updatedAt),\n  publishedAt,\n  priority,\n  featured,\n\n  \"author\": select(\n    defined(author->name) => {\n      \"name\": coalesce(author->name, \"Anonymous\"),\n      \"picture\": author->picture\n    }\n  ),\n\n  \"category\": select(\n    defined(category->name) && defined(category->slug.current) => {\n      \"title\": category->name,\n      \"slug\": category->slug.current\n    }\n  ),\n\n  // Support both tag.title and category.name during transition\n  \"tags\": tags[]->{\n    \"title\": coalesce(title, name),\n    \"slug\": slug.current\n  },\n\n  \"bodyImages\": bodyImages[]{ \"image\": image, epigraph, imageSource },\n  bodyTextOne,\n  bodyTextTwo,\n  bodyTextThree,\n  bodyTextFour,\n  bodyTextFive,\n  bodyImageOne,\n  bodyImageTwo,\n  bodyImageThree,\n  bodyImageFour,\n  bodyImageFive\n\n  }\n": IndexQueryResult;
+    "\n{\n  \"post\": *[_type == \"post\" && slug.current == $slug] | order(_updatedAt desc) [0] {\n    \n  _id,\n  _type,\n  \"status\": select(_originalId in path(\"drafts.**\") => \"draft\", \"published\"),\n  \"title\": coalesce(title, \"Untitled\"),\n  \"slug\": slug.current,\n  excerpt,\n  epigraph,\n  imageSource,\n  coverImage,\n  \"date\": coalesce(date, _updatedAt),\n  publishedAt,\n  priority,\n  featured,\n\n  \"author\": select(\n    defined(author->name) => {\n      \"name\": coalesce(author->name, \"Anonymous\"),\n      \"picture\": author->picture\n    }\n  ),\n\n  \"category\": select(\n    defined(category->name) && defined(category->slug.current) => {\n      \"title\": category->name,\n      \"slug\": category->slug.current\n    }\n  ),\n\n  // Support both tag.title and category.name during transition\n  \"tags\": tags[]->{\n    \"title\": coalesce(title, name),\n    \"slug\": slug.current\n  },\n\n  \"bodyImages\": bodyImages[]{ \"image\": image, epigraph, imageSource },\n  bodyTextOne,\n  bodyTextTwo,\n  bodyTextThree,\n  bodyTextFour,\n  bodyTextFive,\n  bodyImageOne,\n  bodyImageTwo,\n  bodyImageThree,\n  bodyImageFour,\n  bodyImageFive\n\n  },\n  \"latestNews\": *[_type == \"post\" && slug.current != $slug] | order(date desc, _updatedAt desc) [0...6] {\n    \n  _id,\n  _type,\n  \"status\": select(_originalId in path(\"drafts.**\") => \"draft\", \"published\"),\n  \"title\": coalesce(title, \"Untitled\"),\n  \"slug\": slug.current,\n  excerpt,\n  epigraph,\n  imageSource,\n  coverImage,\n  \"date\": coalesce(date, _updatedAt),\n  publishedAt,\n  priority,\n  featured,\n\n  \"author\": select(\n    defined(author->name) => {\n      \"name\": coalesce(author->name, \"Anonymous\"),\n      \"picture\": author->picture\n    }\n  ),\n\n  \"category\": select(\n    defined(category->name) && defined(category->slug.current) => {\n      \"title\": category->name,\n      \"slug\": category->slug.current\n    }\n  ),\n\n  // Support both tag.title and category.name during transition\n  \"tags\": tags[]->{\n    \"title\": coalesce(title, name),\n    \"slug\": slug.current\n  },\n\n  \"bodyImages\": bodyImages[]{ \"image\": image, epigraph, imageSource },\n  bodyTextOne,\n  bodyTextTwo,\n  bodyTextThree,\n  bodyTextFour,\n  bodyTextFive,\n  bodyImageOne,\n  bodyImageTwo,\n  bodyImageThree,\n  bodyImageFour,\n  bodyImageFive\n\n  },\n  \"morePosts\": *[_type == \"post\" && slug.current != $slug] | order(date desc, _updatedAt desc) [4...8] {\n    \n  _id,\n  _type,\n  \"status\": select(_originalId in path(\"drafts.**\") => \"draft\", \"published\"),\n  \"title\": coalesce(title, \"Untitled\"),\n  \"slug\": slug.current,\n  excerpt,\n  epigraph,\n  imageSource,\n  coverImage,\n  \"date\": coalesce(date, _updatedAt),\n  publishedAt,\n  priority,\n  featured,\n\n  \"author\": select(\n    defined(author->name) => {\n      \"name\": coalesce(author->name, \"Anonymous\"),\n      \"picture\": author->picture\n    }\n  ),\n\n  \"category\": select(\n    defined(category->name) && defined(category->slug.current) => {\n      \"title\": category->name,\n      \"slug\": category->slug.current\n    }\n  ),\n\n  // Support both tag.title and category.name during transition\n  \"tags\": tags[]->{\n    \"title\": coalesce(title, name),\n    \"slug\": slug.current\n  },\n\n  \"bodyImages\": bodyImages[]{ \"image\": image, epigraph, imageSource },\n  bodyTextOne,\n  bodyTextTwo,\n  bodyTextThree,\n  bodyTextFour,\n  bodyTextFive,\n  bodyImageOne,\n  bodyImageTwo,\n  bodyImageThree,\n  bodyImageFour,\n  bodyImageFive\n\n  },\n  \"nextArticles\": *[_type == \"post\" && slug.current != $slug] | order(date desc, _updatedAt desc) [8...18] {\n    \n  _id,\n  _type,\n  \"status\": select(_originalId in path(\"drafts.**\") => \"draft\", \"published\"),\n  \"title\": coalesce(title, \"Untitled\"),\n  \"slug\": slug.current,\n  excerpt,\n  epigraph,\n  imageSource,\n  coverImage,\n  \"date\": coalesce(date, _updatedAt),\n  publishedAt,\n  priority,\n  featured,\n\n  \"author\": select(\n    defined(author->name) => {\n      \"name\": coalesce(author->name, \"Anonymous\"),\n      \"picture\": author->picture\n    }\n  ),\n\n  \"category\": select(\n    defined(category->name) && defined(category->slug.current) => {\n      \"title\": category->name,\n      \"slug\": category->slug.current\n    }\n  ),\n\n  // Support both tag.title and category.name during transition\n  \"tags\": tags[]->{\n    \"title\": coalesce(title, name),\n    \"slug\": slug.current\n  },\n\n  \"bodyImages\": bodyImages[]{ \"image\": image, epigraph, imageSource },\n  bodyTextOne,\n  bodyTextTwo,\n  bodyTextThree,\n  bodyTextFour,\n  bodyTextFive,\n  bodyImageOne,\n  bodyImageTwo,\n  bodyImageThree,\n  bodyImageFour,\n  bodyImageFive\n\n  }\n}\n": PostQueryWithRelatedResult;
+    "\n{\n  \"post\": *[_type == \"post\" && slug.current == $slug] | order(_updatedAt desc) [0] {\n    \n  _id,\n  _type,\n  \"status\": select(_originalId in path(\"drafts.**\") => \"draft\", \"published\"),\n  \"title\": coalesce(title, \"Untitled\"),\n  \"slug\": slug.current,\n  excerpt,\n  epigraph,\n  imageSource,\n  coverImage,\n  \"date\": coalesce(date, _updatedAt),\n  publishedAt,\n  priority,\n  featured,\n\n  \"author\": select(\n    defined(author->name) => {\n      \"name\": coalesce(author->name, \"Anonymous\"),\n      \"picture\": author->picture\n    }\n  ),\n\n  \"category\": select(\n    defined(category->name) && defined(category->slug.current) => {\n      \"title\": category->name,\n      \"slug\": category->slug.current\n    }\n  ),\n\n  // Support both tag.title and category.name during transition\n  \"tags\": tags[]->{\n    \"title\": coalesce(title, name),\n    \"slug\": slug.current\n  },\n\n  \"bodyImages\": bodyImages[]{ \"image\": image, epigraph, imageSource },\n  bodyTextOne,\n  bodyTextTwo,\n  bodyTextThree,\n  bodyTextFour,\n  bodyTextFive,\n  bodyImageOne,\n  bodyImageTwo,\n  bodyImageThree,\n  bodyImageFour,\n  bodyImageFive\n\n  },\n  \"latestNews\": *[_type == \"post\" && slug.current != $slug] | order(date desc, _updatedAt desc) [0...6] {\n    \n  _id,\n  _type,\n  \"status\": select(_originalId in path(\"drafts.**\") => \"draft\", \"published\"),\n  \"title\": coalesce(title, \"Untitled\"),\n  \"slug\": slug.current,\n  excerpt,\n  epigraph,\n  imageSource,\n  coverImage,\n  \"date\": coalesce(date, _updatedAt),\n  publishedAt,\n  priority,\n  featured,\n\n  \"author\": select(\n    defined(author->name) => {\n      \"name\": coalesce(author->name, \"Anonymous\"),\n      \"picture\": author->picture\n    }\n  ),\n\n  \"category\": select(\n    defined(category->name) && defined(category->slug.current) => {\n      \"title\": category->name,\n      \"slug\": category->slug.current\n    }\n  ),\n\n  // Support both tag.title and category.name during transition\n  \"tags\": tags[]->{\n    \"title\": coalesce(title, name),\n    \"slug\": slug.current\n  },\n\n  \"bodyImages\": bodyImages[]{ \"image\": image, epigraph, imageSource },\n  bodyTextOne,\n  bodyTextTwo,\n  bodyTextThree,\n  bodyTextFour,\n  bodyTextFive,\n  bodyImageOne,\n  bodyImageTwo,\n  bodyImageThree,\n  bodyImageFour,\n  bodyImageFive\n\n  },\n  \"morePosts\": *[_type == \"post\" && slug.current != $slug] | order(date desc, _updatedAt desc) [4...8] {\n    \n  _id,\n  _type,\n  \"status\": select(_originalId in path(\"drafts.**\") => \"draft\", \"published\"),\n  \"title\": coalesce(title, \"Untitled\"),\n  \"slug\": slug.current,\n  excerpt,\n  epigraph,\n  imageSource,\n  coverImage,\n  \"date\": coalesce(date, _updatedAt),\n  publishedAt,\n  priority,\n  featured,\n\n  \"author\": select(\n    defined(author->name) => {\n      \"name\": coalesce(author->name, \"Anonymous\"),\n      \"picture\": author->picture\n    }\n  ),\n\n  \"category\": select(\n    defined(category->name) && defined(category->slug.current) => {\n      \"title\": category->name,\n      \"slug\": category->slug.current\n    }\n  ),\n\n  // Support both tag.title and category.name during transition\n  \"tags\": tags[]->{\n    \"title\": coalesce(title, name),\n    \"slug\": slug.current\n  },\n\n  \"bodyImages\": bodyImages[]{ \"image\": image, epigraph, imageSource },\n  bodyTextOne,\n  bodyTextTwo,\n  bodyTextThree,\n  bodyTextFour,\n  bodyTextFive,\n  bodyImageOne,\n  bodyImageTwo,\n  bodyImageThree,\n  bodyImageFour,\n  bodyImageFive\n\n  },\n  \"newsForYou\": *[_type == \"post\" && slug.current != $slug] | order(date desc, _updatedAt desc) [0...4] {\n    \n  _id,\n  _type,\n  \"status\": select(_originalId in path(\"drafts.**\") => \"draft\", \"published\"),\n  \"title\": coalesce(title, \"Untitled\"),\n  \"slug\": slug.current,\n  excerpt,\n  epigraph,\n  imageSource,\n  coverImage,\n  \"date\": coalesce(date, _updatedAt),\n  publishedAt,\n  priority,\n  featured,\n\n  \"author\": select(\n    defined(author->name) => {\n      \"name\": coalesce(author->name, \"Anonymous\"),\n      \"picture\": author->picture\n    }\n  ),\n\n  \"category\": select(\n    defined(category->name) && defined(category->slug.current) => {\n      \"title\": category->name,\n      \"slug\": category->slug.current\n    }\n  ),\n\n  // Support both tag.title and category.name during transition\n  \"tags\": tags[]->{\n    \"title\": coalesce(title, name),\n    \"slug\": slug.current\n  },\n\n  \"bodyImages\": bodyImages[]{ \"image\": image, epigraph, imageSource },\n  bodyTextOne,\n  bodyTextTwo,\n  bodyTextThree,\n  bodyTextFour,\n  bodyTextFive,\n  bodyImageOne,\n  bodyImageTwo,\n  bodyImageThree,\n  bodyImageFour,\n  bodyImageFive\n\n  },\n  \"categoryArticles\": *[_type == \"post\" && slug.current != $slug && category->slug.current == $categorySlug] | order(date desc, _updatedAt desc) [0...6] {\n    \n  _id,\n  _type,\n  \"status\": select(_originalId in path(\"drafts.**\") => \"draft\", \"published\"),\n  \"title\": coalesce(title, \"Untitled\"),\n  \"slug\": slug.current,\n  excerpt,\n  epigraph,\n  imageSource,\n  coverImage,\n  \"date\": coalesce(date, _updatedAt),\n  publishedAt,\n  priority,\n  featured,\n\n  \"author\": select(\n    defined(author->name) => {\n      \"name\": coalesce(author->name, \"Anonymous\"),\n      \"picture\": author->picture\n    }\n  ),\n\n  \"category\": select(\n    defined(category->name) && defined(category->slug.current) => {\n      \"title\": category->name,\n      \"slug\": category->slug.current\n    }\n  ),\n\n  // Support both tag.title and category.name during transition\n  \"tags\": tags[]->{\n    \"title\": coalesce(title, name),\n    \"slug\": slug.current\n  },\n\n  \"bodyImages\": bodyImages[]{ \"image\": image, epigraph, imageSource },\n  bodyTextOne,\n  bodyTextTwo,\n  bodyTextThree,\n  bodyTextFour,\n  bodyTextFive,\n  bodyImageOne,\n  bodyImageTwo,\n  bodyImageThree,\n  bodyImageFour,\n  bodyImageFive\n\n  }\n}\n": PostQueryWithCategoryRelatedResult;
     "\n  *[_type == \"post\" && defined(slug.current)][].slug.current\n": PostSlugsQueryResult;
-    "\n  *[_type == \"post\" && slug.current == $slug][0] {\n    \n  _id,\n  _type,\n  \"status\": select(_originalId in path(\"drafts.**\") => \"draft\", \"published\"),\n  \"title\": coalesce(title, \"Untitled\"),\n  \"slug\": slug.current,\n  excerpt,\n  epigraph,\n  imageSource,\n  coverImage,\n  // Keep legacy \"date\" for existing UI; prefer publishedAt elsewhere\n  \"date\": coalesce(date, _updatedAt),\n  publishedAt,\n  priority,\n  featured,\n\n  // Ensure complete author or nothing\n  \"author\": select(\n    defined(author->name) => {\n      \"name\": coalesce(author->name, \"Anonymous\"),\n      \"picture\": author->picture\n    }\n  ),\n\n  // Category shape your UI expects\n  \"category\": select(\n    defined(category->name) && defined(category->slug.current) => {\n      \"title\": category->name,\n      \"slug\": category->slug.current\n    }\n  ),\n\n  // Tags now use tag.title (not name)\n  \"tags\": tags[]->{title, \"slug\": slug.current},\n\n  // Body chunks & images\n  \"bodyImages\": bodyImages[]{ \"image\": image, epigraph, imageSource },\n  bodyTextOne,\n  bodyTextTwo,\n  bodyTextThree,\n  bodyTextFour,\n  bodyTextFive,\n  bodyImageOne,\n  bodyImageTwo,\n  bodyImageThree,\n  bodyImageFour,\n  bodyImageFive\n\n  }\n": PostBySlugQueryResult;
-    "\n  *[_type == \"post\" && category->slug.current == $categorySlug] | order(date desc, _updatedAt desc) {\n    \n  _id,\n  _type,\n  \"status\": select(_originalId in path(\"drafts.**\") => \"draft\", \"published\"),\n  \"title\": coalesce(title, \"Untitled\"),\n  \"slug\": slug.current,\n  excerpt,\n  epigraph,\n  imageSource,\n  coverImage,\n  // Keep legacy \"date\" for existing UI; prefer publishedAt elsewhere\n  \"date\": coalesce(date, _updatedAt),\n  publishedAt,\n  priority,\n  featured,\n\n  // Ensure complete author or nothing\n  \"author\": select(\n    defined(author->name) => {\n      \"name\": coalesce(author->name, \"Anonymous\"),\n      \"picture\": author->picture\n    }\n  ),\n\n  // Category shape your UI expects\n  \"category\": select(\n    defined(category->name) && defined(category->slug.current) => {\n      \"title\": category->name,\n      \"slug\": category->slug.current\n    }\n  ),\n\n  // Tags now use tag.title (not name)\n  \"tags\": tags[]->{title, \"slug\": slug.current},\n\n  // Body chunks & images\n  \"bodyImages\": bodyImages[]{ \"image\": image, epigraph, imageSource },\n  bodyTextOne,\n  bodyTextTwo,\n  bodyTextThree,\n  bodyTextFour,\n  bodyTextFive,\n  bodyImageOne,\n  bodyImageTwo,\n  bodyImageThree,\n  bodyImageFour,\n  bodyImageFive\n\n  }\n": PostsByCategoryQueryResult;
-    "\n  *[_type == \"category\" && defined(slug.current)]{ \"slug\": slug.current, name }\n": CategorySlugsQueryResult;
-    "\n  *[_type == \"category\" && defined(slug.current)] | order(name asc) {\n    \"slug\": slug.current,\n    name\n  }\n": AllCategoriesQueryResult;
+    "\n  *[_type == \"post\" && slug.current == $slug][0] {\n    \n  _id,\n  _type,\n  \"status\": select(_originalId in path(\"drafts.**\") => \"draft\", \"published\"),\n  \"title\": coalesce(title, \"Untitled\"),\n  \"slug\": slug.current,\n  excerpt,\n  epigraph,\n  imageSource,\n  coverImage,\n  \"date\": coalesce(date, _updatedAt),\n  publishedAt,\n  priority,\n  featured,\n\n  \"author\": select(\n    defined(author->name) => {\n      \"name\": coalesce(author->name, \"Anonymous\"),\n      \"picture\": author->picture\n    }\n  ),\n\n  \"category\": select(\n    defined(category->name) && defined(category->slug.current) => {\n      \"title\": category->name,\n      \"slug\": category->slug.current\n    }\n  ),\n\n  // Support both tag.title and category.name during transition\n  \"tags\": tags[]->{\n    \"title\": coalesce(title, name),\n    \"slug\": slug.current\n  },\n\n  \"bodyImages\": bodyImages[]{ \"image\": image, epigraph, imageSource },\n  bodyTextOne,\n  bodyTextTwo,\n  bodyTextThree,\n  bodyTextFour,\n  bodyTextFive,\n  bodyImageOne,\n  bodyImageTwo,\n  bodyImageThree,\n  bodyImageFour,\n  bodyImageFive\n\n  }\n": PostBySlugQueryResult;
+    "\n  *[_type == \"post\" && category->slug.current == $categorySlug] | order(date desc, _updatedAt desc) {\n    \n  _id,\n  _type,\n  \"status\": select(_originalId in path(\"drafts.**\") => \"draft\", \"published\"),\n  \"title\": coalesce(title, \"Untitled\"),\n  \"slug\": slug.current,\n  excerpt,\n  epigraph,\n  imageSource,\n  coverImage,\n  \"date\": coalesce(date, _updatedAt),\n  publishedAt,\n  priority,\n  featured,\n\n  \"author\": select(\n    defined(author->name) => {\n      \"name\": coalesce(author->name, \"Anonymous\"),\n      \"picture\": author->picture\n    }\n  ),\n\n  \"category\": select(\n    defined(category->name) && defined(category->slug.current) => {\n      \"title\": category->name,\n      \"slug\": category->slug.current\n    }\n  ),\n\n  // Support both tag.title and category.name during transition\n  \"tags\": tags[]->{\n    \"title\": coalesce(title, name),\n    \"slug\": slug.current\n  },\n\n  \"bodyImages\": bodyImages[]{ \"image\": image, epigraph, imageSource },\n  bodyTextOne,\n  bodyTextTwo,\n  bodyTextThree,\n  bodyTextFour,\n  bodyTextFive,\n  bodyImageOne,\n  bodyImageTwo,\n  bodyImageThree,\n  bodyImageFour,\n  bodyImageFive\n\n  }\n": PostsByCategoryQueryResult;
+    "\n  *[_type == \"category\" && defined(slug.current)]{ \"slug\": slug.current, name, views }\n": CategorySlugsQueryResult;
+    "\n  *[_type == \"category\" && defined(slug.current)] | order(name asc) {\n    \"slug\": slug.current,\n    name,\n    views\n  }\n": AllCategoriesQueryResult;
+    "\n  *[_type == \"category\" && defined(slug.current)] | order(coalesce(views, 0) desc, name asc) {\n    \"slug\": slug.current,\n    name,\n    views\n  }\n": CategoriesByViewsQueryResult;
+    "\n  *[_type == \"tag\" && defined(slug.current)] | order(coalesce(views, 0) desc, title asc) [0...5] {\n    \"slug\": slug.current,\n    title,\n    views\n  }\n": TopTagsByViewsQueryResult;
+    "\n  *[_type == \"tag\" && defined(slug.current)] | order(coalesce(views, 0) desc, title asc) [5...11] {\n    \"slug\": slug.current,\n    title,\n    views\n  }\n": ShowsTagsByViewsQueryResult;
     "\n  *[_type == \"tag\" && defined(slug.current)]{ \"slug\": slug.current, title }\n": TagSlugsQueryResult;
-    "\n  *[_type == \"post\" && $tagSlug in tags[]->slug.current] | order(date desc, _updatedAt desc) {\n    \n  _id,\n  _type,\n  \"status\": select(_originalId in path(\"drafts.**\") => \"draft\", \"published\"),\n  \"title\": coalesce(title, \"Untitled\"),\n  \"slug\": slug.current,\n  excerpt,\n  epigraph,\n  imageSource,\n  coverImage,\n  // Keep legacy \"date\" for existing UI; prefer publishedAt elsewhere\n  \"date\": coalesce(date, _updatedAt),\n  publishedAt,\n  priority,\n  featured,\n\n  // Ensure complete author or nothing\n  \"author\": select(\n    defined(author->name) => {\n      \"name\": coalesce(author->name, \"Anonymous\"),\n      \"picture\": author->picture\n    }\n  ),\n\n  // Category shape your UI expects\n  \"category\": select(\n    defined(category->name) && defined(category->slug.current) => {\n      \"title\": category->name,\n      \"slug\": category->slug.current\n    }\n  ),\n\n  // Tags now use tag.title (not name)\n  \"tags\": tags[]->{title, \"slug\": slug.current},\n\n  // Body chunks & images\n  \"bodyImages\": bodyImages[]{ \"image\": image, epigraph, imageSource },\n  bodyTextOne,\n  bodyTextTwo,\n  bodyTextThree,\n  bodyTextFour,\n  bodyTextFive,\n  bodyImageOne,\n  bodyImageTwo,\n  bodyImageThree,\n  bodyImageFour,\n  bodyImageFive\n\n  }\n": PostsByTagQueryResult;
-    "\n  *[_type == \"author\" && slug.current == $slug][0] {\n    name,\n    picture,\n    \"posts\": *[_type == \"post\" && author->slug.current == $slug] | order(date desc, _updatedAt desc) {\n      \n  _id,\n  _type,\n  \"status\": select(_originalId in path(\"drafts.**\") => \"draft\", \"published\"),\n  \"title\": coalesce(title, \"Untitled\"),\n  \"slug\": slug.current,\n  excerpt,\n  epigraph,\n  imageSource,\n  coverImage,\n  // Keep legacy \"date\" for existing UI; prefer publishedAt elsewhere\n  \"date\": coalesce(date, _updatedAt),\n  publishedAt,\n  priority,\n  featured,\n\n  // Ensure complete author or nothing\n  \"author\": select(\n    defined(author->name) => {\n      \"name\": coalesce(author->name, \"Anonymous\"),\n      \"picture\": author->picture\n    }\n  ),\n\n  // Category shape your UI expects\n  \"category\": select(\n    defined(category->name) && defined(category->slug.current) => {\n      \"title\": category->name,\n      \"slug\": category->slug.current\n    }\n  ),\n\n  // Tags now use tag.title (not name)\n  \"tags\": tags[]->{title, \"slug\": slug.current},\n\n  // Body chunks & images\n  \"bodyImages\": bodyImages[]{ \"image\": image, epigraph, imageSource },\n  bodyTextOne,\n  bodyTextTwo,\n  bodyTextThree,\n  bodyTextFour,\n  bodyTextFive,\n  bodyImageOne,\n  bodyImageTwo,\n  bodyImageThree,\n  bodyImageFour,\n  bodyImageFive\n\n    }\n  }\n": AuthorQueryResult;
+    "\n  *[_type == \"tag\" && slug.current == $slug][0] {\n    _id,\n    title,\n    \"slug\": slug.current,\n    description,\n    emoji,\n    color,\n    featured,\n    deprecated,\n    views,\n    \"redirectTo\": redirectTo->{\n      title,\n      \"slug\": slug.current\n    },\n    aliases,\n    order\n  }\n": TagBySlugQueryResult;
+    "\n  *[_type == \"post\" && $tagSlug in tags[]->slug.current] | order(date desc, _updatedAt desc) {\n    \n  _id,\n  _type,\n  \"status\": select(_originalId in path(\"drafts.**\") => \"draft\", \"published\"),\n  \"title\": coalesce(title, \"Untitled\"),\n  \"slug\": slug.current,\n  excerpt,\n  epigraph,\n  imageSource,\n  coverImage,\n  \"date\": coalesce(date, _updatedAt),\n  publishedAt,\n  priority,\n  featured,\n\n  \"author\": select(\n    defined(author->name) => {\n      \"name\": coalesce(author->name, \"Anonymous\"),\n      \"picture\": author->picture\n    }\n  ),\n\n  \"category\": select(\n    defined(category->name) && defined(category->slug.current) => {\n      \"title\": category->name,\n      \"slug\": category->slug.current\n    }\n  ),\n\n  // Support both tag.title and category.name during transition\n  \"tags\": tags[]->{\n    \"title\": coalesce(title, name),\n    \"slug\": slug.current\n  },\n\n  \"bodyImages\": bodyImages[]{ \"image\": image, epigraph, imageSource },\n  bodyTextOne,\n  bodyTextTwo,\n  bodyTextThree,\n  bodyTextFour,\n  bodyTextFive,\n  bodyImageOne,\n  bodyImageTwo,\n  bodyImageThree,\n  bodyImageFour,\n  bodyImageFive\n\n  }\n": PostsByTagQueryResult;
+    "\n  *[_type == \"author\" && slug.current == $slug][0] {\n    name,\n    picture,\n    \"posts\": *[_type == \"post\" && author->slug.current == $slug] | order(date desc, _updatedAt desc) {\n      \n  _id,\n  _type,\n  \"status\": select(_originalId in path(\"drafts.**\") => \"draft\", \"published\"),\n  \"title\": coalesce(title, \"Untitled\"),\n  \"slug\": slug.current,\n  excerpt,\n  epigraph,\n  imageSource,\n  coverImage,\n  \"date\": coalesce(date, _updatedAt),\n  publishedAt,\n  priority,\n  featured,\n\n  \"author\": select(\n    defined(author->name) => {\n      \"name\": coalesce(author->name, \"Anonymous\"),\n      \"picture\": author->picture\n    }\n  ),\n\n  \"category\": select(\n    defined(category->name) && defined(category->slug.current) => {\n      \"title\": category->name,\n      \"slug\": category->slug.current\n    }\n  ),\n\n  // Support both tag.title and category.name during transition\n  \"tags\": tags[]->{\n    \"title\": coalesce(title, name),\n    \"slug\": slug.current\n  },\n\n  \"bodyImages\": bodyImages[]{ \"image\": image, epigraph, imageSource },\n  bodyTextOne,\n  bodyTextTwo,\n  bodyTextThree,\n  bodyTextFour,\n  bodyTextFive,\n  bodyImageOne,\n  bodyImageTwo,\n  bodyImageThree,\n  bodyImageFour,\n  bodyImageFive\n\n    }\n  }\n": AuthorQueryResult;
     "\n  *[_type == \"author\" && defined(slug.current)][].slug.current\n": AuthorSlugsQueryResult;
     "\n  *[_type == \"comment\" && post->slug.current == $postSlug && approved == true] | order(_createdAt desc) {\n    name, email, comment, _createdAt\n  }\n": CommentsQueryResult;
-    "\n  *[_type == \"post\" && category->slug.current == $categorySlug] | order(date desc, _updatedAt desc) [0...4] {\n    \n  _id,\n  _type,\n  \"status\": select(_originalId in path(\"drafts.**\") => \"draft\", \"published\"),\n  \"title\": coalesce(title, \"Untitled\"),\n  \"slug\": slug.current,\n  excerpt,\n  epigraph,\n  imageSource,\n  coverImage,\n  // Keep legacy \"date\" for existing UI; prefer publishedAt elsewhere\n  \"date\": coalesce(date, _updatedAt),\n  publishedAt,\n  priority,\n  featured,\n\n  // Ensure complete author or nothing\n  \"author\": select(\n    defined(author->name) => {\n      \"name\": coalesce(author->name, \"Anonymous\"),\n      \"picture\": author->picture\n    }\n  ),\n\n  // Category shape your UI expects\n  \"category\": select(\n    defined(category->name) && defined(category->slug.current) => {\n      \"title\": category->name,\n      \"slug\": category->slug.current\n    }\n  ),\n\n  // Tags now use tag.title (not name)\n  \"tags\": tags[]->{title, \"slug\": slug.current},\n\n  // Body chunks & images\n  \"bodyImages\": bodyImages[]{ \"image\": image, epigraph, imageSource },\n  bodyTextOne,\n  bodyTextTwo,\n  bodyTextThree,\n  bodyTextFour,\n  bodyTextFive,\n  bodyImageOne,\n  bodyImageTwo,\n  bodyImageThree,\n  bodyImageFour,\n  bodyImageFive\n\n  }\n": FourthSectionQueryResult | ThirdSectionQueryResult;
-    "\n  *[_type == \"post\"] | order(date desc, _updatedAt desc) [0...5] {\n    \n  _id,\n  _type,\n  \"status\": select(_originalId in path(\"drafts.**\") => \"draft\", \"published\"),\n  \"title\": coalesce(title, \"Untitled\"),\n  \"slug\": slug.current,\n  excerpt,\n  epigraph,\n  imageSource,\n  coverImage,\n  // Keep legacy \"date\" for existing UI; prefer publishedAt elsewhere\n  \"date\": coalesce(date, _updatedAt),\n  publishedAt,\n  priority,\n  featured,\n\n  // Ensure complete author or nothing\n  \"author\": select(\n    defined(author->name) => {\n      \"name\": coalesce(author->name, \"Anonymous\"),\n      \"picture\": author->picture\n    }\n  ),\n\n  // Category shape your UI expects\n  \"category\": select(\n    defined(category->name) && defined(category->slug.current) => {\n      \"title\": category->name,\n      \"slug\": category->slug.current\n    }\n  ),\n\n  // Tags now use tag.title (not name)\n  \"tags\": tags[]->{title, \"slug\": slug.current},\n\n  // Body chunks & images\n  \"bodyImages\": bodyImages[]{ \"image\": image, epigraph, imageSource },\n  bodyTextOne,\n  bodyTextTwo,\n  bodyTextThree,\n  bodyTextFour,\n  bodyTextFive,\n  bodyImageOne,\n  bodyImageTwo,\n  bodyImageThree,\n  bodyImageFour,\n  bodyImageFive\n\n  }\n": MostReadQueryResult;
-    "\n  *[_type == \"post\" && category->slug.current == $categorySlug] | order(date desc, _updatedAt desc) [0...20] {\n    \n  _id,\n  _type,\n  \"status\": select(_originalId in path(\"drafts.**\") => \"draft\", \"published\"),\n  \"title\": coalesce(title, \"Untitled\"),\n  \"slug\": slug.current,\n  excerpt,\n  epigraph,\n  imageSource,\n  coverImage,\n  // Keep legacy \"date\" for existing UI; prefer publishedAt elsewhere\n  \"date\": coalesce(date, _updatedAt),\n  publishedAt,\n  priority,\n  featured,\n\n  // Ensure complete author or nothing\n  \"author\": select(\n    defined(author->name) => {\n      \"name\": coalesce(author->name, \"Anonymous\"),\n      \"picture\": author->picture\n    }\n  ),\n\n  // Category shape your UI expects\n  \"category\": select(\n    defined(category->name) && defined(category->slug.current) => {\n      \"title\": category->name,\n      \"slug\": category->slug.current\n    }\n  ),\n\n  // Tags now use tag.title (not name)\n  \"tags\": tags[]->{title, \"slug\": slug.current},\n\n  // Body chunks & images\n  \"bodyImages\": bodyImages[]{ \"image\": image, epigraph, imageSource },\n  bodyTextOne,\n  bodyTextTwo,\n  bodyTextThree,\n  bodyTextFour,\n  bodyTextFive,\n  bodyImageOne,\n  bodyImageTwo,\n  bodyImageThree,\n  bodyImageFour,\n  bodyImageFive\n\n  }\n": SixthSectionQueryResult;
-    "\n{\n  \"posts\": *[_type == \"post\" && status == \"published\" && defined(publishedAt) && publishedAt <= now() && (\n  title match $term ||\n  excerpt match $term ||\n  epigraph match $term ||\n  pt::text(bodyRich) match $term ||\n  pt::text(bodyTextOne) match $term ||\n  pt::text(bodyTextTwo) match $term ||\n  pt::text(bodyTextThree) match $term ||\n  pt::text(bodyTextFour) match $term ||\n  pt::text(bodyTextFive) match $term ||\n  category->name match $term ||\n  tags[]->title match $term ||\n  author->name match $term\n)] | order(publishedAt desc) [0...$postLimit] {\n    \n  _id,\n  _type,\n  \"status\": select(_originalId in path(\"drafts.**\") => \"draft\", \"published\"),\n  \"title\": coalesce(title, \"Untitled\"),\n  \"slug\": slug.current,\n  excerpt,\n  epigraph,\n  imageSource,\n  coverImage,\n  // Keep legacy \"date\" for existing UI; prefer publishedAt elsewhere\n  \"date\": coalesce(date, _updatedAt),\n  publishedAt,\n  priority,\n  featured,\n\n  // Ensure complete author or nothing\n  \"author\": select(\n    defined(author->name) => {\n      \"name\": coalesce(author->name, \"Anonymous\"),\n      \"picture\": author->picture\n    }\n  ),\n\n  // Category shape your UI expects\n  \"category\": select(\n    defined(category->name) && defined(category->slug.current) => {\n      \"title\": category->name,\n      \"slug\": category->slug.current\n    }\n  ),\n\n  // Tags now use tag.title (not name)\n  \"tags\": tags[]->{title, \"slug\": slug.current},\n\n  // Body chunks & images\n  \"bodyImages\": bodyImages[]{ \"image\": image, epigraph, imageSource },\n  bodyTextOne,\n  bodyTextTwo,\n  bodyTextThree,\n  bodyTextFour,\n  bodyTextFive,\n  bodyImageOne,\n  bodyImageTwo,\n  bodyImageThree,\n  bodyImageFour,\n  bodyImageFive\n\n  },\n  \"tags\": *[_type == \"tag\" && (\n    title match $term ||\n    description match $term ||\n    $term in aliases\n  )] | order(order asc, title asc) [0...$tagLimit] {\n    _id,\n    title,\n    \"slug\": slug.current,\n    description,\n    emoji,\n    color,\n    featured\n  },\n  \"topics\": *[_type == \"topic\" && (\n    title match $term ||\n    description match $term\n  )] | order(title asc) [0...$topicLimit] {\n    _id,\n    title,\n    \"slug\": slug.current,\n    kind,\n    description,\n    image\n  }\n}\n": SearchAllQueryResult;
+    "\n  *[_type == \"post\" && category->slug.current == $categorySlug] | order(date desc, _updatedAt desc) [0...4] {\n    \n  _id,\n  _type,\n  \"status\": select(_originalId in path(\"drafts.**\") => \"draft\", \"published\"),\n  \"title\": coalesce(title, \"Untitled\"),\n  \"slug\": slug.current,\n  excerpt,\n  epigraph,\n  imageSource,\n  coverImage,\n  \"date\": coalesce(date, _updatedAt),\n  publishedAt,\n  priority,\n  featured,\n\n  \"author\": select(\n    defined(author->name) => {\n      \"name\": coalesce(author->name, \"Anonymous\"),\n      \"picture\": author->picture\n    }\n  ),\n\n  \"category\": select(\n    defined(category->name) && defined(category->slug.current) => {\n      \"title\": category->name,\n      \"slug\": category->slug.current\n    }\n  ),\n\n  // Support both tag.title and category.name during transition\n  \"tags\": tags[]->{\n    \"title\": coalesce(title, name),\n    \"slug\": slug.current\n  },\n\n  \"bodyImages\": bodyImages[]{ \"image\": image, epigraph, imageSource },\n  bodyTextOne,\n  bodyTextTwo,\n  bodyTextThree,\n  bodyTextFour,\n  bodyTextFive,\n  bodyImageOne,\n  bodyImageTwo,\n  bodyImageThree,\n  bodyImageFour,\n  bodyImageFive\n\n  }\n": FourthSectionQueryResult | ThirdSectionQueryResult;
+    "\n  *[_type == \"post\" && category->slug.current == $categorySlug] | order(coalesce(views7d, 0) desc, publishedAt desc) [0...5] {\n    \n  _id,\n  _type,\n  \"status\": select(_originalId in path(\"drafts.**\") => \"draft\", \"published\"),\n  \"title\": coalesce(title, \"Untitled\"),\n  \"slug\": slug.current,\n  excerpt,\n  epigraph,\n  imageSource,\n  coverImage,\n  \"date\": coalesce(date, _updatedAt),\n  publishedAt,\n  priority,\n  featured,\n\n  \"author\": select(\n    defined(author->name) => {\n      \"name\": coalesce(author->name, \"Anonymous\"),\n      \"picture\": author->picture\n    }\n  ),\n\n  \"category\": select(\n    defined(category->name) && defined(category->slug.current) => {\n      \"title\": category->name,\n      \"slug\": category->slug.current\n    }\n  ),\n\n  // Support both tag.title and category.name during transition\n  \"tags\": tags[]->{\n    \"title\": coalesce(title, name),\n    \"slug\": slug.current\n  },\n\n  \"bodyImages\": bodyImages[]{ \"image\": image, epigraph, imageSource },\n  bodyTextOne,\n  bodyTextTwo,\n  bodyTextThree,\n  bodyTextFour,\n  bodyTextFive,\n  bodyImageOne,\n  bodyImageTwo,\n  bodyImageThree,\n  bodyImageFour,\n  bodyImageFive\n\n  }\n": MostViewedQueryResult;
+    "\n  *[_type == \"post\" && category->slug.current == $categorySlug] | order(date desc, _updatedAt desc) [2...3] {\n    \n  _id,\n  _type,\n  \"status\": select(_originalId in path(\"drafts.**\") => \"draft\", \"published\"),\n  \"title\": coalesce(title, \"Untitled\"),\n  \"slug\": slug.current,\n  excerpt,\n  epigraph,\n  imageSource,\n  coverImage,\n  \"date\": coalesce(date, _updatedAt),\n  publishedAt,\n  priority,\n  featured,\n\n  \"author\": select(\n    defined(author->name) => {\n      \"name\": coalesce(author->name, \"Anonymous\"),\n      \"picture\": author->picture\n    }\n  ),\n\n  \"category\": select(\n    defined(category->name) && defined(category->slug.current) => {\n      \"title\": category->name,\n      \"slug\": category->slug.current\n    }\n  ),\n\n  // Support both tag.title and category.name during transition\n  \"tags\": tags[]->{\n    \"title\": coalesce(title, name),\n    \"slug\": slug.current\n  },\n\n  \"bodyImages\": bodyImages[]{ \"image\": image, epigraph, imageSource },\n  bodyTextOne,\n  bodyTextTwo,\n  bodyTextThree,\n  bodyTextFour,\n  bodyTextFive,\n  bodyImageOne,\n  bodyImageTwo,\n  bodyImageThree,\n  bodyImageFour,\n  bodyImageFive\n\n  }\n": ThirdLatestArticleQueryResult;
+    "\n  *[_type == \"post\"] | order(date desc, _updatedAt desc) [0...5] {\n    \n  _id,\n  _type,\n  \"status\": select(_originalId in path(\"drafts.**\") => \"draft\", \"published\"),\n  \"title\": coalesce(title, \"Untitled\"),\n  \"slug\": slug.current,\n  excerpt,\n  epigraph,\n  imageSource,\n  coverImage,\n  \"date\": coalesce(date, _updatedAt),\n  publishedAt,\n  priority,\n  featured,\n\n  \"author\": select(\n    defined(author->name) => {\n      \"name\": coalesce(author->name, \"Anonymous\"),\n      \"picture\": author->picture\n    }\n  ),\n\n  \"category\": select(\n    defined(category->name) && defined(category->slug.current) => {\n      \"title\": category->name,\n      \"slug\": category->slug.current\n    }\n  ),\n\n  // Support both tag.title and category.name during transition\n  \"tags\": tags[]->{\n    \"title\": coalesce(title, name),\n    \"slug\": slug.current\n  },\n\n  \"bodyImages\": bodyImages[]{ \"image\": image, epigraph, imageSource },\n  bodyTextOne,\n  bodyTextTwo,\n  bodyTextThree,\n  bodyTextFour,\n  bodyTextFive,\n  bodyImageOne,\n  bodyImageTwo,\n  bodyImageThree,\n  bodyImageFour,\n  bodyImageFive\n\n  }\n": MostReadQueryResult;
+    "\n  *[_type == \"post\" && category->slug.current == $categorySlug] | order(date desc, _updatedAt desc) [0...20] {\n    \n  _id,\n  _type,\n  \"status\": select(_originalId in path(\"drafts.**\") => \"draft\", \"published\"),\n  \"title\": coalesce(title, \"Untitled\"),\n  \"slug\": slug.current,\n  excerpt,\n  epigraph,\n  imageSource,\n  coverImage,\n  \"date\": coalesce(date, _updatedAt),\n  publishedAt,\n  priority,\n  featured,\n\n  \"author\": select(\n    defined(author->name) => {\n      \"name\": coalesce(author->name, \"Anonymous\"),\n      \"picture\": author->picture\n    }\n  ),\n\n  \"category\": select(\n    defined(category->name) && defined(category->slug.current) => {\n      \"title\": category->name,\n      \"slug\": category->slug.current\n    }\n  ),\n\n  // Support both tag.title and category.name during transition\n  \"tags\": tags[]->{\n    \"title\": coalesce(title, name),\n    \"slug\": slug.current\n  },\n\n  \"bodyImages\": bodyImages[]{ \"image\": image, epigraph, imageSource },\n  bodyTextOne,\n  bodyTextTwo,\n  bodyTextThree,\n  bodyTextFour,\n  bodyTextFive,\n  bodyImageOne,\n  bodyImageTwo,\n  bodyImageThree,\n  bodyImageFour,\n  bodyImageFive\n\n  }\n": SixthSectionQueryResult;
+    "\n{\n  \"posts\": *[_type == \"post\" && status == \"published\" && defined(publishedAt) && publishedAt <= now() && (\n  title match $term ||\n  excerpt match $term ||\n  epigraph match $term ||\n  pt::text(bodyRich) match $term ||\n  pt::text(bodyTextOne) match $term ||\n  pt::text(bodyTextTwo) match $term ||\n  pt::text(bodyTextThree) match $term ||\n  pt::text(bodyTextFour) match $term ||\n  pt::text(bodyTextFive) match $term ||\n  category->name match $term ||\n  coalesce(tags[]->title, tags[]->name) match $term ||   // <\u2014 supports both\n  author->name match $term\n)] | order(publishedAt desc) [0...$postLimit] {\n    \n  _id,\n  _type,\n  \"status\": select(_originalId in path(\"drafts.**\") => \"draft\", \"published\"),\n  \"title\": coalesce(title, \"Untitled\"),\n  \"slug\": slug.current,\n  excerpt,\n  epigraph,\n  imageSource,\n  coverImage,\n  \"date\": coalesce(date, _updatedAt),\n  publishedAt,\n  priority,\n  featured,\n\n  \"author\": select(\n    defined(author->name) => {\n      \"name\": coalesce(author->name, \"Anonymous\"),\n      \"picture\": author->picture\n    }\n  ),\n\n  \"category\": select(\n    defined(category->name) && defined(category->slug.current) => {\n      \"title\": category->name,\n      \"slug\": category->slug.current\n    }\n  ),\n\n  // Support both tag.title and category.name during transition\n  \"tags\": tags[]->{\n    \"title\": coalesce(title, name),\n    \"slug\": slug.current\n  },\n\n  \"bodyImages\": bodyImages[]{ \"image\": image, epigraph, imageSource },\n  bodyTextOne,\n  bodyTextTwo,\n  bodyTextThree,\n  bodyTextFour,\n  bodyTextFive,\n  bodyImageOne,\n  bodyImageTwo,\n  bodyImageThree,\n  bodyImageFour,\n  bodyImageFive\n\n  },\n  \"tags\": *[_type == \"tag\" && (\n    title match $term ||\n    description match $term ||\n    $term in aliases\n  )] | order(order asc, title asc) [0...$tagLimit] {\n    _id,\n    title,\n    \"slug\": slug.current,\n    description,\n    emoji,\n    color,\n    featured,\n    views\n  },\n  \"topics\": *[_type == \"topic\" && (\n    title match $term ||\n    description match $term\n  )] | order(title asc) [0...$topicLimit] {\n    _id,\n    title,\n    \"slug\": slug.current,\n    kind,\n    description,\n    image\n  }\n}\n": SearchAllQueryResult;
+    "\n  *[_type == \"category\" && slug.current in $categorySlugs] {\n    \"slug\": slug.current,\n    \"name\": name,\n    \"posts\": *[_type == \"post\" && category->slug.current == slug.current] | order(date desc, _updatedAt desc) [0...3] {\n      \n  _id,\n  _type,\n  \"status\": select(_originalId in path(\"drafts.**\") => \"draft\", \"published\"),\n  \"title\": coalesce(title, \"Untitled\"),\n  \"slug\": slug.current,\n  excerpt,\n  epigraph,\n  imageSource,\n  coverImage,\n  \"date\": coalesce(date, _updatedAt),\n  publishedAt,\n  priority,\n  featured,\n\n  \"author\": select(\n    defined(author->name) => {\n      \"name\": coalesce(author->name, \"Anonymous\"),\n      \"picture\": author->picture\n    }\n  ),\n\n  \"category\": select(\n    defined(category->name) && defined(category->slug.current) => {\n      \"title\": category->name,\n      \"slug\": category->slug.current\n    }\n  ),\n\n  // Support both tag.title and category.name during transition\n  \"tags\": tags[]->{\n    \"title\": coalesce(title, name),\n    \"slug\": slug.current\n  },\n\n  \"bodyImages\": bodyImages[]{ \"image\": image, epigraph, imageSource },\n  bodyTextOne,\n  bodyTextTwo,\n  bodyTextThree,\n  bodyTextFour,\n  bodyTextFive,\n  bodyImageOne,\n  bodyImageTwo,\n  bodyImageThree,\n  bodyImageFour,\n  bodyImageFive\n\n    }\n  }\n": EighthSectionQueryResult;
+    "\n  *[_type == \"category\" && slug.current in $categorySlugs] {\n    \"slug\": slug.current,\n    \"name\": name,\n    \"thirdMostViewed\": *[_type == \"post\" && category->slug.current == slug.current] | order(coalesce(views7d, 0) desc, publishedAt desc) [0...5] {\n      _id, title, \"slug\": slug.current, excerpt, coverImage, \"date\": coalesce(date, _updatedAt), publishedAt,\n      \"author\": select(\n        defined(author->name) => {\n          \"name\": coalesce(author->name, \"Anonymous\"),\n          \"picture\": author->picture\n        }\n      ),\n      \"category\": select(\n        defined(category->name) && defined(category->slug.current) => {\n          \"title\": category->name,\n          \"slug\": category->slug.current\n        }\n      ),\n      views7d\n    },\n    \"thirdLatest\": *[_type == \"post\" && category->slug.current == slug.current] | order(publishedAt desc, _updatedAt desc) [0...5] {\n      _id, title, \"slug\": slug.current, excerpt, coverImage, \"date\": coalesce(date, _updatedAt), publishedAt,\n      \"author\": select(\n        defined(author->name) => {\n          \"name\": coalesce(author->name, \"Anonymous\"),\n          \"picture\": author->picture\n        }\n      ),\n      \"category\": select(\n        defined(category->name) && defined(category->slug.current) => {\n          \"title\": category->name,\n          \"slug\": category->slug.current\n        }\n      ),\n      views7d\n    }\n  }\n": SecondSectionQueryResult;
   }
 }

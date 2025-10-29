@@ -47,7 +47,7 @@ export function RightColumnThird({ mostReadArticles }: RightColumnThirdProps) {
                         alt={article.imageAlt || "Article image"}
                         width={64}
                         height={64}
-                        className="w-16 h-16 object-cover rounded flex-shrink-0 cursor-pointer hover:opacity-90 transition-opacity"
+                        className="w-16 h-16 object-cover rounded-xl flex-shrink-0 cursor-pointer hover:opacity-90 transition-opacity"
                       />
                     </Link>
                     <div className="flex-1">
@@ -95,7 +95,7 @@ export function RightColumnThird({ mostReadArticles }: RightColumnThirdProps) {
               alt="Political cartoon"
               width={300}
               height={200}
-              className="w-full h-48 object-cover rounded"
+              className="w-full h-48 object-cover rounded-xl"
             />
           </Card>
         </div>

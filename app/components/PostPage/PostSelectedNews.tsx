@@ -9,7 +9,7 @@ interface Post {
   slug: string;
   excerpt?: string;
   coverImage?: any;
-  date: string;
+  date?: string; // normalized in queries (coalesce(publishedAt, date))
   author?: {
     name: string;
     picture?: any;
@@ -77,9 +77,17 @@ export default function PostSelectedNews({
                 <h3 className="font-inter text-sm font-semibold text-foreground leading-tight group-hover:text-primary transition-colors duration-200 line-clamp-2">
                   {post.title}
                 </h3>
-                <p className="text-xs text-muted-foreground mt-1 font-inter">
-                  {format(parseISO(post.date), "MMM dd, h:mm a")}
-                </p>
+                {post.date && (
+                  <p className="text-xs text-muted-foreground mt-1 font-inter">
+                    {(() => {
+                      try {
+                        return format(parseISO(post.date), "MMM dd, h:mm a");
+                      } catch {
+                        return "";
+                      }
+                    })()}
+                  </p>
+                )}
               </div>
             </Link>
           );

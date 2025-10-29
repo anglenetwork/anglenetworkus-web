@@ -54,7 +54,7 @@ export function CenterColumnFourthSection({
               alt={data.mainStory.title}
               width={800}
               height={320}
-              className="w-full h-80 object-cover rounded mb-4 cursor-pointer hover:opacity-90 transition-opacity"
+              className="w-full h-80 object-cover rounded-xl mb-4 cursor-pointer hover:opacity-90 transition-opacity"
             />
           </Link>
           <Link href={`/post/${data.mainStory.slug}`}>
@@ -77,7 +77,7 @@ export function CenterColumnFourthSection({
                   alt={story.title}
                   width={160}
                   height={112}
-                  className="w-40 h-28 object-cover rounded flex-shrink-0 cursor-pointer hover:opacity-90 transition-opacity"
+                  className="w-40 h-28 object-cover rounded-xl flex-shrink-0 cursor-pointer hover:opacity-90 transition-opacity"
                 />
               </Link>
               <div className="flex-1">

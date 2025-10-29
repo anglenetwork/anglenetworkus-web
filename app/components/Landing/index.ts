@@ -7,3 +7,4 @@ export { default as MainFourthSection } from './FourthSectionComponents/mainFour
 export { default as MainSixthSection } from './SixthSectionComponents/mainSixthSection';
 export { VideoPlayer as MainHighlightsStories } from './FifthSectionComponents/MainHighlightsStories';
 export { default as MainSeventhSection } from './SeventhSectionComponents/mainSeventhSection';
+export { default as MainEighthSection } from './EighthSectionComponents/mainEighthSection';

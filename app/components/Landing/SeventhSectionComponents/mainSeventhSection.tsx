@@ -69,7 +69,7 @@ export default function MainSeventhSection({
                       }
                       alt={mainArticle.title || "Article image"}
                       fill
-                      className="object-cover transition-opacity group-hover:opacity-90"
+                      className="object-cover rounded-xl transition-opacity group-hover:opacity-90"
                       priority
                     />
                   ) : (

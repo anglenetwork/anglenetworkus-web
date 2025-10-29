@@ -47,7 +47,7 @@ export default function MainThirdSection({
   return (
     <div className="min-h-screen">
       {/* Main container with three columns */}
-      <div className="py-8">
+      <div>
         <div className="grid grid-cols-12 gap-0">
           {/* Mobile order: Center, Left, Right */}
           {/* Desktop order: Left, Center, Right */}

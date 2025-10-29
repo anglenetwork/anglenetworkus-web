@@ -2,110 +2,92 @@
 
 import { useRef } from "react";
 import ArticleCard from "./article-card";
+import ArticleCardAlternative from "./articleCardAlternative";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import { urlForImage } from "@/sanity/lib/utils";
 
-export default function MainSecondSection() {
+interface Post {
+  _id: string;
+  title: string | null;
+  slug: string | null;
+  excerpt?: string | null;
+  coverImage?: any;
+  date: string;
+  author?: {
+    name: string;
+    picture?: any;
+  } | null;
+  category?: {
+    title: string | null;
+    slug: string | null;
+  } | null;
+  views7d?: number | null;
+  readTime?: number | null;
+}
+
+interface CategoryData {
+  slug: string | null;
+  name: string | null;
+  thirdArticle: Post | null;
+}
+
+interface MainSecondSectionProps {
+  categoriesData?: CategoryData[];
+}
+
+export default function MainSecondSection({
+  categoriesData,
+}: MainSecondSectionProps) {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
-  const stories = [
-    {
-      id: 1,
-      category: "Letter from Israel",
-      title:
-        "The 'Day After' Plan for Gaza That Netanyahu Doesn't Want to Talk About",
-      description:
-        "Despite what Netanyahu says, the West Bank business elite is ready and willing to govern and rebuild.",
-      author: "Bernard Avishai",
-      image: undefined,
-      isDecorative: true,
-    },
-    {
-      id: 2,
-      category: "Letter from Israel",
-      title:
-        "The 'Day After' Plan for Gaza That Netanyahu Doesn't Want to Talk About",
-      description:
-        "Despite what Netanyahu says, the West Bank business elite is ready and willing to govern and rebuild.",
-      author: "Bernard Avishai",
-      image:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop",
-      imageAlt: "Meeting hall with people and bunting",
-      isDecorative: false,
-    },
-    {
-      id: 3,
-      category: "Politics",
-      title:
-        "Opinion | The Sydney Sweeney Saga Shows Why Republicans Keep Winning",
-      description: "Democrats will struggle until the media ecosystem changes.",
-      author: "Rob Flherty",
-      image:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop",
-      imageAlt: "Stylized portrait with geometric patterns",
-      isDecorative: false,
-    },
-    {
-      id: 4,
-      category: "The Friday Read | Primary Source",
-      title: "Nobody Is Making Deals in Trump's Washington",
-      description:
-        "The Senate used to run on deals involving everything from pipelines to feral cows. Reviving them could be the first step to fixing politics.",
-      author: "Jim Secretto",
-      image:
-        "https://images.unsplash.com/photo-1557804506-669a67965ba0?auto=format&fit=crop",
-      imageAlt: "Black cattle grazing in field",
-      isDecorative: false,
-    },
-    {
-      id: 5,
-      category: "Technology",
-      title: "The Future of Artificial Intelligence in Healthcare",
-      description:
-        "How AI is revolutionizing medical diagnosis and treatment planning across the globe.",
-      author: "Sarah Chen",
-      image:
-        "https://images.unsplash.com/photo-1559757148-5c350d0d3c56?auto=format&fit=crop",
-      imageAlt: "Medical technology and AI visualization",
-      isDecorative: false,
-    },
-    {
-      id: 6,
-      category: "Environment",
-      title: "Climate Change Solutions That Actually Work",
-      description:
-        "Innovative approaches to carbon reduction that are making a real difference in communities worldwide.",
-      author: "Michael Torres",
-      image:
-        "https://images.unsplash.com/photo-1569163139394-de4e4f43e4e3?auto=format&fit=crop",
-      imageAlt: "Solar panels and wind turbines",
-      isDecorative: false,
-    },
-    {
-      id: 7,
-      category: "Business",
-      title: "The Rise of Remote Work Culture",
-      description:
-        "How companies are adapting to permanent remote work and what it means for the future of employment.",
-      author: "Lisa Rodriguez",
-      image:
-        "https://images.unsplash.com/photo-1521737604893-d14cc237f11d?auto=format&fit=crop",
-      imageAlt: "Person working remotely with laptop",
-      isDecorative: false,
-    },
-    {
-      id: 8,
-      category: "Culture",
-      title: "The Renaissance of Independent Cinema",
-      description:
-        "Small budget films are making big impacts at international film festivals and streaming platforms.",
-      author: "David Park",
-      image:
-        "https://images.unsplash.com/photo-1489599904472-c2d34d17c1b5?auto=format&fit=crop",
-      imageAlt: "Film camera and movie equipment",
-      isDecorative: false,
-    },
-  ];
+  // Transform the data into the format expected by ArticleCard
+  const stories =
+    categoriesData?.flatMap((category) => {
+      // Skip categories that don't have a 3rd article
+      if (!category.thirdArticle || !category.thirdArticle.slug) {
+        return [];
+      }
+
+      return [
+        {
+          id: category.thirdArticle._id,
+          category: category.name || "Uncategorized",
+          title: category.thirdArticle.title || "Untitled",
+          description: category.thirdArticle.excerpt || "",
+          author: category.thirdArticle.author?.name || "Anonymous",
+          image: category.thirdArticle.coverImage
+            ? urlForImage(category.thirdArticle.coverImage)?.url()
+            : undefined,
+          imageAlt: category.thirdArticle.title || "Article image",
+          isDecorative: !category.thirdArticle.coverImage,
+          slug: category.thirdArticle.slug,
+          views7d: category.thirdArticle.views7d || 0,
+          readTime: category.thirdArticle.readTime || 5,
+        },
+      ];
+    }) || [];
+
+  // Fallback content if no stories are available
+  const displayStories =
+    stories.length > 0
+      ? stories
+      : [
+          {
+            id: "fallback-1",
+            category: "Sample Category",
+            title: "Sample Article Title",
+            description:
+              "This is a sample article description to test the component rendering.",
+            author: "Sample Author",
+            image: undefined,
+            imageAlt: "Sample image",
+            isDecorative: true,
+            slug: "#",
+            views7d: 0,
+            readTime: 5,
+          },
+        ];
 
   const scrollLeft = () => {
     if (scrollContainerRef.current) {
@@ -127,7 +109,7 @@ export default function MainSecondSection() {
 
   return (
     <div className="bg-white">
-      <div className="px-6 py-8">
+      <div className="px-6">
         {/* Title Section */}
         <div className="flex items-center mb-4">
           <div className="w-2 h-2 bg-red-600 rounded-full mr-3"></div>
@@ -168,7 +150,24 @@ export default function MainSecondSection() {
               msOverflowStyle: "none",
             }}
           >
-            {stories.map((story) => (
+            {displayStories.map((story) => (
+              <div key={story.id} className="flex-shrink-0 w-[300px]">
+                <ArticleCardAlternative
+                  category={story.category}
+                  title={story.title}
+                  description={story.description}
+                  author={story.author}
+                  image={story.image}
+                  imageAlt={story.imageAlt}
+                  isDecorative={story.isDecorative}
+                  slug={story.slug}
+                  views7d={story.views7d}
+                  readTime={story.readTime}
+                />
+              </div>
+            ))}
+            {/* Original ArticleCard (commented out for now)
+            {displayStories.map((story) => (
               <ArticleCard
                 key={story.id}
                 category={story.category}
@@ -180,6 +179,7 @@ export default function MainSecondSection() {
                 isDecorative={story.isDecorative}
               />
             ))}
+            */}
           </div>
         </div>
       </div>

@@ -8,11 +8,20 @@ import { useEffect } from "react";
 interface Category {
   slug: string;
   name: string;
+  views?: number;
+}
+
+interface Tag {
+  slug: string;
+  title: string;
+  views?: number;
 }
 
 interface FullScreenMenuProps {
   isOpen: boolean;
   categories: Category[];
+  tags: Tag[];
+  showsTags: Tag[];
   onClose: () => void;
   headerOffset: number; // <— new prop: pixels to pad from top
 }
@@ -20,6 +29,8 @@ interface FullScreenMenuProps {
 export function FullScreenMenu({
   isOpen,
   categories,
+  tags,
+  showsTags,
   onClose,
   headerOffset,
 }: FullScreenMenuProps) {
@@ -100,81 +111,109 @@ export function FullScreenMenu({
               {/* Content Types */}
               <div>
                 <nav className="flex flex-col gap-4">
-                  <Link
-                    href="#"
-                    className="text-2xl font-bold hover:text-primary transition-colors font-outfit"
-                  >
-                    Video
-                  </Link>
-                  <Link
-                    href="#"
-                    className="text-2xl font-bold hover:text-primary transition-colors font-outfit"
-                  >
-                    Shop
-                  </Link>
-                  <Link
-                    href="#"
-                    className="text-2xl font-bold hover:text-primary transition-colors font-outfit"
-                  >
-                    Health
-                  </Link>
-                  <Link
-                    href="#"
-                    className="text-2xl font-bold hover:text-primary transition-colors font-outfit"
-                  >
-                    Weather
-                  </Link>
-                  <Link
-                    href="#"
-                    className="text-2xl font-bold hover:text-primary transition-colors font-outfit"
-                  >
-                    Sports
-                  </Link>
+                  {tags.length > 0 ? (
+                    tags.map((tag) => (
+                      <Link
+                        key={tag.slug}
+                        href={`/tag/${tag.slug}`}
+                        className="text-2xl font-bold hover:text-primary transition-colors font-outfit"
+                      >
+                        {tag.title}
+                      </Link>
+                    ))
+                  ) : (
+                    <>
+                      <Link
+                        href="#"
+                        className="text-2xl font-bold hover:text-primary transition-colors font-outfit"
+                      >
+                        Video
+                      </Link>
+                      <Link
+                        href="#"
+                        className="text-2xl font-bold hover:text-primary transition-colors font-outfit"
+                      >
+                        Shop
+                      </Link>
+                      <Link
+                        href="#"
+                        className="text-2xl font-bold hover:text-primary transition-colors font-outfit"
+                      >
+                        Health
+                      </Link>
+                      <Link
+                        href="#"
+                        className="text-2xl font-bold hover:text-primary transition-colors font-outfit"
+                      >
+                        Weather
+                      </Link>
+                      <Link
+                        href="#"
+                        className="text-2xl font-bold hover:text-primary transition-colors font-outfit"
+                      >
+                        Sports
+                      </Link>
+                    </>
+                  )}
                 </nav>
               </div>
 
-              {/* Shows */}
+              {/* See more */}
               <div>
                 <h3 className="text-lg font-semibold mb-4 text-muted-foreground font-outfit">
-                  Shows
+                  See more
                 </h3>
                 <nav className="flex flex-col gap-3">
-                  <Link
-                    href="#"
-                    className="text-base hover:text-primary transition-colors font-outfit"
-                  >
-                    Morning News
-                  </Link>
-                  <Link
-                    href="#"
-                    className="text-base hover:text-primary transition-colors font-outfit"
-                  >
-                    Evening Report
-                  </Link>
-                  <Link
-                    href="#"
-                    className="text-base hover:text-primary transition-colors font-outfit"
-                  >
-                    Weekend Edition
-                  </Link>
-                  <Link
-                    href="#"
-                    className="text-base hover:text-primary transition-colors font-outfit"
-                  >
-                    Investigative Reports
-                  </Link>
-                  <Link
-                    href="#"
-                    className="text-base hover:text-primary transition-colors font-outfit"
-                  >
-                    Special Coverage
-                  </Link>
-                  <Link
-                    href="#"
-                    className="text-base hover:text-primary transition-colors font-outfit"
-                  >
-                    Documentary Series
-                  </Link>
+                  {showsTags.length > 0 ? (
+                    showsTags.map((tag) => (
+                      <Link
+                        key={tag.slug}
+                        href={`/tag/${tag.slug}`}
+                        className="text-base hover:text-primary transition-colors font-outfit"
+                      >
+                        {tag.title}
+                      </Link>
+                    ))
+                  ) : (
+                    <>
+                      <Link
+                        href="#"
+                        className="text-base hover:text-primary transition-colors font-outfit"
+                      >
+                        Morning News
+                      </Link>
+                      <Link
+                        href="#"
+                        className="text-base hover:text-primary transition-colors font-outfit"
+                      >
+                        Evening Report
+                      </Link>
+                      <Link
+                        href="#"
+                        className="text-base hover:text-primary transition-colors font-outfit"
+                      >
+                        Weekend Edition
+                      </Link>
+                      <Link
+                        href="#"
+                        className="text-base hover:text-primary transition-colors font-outfit"
+                      >
+                        Investigative Reports
+                      </Link>
+                      <Link
+                        href="#"
+                        className="text-base hover:text-primary transition-colors font-outfit"
+                      >
+                        Special Coverage
+                      </Link>
+                      <Link
+                        href="#"
+                        className="text-base hover:text-primary transition-colors font-outfit"
+                      >
+                        Documentary Series
+                      </Link>
+                    </>
+                  )}
                 </nav>
               </div>
 

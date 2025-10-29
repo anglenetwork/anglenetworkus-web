@@ -29,9 +29,13 @@ interface ValidPost extends Omit<Post, "slug" | "category"> {
 
 interface MainFirstSectionProps {
   posts: Post[];
+  mostReadPosts: Post[];
 }
 
-export function MainFirstSection({ posts }: MainFirstSectionProps) {
+export function MainFirstSection({
+  posts,
+  mostReadPosts,
+}: MainFirstSectionProps) {
   // Filter out posts without slugs and organize posts for different sections
   const validPosts = posts.filter(
     (post): post is ValidPost =>
@@ -41,13 +45,20 @@ export function MainFirstSection({ posts }: MainFirstSectionProps) {
   const mainStory = validPosts.slice(0, 2); // First 2 posts for main story section
   const moreTopHeadlines = validPosts.slice(2, 7); // Next 5 posts for more headlines
   const sideStories = validPosts.slice(7, 9); // Next 2 posts for side stories
-  const mostRead = validPosts.slice(9, 14); // Next 5 posts for most read
+
+  // Filter most read posts to ensure they have valid slugs
+  const validMostReadPosts = mostReadPosts.filter(
+    (post): post is ValidPost =>
+      !!post.slug &&
+      (!post.category || (!!post.category.title && !!post.category.slug))
+  );
+  const mostRead = validMostReadPosts.slice(0, 5); // Top 5 most viewed posts
 
   // Use first 6 posts for latest news section
   const latestNews = validPosts.slice(0, 8);
 
   return (
-    <main className="w-full px-4 md:px-0 py-8">
+    <main className="w-full px-4 md:px-0">
       {/* Mobile order: Center, Left, Right */}
       {/* Desktop order: Left, Center, Right */}
       <div className="grid grid-cols-1 lg:grid-cols-5 gap-0">

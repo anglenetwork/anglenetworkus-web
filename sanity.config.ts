@@ -18,7 +18,6 @@ import { pageStructure, singletonPlugin } from "@/sanity/plugins/settings";
 import { assistWithPresets } from "@/sanity/plugins/assist";
 import author from "@/sanity/schemas/documents/author";
 import category from "@/sanity/schemas/documents/category";
-import comment from "@/sanity/schemas/documents/comment";
 import post from "@/sanity/schemas/documents/post";
 import settings from "@/sanity/schemas/singletons/settings";
 import tag from "@/sanity/schemas/documents/tag";
@@ -44,7 +43,6 @@ export default defineConfig({
       post,
       author,
       category,
-      comment,
       tag,
       topic,
       // Objects

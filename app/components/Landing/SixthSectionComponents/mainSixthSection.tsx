@@ -29,7 +29,7 @@ export default function MainSixthSection({
   return (
     <div className="min-h-screen">
       {/* Main container with consistent padding */}
-      <div className="py-8 px-4">
+      <div className="px-4">
         <div className="grid grid-cols-12 gap-0">
           {/* Section Header */}
           <div className="col-span-12 mb-4">
@@ -60,7 +60,7 @@ export default function MainSixthSection({
                       src={getImageUrl(mainArticle.coverImage)}
                       alt={mainArticle.title || "Featured article"}
                       fill
-                      className="object-cover"
+                      className="object-cover rounded-xl"
                     />
                     <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-4">
                       <h3 className="text-white text-2xl tracking-wide font-semibold leading-tight font-outfit">
@@ -82,7 +82,7 @@ export default function MainSixthSection({
                         src={getImageUrl(secondaryArticles[0].coverImage)}
                         alt={secondaryArticles[0].title || "Article image"}
                         fill
-                        className="object-cover"
+                        className="object-cover rounded-xl"
                       />
                     </div>
                     <div className="mt-2">
@@ -103,7 +103,7 @@ export default function MainSixthSection({
                         src={getImageUrl(secondaryArticles[1].coverImage)}
                         alt={secondaryArticles[1].title || "Article image"}
                         fill
-                        className="object-cover"
+                        className="object-cover rounded-xl"
                       />
                     </div>
                     <div className="mt-2">
@@ -130,7 +130,7 @@ export default function MainSixthSection({
                         src={getImageUrl(rightColumnArticles[0].coverImage)}
                         alt={rightColumnArticles[0].title || "Article image"}
                         fill
-                        className="object-cover"
+                        className="object-cover rounded-xl"
                       />
                     </div>
                     <div className="mt-2">
@@ -184,7 +184,7 @@ export default function MainSixthSection({
                           ].title || "Article image"
                         }
                         fill
-                        className="object-cover"
+                        className="object-cover rounded-xl"
                       />
                     </div>
                     <div className="mt-2">

@@ -9,219 +9,238 @@ import { FullScreenMenu } from "./full-screen-menu";
 interface Category {
   slug: string;
   name: string;
+  views?: number;
 }
 
-interface HeaderClientProps {
+interface Tag {
+  slug: string;
+  title: string;
+  views?: number;
+}
+
+interface BetterHeaderProps {
   categories: Category[];
+  tags: Tag[];
+  showsTags: Tag[];
 }
 
-export function HeaderClient({ categories }: HeaderClientProps) {
+export function HeaderClient({
+  categories,
+  tags,
+  showsTags,
+}: BetterHeaderProps) {
   const [isScrolled, setIsScrolled] = useState(false);
-  const [showPolitico, setShowPolitico] = useState(true);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [headerOffset, setHeaderOffset] = useState(0); // <— current header height (px)
+  const [headerOffset, setHeaderOffset] = useState(0); // Current header height in pixels
   const headerRef = useRef<HTMLElement | null>(null);
 
-  // Measure header height whenever it changes (scroll, resize, CSS transitions)
+  const measureHeaderHeight = () => {
+    if (!headerRef.current) return;
+    const height = headerRef.current.getBoundingClientRect().height || 0;
+    setHeaderOffset(height);
+    document.documentElement.style.setProperty(
+      "--header-offset",
+      `${height}px`
+    );
+  };
+
   useEffect(() => {
     if (!headerRef.current) return;
-
-    const el = headerRef.current;
-
-    const measure = () => {
-      const h = el.getBoundingClientRect().height || 0;
-      setHeaderOffset(h);
-      // also expose as CSS variable for any other consumers
-      document.documentElement.style.setProperty("--header-offset", `${h}px`);
-    };
-
-    measure();
-
-    // Listen to size changes of the header (handles show/hide transitions)
-    const ro = new ResizeObserver(measure);
-    ro.observe(el);
-
-    // Re-measure on resize
-    const onResize = () => measure();
+    measureHeaderHeight();
+    const ro = new ResizeObserver(measureHeaderHeight);
+    ro.observe(headerRef.current);
+    const onResize = () => measureHeaderHeight();
     window.addEventListener("resize", onResize);
-
     return () => {
       ro.disconnect();
       window.removeEventListener("resize", onResize);
     };
   }, []);
 
-  // Toggle compact state on scroll and re-measure
   useEffect(() => {
-    const handleScroll = () => {
-      const scrollTop = window.scrollY;
-      const nextIsScrolled = scrollTop > 50;
-      setIsScrolled(nextIsScrolled);
-      setShowPolitico(!nextIsScrolled);
-      // measurement is handled by ResizeObserver, but this keeps it snappy
-      if (headerRef.current) {
-        const h = headerRef.current.getBoundingClientRect().height || 0;
-        setHeaderOffset(h);
-        document.documentElement.style.setProperty("--header-offset", `${h}px`);
-      }
+    const onScroll = () => {
+      const y = window.scrollY;
+      setIsScrolled(y > 20);
+      measureHeaderHeight();
     };
-
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => window.removeEventListener("scroll", handleScroll);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
   return (
     <>
-      <header ref={headerRef} className="sticky top-0 bg-white z-50">
-        <div className="">
-          {/* Top Bar - POLITICO Logo + Hamburger Button */}
-          <div
-            className={`container mx-auto transition-all duration-500 ease-in-out ${
-              showPolitico
-                ? "opacity-100 max-h-20 translate-y-0 "
-                : "opacity-0 max-h-0 -translate-y-full overflow-hidden border-b-0"
-            }`}
-          >
-            <div className="flex items-center justify-between py-3">
-              {/* Left side - Hamburger Button */}
-              <div className="flex items-center">
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => setIsMenuOpen((v) => !v)}
-                  className="h-10 w-10 rounded-full bg-transparent p-0 relative overflow-hidden flex items-center justify-center"
-                >
-                  <div className="relative w-5 h-5 flex items-center justify-center">
-                    <Menu
-                      className={`h-5 w-5 text-black absolute transition-all duration-300 ease-in-out ${
-                        isMenuOpen
-                          ? "opacity-0 rotate-180 scale-0"
-                          : "opacity-100 rotate-0 scale-100"
-                      }`}
-                    />
-                    <X
-                      className={`h-5 w-5 text-black absolute transition-all duration-300 ease-in-out ${
-                        isMenuOpen
-                          ? "opacity-100 rotate-0 scale-100"
-                          : "opacity-0 -rotate-180 scale-0"
-                      }`}
-                    />
-                  </div>
-                </Button>
+      <header
+        ref={headerRef}
+        className={`sticky top-0 bg-white z-50 transition-all duration-500 ease-out ${
+          isScrolled ? "shadow-sm border-b border-neutral-200" : ""
+        }`}
+      >
+        <div className="container mx-auto">
+          {/* MOBILE: hamburger (left) • logo (center) • search (right) */}
+          <div className="flex items-center justify-between py-3 lg:hidden">
+            {/* Left: Hamburger (fixed size on mobile) */}
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setIsMenuOpen((v) => !v)}
+              className={`rounded-full bg-transparent p-0 relative flex items-center justify-center transition-all duration-500 ease-out h-10 w-10`}
+            >
+              <div className="relative flex items-center justify-center w-5 h-5">
+                <Menu
+                  className={`text-black absolute transition-all duration-300 ease-in-out h-5 w-5 ${
+                    isMenuOpen
+                      ? "opacity-0 rotate-180 scale-0"
+                      : "opacity-100 rotate-0 scale-100"
+                  }`}
+                />
+                <X
+                  className={`text-black absolute transition-all duration-300 ease-in-out h-5 w-5 ${
+                    isMenuOpen
+                      ? "opacity-100 rotate-0 scale-100"
+                      : "opacity-0 -rotate-180 scale-0"
+                  }`}
+                />
               </div>
+            </Button>
 
-              {/* Center - POLITICO Logo */}
-              <div className="flex items-center">
-                <Link href="/" className="hover:opacity-80 transition-opacity">
-                  <h1 className="text-4xl font-bold text-red-600 tracking-tight">
-                    POLITICO
-                  </h1>
-                </Link>
-              </div>
+            {/* Center: Logo (fixed size on mobile) */}
+            <Link href="/" className="hover:opacity-80 transition-opacity">
+              <h1 className="font-bold text-red-600 tracking-tight text-3xl font-outfit">
+                POLITICO
+              </h1>
+            </Link>
 
-              {/* Right side - Search Button */}
-              <div className="flex items-center">
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="h-10 w-10 rounded-full bg-transparent p-0 flex items-center justify-center hover:bg-gray-100"
-                >
-                  <Search className="h-5 w-5 text-black" />
-                </Button>
-              </div>
-            </div>
+            {/* Right: Search (fixed size on mobile) */}
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setIsMenuOpen((v) => !v)}
+              className="rounded-full bg-transparent p-0 flex items-center justify-center hover:bg-gray-100 h-10 w-10"
+            >
+              <Search className="text-black h-5 w-5" />
+            </Button>
           </div>
 
-          {/* Navigation Bar - Categories */}
-          <nav className=" hidden md:block border-t border-neutral-200">
-            <div
-              className={`mx-auto container flex items-center py-3 text-sm font-medium text-gray-700 transition-all duration-500 ease-in-out ${
-                isScrolled ? "justify-between" : "justify-center space-x-8"
-              }`}
-            >
-              {/* Left Block */}
-              <div className="flex items-center space-x-6">
-                {/* Compact Header Elements - Only visible when scrolled */}
-                {isScrolled && (
-                  <div className="flex items-center space-x-4">
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => setIsMenuOpen((v) => !v)}
-                      className="h-8 w-8 rounded-full bg-transparent p-0 relative overflow-hidden flex items-center justify-center"
-                    >
-                      <div className="relative w-4 h-4 flex items-center justify-center">
-                        <Menu
-                          className={`h-4 w-4 text-black absolute transition-all duration-300 ease-in-out ${
-                            isMenuOpen
-                              ? "opacity-0 rotate-180 scale-0"
-                              : "opacity-100 rotate-0 scale-100"
-                          }`}
-                        />
-                        <X
-                          className={`h-4 w-4 text-black absolute transition-all duration-300 ease-in-out ${
-                            isMenuOpen
-                              ? "opacity-100 rotate-0 scale-100"
-                              : "opacity-0 -rotate-180 scale-0"
-                          }`}
-                        />
-                      </div>
-                    </Button>
+          {/* DESKTOP: hamburger + logo + categories (left) • search (right) */}
+          <div className="hidden lg:flex items-center justify-between py-4 transition-all duration-500 ease-out">
+            {/* Left block: Hamburger + Logo + Categories */}
+            <div className="flex items-center gap-4">
+              {/* Hamburger (shrinks only on lg+) */}
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setIsMenuOpen((v) => !v)}
+                className={`rounded-full bg-transparent p-0 relative flex items-center justify-center transition-all duration-500 ease-out ${
+                  isScrolled ? "lg:h-8 lg:w-8" : "lg:h-10 lg:w-10"
+                } h-10 w-10`} // mobile fallback (not used here but keeps consistency)
+              >
+                <div
+                  className={`relative flex items-center justify-center transition-all duration-500 ease-out ${
+                    isScrolled ? "lg:w-4 lg:h-4" : "lg:w-5 lg:h-5"
+                  } w-5 h-5`}
+                >
+                  <Menu
+                    className={`text-black absolute transition-all duration-300 ease-in-out ${
+                      isScrolled ? "lg:h-4 lg:w-4" : "lg:h-5 lg:w-5"
+                    } h-5 w-5 ${
+                      isMenuOpen
+                        ? "opacity-0 rotate-180 scale-0"
+                        : "opacity-100 rotate-0 scale-100"
+                    }`}
+                  />
+                  <X
+                    className={`text-black absolute transition-all duration-300 ease-in-out ${
+                      isScrolled ? "lg:h-4 lg:w-4" : "lg:h-5 lg:w-5"
+                    } h-5 w-5 ${
+                      isMenuOpen
+                        ? "opacity-100 rotate-0 scale-100"
+                        : "opacity-0 -rotate-180 scale-0"
+                    }`}
+                  />
+                </div>
+              </Button>
 
+              {/* Logo (shrinks only on lg+) */}
+              <Link href="/" className="hover:opacity-80 transition-opacity">
+                <h1
+                  className={`font-bold text-red-600 tracking-tight transition-all duration-500 ease-out font-outfit ${
+                    isScrolled ? "lg:text-xl" : "lg:text-4xl"
+                  } text-4xl`}
+                >
+                  POLITICO
+                </h1>
+              </Link>
+
+              {/* Categories (next to logo) */}
+              <nav className="ml-4 flex items-center gap-6">
+                {categories.length > 0 ? (
+                  categories.slice(0, 10).map((category) => (
                     <Link
-                      href="/"
-                      className="hover:opacity-80 transition-opacity"
+                      key={category.slug}
+                      href={`/category/${category.slug}`}
+                      className={`hover:text-red-600 font-light text-neutral-900 capitalize transition-all duration-500 ease-out whitespace-nowrap font-outfit ${
+                        isScrolled ? "lg:text-sm" : "lg:text-base"
+                      } text-base`}
                     >
-                      <h2 className="text-lg font-bold text-red-600 tracking-tight">
-                        POLITICO
-                      </h2>
+                      {category.name}
                     </Link>
-                  </div>
-                )}
-
-                {/* Categories - Always visible */}
-                <div className="flex items-center space-x-8">
-                  {categories.length > 0 ? (
-                    categories.map((category) => (
-                      <a
-                        key={category.slug}
-                        href={`/category/${category.slug}`}
-                        className="hover:text-red-600 font-outfit font-light text-neutral-900 text-base capitalize"
+                  ))
+                ) : (
+                  <>
+                    {[
+                      ["politics", "Politics"],
+                      ["policy", "Policy"],
+                      ["congress", "Congress"],
+                      ["white-house", "White House"],
+                      ["elections", "Elections"],
+                      ["magazine", "Magazine"],
+                      ["newsletters", "Newsletters"],
+                      ["podcasts", "Podcasts"],
+                    ].map(([href, label]) => (
+                      <Link
+                        key={href}
+                        href={`/${href}`}
+                        className={`hover:text-red-600 font-light text-neutral-900 transition-all duration-500 ease-out whitespace-nowrap font-outfit ${
+                          isScrolled ? "lg:text-sm" : "lg:text-base"
+                        } text-base`}
                       >
-                        {category.name}
-                      </a>
-                    ))
-                  ) : (
-                    <span className="text-gray-500">
-                      No categories available
-                    </span>
-                  )}
-                </div>
-              </div>
-
-              {/* Right Block - Search Button (only visible when scrolled) */}
-              {isScrolled && (
-                <div className="flex items-center">
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="h-8 w-8 rounded-full bg-transparent p-0 flex items-center justify-center hover:bg-gray-100"
-                  >
-                    <Search className="h-4 w-4 text-black" />
-                  </Button>
-                </div>
-              )}
+                        {label}
+                      </Link>
+                    ))}
+                  </>
+                )}
+              </nav>
             </div>
-          </nav>
+
+            {/* Right: Search (shrinks only on lg+) */}
+            <div className="flex items-center">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setIsMenuOpen((v) => !v)}
+                className={`rounded-full bg-transparent p-0 flex items-center justify-center hover:bg-gray-100 transition-all duration-500 ease-out ${
+                  isScrolled ? "lg:h-8 lg:w-8" : "lg:h-10 lg:w-10"
+                } h-10 w-10`}
+              >
+                <Search
+                  className={`text-black transition-all duration-500 ease-out ${
+                    isScrolled ? "lg:h-4 lg:w-4" : "lg:h-5 lg:w-5"
+                  } h-5 w-5`}
+                />
+              </Button>
+            </div>
+          </div>
         </div>
       </header>
 
-      {/* Full Screen Menu */}
+      {/* Full Screen Menu - Triggered by hamburger or search icons */}
       <FullScreenMenu
         isOpen={isMenuOpen}
         categories={categories}
+        tags={tags}
+        showsTags={showsTags}
         onClose={() => setIsMenuOpen(false)}
-        headerOffset={headerOffset} // <— pass current header height
+        headerOffset={headerOffset} // Pass current header height for proper positioning
       />
     </>
   );

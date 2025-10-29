@@ -33,7 +33,7 @@ export default function ArticleCard({
             alt={imageAlt || "Article image"}
             width={400}
             height={240}
-            className="w-full h-60 object-cover object-center"
+            className="w-full h-60 object-cover object-center rounded-xl"
             style={{ width: "100%", height: "240px" }}
           />
         )}
@@ -49,9 +49,6 @@ export default function ArticleCard({
         <p className="text-gray-600 font-normal text-xs leading-relaxed mb-4 font-outfit">
           {description}
         </p>
-        <div className="text-gray-400 text-sm font-light mt-auto font-outfit">
-          By <span className="text-gray-500 font-medium">{author}</span>
-        </div>
       </div>
     </Card>
   );

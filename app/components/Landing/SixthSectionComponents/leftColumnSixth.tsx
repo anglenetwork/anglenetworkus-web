@@ -15,7 +15,7 @@ export function LeftColumnSixth() {
             alt="Generic placeholder"
             width={300}
             height={400}
-            className="w-full h-96 object-cover rounded"
+            className="w-full h-96 object-cover rounded-xl"
           />
           <p className="text-sm text-gray-600 mt-2 text-center font-outfit">
             Generic Content

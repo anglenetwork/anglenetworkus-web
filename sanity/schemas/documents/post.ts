@@ -199,13 +199,6 @@ export default defineType({
       type: "reference",
       to: [{ type: "author" }],
     }),
-    defineField({
-      name: "comments",
-      title: "Comments",
-      type: "array",
-      of: [{ type: "reference", to: [{ type: "comment" }] }],
-      readOnly: true,
-    }),
 
     // ---- Editorial controls ----
     defineField({
@@ -223,6 +216,29 @@ export default defineType({
       validation: (rule) => rule.min(0).max(10),
     }),
     defineField({ name: "readTime", title: "Estimated read time (min)", type: "number" }),
+
+    // ---- View counters (read-only) ----
+    defineField({
+      name: "viewsAll",
+      title: "Views (all time)",
+      type: "number",
+      initialValue: 0,
+      readOnly: true,
+    }),
+    defineField({
+      name: "views30d",
+      title: "Views (30 days)",
+      type: "number",
+      initialValue: 0,
+      readOnly: true,
+    }),
+    defineField({
+      name: "views7d",
+      title: "Views (7 days)",
+      type: "number",
+      initialValue: 0,
+      readOnly: true,
+    }),
 
     // ---- Labels: internal editorial flags (strings) ----
     defineField({

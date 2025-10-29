@@ -115,6 +115,14 @@ export default defineType({
       type: "string",
       description: "Optional key used by your analytics/tracking.",
     }),
+    defineField({
+      name: "views",
+      title: "Views",
+      type: "number",
+      initialValue: 0,
+      description: "Total number of visits to this tag page.",
+      validation: (rule) => rule.min(0),
+    }),
   ],
 
   preview: {
@@ -127,15 +135,17 @@ export default defineType({
       order: "order",
       deprecated: "deprecated",
       redirect: "redirectTo.title",
+      views: "views",
     },
     prepare(selection) {
-      const { title, slug, emoji, featured, hidden, order, deprecated, redirect } =
+      const { title, slug, emoji, featured, hidden, order, deprecated, redirect, views } =
         selection as any;
       const flags = [
         featured ? "★ featured" : null,
         hidden ? "hidden" : null,
         deprecated ? (redirect ? `→ ${redirect}` : "deprecated") : null,
         typeof order === "number" ? `#${order}` : null,
+        views > 0 ? `👁 ${views}` : null,
       ]
         .filter(Boolean)
         .join(" • ");

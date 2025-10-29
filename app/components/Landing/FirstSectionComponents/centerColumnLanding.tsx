@@ -40,7 +40,7 @@ export function CenterColumnLanding({
           {index === 0 ? (
             <>
               <Link href={`/post/${post.slug}`} className="hover:text-red-600">
-                <h1 className="text-2xl md:text-3xl lg:text-5xl font-semibold md:font-bold text-gray-900 leading-tight mb-2 font-outfit text-center">
+                <h1 className="text-3xl md:text-3xl lg:text-5xl font-semibold md:font-bold text-gray-900 leading-tight mb-4 font-outfit text-start">
                   {post.title}
                 </h1>
               </Link>
@@ -57,7 +57,7 @@ export function CenterColumnLanding({
                           alt={post.title}
                           width={800}
                           height={400}
-                          className="w-full h-80 md:h-auto object-cover"
+                          className="w-full h-80 md:h-[500px] object-cover rounded-xl"
                         />
                       </div>
                     </Link>
@@ -78,7 +78,7 @@ export function CenterColumnLanding({
                           alt={post.title}
                           width={600}
                           height={256}
-                          className="w-32 h-24 md:w-full md:h-64 object-cover"
+                          className="w-32 h-24 md:w-full md:h-64 object-cover rounded-xl"
                         />
                       </Link>
                     );
@@ -127,7 +127,7 @@ export function CenterColumnLanding({
                           alt={post.title}
                           width={400}
                           height={192}
-                          className="w-24 h-20 md:w-full md:h-48 object-cover"
+                          className="w-24 h-20 md:w-full md:h-48 object-cover rounded-xl"
                         />
                       </div>
                     </Link>
@@ -171,7 +171,7 @@ export function CenterColumnLanding({
                           alt={post.title}
                           width={300}
                           height={128}
-                          className="w-24 h-20 md:w-full md:h-32 object-cover"
+                          className="w-24 h-20 md:w-full md:h-32 object-cover rounded-xl"
                         />
                       </div>
                     </Link>

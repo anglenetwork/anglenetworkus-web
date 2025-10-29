@@ -38,7 +38,7 @@ export function RightColumnLanding({
                       alt={post.title}
                       width={400}
                       height={192}
-                      className="w-full h-48 object-cover"
+                      className="w-full h-48 object-cover rounded-xl"
                     />
                   </div>
                 </Link>
@@ -85,7 +85,7 @@ export function RightColumnLanding({
                       alt={mostRead[0].title}
                       width={400}
                       height={256}
-                      className="w-full h-48 object-cover"
+                      className="w-full h-48 object-cover rounded-xl"
                     />
                   </div>
                 </Link>

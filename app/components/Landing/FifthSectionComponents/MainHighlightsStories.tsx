@@ -214,7 +214,7 @@ export function VideoPlayer() {
             src={selectedVideo.videoUrl || "/placeholder.svg"}
             alt={selectedVideo.title}
             fill
-            className="object-cover rounded-lg"
+            className="object-cover rounded-xl"
           />
 
           {/* Play Button Overlay */}
@@ -288,7 +288,7 @@ export function VideoPlayer() {
                   src={video.thumbnail || "/placeholder.svg"}
                   alt={video.title}
                   fill
-                  className="object-cover rounded"
+                  className="object-cover rounded-xl"
                 />
                 <div className="absolute bottom-1 right-1 bg-black/80 text-white text-xs px-1 rounded">
                   <Play className="w-2 h-2 inline mr-1" />
