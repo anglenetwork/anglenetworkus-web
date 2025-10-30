@@ -39,7 +39,7 @@ export default function MainSeventhSection({
         <div className="mb-6">
           <div className="flex items-center mb-4">
             <div className="w-2 h-2 bg-red-500 rounded-full mr-2"></div>
-            <h2 className="text-sm font-semibold text-gray-700 uppercase tracking-wide font-outfit">
+            <h2 className="text-sm font-semibold text-gray-700 uppercase tracking-wide font-sans">
               <Link
                 href={`/category/${categoryTitle.toLowerCase().replace(/\s+/g, "-")}`}
                 className="hover:text-red-600 transition-colors cursor-pointer"
@@ -78,7 +78,7 @@ export default function MainSeventhSection({
                     </div>
                   )}
                 </div>
-                <h2 className="mt-6 text-balance text-2xl font-bold leading-tight text-neutral-900 font-outfit">
+                <h2 className="mt-6 text-balance text-2xl font-bold leading-tight text-neutral-900 font-sans">
                   {mainArticle.title || "Untitled"}
                 </h2>
               </Link>
@@ -92,7 +92,7 @@ export default function MainSeventhSection({
                   href={`/post/${article.slug || "#"}`}
                   className="block py-4 transition-opacity hover:opacity-70"
                 >
-                  <h3 className="text-base font-normal leading-relaxed text-neutral-900 font-outfit">
+                  <h3 className="text-base font-normal leading-relaxed text-neutral-900 font-sans">
                     {article.title || "Untitled"}
                   </h3>
                 </Link>

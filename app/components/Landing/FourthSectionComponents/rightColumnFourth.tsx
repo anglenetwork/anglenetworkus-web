@@ -18,7 +18,7 @@ export function RightColumnFourth({ videosData }: RightColumnFourthProps) {
         <div className="mb-8">
           <div className="flex items-center mb-4">
             <div className="w-2 h-2 bg-red-500 rounded-full mr-2"></div>
-            <h2 className="text-sm font-semibold text-gray-700 uppercase tracking-wide font-outfit">
+            <h2 className="text-sm font-semibold text-gray-700 uppercase tracking-wide font-sans">
               Videos
             </h2>
           </div>
@@ -42,10 +42,10 @@ export function RightColumnFourth({ videosData }: RightColumnFourthProps) {
                   />
                 )}
                 <div className="flex-1">
-                  <span className="text-red-500 font-bold text-sm mr-2 font-outfit">
+                  <span className="text-red-500 font-bold text-sm mr-2 font-sans">
                     {video.number}
                   </span>
-                  <h4 className="text-sm font-semibold text-gray-900 leading-tight font-outfit">
+                  <h4 className="text-sm font-semibold text-gray-900 leading-tight font-sans">
                     {video.title}
                   </h4>
                 </div>
@@ -60,13 +60,13 @@ export function RightColumnFourth({ videosData }: RightColumnFourthProps) {
         <div>
           <div className="flex items-center mb-4">
             <div className="w-2 h-2 bg-red-500 rounded-full mr-2"></div>
-            <h2 className="text-sm font-semibold text-gray-700 uppercase tracking-wide font-outfit">
+            <h2 className="text-sm font-semibold text-gray-700 uppercase tracking-wide font-sans">
               TRENDING
             </h2>
           </div>
           <div className="border-t border-gray-300 mb-4"></div>
           <div className="p-2 border border-gray-200 rounded">
-            <div className="text-sm text-gray-600 text-center font-outfit">
+            <div className="text-sm text-gray-600 text-center font-sans">
               Trending content placeholder
             </div>
           </div>

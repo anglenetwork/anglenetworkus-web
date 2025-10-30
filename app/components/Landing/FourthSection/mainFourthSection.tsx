@@ -26,13 +26,13 @@ interface CategoryData {
   posts: Post[];
 }
 
-interface MainEighthSectionProps {
+interface MainFourthSectionProps {
   categoriesData: CategoryData[];
 }
 
-export default function MainEighthSection({
+export default function MainFourthSection({
   categoriesData,
-}: MainEighthSectionProps) {
+}: MainFourthSectionProps) {
   // Filter out categories without required data and limit to 3 posts per category
   const validCategories = categoriesData
     .filter(
@@ -44,7 +44,7 @@ export default function MainEighthSection({
     }));
 
   return (
-    <main className="bg-background px-4 border-2 border-yellow-500">
+    <main className="bg-background px-4 border-2 border-yellow-200">
       <div className="">
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
           {validCategories.map((category, index) => {
@@ -55,14 +55,14 @@ export default function MainEighthSection({
                 {/* Category Header */}
                 <div className="flex items-center mb-4">
                   <div className="w-2 h-2 bg-red-600 rounded-full mr-3"></div>
-                  <h2 className="text-xs font-medium text-neutral-900 uppercase tracking-wider font-inter">
+                  <h2 className="text-xs font-medium text-neutral-900 uppercase tracking-wider font-secondary">
                     {category.name}
                   </h2>
                 </div>
-                <div className="border-b border-gray-300 mb-6"></div>
+                <div className="border-b border-gray-300 mb-10"></div>
 
                 {/* Featured Image */}
-                <Link href={`/post/${mainPost.slug}`}>
+                <Link href={`/post/${mainPost.slug}`} className="block mt-4">
                   {mainPost?.coverImage && (
                     <div className="relative overflow-hidden rounded-lg bg-black">
                       <Image
@@ -75,9 +75,6 @@ export default function MainEighthSection({
                         height={300}
                         className="h-[300px] w-full object-cover rounded-xl"
                       />
-                      <span className="absolute bottom-4 right-4 text-xs text-white">
-                        {mainPost.author?.name || "The Associated Press"}
-                      </span>
                     </div>
                   )}
                 </Link>
@@ -86,7 +83,7 @@ export default function MainEighthSection({
                 {mainPost && mainPost.slug && (
                   <div className="space-y-2">
                     <Link href={`/post/${mainPost.slug}`}>
-                      <h1 className=" text-base font-outfit font-medium leading-tight tracking-wide text-foreground">
+                      <h1 className=" text-base font-sans font-medium leading-tight tracking-wide text-foreground">
                         {mainPost.title}
                       </h1>
                     </Link>
@@ -100,14 +97,14 @@ export default function MainEighthSection({
                 <div className="space-y-4">
                   {secondPost && secondPost.slug && (
                     <Link href={`/post/${secondPost.slug}`}>
-                      <h3 className="text-base font-outfit font-medium leading-tight tracking-wide text-foreground mb-4">
+                      <h3 className="text-base font-sans font-medium leading-tight tracking-wide text-foreground mb-4">
                         {secondPost.title}
                       </h3>
                     </Link>
                   )}
                   {thirdPost && thirdPost.slug && (
                     <Link href={`/post/${thirdPost.slug}`}>
-                      <h3 className="text-base font-outfit font-medium leading-tight tracking-wide text-foreground">
+                      <h3 className="text-base font-sans font-medium leading-tight tracking-wide text-foreground">
                         {thirdPost.title}
                       </h3>
                     </Link>

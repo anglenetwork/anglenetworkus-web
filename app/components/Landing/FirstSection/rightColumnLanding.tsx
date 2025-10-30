@@ -45,15 +45,10 @@ export function RightColumnLanding({
               );
             })()}
           <Link href={`/post/${post.slug}`} className="hover:text-red-600">
-            <h3 className="text-xl font-outfit font-medium text-neutral-900 leading-tight">
+            <h3 className="text-xl font-sans font-medium text-neutral-900 leading-tight">
               {post.title}
             </h3>
           </Link>
-          {/* {post.author && (
-            <p className="text-sm text-gray-500 font-inter">
-              By <span className="font-semibold">{post.author.name}</span>
-            </p>
-          )} */}
           {index < sideStories.length - 1 && (
             <div className="border-b border-gray-300 mt-4"></div>
           )}
@@ -62,9 +57,9 @@ export function RightColumnLanding({
 
       {/* MOST READ section */}
       <div className="border-t border-neutral-300 pt-4">
-        <div className="flex items-center justify-center lg:justify-start mb-4">
+        <div className="flex items-center justify-start mb-4">
           <div className="w-2 h-2 bg-red-600 rounded-full mr-3"></div>
-          <h2 className="text-xs font-medium text-neutral-900 uppercase tracking-wider font-outfit">
+          <h2 className="text-xs font-medium text-neutral-900 uppercase tracking-wider font-sans">
             Most Read
           </h2>
         </div>
@@ -99,14 +94,14 @@ export function RightColumnLanding({
                 key={post._id}
                 className={`flex items-start justify-center lg:justify-start space-x-3 ${index < mostRead.length - 1 ? "border-b border-gray-200" : ""} pb-4`}
               >
-                <span className="text-lg font-bold text-red-600 flex-shrink-0 font-outfit">
+                <span className="text-lg font-bold text-red-600 flex-shrink-0 font-sans">
                   {index + 1}
                 </span>
                 <Link
                   href={`/post/${post.slug}`}
                   className="hover:text-red-600"
                 >
-                  <h3 className="text-base font-outfit font-medium text-neutral-900 leading-tight line-clamp-2">
+                  <h3 className="text-base font-sans font-medium text-neutral-900 leading-tight line-clamp-2">
                     {post.title}
                   </h3>
                 </Link>

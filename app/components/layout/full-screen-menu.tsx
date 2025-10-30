@@ -64,11 +64,13 @@ export function FullScreenMenu({
       }`}
       style={{ height: "100svh" }}
       aria-hidden={!isOpen}
+      onClick={onClose}
     >
       {/* Only this area can scroll; top padding = current header height */}
       <div
         className="h-full max-h-[100svh] overflow-y-auto overscroll-contain"
         style={{ paddingTop: `${headerOffset || 0}px` }}
+        onClick={(e) => e.stopPropagation()}
       >
         <div className="container mx-auto md:py-6">
           {/* Shared wrapper: search + nav same horizontal padding */}
@@ -95,7 +97,8 @@ export function FullScreenMenu({
                       <Link
                         key={category.slug}
                         href={`/category/${category.slug}`}
-                        className="text-3xl font-bold hover:text-primary transition-colors capitalize font-outfit"
+                        onClick={onClose}
+                        className="text-3xl font-bold hover:text-primary transition-colors capitalize font-sans"
                       >
                         {category.name}
                       </Link>
@@ -116,7 +119,8 @@ export function FullScreenMenu({
                       <Link
                         key={tag.slug}
                         href={`/tag/${tag.slug}`}
-                        className="text-2xl font-bold hover:text-primary transition-colors font-outfit"
+                        onClick={onClose}
+                        className="text-2xl font-bold hover:text-primary transition-colors font-sans"
                       >
                         {tag.title}
                       </Link>
@@ -125,31 +129,36 @@ export function FullScreenMenu({
                     <>
                       <Link
                         href="#"
-                        className="text-2xl font-bold hover:text-primary transition-colors font-outfit"
+                        onClick={onClose}
+                        className="text-2xl font-bold hover:text-primary transition-colors font-sans"
                       >
                         Video
                       </Link>
                       <Link
                         href="#"
-                        className="text-2xl font-bold hover:text-primary transition-colors font-outfit"
+                        onClick={onClose}
+                        className="text-2xl font-bold hover:text-primary transition-colors font-sans"
                       >
                         Shop
                       </Link>
                       <Link
                         href="#"
-                        className="text-2xl font-bold hover:text-primary transition-colors font-outfit"
+                        onClick={onClose}
+                        className="text-2xl font-bold hover:text-primary transition-colors font-sans"
                       >
                         Health
                       </Link>
                       <Link
                         href="#"
-                        className="text-2xl font-bold hover:text-primary transition-colors font-outfit"
+                        onClick={onClose}
+                        className="text-2xl font-bold hover:text-primary transition-colors font-sans"
                       >
                         Weather
                       </Link>
                       <Link
                         href="#"
-                        className="text-2xl font-bold hover:text-primary transition-colors font-outfit"
+                        onClick={onClose}
+                        className="text-2xl font-bold hover:text-primary transition-colors font-sans"
                       >
                         Sports
                       </Link>
@@ -160,7 +169,7 @@ export function FullScreenMenu({
 
               {/* See more */}
               <div>
-                <h3 className="text-lg font-semibold mb-4 text-muted-foreground font-outfit">
+                <h3 className="text-lg font-semibold mb-4 text-muted-foreground font-sans">
                   See more
                 </h3>
                 <nav className="flex flex-col gap-3">
@@ -169,7 +178,8 @@ export function FullScreenMenu({
                       <Link
                         key={tag.slug}
                         href={`/tag/${tag.slug}`}
-                        className="text-base hover:text-primary transition-colors font-outfit"
+                        onClick={onClose}
+                        className="text-base hover:text-primary transition-colors font-sans"
                       >
                         {tag.title}
                       </Link>
@@ -178,37 +188,43 @@ export function FullScreenMenu({
                     <>
                       <Link
                         href="#"
-                        className="text-base hover:text-primary transition-colors font-outfit"
+                        onClick={onClose}
+                        className="text-base hover:text-primary transition-colors font-sans"
                       >
                         Morning News
                       </Link>
                       <Link
                         href="#"
-                        className="text-base hover:text-primary transition-colors font-outfit"
+                        onClick={onClose}
+                        className="text-base hover:text-primary transition-colors font-sans"
                       >
                         Evening Report
                       </Link>
                       <Link
                         href="#"
-                        className="text-base hover:text-primary transition-colors font-outfit"
+                        onClick={onClose}
+                        className="text-base hover:text-primary transition-colors font-sans"
                       >
                         Weekend Edition
                       </Link>
                       <Link
                         href="#"
-                        className="text-base hover:text-primary transition-colors font-outfit"
+                        onClick={onClose}
+                        className="text-base hover:text-primary transition-colors font-sans"
                       >
                         Investigative Reports
                       </Link>
                       <Link
                         href="#"
-                        className="text-base hover:text-primary transition-colors font-outfit"
+                        onClick={onClose}
+                        className="text-base hover:text-primary transition-colors font-sans"
                       >
                         Special Coverage
                       </Link>
                       <Link
                         href="#"
-                        className="text-base hover:text-primary transition-colors font-outfit"
+                        onClick={onClose}
+                        className="text-base hover:text-primary transition-colors font-sans"
                       >
                         Documentary Series
                       </Link>
@@ -219,63 +235,37 @@ export function FullScreenMenu({
 
               {/* Company */}
               <div>
-                <h3 className="text-lg font-semibold mb-4 text-muted-foreground font-outfit">
+                <h3 className="text-lg font-semibold mb-4 text-muted-foreground font-sans">
                   Company
                 </h3>
                 <nav className="flex flex-col gap-3">
                   <Link
-                    href="#"
-                    className="text-base hover:text-primary transition-colors font-outfit"
+                    href="/company/about"
+                    onClick={onClose}
+                    className="text-base hover:text-primary transition-colors font-sans"
+                  >
+                    About
+                  </Link>
+                  <Link
+                    href="/company/contact"
+                    onClick={onClose}
+                    className="text-base hover:text-primary transition-colors font-sans"
                   >
                     Contact Us
                   </Link>
                   <Link
-                    href="#"
-                    className="text-base hover:text-primary transition-colors font-outfit"
+                    href="/company/privacy-policy"
+                    onClick={onClose}
+                    className="text-base hover:text-primary transition-colors font-sans"
                   >
-                    Advertise with Us
+                    Privacy Policy
                   </Link>
                   <Link
-                    href="#"
-                    className="text-base hover:text-primary transition-colors font-outfit"
+                    href="/company/terms-of-service"
+                    onClick={onClose}
+                    className="text-base hover:text-primary transition-colors font-sans"
                   >
-                    Share Tips with News
-                  </Link>
-                  <Link
-                    href="#"
-                    className="text-base hover:text-primary transition-colors font-outfit"
-                  >
-                    News App
-                  </Link>
-                  <Link
-                    href="#"
-                    className="text-base hover:text-primary transition-colors font-outfit"
-                  >
-                    News Store
-                  </Link>
-                  <Link
-                    href="#"
-                    className="text-base hover:text-primary transition-colors font-outfit"
-                  >
-                    Authors List
-                  </Link>
-                  <Link
-                    href="#"
-                    className="text-base hover:text-primary transition-colors font-outfit"
-                  >
-                    Press Releases
-                  </Link>
-                  <Link
-                    href="#"
-                    className="text-base hover:text-primary transition-colors font-outfit"
-                  >
-                    Feedback
-                  </Link>
-                  <Link
-                    href="#"
-                    className="text-base hover:text-primary transition-colors font-outfit"
-                  >
-                    Site Map
+                    Terms of Service
                   </Link>
                 </nav>
               </div>
@@ -327,44 +317,50 @@ export function FullScreenMenu({
             style={{ transitionDelay: isOpen ? "400ms" : "0ms" }}
           >
             <div className="flex flex-wrap gap-x-4 gap-y-2">
-              <a
-                href="#"
-                className="hover:text-foreground transition-colors font-outfit"
+              <Link
+                href="/company/privacy-policy"
+                onClick={onClose}
+                className="hover:text-foreground transition-colors font-sans"
               >
                 Privacy Policy
-              </a>
-              <a
-                href="#"
-                className="hover:text-foreground transition-colors font-outfit"
+              </Link>
+              <Link
+                href="/company/terms-of-service"
+                onClick={onClose}
+                className="hover:text-foreground transition-colors font-sans"
               >
                 Terms of Use
-              </a>
+              </Link>
               <a
                 href="#"
-                className="hover:text-foreground transition-colors font-outfit"
+                onClick={onClose}
+                className="hover:text-foreground transition-colors font-sans"
               >
                 Do Not Sell My Personal Information
               </a>
               <a
                 href="#"
-                className="hover:text-foreground transition-colors font-outfit"
+                onClick={onClose}
+                className="hover:text-foreground transition-colors font-sans"
               >
                 Children&apos;s Privacy Policy
               </a>
               <a
                 href="#"
-                className="hover:text-foreground transition-colors font-outfit"
+                onClick={onClose}
+                className="hover:text-foreground transition-colors font-sans"
               >
                 Your Privacy Rights
               </a>
               <a
                 href="#"
-                className="hover:text-foreground transition-colors font-outfit"
+                onClick={onClose}
+                className="hover:text-foreground transition-colors font-sans"
               >
                 Interest-Based Ads
               </a>
             </div>
-            <p className="font-outfit">© 2025 News. All rights reserved.</p>
+            <p className="font-sans">© 2025 News. All rights reserved.</p>
           </div>
         </div>
       </div>

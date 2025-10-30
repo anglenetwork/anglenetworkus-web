@@ -40,13 +40,13 @@ export default function ArticleCard({
       </div>
 
       <div className="p-2 flex flex-col text-center bg-gray-100 flex-1">
-        <div className="text-red-600 text-sm font-light tracking-wider mb-3 font-outfit">
+        <div className="text-red-600 text-sm font-light tracking-wider mb-3 font-sans">
           {category}
         </div>
-        <h2 className="text-black font-bold text-2xl leading-tight mb-3 font-outfit">
+        <h2 className="text-black font-bold text-2xl leading-tight mb-3 font-sans">
           {title}
         </h2>
-        <p className="text-gray-600 font-normal text-xs leading-relaxed mb-4 font-outfit">
+        <p className="text-gray-600 font-normal text-xs leading-relaxed mb-4 font-sans">
           {description}
         </p>
       </div>

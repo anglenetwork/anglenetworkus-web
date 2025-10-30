@@ -1,18 +1,17 @@
-import { ArrowRight } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { FourthSectionQueryResult } from "@/sanity.types";
 import { urlForImage } from "@/sanity/lib/utils";
 
-interface MainSixthSectionProps {
+interface MainThirdSectionProps {
   posts: FourthSectionQueryResult;
   categoryTitle: string;
 }
 
-export default function MainSixthSection({
+export default function MainThirdSection({
   posts,
   categoryTitle,
-}: MainSixthSectionProps) {
+}: MainThirdSectionProps) {
   // Helper function to get image URL from Sanity image
   const getImageUrl = (coverImage: any) => {
     const imageUrl = urlForImage(coverImage);
@@ -35,7 +34,7 @@ export default function MainSixthSection({
           <div className="col-span-12 mb-4">
             <div className="flex items-center mb-4">
               <div className="w-2 h-2 bg-red-500 rounded-full mr-2"></div>
-              <h2 className="text-sm font-semibold text-gray-700 uppercase tracking-wide font-outfit">
+              <h2 className="text-sm font-semibold text-gray-700 uppercase tracking-wide font-sans">
                 <Link
                   href={`/category/${categoryTitle.toLowerCase().replace(/\s+/g, "-")}`}
                   className="hover:text-red-600 transition-colors cursor-pointer"
@@ -55,7 +54,7 @@ export default function MainSixthSection({
                   href={`/post/${mainArticle.slug || "#"}`}
                   className="group block"
                 >
-                  <div className="relative aspect-[16/9] bg-muted overflow-hidden">
+                  <div className="relative aspect-[16/9] overflow-hidden">
                     <Image
                       src={getImageUrl(mainArticle.coverImage)}
                       alt={mainArticle.title || "Featured article"}
@@ -63,7 +62,7 @@ export default function MainSixthSection({
                       className="object-cover rounded-xl"
                     />
                     <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-4">
-                      <h3 className="text-white text-2xl tracking-wide font-semibold leading-tight font-outfit">
+                      <h3 className="text-white text-2xl tracking-wide font-semibold leading-tight font-sans">
                         {mainArticle.title || "Untitled"}
                       </h3>
                     </div>
@@ -77,7 +76,7 @@ export default function MainSixthSection({
                     href={`/post/${secondaryArticles[0].slug || "#"}`}
                     className="group block"
                   >
-                    <div className="relative aspect-[16/9] sm:aspect-[4/3] bg-muted overflow-hidden">
+                    <div className="relative aspect-[16/9] sm:aspect-[4/3] overflow-hidden">
                       <Image
                         src={getImageUrl(secondaryArticles[0].coverImage)}
                         alt={secondaryArticles[0].title || "Article image"}
@@ -86,7 +85,7 @@ export default function MainSixthSection({
                       />
                     </div>
                     <div className="mt-2">
-                      <h4 className="text-base font-semibold leading-tight mt-1 tracking-wide font-outfit">
+                      <h4 className="text-base font-semibold leading-tight mt-1 tracking-wide font-sans">
                         {secondaryArticles[0].title || "Untitled"}
                       </h4>
                     </div>
@@ -98,7 +97,7 @@ export default function MainSixthSection({
                     href={`/post/${secondaryArticles[1].slug || "#"}`}
                     className="group block"
                   >
-                    <div className="relative aspect-[16/9] sm:aspect-[4/3] bg-muted overflow-hidden">
+                    <div className="relative aspect-[16/9] sm:aspect-[4/3] overflow-hidden">
                       <Image
                         src={getImageUrl(secondaryArticles[1].coverImage)}
                         alt={secondaryArticles[1].title || "Article image"}
@@ -107,7 +106,7 @@ export default function MainSixthSection({
                       />
                     </div>
                     <div className="mt-2">
-                      <h4 className="text-base font-semibold leading-tight mt-1 tracking-wide font-outfit">
+                      <h4 className="text-base font-semibold leading-tight mt-1 tracking-wide font-sans">
                         {secondaryArticles[1].title || "Untitled"}
                       </h4>
                     </div>
@@ -125,7 +124,7 @@ export default function MainSixthSection({
                     href={`/post/${rightColumnArticles[0].slug || "#"}`}
                     className="group block"
                   >
-                    <div className="relative aspect-[16/9] lg:aspect-[3/4] bg-muted overflow-hidden">
+                    <div className="relative aspect-[16/9] lg:aspect-[3/4] overflow-hidden">
                       <Image
                         src={getImageUrl(rightColumnArticles[0].coverImage)}
                         alt={rightColumnArticles[0].title || "Article image"}
@@ -134,7 +133,7 @@ export default function MainSixthSection({
                       />
                     </div>
                     <div className="mt-2">
-                      <h4 className="text-sm font-semibold leading-tight mt-1 tracking-wide font-outfit">
+                      <h4 className="text-sm font-semibold leading-tight mt-1 tracking-wide font-sans">
                         {rightColumnArticles[0].title || "Untitled"}
                       </h4>
                     </div>
@@ -150,7 +149,7 @@ export default function MainSixthSection({
                     <div key={article._id}>
                       <Link
                         href={`/post/${article.slug || "#"}`}
-                        className="text-sm font-semibold leading-tight mt-1 tracking-wide font-outfit"
+                        className="text-sm font-semibold leading-tight mt-1 tracking-wide font-sans"
                       >
                         {article.title || "Untitled"}
                       </Link>
@@ -171,7 +170,7 @@ export default function MainSixthSection({
                     href={`/post/${rightColumnArticles[Math.ceil(rightColumnArticles.length / 2)].slug || "#"}`}
                     className="group block"
                   >
-                    <div className="relative aspect-[16/9] lg:aspect-[3/4] bg-muted overflow-hidden">
+                    <div className="relative aspect-[16/9] lg:aspect-[3/4] overflow-hidden">
                       <Image
                         src={getImageUrl(
                           rightColumnArticles[
@@ -188,7 +187,7 @@ export default function MainSixthSection({
                       />
                     </div>
                     <div className="mt-2">
-                      <h4 className="text-sm font-semibold leading-tight mt-1 tracking-wide font-outfit">
+                      <h4 className="text-sm font-semibold leading-tight mt-1 tracking-wide font-sans">
                         {rightColumnArticles[
                           Math.ceil(rightColumnArticles.length / 2)
                         ].title || "Untitled"}
@@ -206,7 +205,7 @@ export default function MainSixthSection({
                     <div key={article._id}>
                       <Link
                         href={`/post/${article.slug || "#"}`}
-                        className="text-sm font-semibold leading-tight mt-1 tracking-wide font-outfit"
+                        className="text-sm font-semibold leading-tight mt-1 tracking-wide font-sans"
                       >
                         {article.title || "Untitled"}
                       </Link>
@@ -221,7 +220,6 @@ export default function MainSixthSection({
           </div>
         </div>
       </div>
-      {/* <div className="border-t border-gray-300 py-4"></div> */}
     </div>
   );
 }

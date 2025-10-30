@@ -240,26 +240,26 @@ export default function SearchResults() {
           <>
             {/* Header with sorting */}
             <div className="mb-8 flex items-center justify-between">
-              <h1 className="text-base text-foreground font-inter">
+              <h1 className="text-base text-foreground font-secondary">
                 Displaying {startIndex + 1}-{endIndex} results out of{" "}
                 {totalResults} for{" "}
                 <span className="font-semibold">{searchQuery}</span>
               </h1>
               <div className="flex items-center gap-2">
-                <span className="text-sm text-muted-foreground font-inter">
+                <span className="text-sm text-muted-foreground font-secondary">
                   Sorting by
                 </span>
                 <Button
                   variant={sortBy === "newest" ? "default" : "outline"}
                   onClick={() => setSortBy("newest")}
-                  className="rounded-lg font-inter"
+                  className="rounded-lg font-secondary"
                 >
                   Newest
                 </Button>
                 <Button
                   variant={sortBy === "relevancy" ? "default" : "outline"}
                   onClick={() => setSortBy("relevancy")}
-                  className="rounded-lg font-inter"
+                  className="rounded-lg font-secondary"
                 >
                   Relevancy
                 </Button>
@@ -350,17 +350,17 @@ export default function SearchResults() {
                               )}
                             </div>
                             <div className="flex flex-col">
-                              <h2 className="mb-3 font-outfit text-2xl font-medium leading-tight text-foreground">
+                              <h2 className="mb-3 font-sans text-2xl font-medium leading-tight text-foreground">
                                 {result.type === "tag"
                                   ? result.name
                                   : result.title}
                               </h2>
-                              <time className="mb-4 font-inter font-light text-sm text-muted-foreground text-neutral-400">
+                              <time className="mb-4 font-secondary font-light text-sm text-muted-foreground text-neutral-400">
                                 {result.type === "post" && result.date
                                   ? new Date(result.date).toLocaleDateString()
                                   : "No date"}
                               </time>
-                              <p className="text-base font-regular font-inter leading-relaxed text-foreground tracking-normal font-neutral-900">
+                              <p className="text-base font-regular font-secondary leading-relaxed text-foreground tracking-normal font-neutral-900">
                                 {result.type === "post" && result.excerpt
                                   ? result.excerpt
                                   : result.type === "tag" && result.description
@@ -392,7 +392,7 @@ export default function SearchResults() {
                       variant="outline"
                       onClick={handlePrevPage}
                       disabled={currentPage === 1}
-                      className="rounded-xl px-6 py-6 font-inter text-base font-medium bg-transparent text-neutral-900"
+                      className="rounded-xl px-6 py-6 font-secondary text-base font-medium bg-transparent text-neutral-900"
                     >
                       <ChevronLeft className="mr-2 h-5 w-5" />
                       Prev
@@ -403,7 +403,7 @@ export default function SearchResults() {
                         <button
                           key={pageNum}
                           onClick={() => setCurrentPage(pageNum)}
-                          className={`relative px-4 py-2 text-xl font-medium transition-colors font-outfit ${
+                          className={`relative px-4 py-2 text-xl font-medium transition-colors font-sans ${
                             currentPage === pageNum
                               ? "text-foreground"
                               : "text-muted-foreground hover:text-foreground"
@@ -421,7 +421,7 @@ export default function SearchResults() {
                       variant="outline"
                       onClick={handleNextPage}
                       disabled={currentPage === totalPages}
-                      className="rounded-xl px-6 py-6 font-inter text-base font-medium bg-transparent text-neutral-900"
+                      className="rounded-xl px-6 py-6 font-secondary text-base font-medium bg-transparent text-neutral-900"
                     >
                       Next
                       <ChevronRight className="ml-2 h-5 w-5" />

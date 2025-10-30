@@ -301,6 +301,14 @@ export const thirdSectionQuery = defineQuery(`
   }
 `);
 
+// Latest 9 posts for a given category (for Fifth Section layout)
+export const latestNineByCategoryQuery = defineQuery(`
+  *[_type == "post" && category->slug.current == $categorySlug]
+  | order(date desc, _updatedAt desc) [0...9] {
+    ${postFields}
+  }
+`);
+
 export const mostReadQuery = defineQuery(`
   *[_type == "post"] | order(date desc, _updatedAt desc) [0...5] {
     ${postFields}
@@ -349,6 +357,8 @@ const SEARCH_FILTER = `(
   pt::text(bodyTextFive) match $term ||
   category->name match $term ||
   coalesce(tags[]->title, tags[]->name) match $term ||   // <— supports both
+  // Check tag aliases on referenced tag documents (prefix tokenized)
+  count(tags[]->aliases[@ match $term]) > 0 ||
   author->name match $term
 )`;
 

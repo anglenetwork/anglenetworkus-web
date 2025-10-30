@@ -15,7 +15,7 @@ export function SuggestedTags({ tags }: SuggestedTagsProps) {
       <div className="mb-6">
         <div className="flex items-center mb-4">
           {/* <div className="w-2 h-2 bg-red-500 rounded-full mr-2"></div> */}
-          <h2 className="text-sm font-medium text-neutral-900 uppercase tracking-wide font-outfit">
+          <h2 className="text-sm font-medium text-neutral-900 uppercase tracking-wide font-sans">
             Suggested Topics
           </h2>
         </div>
@@ -26,7 +26,7 @@ export function SuggestedTags({ tags }: SuggestedTagsProps) {
           <Link key={index} href={`/tag/${tag.slug}`}>
             <Badge
               variant="secondary"
-              className="font-inter uppercase bg-blue-100 text-blue-700 hover:bg-blue-200 px-4 py-2 text-sm font-medium rounded-full border-0 dark:bg-blue-900/30 dark:text-blue-300 dark:hover:bg-blue-900/50 cursor-pointer transition-colors"
+              className="font-secondary uppercase bg-blue-100 text-blue-700 hover:bg-blue-200 px-4 py-2 text-sm font-medium rounded-full dark:bg-blue-900/30 dark:text-blue-300 dark:hover:bg-blue-900/50 cursor-pointer transition-colors"
             >
               {tag.name}
             </Badge>

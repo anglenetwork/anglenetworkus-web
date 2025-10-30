@@ -51,7 +51,7 @@ export default function ShowMoreSection({
 
   return (
     <div className="mx-auto mt-16 max-w-7xl">
-      <h2 className="mb-6 text-2xl font-bold font-inter">
+      <h2 className="mb-6 text-2xl font-bold font-secondary">
         In case you missed it...
       </h2>
       <div className="space-y-0 divide-y divide-dotted divide-border border-t border-dotted">
@@ -77,7 +77,7 @@ export default function ShowMoreSection({
             onClick={handleShowMore}
             disabled={isLoading}
             variant="outline"
-            className="flex items-center gap-2 font-inter"
+            className="flex items-center gap-2 font-secondary"
           >
             {isLoading ? (
               "Loading..."
@@ -122,14 +122,14 @@ function FullWidthArticle({
       </div>
       <div className="flex-1">
         <Link href={`/post/${slug}`} className="block">
-          <h2 className="text-balance text-xl font-medium leading-tight md:text-2xl font-outfit">
+          <h2 className="text-balance text-xl font-medium leading-tight md:text-2xl font-sans">
             {title}
           </h2>
         </Link>
-        <p className="mt-3 text-pretty text-sm leading-relaxed text-muted-foreground md:text-base font-inter">
+        <p className="mt-3 text-pretty text-sm leading-relaxed text-muted-foreground md:text-base font-secondary">
           {description}
         </p>
-        <p className="mt-3 text-xs font-semibold capitalize tracking-wide text-muted-foreground font-inter">
+        <p className="mt-3 text-xs font-semibold capitalize tracking-wide text-muted-foreground font-secondary">
           {readTime}
         </p>
       </div>

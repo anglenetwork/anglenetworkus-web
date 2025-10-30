@@ -44,13 +44,13 @@ export default function ArticleCardAlternative({
         <div className="absolute bottom-0 left-0 right-0 p-4 text-white">
           <div className="flex items-center mb-2">
             <div className="w-2 h-2 bg-red-600 rounded-full mr-3"></div>
-            <span className="text-xs font-inter font-medium uppercase tracking-wider">
+            <span className="text-xs font-secondary font-medium uppercase tracking-wider">
               {category}
             </span>
           </div>
 
           <h3
-            className="text-lg font-outfit font-semibold leading-tight mb-3"
+            className="text-lg font-sans font-semibold leading-tight mb-3"
             style={{
               display: "-webkit-box",
               WebkitLineClamp: 2,
@@ -63,7 +63,7 @@ export default function ArticleCardAlternative({
 
           <div className="flex items-center gap-2">
             {/* <Play className="h-4 w-4 fill-white" /> */}
-            <span className="text-xs font-outfit font-light">
+            <span className="text-xs font-sans font-light">
               {readTime} min read
             </span>
           </div>

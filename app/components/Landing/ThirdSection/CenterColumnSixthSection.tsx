@@ -27,7 +27,7 @@ export function CenterColumnSixthSection({
     <div className="border-r border-gray-200 px-6 mb-8">
       <div className="flex items-center mb-4">
         <div className="w-2 h-2 bg-red-500 rounded-full mr-2"></div>
-        <h2 className="text-xs font-medium text-neutral-900 uppercase tracking-wider font-outfit">
+        <h2 className="text-xs font-medium text-neutral-900 uppercase tracking-wider font-sans">
           {categoryTitle}
         </h2>
       </div>
@@ -45,11 +45,11 @@ export function CenterColumnSixthSection({
           />
         </Link>
         <Link href={`/post/${data.mainStory.slug}`}>
-          <h1 className="text-3xl font-semibold text-gray-900 mb-3 font-outfit cursor-pointer hover:text-gray-700 transition-colors">
+          <h1 className="text-3xl font-semibold text-gray-900 mb-3 font-sans cursor-pointer hover:text-gray-700 transition-colors">
             {data.mainStory.title}
           </h1>
         </Link>
-        <p className="text-sm font-light text-neutral-400 mb-4 font-outfit">
+        <p className="text-sm font-light text-neutral-400 mb-4 font-sans">
           By{" "}
           {data.mainStory.authors.map((author, index) => (
             <span key={author}>
@@ -75,11 +75,11 @@ export function CenterColumnSixthSection({
             </Link>
             <div className="flex-1">
               <Link href={`/post/${story.slug}`}>
-                <h3 className="text-base font-semibold text-neutral-900 mb-2 font-outfit cursor-pointer hover:text-gray-700 transition-colors">
+                <h3 className="text-base font-semibold text-neutral-900 mb-2 font-sans cursor-pointer hover:text-gray-700 transition-colors">
                   {story.title}
                 </h3>
               </Link>
-              <p className="text-xs text-neutral-400 font-outfit">
+              <p className="text-xs text-neutral-400 font-sans">
                 By{" "}
                 {story.authors.map((author, index) => (
                   <span key={author}>

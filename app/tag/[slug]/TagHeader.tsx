@@ -22,7 +22,7 @@ export default function TagHeader({ tag }: TagHeaderProps) {
           </span>
         )}
         <div>
-          <h1 className="text-3xl font-bold text-gray-900 font-outfit">
+          <h1 className="text-3xl font-bold text-gray-900 font-sans">
             {tag.title}
           </h1>
           {tag.featured && (
@@ -34,7 +34,7 @@ export default function TagHeader({ tag }: TagHeaderProps) {
       </div>
 
       {tag.description && (
-        <p className="text-lg text-gray-600 font-inter leading-relaxed">
+        <p className="text-lg text-gray-600 font-secondary leading-relaxed">
           {tag.description}
         </p>
       )}

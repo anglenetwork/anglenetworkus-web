@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 
-interface CongressArticle {
+interface CenterArticle {
   id: string;
   title: string;
   author: string;
@@ -14,12 +14,12 @@ interface CongressArticle {
 }
 
 interface CenterColumnThirdProps {
-  congressArticles: CongressArticle[];
+  centerArticles: CenterArticle[];
   categoryTitle: string;
 }
 
-export function CenterColumnThird({
-  congressArticles,
+export function CenterColumnFifth({
+  centerArticles,
   categoryTitle,
 }: CenterColumnThirdProps) {
   return (
@@ -28,14 +28,14 @@ export function CenterColumnThird({
       <div className="mb-8">
         <div className="flex items-center mb-4">
           <div className="w-2 h-2 bg-red-500 rounded-full mr-2"></div>
-          <h2 className="text-sm font-semibold text-gray-700 uppercase tracking-wide font-outfit">
+          <h2 className="text-sm font-semibold text-gray-700 uppercase tracking-wide font-sans">
             {categoryTitle}
           </h2>
         </div>
         <div className="border-t border-black mb-6"></div>
 
-        {/* Congress Articles */}
-        {congressArticles.map((article, index) => (
+        {/* Articles */}
+        {centerArticles.map((article, index) => (
           <div key={article.id}>
             {article.isMain ? (
               // Main Article
@@ -50,38 +50,42 @@ export function CenterColumnThird({
                   />
                 </Link>
                 <Link href={`/post/${article.slug}`}>
-                  <h1 className="text-3xl font-semibold text-gray-900 mb-3 font-outfit cursor-pointer hover:text-gray-700 transition-colors">
+                  <h1 className="text-3xl font-semibold text-gray-900 mb-3 font-sans cursor-pointer hover:text-gray-700 transition-colors">
                     {article.title}
                   </h1>
                 </Link>
               </div>
-            ) : (
-              // Secondary Articles
-              <div
-                className={`${index < congressArticles.length - 1 ? "border-t border-gray-300 pt-6 mb-6" : "border-t border-gray-300 pt-6"}`}
-              >
-                <div className="flex gap-4">
-                  <Link href={`/post/${article.slug}`}>
-                    <Image
-                      src={article.image}
-                      alt={article.imageAlt}
-                      width={160}
-                      height={112}
-                      className="w-40 h-28 object-cover rounded-xl flex-shrink-0 cursor-pointer hover:opacity-90 transition-opacity"
-                    />
-                  </Link>
-                  <div className="flex-1">
+            ) : null}
+          </div>
+        ))}
+
+        {/* Secondary Articles in Row Layout */}
+        {centerArticles.filter((article) => !article.isMain).length > 0 && (
+          <div className="border-t border-gray-300 pt-6">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {centerArticles
+                .filter((article) => !article.isMain)
+                .map((article, index) => (
+                  <div key={article.id} className="flex flex-col">
                     <Link href={`/post/${article.slug}`}>
-                      <h3 className="text-base font-semibold text-neutral-900 mb-2 font-outfit cursor-pointer hover:text-gray-700 transition-colors">
+                      <Image
+                        src={article.image}
+                        alt={article.imageAlt}
+                        width={240}
+                        height={160}
+                        className="w-full h-48 object-cover rounded-xl mb-3 cursor-pointer hover:opacity-90 transition-opacity"
+                      />
+                    </Link>
+                    <Link href={`/post/${article.slug}`}>
+                      <h3 className="text-base font-semibold text-neutral-900 font-sans cursor-pointer hover:text-gray-700 transition-colors line-clamp-3">
                         {article.title}
                       </h3>
                     </Link>
                   </div>
-                </div>
-              </div>
-            )}
+                ))}
+            </div>
           </div>
-        ))}
+        )}
       </div>
     </div>
   );

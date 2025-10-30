@@ -1,10 +1,9 @@
-export { MainFirstSection } from './FirstSectionComponents/mainFirstSection';
+export { MainFirstSection } from './FirstSection/mainFirstSection';
 export { CenterColumnFourthSection } from './FourthSectionComponents/CenterColumnFourthSection';
-export { default as ArticleCard } from './SecondSectionComponents/article-card';
-export { default as MainSecondSection } from './SecondSectionComponents/mainSecondSection';
-export { default as MainThirdSection } from './ThirdSectionComponents/mainThirdSection';
-export { default as MainFourthSection } from './FourthSectionComponents/mainFourthSection';
-export { default as MainSixthSection } from './SixthSectionComponents/mainSixthSection';
-export { VideoPlayer as MainHighlightsStories } from './FifthSectionComponents/MainHighlightsStories';
+export { default as ArticleCard } from './SecondSection/article-card';
+export { default as MainSecondSection } from './SecondSection/mainSecondSection';
+export { default as MainThirdSection } from './ThirdSection/mainThirdSection';
+export { default as MainFourthSection } from './FourthSection/mainFourthSection';
+export { default as MainFifthSection } from './FifthSection/mainFifthSection';
+export { default as MainSixthSection } from './SixthSection/MainSixthSection';
 export { default as MainSeventhSection } from './SeventhSectionComponents/mainSeventhSection';
-export { default as MainEighthSection } from './EighthSectionComponents/mainEighthSection';

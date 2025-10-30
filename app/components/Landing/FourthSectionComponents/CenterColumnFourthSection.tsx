@@ -31,7 +31,7 @@ export function CenterColumnFourthSection({
       <div className="mb-8">
         <div className="flex items-center mb-4">
           <div className="w-2 h-2 bg-red-500 rounded-full mr-2"></div>
-          <h2 className="text-sm font-semibold text-gray-700 uppercase tracking-wide font-outfit">
+          <h2 className="text-sm font-semibold text-gray-700 uppercase tracking-wide font-sans">
             {categorySlug ? (
               <Link
                 href={`/category/${categorySlug}`}
@@ -58,7 +58,7 @@ export function CenterColumnFourthSection({
             />
           </Link>
           <Link href={`/post/${data.mainStory.slug}`}>
-            <h1 className="text-3xl font-semibold text-gray-900 mb-3 font-outfit cursor-pointer hover:text-gray-700 transition-colors">
+            <h1 className="text-3xl font-semibold text-gray-900 mb-3 font-sans cursor-pointer hover:text-gray-700 transition-colors">
               {data.mainStory.title}
             </h1>
           </Link>
@@ -82,7 +82,7 @@ export function CenterColumnFourthSection({
               </Link>
               <div className="flex-1">
                 <Link href={`/post/${story.slug}`}>
-                  <h3 className="text-base font-semibold text-neutral-900 mb-2 font-outfit cursor-pointer hover:text-gray-700 transition-colors">
+                  <h3 className="text-base font-semibold text-neutral-900 mb-2 font-sans cursor-pointer hover:text-gray-700 transition-colors">
                     {story.title}
                   </h3>
                 </Link>

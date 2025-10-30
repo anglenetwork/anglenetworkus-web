@@ -78,32 +78,32 @@ const portableTextComponents = {
   },
   block: {
     h1: ({ children }: any) => (
-      <h1 className="text-3xl font-bold text-gray-900 mt-8 mb-4 font-inter">
+      <h1 className="text-3xl font-bold text-gray-900 mt-8 mb-4 font-secondary">
         {children}
       </h1>
     ),
     h2: ({ children }: any) => (
-      <h2 className="text-2xl font-bold text-gray-900 mt-6 mb-3 font-inter">
+      <h2 className="text-2xl font-bold text-gray-900 mt-6 mb-3 font-secondary">
         {children}
       </h2>
     ),
     h3: ({ children }: any) => (
-      <h3 className="text-xl font-bold text-gray-900 mt-5 mb-2 font-inter">
+      <h3 className="text-xl font-bold text-gray-900 mt-5 mb-2 font-secondary">
         {children}
       </h3>
     ),
     h4: ({ children }: any) => (
-      <h4 className="text-lg font-bold text-gray-900 mt-4 mb-2 font-inter">
+      <h4 className="text-lg font-bold text-gray-900 mt-4 mb-2 font-secondary">
         {children}
       </h4>
     ),
     normal: ({ children }: any) => (
-      <p className="text-gray-800 leading-relaxed mb-4 font-inter text-lg font-light">
+      <p className="text-gray-800 leading-relaxed mb-4 font-secondary text-lg font-light">
         {children}
       </p>
     ),
     blockquote: ({ children }: any) => (
-      <blockquote className="border-l-4 border-blue-500 pl-4 italic text-gray-700 my-6 font-inter">
+      <blockquote className="border-l-4 border-blue-500 pl-4 italic text-gray-700 my-6 font-secondary">
         {children}
       </blockquote>
     ),
@@ -160,7 +160,7 @@ export default function PostBody({
         />
         <div className="mt-2 space-y-1">
           {(image.epigraph || image.imageSource) && (
-            <p className="text-sm text-gray-500 font-inter">
+            <p className="text-sm text-gray-500 font-secondary">
               {image.epigraph && (
                 <span className="italic">{image.epigraph}</span>
               )}
@@ -176,7 +176,7 @@ export default function PostBody({
           )}
           {image.alt && (
             <p
-              className="text-sm text-white font-inter font-light"
+              className="text-sm text-white font-secondary font-light"
               aria-hidden="true"
             >
               {image.alt}
@@ -206,13 +206,13 @@ export default function PostBody({
       {/* Author, Date, and Social Share Section */}
       <div className="flex items-center justify-between mb-6">
         <div className="flex flex-col">
-          <div className="text-xs font-inter text-muted-foreground">
+          <div className="text-xs font-secondary text-muted-foreground">
             By{" "}
-            <span className="text-blue-600 font-medium font-inter">
+            <span className="text-blue-600 font-medium font-secondary">
               {author?.name || "Unknown Author"}
             </span>
           </div>
-          <div className="text-xs font-inter text-muted-foreground">
+          <div className="text-xs font-secondary text-muted-foreground">
             {new Date(date).toLocaleDateString("en-US", {
               year: "numeric",
               month: "long",
@@ -258,7 +258,7 @@ export default function PostBody({
           })()}
           <div className="mt-2 space-y-1">
             {(epigraph || imageSource) && (
-              <p className="text-sm text-gray-500 font-inter">
+              <p className="text-sm text-gray-500 font-secondary">
                 {epigraph && <span className="italic">{epigraph}</span>}
                 {epigraph && imageSource && (
                   <span className="text-gray-400"> • </span>
@@ -270,7 +270,7 @@ export default function PostBody({
             )}
             {/* {coverImage.alt && (
               <p
-                className="text-sm text-white font-inter font-light"
+                className="text-sm text-white font-secondary font-light"
                 aria-hidden="true"
               >
                 {coverImage.alt}
@@ -305,7 +305,7 @@ export default function PostBody({
                 />
                 <div className="mt-2 space-y-1">
                   {(bodyImage.epigraph || bodyImage.imageSource) && (
-                    <p className="text-sm text-gray-500 font-inter">
+                    <p className="text-sm text-gray-500 font-secondary">
                       {bodyImage.epigraph && (
                         <span className="italic">{bodyImage.epigraph}</span>
                       )}
@@ -321,7 +321,7 @@ export default function PostBody({
                   )}
                   {bodyImage.image.alt && (
                     <p
-                      className="text-sm text-white font-inter font-light"
+                      className="text-sm text-white font-secondary font-light"
                       aria-hidden="true"
                     >
                       {bodyImage.image.alt}

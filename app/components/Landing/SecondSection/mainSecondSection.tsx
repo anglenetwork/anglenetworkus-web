@@ -113,7 +113,7 @@ export default function MainSecondSection({
         {/* Title Section */}
         <div className="flex items-center mb-4">
           <div className="w-2 h-2 bg-red-600 rounded-full mr-3"></div>
-          <h2 className="text-xs font-medium text-neutral-900 uppercase tracking-wider font-inter">
+          <h2 className="text-xs font-medium text-neutral-900 uppercase tracking-wider font-secondary">
             Featured Stories
           </h2>
         </div>

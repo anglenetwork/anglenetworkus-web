@@ -1,6 +1,10 @@
 import { notFound } from "next/navigation";
-import { sanityFetch, sanityFetchStatic } from "@/sanity/lib/fetch";
-import { categorySlugsQuery, postsByCategoryQuery } from "@/sanity/lib/queries";
+import { sanityFetchStatic } from "@/sanity/lib/fetch";
+import {
+  categorySlugsQuery,
+  postsByCategoryQuery,
+  mostViewedQuery,
+} from "@/sanity/lib/queries";
 import { CategoryPage } from "@/app/components/CategoryPage";
 import { urlForImage } from "@/sanity/lib/utils";
 
@@ -8,10 +12,7 @@ import { urlForImage } from "@/sanity/lib/utils";
 export async function generateStaticParams() {
   const categories = await sanityFetchStatic({ query: categorySlugsQuery });
   return categories
-    .filter(
-      (category): category is { slug: string; name: string | null } =>
-        category.slug !== null
-    )
+    .filter((category) => category.slug !== null)
     .map((category) => ({
       slug: category.slug,
     }));
@@ -26,13 +27,17 @@ export async function generateMetadata({
   const { slug } = await params;
 
   // Fetch category details and posts for better metadata
-  const [categoryData, posts] = await Promise.all([
+  const [categoryData, posts, mostViewed] = await Promise.all([
     sanityFetchStatic({
       query: `*[_type == "category" && slug.current == $slug][0]{name, slug}`,
       params: { slug },
     }),
     sanityFetchStatic({
       query: postsByCategoryQuery,
+      params: { categorySlug: slug },
+    }),
+    sanityFetchStatic({
+      query: mostViewedQuery,
       params: { categorySlug: slug },
     }),
   ]);
@@ -63,13 +68,17 @@ export default async function CategoryPageRoute({
   const { slug } = await params;
 
   // Fetch category data and posts
-  const [categoryData, posts] = await Promise.all([
+  const [categoryData, posts, mostViewed] = await Promise.all([
     sanityFetchStatic({
       query: `*[_type == "category" && slug.current == $slug][0]{name, slug}`,
       params: { slug },
     }),
     sanityFetchStatic({
       query: postsByCategoryQuery,
+      params: { categorySlug: slug },
+    }),
+    sanityFetchStatic({
+      query: mostViewedQuery,
       params: { categorySlug: slug },
     }),
   ]);
@@ -103,7 +112,9 @@ export default async function CategoryPageRoute({
   // Featured articles: posts 0-4 (latest 5 articles)
   // Latest articles: posts 5+ (from 6th article onwards)
 
-  const mostReadArticles = posts.slice(0, 5).map(transformPostToArticle); // Use first 5 as most read for now
+  const mostReadArticles = (mostViewed || [])
+    .slice(0, 5)
+    .map(transformPostToArticle);
   const latestArticles = posts.slice(5).map(transformPostToArticle); // From 6th article onwards
 
   // Create featured articles if we have enough posts (at least 5)

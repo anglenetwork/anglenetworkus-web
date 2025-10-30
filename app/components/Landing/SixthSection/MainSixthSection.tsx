@@ -208,13 +208,13 @@ export function VideoPlayer() {
   return (
     <div className="flex flex-col lg:flex-row bg-slate-900 text-white lg:h-[60vh]">
       {/* Main Video Player - Mobile First */}
-      <div className="flex-1 relative p-4 lg:p-8 order-2 lg:order-2 aspect-video lg:aspect-auto">
+      <div className="flex-1 relative p-4 lg:p-8 order-2 lg:order-2 aspect-video lg:aspect-auto bg-slate-900">
         <div className="relative w-full h-full flex items-center justify-center">
           <Image
             src={selectedVideo.videoUrl || "/placeholder.svg"}
             alt={selectedVideo.title}
             fill
-            className="object-cover rounded-xl"
+            className="object-cover"
           />
 
           {/* Play Button Overlay */}
@@ -230,19 +230,19 @@ export function VideoPlayer() {
           {/* Video Info Overlay */}
           <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 via-black/60 to-transparent p-4 lg:p-8">
             <div
-              className="text-sm text-blue-400 mb-2 font-outfit drop-shadow-lg"
+              className="text-sm text-blue-400 mb-2 font-sans drop-shadow-lg"
               style={{ textShadow: "2px 2px 4px rgba(0,0,0,0.8)" }}
             >
               {selectedVideo.category}
             </div>
             <h1
-              className="text-xl lg:text-2xl font-bold text-white mb-2 font-outfit drop-shadow-lg"
+              className="text-xl lg:text-2xl font-bold text-white mb-2 font-sans drop-shadow-lg"
               style={{ textShadow: "2px 2px 4px rgba(0,0,0,0.8)" }}
             >
               {selectedVideo.title}
             </h1>
             <div
-              className="text-sm text-slate-300 font-outfit drop-shadow-lg"
+              className="text-sm text-slate-300 font-sans drop-shadow-lg"
               style={{ textShadow: "2px 2px 4px rgba(0,0,0,0.8)" }}
             >
               Duration: {selectedVideo.duration}
@@ -254,7 +254,7 @@ export function VideoPlayer() {
       {/* Left Sidebar - Video List */}
       <div className="w-full lg:w-96 bg-slate-800/50 p-4 lg:p-6 flex flex-col order-1 lg:order-1 max-h-[60vh] lg:max-h-none">
         <div className="flex items-center justify-between mb-6">
-          <h2 className="text-xl font-semibold text-white font-outfit">
+          <h2 className="text-xl font-semibold text-white font-sans">
             Trending Videos
           </h2>
           {canScrollUp && (
@@ -296,10 +296,10 @@ export function VideoPlayer() {
                 </div>
               </div>
               <div className="flex-1 min-w-0">
-                <div className="text-xs text-blue-400 mb-1 font-outfit">
+                <div className="text-xs text-blue-400 mb-1 font-sans">
                   {video.category}
                 </div>
-                <h3 className="text-sm font-medium text-white leading-tight line-clamp-2 font-outfit">
+                <h3 className="text-sm font-medium text-white leading-tight line-clamp-2 font-sans">
                   {video.title}
                 </h3>
               </div>
@@ -309,7 +309,7 @@ export function VideoPlayer() {
 
         <div className="mt-4 pt-4 border-t border-slate-700">
           <div className="flex items-center justify-between text-sm text-slate-400">
-            <span className="font-outfit">
+            <span className="font-sans">
               Playlist - {mockVideos.length} Videos
             </span>
             <Button
@@ -325,4 +325,8 @@ export function VideoPlayer() {
       </div>
     </div>
   );
+}
+
+export default function MainSixthSection() {
+  return <VideoPlayer />;
 }

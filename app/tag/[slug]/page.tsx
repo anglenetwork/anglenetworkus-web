@@ -131,7 +131,7 @@ export default async function TagPage({
       <div className="mx-auto flex max-w-7xl flex-col gap-8 lg:flex-row">
         {/* Left Column - 60% */}
         <div className="w-full lg:w-[60%]">
-          <h2 className="mb-6 text-3xl font-bold uppercase tracking-wide font-outfit">
+          <h2 className="mb-6 text-3xl font-bold uppercase tracking-wide font-sans">
             {tag.title}
           </h2>
 
@@ -153,7 +153,7 @@ export default async function TagPage({
                 />
               </div>
               <div className="mt-4">
-                <h1 className="mt-2 text-xl font-semibold leading-tight md:text-3xl font-outfit">
+                <h1 className="mt-2 text-xl font-semibold leading-tight md:text-3xl font-sans">
                   {posts[0].title}
                 </h1>
               </div>
@@ -239,7 +239,7 @@ function ArticleItem({
         </Link>
       </div>
       <Link href={`/post/${slug}`} className="block flex-1">
-        <h2 className="text-pretty text-base font-normal leading-snug md:text-lg font-outfit">
+        <h2 className="text-pretty text-base font-normal leading-snug md:text-lg font-sans">
           {title}
         </h2>
       </Link>
@@ -262,11 +262,11 @@ function NewsItem({
     <article className="flex gap-4 py-6">
       <div className="flex-1">
         <Link href={`/post/${slug}`} className="block">
-          <h2 className="text-base font-outfit font-semibold leading-tight">
+          <h2 className="text-base font-sans font-semibold leading-tight">
             {title}
           </h2>
         </Link>
-        <p className="mt-2 text-xs font-inter font-semibold capitalize tracking-wide text-muted-foreground">
+        <p className="mt-2 text-xs font-secondary font-semibold capitalize tracking-wide text-muted-foreground">
           {readTime}
         </p>
       </div>
@@ -289,7 +289,7 @@ function TextNewsItem({ title, slug }: { title: string; slug: string }) {
   return (
     <article className="py-5">
       <Link href={`/post/${slug}`} className="block">
-        <h3 className="text-base font-outfit font-semibold leading-tight">
+        <h3 className="text-base font-sans font-semibold leading-tight">
           {title}
         </h3>
       </Link>
@@ -325,7 +325,7 @@ function FullWidthArticle({
       </div>
       <div className="flex-1">
         <Link href={`/post/${slug}`} className="block">
-          <h2 className="text-balance text-xl font-bold leading-tight md:text-2xl font-outfit">
+          <h2 className="text-balance text-xl font-bold leading-tight md:text-2xl font-sans">
             {title}
           </h2>
         </Link>
