@@ -14,6 +14,15 @@ const postFields = `
   epigraph,
   imageSource,
   coverImage,
+  // New cover (external or asset)
+  cover{
+    source,
+    externalUrl,
+    image,
+    alt,
+    epigraph,
+    imageSource
+  },
   "date": coalesce(date, _updatedAt),
   publishedAt,
   priority,
