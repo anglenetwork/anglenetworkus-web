@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 interface Category {
   slug: string;
   name: string;
@@ -128,29 +130,36 @@ export function Footer({ categories, tags }: FooterProps) {
             <h4 className="font-semibold text-white mb-4">Company</h4>
             <ul className="space-y-2 text-sm">
               <li>
-                <a href="#" className="text-gray-300 hover:text-white">
+                <Link
+                  href="/company/about"
+                  className="text-gray-300 hover:text-white"
+                >
                   About
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="#" className="text-gray-300 hover:text-white">
-                  Careers
-                </a>
-              </li>
-              <li>
-                <a href="#" className="text-gray-300 hover:text-white">
+                <Link
+                  href="/company/privacy-policy"
+                  className="text-gray-300 hover:text-white"
+                >
                   Privacy Policy
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="#" className="text-gray-300 hover:text-white">
+                <Link
+                  href="/company/terms-of-service"
+                  className="text-gray-300 hover:text-white"
+                >
                   Terms of Service
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="#" className="text-gray-300 hover:text-white">
+                <Link
+                  href="/company/contact"
+                  className="text-gray-300 hover:text-white"
+                >
                   Contact
-                </a>
+                </Link>
               </li>
             </ul>
           </div>
@@ -161,12 +170,18 @@ export function Footer({ categories, tags }: FooterProps) {
             © 2025 POLITICO LLC. All rights reserved.
           </p>
           <div className="flex space-x-6 mt-4 md:mt-0">
-            <a href="#" className="text-gray-400 hover:text-white text-sm">
+            <Link
+              href="/company/privacy-policy"
+              className="text-gray-400 hover:text-white text-sm"
+            >
               Privacy
-            </a>
-            <a href="#" className="text-gray-400 hover:text-white text-sm">
+            </Link>
+            <Link
+              href="/company/terms-of-service"
+              className="text-gray-400 hover:text-white text-sm"
+            >
               Terms
-            </a>
+            </Link>
             <a href="#" className="text-gray-400 hover:text-white text-sm">
               Cookies
             </a>

@@ -9,16 +9,7 @@ import {
   type PortableTextBlock,
 } from "next-sanity";
 import { draftMode } from "next/headers";
-import {
-  Merriweather,
-  IBM_Plex_Serif,
-  Prata,
-  Playfair_Display,
-  Inter,
-  Manrope,
-  Sora,
-  Outfit,
-} from "next/font/google";
+import { Inter, Outfit } from "next/font/google";
 
 import { AlertBanner, ContentLayoutWrapper } from "./components/layout";
 
@@ -28,59 +19,17 @@ import { settingsQuery } from "@/sanity/lib/queries";
 import { resolveOpenGraphImage } from "@/sanity/lib/utils";
 
 // Configure Google Fonts
-const merriweather = Merriweather({
-  subsets: ["latin"],
-  weight: ["300", "400", "700", "900"],
-  variable: "--font-merriweather",
-  display: "swap",
-});
-
-const ibmPlexSerif = IBM_Plex_Serif({
-  subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700"],
-  variable: "--font-ibm-plex-serif",
-  display: "swap",
-});
-
-const prata = Prata({
-  subsets: ["latin"],
-  weight: ["400"],
-  variable: "--font-prata",
-  display: "swap",
-});
-
-const playfairDisplay = Playfair_Display({
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700", "800", "900"],
-  variable: "--font-playfair-display",
-  display: "swap",
-});
-
 const inter = Inter({
   subsets: ["latin"],
   weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
-  variable: "--font-inter",
-  display: "swap",
-});
-
-const manrope = Manrope({
-  subsets: ["latin"],
-  weight: ["200", "300", "400", "500", "600", "700", "800"],
-  variable: "--font-manrope",
-  display: "swap",
-});
-
-const sora = Sora({
-  subsets: ["latin"],
-  weight: ["100", "200", "300", "400", "500", "600", "700", "800"],
-  variable: "--font-sora",
+  variable: "--font-secondary",
   display: "swap",
 });
 
 const outfit = Outfit({
   subsets: ["latin"],
   weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
-  variable: "--font-outfit",
+  variable: "--font-sans",
   display: "swap",
 });
 
@@ -128,13 +77,7 @@ export default async function RootLayout({
     <html lang="en">
       <body
         className={`
-        ${merriweather.variable}
-        ${ibmPlexSerif.variable}
-        ${prata.variable}
-        ${playfairDisplay.variable}
         ${inter.variable}
-        ${manrope.variable}
-        ${sora.variable}
         ${outfit.variable}
       `}
       >

@@ -4,7 +4,7 @@ import { Inter } from "next/font/google";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 
 const inter = Inter({
-  variable: "--font-inter",
+  variable: "--font-secondary",
   subsets: ["latin"],
   display: "swap",
 });

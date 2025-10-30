@@ -10,19 +10,14 @@ export default {
         // 24 columns
         24: 'repeat(24, minmax(0, 1fr))',
       },
-  		fontFamily: {
-  			sans: [
-  				'var(--font-inter)'
-  			],
-  			merriweather: ['var(--font-merriweather)'],
-  			'ibm-plex-serif': ['var(--font-ibm-plex-serif)'],
-  			prata: ['var(--font-prata)'],
-  			'playfair-display': ['var(--font-playfair-display)'],
-  			inter: ['var(--font-inter)'],
-  			manrope: ['var(--font-manrope)'],
-  			sora: ['var(--font-sora)'],
-  			outfit: ['var(--font-outfit)']
-  		},
+		fontFamily: {
+			sans: [
+				'var(--font-sans)'
+			],
+			secondary: [
+				'var(--font-secondary)'
+			],
+		},
   		borderRadius: {
   			lg: 'var(--radius)',
   			md: 'calc(var(--radius) - 2px)',
@@ -76,4 +71,7 @@ export default {
     hoverOnlyWhenSupported: true,
   },
   plugins: [typography, require("tailwindcss-animate")],
+  corePlugins: {
+    lineClamp: true,
+  },
 } satisfies Config;

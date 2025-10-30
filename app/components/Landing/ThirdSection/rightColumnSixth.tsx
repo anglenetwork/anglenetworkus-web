@@ -18,7 +18,7 @@ export function RightColumnSixth({ videosData }: RightColumnSixthProps) {
         <div className="mb-8">
           <div className="flex items-center mb-4">
             <div className="w-2 h-2 bg-red-500 rounded-full mr-2"></div>
-            <h2 className="text-xs font-medium text-neutral-900 uppercase tracking-wider font-outfit">
+            <h2 className="text-xs font-medium text-neutral-900 uppercase tracking-wider font-sans">
               Videos
             </h2>
           </div>
@@ -42,10 +42,10 @@ export function RightColumnSixth({ videosData }: RightColumnSixthProps) {
                   />
                 )}
                 <div className="flex-1">
-                  <span className="text-red-500 font-bold text-sm mr-2 font-outfit">
+                  <span className="text-red-500 font-bold text-sm mr-2 font-sans">
                     {video.number}
                   </span>
-                  <h4 className="text-sm font-semibold text-gray-900 leading-tight font-outfit">
+                  <h4 className="text-sm font-semibold text-gray-900 leading-tight font-sans">
                     {video.title}
                   </h4>
                 </div>

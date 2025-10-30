@@ -235,6 +235,143 @@ The homepage features a sophisticated multi-section layout designed for news con
 - **Advanced Filtering**: Category and topic-based filtering
 - **Search API**: Dedicated GROQ-powered search endpoint
 
+## 🔎 Search Algorithm
+
+### Overview
+
+The search feature fetches, sorts, and displays posts based on user queries with two strategies: Relevancy (default) and Newest. It prioritizes recent engagement and freshness for high-quality results.
+
+### Architecture
+
+1. Frontend — `app/search/SearchResults.tsx`
+   - Search bar, sorting controls, paginated results
+   - State: `sortBy` ("relevancy" | "newest"), `currentPage`, `searchResults`
+2. API — `app/api/search/route.ts`
+   - Accepts `q`, `sort`, `postLimit` (default 10)
+   - Tokenizes query and applies prefix matching (each term gets `*`)
+   - Chooses GROQ: `searchPostsRelevanceQuery` or `searchPostsNewestQuery`
+3. Data — `sanity/lib/queries.ts`
+   - GROQ queries filter to published posts and project only needed fields
+
+### Algorithm Details
+
+Relevancy (default)
+
+- Filters to published posts
+- Applies multi-field search filter (see Filtering)
+- Sorts by `views7d` desc, then `publishedAt` desc
+
+Newest
+
+- Same filters as Relevancy
+- Sorts by `publishedAt` desc only
+
+### Search Filtering
+
+Fields matched (case-insensitive, prefix-tokenized):
+
+- Title, excerpt, epigraph
+- Body content (rich body and legacy text fields)
+- Category name
+- Tag titles (supports legacy `name`)
+- Author name
+- Tag aliases (see below)
+
+Query processing:
+
+1. Tokenization by whitespace
+2. Prefix matching for each token (adds `*`)
+3. Combined term string matched across fields
+
+### Tag Aliases Matching (Important)
+
+- Posts can be discovered by searching any alias of their tags.
+- Implementation in GROQ dereferences tag references and checks alias elements with prefix matching:
+
+```12:18:sanity/lib/queries.ts
+count(tags[]->aliases[@ match $term]) > 0
+```
+
+Why: `tags` is an array of references; alias data lives on the tag docs. We dereference with `tags[]->` and evaluate `@ match $term` for each alias element. This fixes missed results when searching for a tag’s alias (e.g., searching "presidency" returns posts tagged "White House").
+
+Constraints and behavior:
+
+- Matching is case-insensitive and prefix-based due to tokenization (e.g., "presiden\*" matches "presidency").
+- Exact matching can be implemented with `@ == $term` if needed.
+
+### Data Flow
+
+1. User enters query; URL updates; results component loads
+2. User toggles sort; API called with selected mode
+3. API builds tokenized term, executes GROQ, returns posts
+4. Client paginates and renders results
+
+### Performance Notes
+
+- 10 results per page (client-side slicing)
+- Sanity CDN caches published reads
+- Queries project only fields required by the UI and limit results
+
+### UX
+
+- Loading states, clear errors, empty results messaging
+- URL persistence for query and sort
+- Accessible controls and semantic markup
+
+### Future Enhancements
+
+## 🧮 Category Page: "Most Read" Algorithm
+
+> Summary: In this component we display the 5 most viewed articles during the last 7 days for the current category.
+
+### Overview
+
+The Category page includes a Most Read block that highlights top-performing content per category based on recent readership. The algorithm ranks posts by `views7d` (sitewide metric), ensuring the list reflects what readers are engaging with right now.
+
+### Algorithm
+
+- Scope: Only posts within the current category
+- Visibility: Published posts with `publishedAt` in the past
+- Primary sort key: `views7d` (descending)
+- Secondary sort key: `publishedAt` (descending) — used when view counts are tied or missing
+- Limit: Top 5 posts
+
+### Data Flow
+
+1. Route loader (`app/category/[slug]/page.tsx`)
+   - Fetches category posts and most viewed posts for the category
+   - Maps the 5 most-viewed posts (7-day window) to the UI `Article` shape as `mostReadArticles`
+   - Passes `mostReadArticles` to `CategoryPage`
+
+2. UI rendering (`app/components/CategoryPage/CategoryPage.tsx`)
+   - Displays the Most Read block using `mostReadArticles`
+   - Shows rank, title, author and date; links to each post
+
+### Query
+
+- Source: `sanity/lib/queries.ts`
+- Query used: `mostViewedQuery`
+- Behavior: Selects posts where `status == "published"`, `publishedAt <= now()` and orders by `views7d` desc with a secondary recency order, then limited to 5
+
+### Implementation Pointers
+
+- Ensure `views7d` is tracked and updated (the list relies on it)
+- If `views7d` is missing, the secondary `publishedAt` sort prevents empty or unstable lists
+- To change window (e.g., 30 days), either add a `mostViewed30dQuery` or adjust the existing query and props
+- If you need to include/exclude drafts or scheduled posts, change the visibility filter in the query
+
+### Tips to Post
+
+- Publishing quickly after a spike in traffic ensures visibility in Most Read
+- Use compelling titles and images — click-throughs increase `views7d`
+- Cross-link relevant articles within the same category to concentrate engagement
+- Feature fresh posts during peak traffic hours to maximize the 7-day window impact
+
+- Weighted scoring blending views, recency, priority
+- Personalization and ML relevance
+- Suggestions/autocomplete, faceting, boolean operators
+- Analytics for search insights
+
 ### Navigation Structure
 
 - **Header Navigation**: Main category navigation

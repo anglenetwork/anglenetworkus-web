@@ -58,7 +58,7 @@ export function MainFirstSection({
   const latestNews = validPosts.slice(0, 8);
 
   return (
-    <main className="w-full px-4 md:px-0">
+    <main className="w-full px-4 md:px-0 pt-8">
       {/* Mobile order: Center, Left, Right */}
       {/* Desktop order: Left, Center, Right */}
       <div className="grid grid-cols-1 lg:grid-cols-5 gap-0">

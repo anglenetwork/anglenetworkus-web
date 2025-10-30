@@ -1,11 +1,11 @@
 import Image from "next/image";
 import { Card } from "@/components/ui/card";
 
-export function LeftColumnThird() {
+export function LeftColumnFifth() {
   return (
     <div className="border-r border-gray-200 pr-6 pl-4">
       <div className="sticky top-6">
-        <p className="text-sm text-gray-500 mb-4 text-center font-outfit">
+        <p className="text-sm text-gray-500 mb-4 text-center font-sans">
           Advertisement
         </p>
         <div className="border-t border-black mb-4"></div>
@@ -17,7 +17,7 @@ export function LeftColumnThird() {
             height={400}
             className="w-full h-96 object-cover rounded-xl"
           />
-          <p className="text-sm text-gray-600 mt-2 text-center font-outfit">
+          <p className="text-sm text-gray-600 mt-2 text-center font-sans">
             Generic Content
           </p>
         </Card>

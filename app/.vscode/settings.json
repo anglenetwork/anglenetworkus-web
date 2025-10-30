@@ -1,0 +1,6 @@
+{
+  "typescript.tsdk": "node_modules/typescript/lib",
+  "editor.definitionLinkOpensInPeek": false,
+  "typescript.preferences.preferGoToSourceDefinition": true,
+  "javascript.preferences.preferGoToSourceDefinition": true
+}

@@ -3,6 +3,7 @@
 import { Search, Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState, useEffect, useRef } from "react";
+import { usePathname } from "next/navigation";
 import Link from "next/link";
 import { FullScreenMenu } from "./full-screen-menu";
 
@@ -33,6 +34,7 @@ export function HeaderClient({
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [headerOffset, setHeaderOffset] = useState(0); // Current header height in pixels
   const headerRef = useRef<HTMLElement | null>(null);
+  const pathname = usePathname();
 
   const measureHeaderHeight = () => {
     if (!headerRef.current) return;
@@ -56,6 +58,11 @@ export function HeaderClient({
       window.removeEventListener("resize", onResize);
     };
   }, []);
+
+  // Close menu on route change
+  useEffect(() => {
+    if (isMenuOpen) setIsMenuOpen(false);
+  }, [pathname]);
 
   useEffect(() => {
     const onScroll = () => {
@@ -105,7 +112,7 @@ export function HeaderClient({
 
             {/* Center: Logo (fixed size on mobile) */}
             <Link href="/" className="hover:opacity-80 transition-opacity">
-              <h1 className="font-bold text-red-600 tracking-tight text-3xl font-outfit">
+              <h1 className="font-bold text-red-600 tracking-tight text-3xl font-sans">
                 POLITICO
               </h1>
             </Link>
@@ -163,7 +170,7 @@ export function HeaderClient({
               {/* Logo (shrinks only on lg+) */}
               <Link href="/" className="hover:opacity-80 transition-opacity">
                 <h1
-                  className={`font-bold text-red-600 tracking-tight transition-all duration-500 ease-out font-outfit ${
+                  className={`font-bold text-red-600 tracking-tight transition-all duration-500 ease-out font-sans ${
                     isScrolled ? "lg:text-xl" : "lg:text-4xl"
                   } text-4xl`}
                 >
@@ -178,7 +185,8 @@ export function HeaderClient({
                     <Link
                       key={category.slug}
                       href={`/category/${category.slug}`}
-                      className={`hover:text-red-600 font-light text-neutral-900 capitalize transition-all duration-500 ease-out whitespace-nowrap font-outfit ${
+                      onClick={() => setIsMenuOpen(false)}
+                      className={`hover:text-red-600 font-light text-neutral-900 capitalize transition-all duration-500 ease-out whitespace-nowrap font-sans ${
                         isScrolled ? "lg:text-sm" : "lg:text-base"
                       } text-base`}
                     >
@@ -200,7 +208,8 @@ export function HeaderClient({
                       <Link
                         key={href}
                         href={`/${href}`}
-                        className={`hover:text-red-600 font-light text-neutral-900 transition-all duration-500 ease-out whitespace-nowrap font-outfit ${
+                        onClick={() => setIsMenuOpen(false)}
+                        className={`hover:text-red-600 font-light text-neutral-900 transition-all duration-500 ease-out whitespace-nowrap font-sans ${
                           isScrolled ? "lg:text-sm" : "lg:text-base"
                         } text-base`}
                       >

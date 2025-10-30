@@ -67,7 +67,34 @@ Displays additional stories with larger images and more details.
 
 ### BottomArticleModule
 
-Shows related articles at the bottom of the post with a grid layout.
+Summary: Displays related articles from the same category as the current post, ordered by newest. The first related article is highlighted with image and title; the rest are shown as a list of linked headlines.
+
+What we display
+
+- Highlighted related article (first item):
+  - Cover image (responsive, rounded)
+  - Title linking to the article
+- Additional related articles (remaining items):
+  - Linked titles in a vertical list with separators
+
+Data source and algorithm
+
+- Source component: `app/post/[slug]/page.tsx`
+- Query: `postQueryWithCategoryRelated` from `sanity/lib/queries.ts`
+  - Filters posts by the current post’s category
+  - Excludes the current post
+  - Orders by newest (date desc)
+  - Returns a bounded slice used as related items
+- The page maps the returned `categoryArticles` (after filtering out null slugs) to `BottomArticleModule` via the `posts` prop.
+
+Prop shape (simplified)
+
+- `posts: Array<{ _id, title, slug, coverImage?, date, author?, category? }>`
+
+Notes
+
+- If no related posts are available, the component renders null.
+- Image URLs are generated via `urlForImage` and rendered with Next/Image.
 
 ## Dependencies
 

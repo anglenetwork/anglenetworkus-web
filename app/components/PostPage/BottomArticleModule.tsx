@@ -38,7 +38,7 @@ export default function BottomArticleModule({
         <div className="mb-6">
           <div className="flex items-center mb-4">
             <div className="w-2 h-2 bg-red-500 rounded-full mr-2"></div>
-            <h2 className="text-sm uppercase font-medium text-neutral-900 tracking-wide font-outfit">
+            <h2 className="text-sm uppercase font-medium text-neutral-900 tracking-wide font-sans">
               Related Articles
             </h2>
           </div>
@@ -72,7 +72,7 @@ export default function BottomArticleModule({
                     </div>
                   )}
                 </div>
-                <h2 className="mt-6 text-3xl font-medium leading-tight text-neutral-900 font-outfit">
+                <h2 className="mt-6 text-3xl font-medium leading-tight text-neutral-900 font-sans">
                   {posts[0].title || "Untitled"}
                 </h2>
               </Link>
@@ -86,7 +86,7 @@ export default function BottomArticleModule({
                   href={`/post/${post.slug || "#"}`}
                   className="block py-4 transition-opacity"
                 >
-                  <h3 className="text-base font-regular leading-relaxed text-neutral-900 font-outfit">
+                  <h3 className="text-base font-regular leading-relaxed text-neutral-900 font-sans">
                     {post.title || "Untitled"}
                   </h3>
                 </Link>

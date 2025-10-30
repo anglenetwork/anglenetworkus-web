@@ -34,7 +34,7 @@ export default function PostSelectedNews({
   return (
     <div className="w-full max-w-md mx-auto bg-white rounded-lg">
       {/* Header */}
-      <h2 className="text-xl font-inter font-bold text-foreground mb-6">
+      <h2 className="text-xl font-secondary font-bold text-foreground mb-6">
         {title}
       </h2>
 
@@ -74,11 +74,11 @@ export default function PostSelectedNews({
 
               {/* Article Content */}
               <div className="flex-1 min-w-0">
-                <h3 className="font-inter text-sm font-semibold text-foreground leading-tight group-hover:text-primary transition-colors duration-200 line-clamp-2">
+                <h3 className="font-secondary text-sm font-semibold text-foreground leading-tight group-hover:text-primary transition-colors duration-200 line-clamp-2">
                   {post.title}
                 </h3>
                 {post.date && (
-                  <p className="text-xs text-muted-foreground mt-1 font-inter">
+                  <p className="text-xs text-muted-foreground mt-1 font-secondary">
                     {(() => {
                       try {
                         return format(parseISO(post.date), "MMM dd, h:mm a");
