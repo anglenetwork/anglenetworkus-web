@@ -8,6 +8,12 @@ interface Post {
   slug: string;
   excerpt?: string | null;
   coverImage?: any;
+  cover?: {
+    source?: "asset" | "external";
+    externalUrl?: string;
+    image?: any;
+    alt?: string;
+  };
   author?: {
     name: string;
     picture?: any;
@@ -23,6 +29,38 @@ export function CenterColumnLanding({
   mainStory,
   moreTopHeadlines,
 }: CenterColumnLandingProps) {
+  const getCover = (
+    post: Post
+  ): { src: string | null; alt: string; unoptimized: boolean } => {
+    // 1) External URL
+    if (post.cover?.source === "external" && post.cover?.externalUrl) {
+      return {
+        src: post.cover.externalUrl,
+        alt: post.cover.alt || post.title,
+        unoptimized: true, // unless domain is whitelisted in next.config
+      };
+    }
+    // 2) New asset image
+    if (post.cover?.source === "asset" && post.cover?.image) {
+      const b = urlForImage(post.cover.image);
+      if (b) {
+        return {
+          src: b.url(),
+          alt: post.cover.alt || post.cover.image?.alt || post.title,
+          unoptimized: false,
+        };
+      }
+    }
+    // 3) Legacy coverImage
+    if (post.coverImage) {
+      const b = urlForImage(post.coverImage);
+      if (b) {
+        return { src: b.url(), alt: post.title, unoptimized: false };
+      }
+    }
+    return { src: null, alt: post.title, unoptimized: false };
+  };
+
   return (
     <div className="lg:border-r border-gray-300 lg:px-8">
       <div className="flex items-center mb-4">
@@ -45,44 +83,44 @@ export function CenterColumnLanding({
                 </h1>
               </Link>
 
-              {post.coverImage &&
-                (() => {
-                  const imageUrl = urlForImage(post.coverImage);
-                  if (!imageUrl) return null;
-                  return (
-                    <Link href={`/post/${post.slug}`}>
-                      <div className="mb-8">
-                        <Image
-                          src={imageUrl.url()}
-                          alt={post.title}
-                          width={800}
-                          height={400}
-                          className="w-full h-80 md:h-[500px] object-cover rounded-xl"
-                        />
-                      </div>
-                    </Link>
-                  );
-                })()}
+              {(() => {
+                const { src, alt, unoptimized } = getCover(post);
+                if (!src) return null;
+                return (
+                  <Link href={`/post/${post.slug}`}>
+                    <div className="mb-8">
+                      <Image
+                        src={src}
+                        alt={alt}
+                        width={800}
+                        height={400}
+                        unoptimized={unoptimized}
+                        className="w-full h-80 md:h-[500px] object-cover rounded-xl"
+                      />
+                    </div>
+                  </Link>
+                );
+              })()}
             </>
           ) : (
             <div className="flex gap-4 md:grid md:grid-cols-5 md:gap-8 md:items-start">
               <div className="flex-shrink-0 md:col-span-3 md:order-2">
-                {post.coverImage &&
-                  (() => {
-                    const imageUrl = urlForImage(post.coverImage);
-                    if (!imageUrl) return null;
-                    return (
-                      <Link href={`/post/${post.slug}`}>
-                        <Image
-                          src={imageUrl.url()}
-                          alt={post.title}
-                          width={600}
-                          height={256}
-                          className="w-32 h-24 md:w-full md:h-64 object-cover rounded-xl"
-                        />
-                      </Link>
-                    );
-                  })()}
+                {(() => {
+                  const { src, alt, unoptimized } = getCover(post);
+                  if (!src) return null;
+                  return (
+                    <Link href={`/post/${post.slug}`}>
+                      <Image
+                        src={src}
+                        alt={alt}
+                        width={600}
+                        height={256}
+                        unoptimized={unoptimized}
+                        className="w-32 h-24 md:w-full md:h-64 object-cover rounded-xl"
+                      />
+                    </Link>
+                  );
+                })()}
               </div>
               <div className="flex-1 md:col-span-2 md:order-1">
                 <Link
@@ -115,24 +153,24 @@ export function CenterColumnLanding({
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8">
           {moreTopHeadlines.slice(0, 2).map((post) => (
             <article key={post._id} className="flex gap-4 md:block">
-              {post.coverImage &&
-                (() => {
-                  const imageUrl = urlForImage(post.coverImage);
-                  if (!imageUrl) return null;
-                  return (
-                    <Link href={`/post/${post.slug}`}>
-                      <div className="flex-shrink-0 mb-0 md:mb-4">
-                        <Image
-                          src={imageUrl.url()}
-                          alt={post.title}
-                          width={400}
-                          height={192}
-                          className="w-24 h-20 md:w-full md:h-48 object-cover rounded-xl"
-                        />
-                      </div>
-                    </Link>
-                  );
-                })()}
+              {(() => {
+                const { src, alt, unoptimized } = getCover(post);
+                if (!src) return null;
+                return (
+                  <Link href={`/post/${post.slug}`}>
+                    <div className="flex-shrink-0 mb-0 md:mb-4">
+                      <Image
+                        src={src}
+                        alt={alt}
+                        width={400}
+                        height={192}
+                        unoptimized={unoptimized}
+                        className="w-24 h-20 md:w-full md:h-48 object-cover rounded-xl"
+                      />
+                    </div>
+                  </Link>
+                );
+              })()}
               <div className="flex-1 md:block">
                 <Link
                   href={`/post/${post.slug}`}
@@ -159,24 +197,24 @@ export function CenterColumnLanding({
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
           {moreTopHeadlines.slice(2, 5).map((post) => (
             <article key={post._id} className="flex gap-4 md:block">
-              {post.coverImage &&
-                (() => {
-                  const imageUrl = urlForImage(post.coverImage);
-                  if (!imageUrl) return null;
-                  return (
-                    <Link href={`/post/${post.slug}`}>
-                      <div className="flex-shrink-0 mb-0 md:mb-3">
-                        <Image
-                          src={imageUrl.url()}
-                          alt={post.title}
-                          width={300}
-                          height={128}
-                          className="w-24 h-20 md:w-full md:h-32 object-cover rounded-xl"
-                        />
-                      </div>
-                    </Link>
-                  );
-                })()}
+              {(() => {
+                const { src, alt, unoptimized } = getCover(post);
+                if (!src) return null;
+                return (
+                  <Link href={`/post/${post.slug}`}>
+                    <div className="flex-shrink-0 mb-0 md:mb-3">
+                      <Image
+                        src={src}
+                        alt={alt}
+                        width={300}
+                        height={128}
+                        unoptimized={unoptimized}
+                        className="w-24 h-20 md:w-full md:h-32 object-cover rounded-xl"
+                      />
+                    </div>
+                  </Link>
+                );
+              })()}
               <div className="flex-1 md:block">
                 <Link
                   href={`/post/${post.slug}`}

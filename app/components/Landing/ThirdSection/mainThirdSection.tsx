@@ -54,7 +54,7 @@ export default function MainThirdSection({
                   href={`/post/${mainArticle.slug || "#"}`}
                   className="group block"
                 >
-                  <div className="relative aspect-[16/9] overflow-hidden">
+                  <div className="relative aspect-[16/9] overflow-hidden rounded-xl">
                     <Image
                       src={getImageUrl(mainArticle.coverImage)}
                       alt={mainArticle.title || "Featured article"}
@@ -76,7 +76,7 @@ export default function MainThirdSection({
                     href={`/post/${secondaryArticles[0].slug || "#"}`}
                     className="group block"
                   >
-                    <div className="relative aspect-[16/9] sm:aspect-[4/3] overflow-hidden">
+                    <div className="relative aspect-[16/9] sm:aspect-[4/3] overflow-hidden rounded-xl">
                       <Image
                         src={getImageUrl(secondaryArticles[0].coverImage)}
                         alt={secondaryArticles[0].title || "Article image"}
@@ -97,7 +97,7 @@ export default function MainThirdSection({
                     href={`/post/${secondaryArticles[1].slug || "#"}`}
                     className="group block"
                   >
-                    <div className="relative aspect-[16/9] sm:aspect-[4/3] overflow-hidden">
+                    <div className="relative aspect-[16/9] sm:aspect-[4/3] overflow-hidden rounded-xl">
                       <Image
                         src={getImageUrl(secondaryArticles[1].coverImage)}
                         alt={secondaryArticles[1].title || "Article image"}
@@ -124,7 +124,7 @@ export default function MainThirdSection({
                     href={`/post/${rightColumnArticles[0].slug || "#"}`}
                     className="group block"
                   >
-                    <div className="relative aspect-[16/9] lg:aspect-[3/4] overflow-hidden">
+                    <div className="relative aspect-[16/9] lg:aspect-[3/4] overflow-hidden rounded-xl">
                       <Image
                         src={getImageUrl(rightColumnArticles[0].coverImage)}
                         alt={rightColumnArticles[0].title || "Article image"}
@@ -170,7 +170,7 @@ export default function MainThirdSection({
                     href={`/post/${rightColumnArticles[Math.ceil(rightColumnArticles.length / 2)].slug || "#"}`}
                     className="group block"
                   >
-                    <div className="relative aspect-[16/9] lg:aspect-[3/4] overflow-hidden">
+                    <div className="relative aspect-[16/9] lg:aspect-[3/4] overflow-hidden rounded-xl">
                       <Image
                         src={getImageUrl(
                           rightColumnArticles[
