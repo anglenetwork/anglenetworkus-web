@@ -169,7 +169,7 @@ export function FullScreenMenu({
 
               {/* See more */}
               <div>
-                <h3 className="text-lg font-semibold mb-4 text-muted-foreground font-sans">
+                <h3 className="text-lg font-semibold mb-4 text-blue-600 font-sans">
                   See more
                 </h3>
                 <nav className="flex flex-col gap-3">
@@ -235,7 +235,7 @@ export function FullScreenMenu({
 
               {/* Company */}
               <div>
-                <h3 className="text-lg font-semibold mb-4 text-muted-foreground font-sans">
+                <h3 className="text-lg font-semibold mb-4 text-blue-600 font-sans">
                   Company
                 </h3>
                 <nav className="flex flex-col gap-3">

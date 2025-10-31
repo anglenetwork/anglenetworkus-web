@@ -5,14 +5,19 @@ import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { ChevronDown } from "lucide-react";
-import { urlForImage } from "@/sanity/lib/utils";
+import { getCoverImage } from "@/sanity/lib/utils";
 
 interface Post {
   _id: string;
   title: string | null;
   slug: string | null;
   excerpt?: string | null;
-  coverImage?: any;
+  cover?: {
+    source?: "asset" | "external";
+    externalUrl?: string | null;
+    image?: any;
+    alt?: string | null;
+  } | null;
   date: string;
   author?: {
     name: string;
@@ -55,20 +60,20 @@ export default function ShowMoreSection({
         In case you missed it...
       </h2>
       <div className="space-y-0 divide-y divide-dotted divide-border border-t border-dotted">
-        {visiblePosts.map((post) => (
-          <FullWidthArticle
-            key={post._id}
-            image={
-              post.coverImage
-                ? urlForImage(post.coverImage)?.url() || "/placeholder.svg"
-                : "/placeholder.svg"
-            }
-            title={post.title || "Untitled"}
-            description={post.excerpt || ""}
-            readTime={`${post.readTime || 5} MIN READ`}
-            slug={post.slug || "#"}
-          />
-        ))}
+        {visiblePosts.map((post) => {
+          const coverData = getCoverImage(post.cover, post.title || "Article image");
+          return (
+            <FullWidthArticle
+              key={post._id}
+              image={coverData?.src || "/placeholder.svg"}
+              imageUnoptimized={coverData?.unoptimized}
+              title={post.title || "Untitled"}
+              description={post.excerpt || ""}
+              readTime={`${post.readTime || 5} MIN READ`}
+              slug={post.slug || "#"}
+            />
+          );
+        })}
       </div>
 
       {hasMore && (
@@ -96,12 +101,14 @@ export default function ShowMoreSection({
 
 function FullWidthArticle({
   image,
+  imageUnoptimized,
   title,
   description,
   readTime,
   slug,
 }: {
   image: string;
+  imageUnoptimized?: boolean;
   title: string;
   description: string;
   readTime: string;
@@ -115,6 +122,7 @@ function FullWidthArticle({
             src={image || "/placeholder.svg"}
             alt=""
             fill
+            unoptimized={imageUnoptimized}
             className="object-cover"
             sizes="(max-width: 1024px) 100vw, 192px"
           />

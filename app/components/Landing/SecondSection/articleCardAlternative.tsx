@@ -43,7 +43,7 @@ export default function ArticleCardAlternative({
 
         <div className="absolute bottom-0 left-0 right-0 p-4 text-white">
           <div className="flex items-center mb-2">
-            <div className="w-2 h-2 bg-red-600 rounded-full mr-3"></div>
+            <div className="w-2 h-2 bg-blue-600 rounded-full mr-3"></div>
             <span className="text-xs font-secondary font-medium uppercase tracking-wider">
               {category}
             </span>

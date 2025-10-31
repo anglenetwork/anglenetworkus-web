@@ -11,7 +11,7 @@ import {
   popularReadsTrendingQuery,
   popularReadsFallbackQuery,
 } from "@/sanity/lib/queries";
-import { urlForImage } from "@/sanity/lib/utils";
+import { getCoverImage } from "@/sanity/lib/utils";
 import ShowMoreSection from "./ShowMoreSection";
 import TagViewTracker from "./TagViewTracker";
 
@@ -139,18 +139,34 @@ export default async function TagPage({
           {posts.length > 0 && (
             <article className="mb-8">
               <div className="relative aspect-video w-full overflow-hidden rounded-xl">
-                <Image
-                  src={
-                    posts[0].coverImage
-                      ? urlForImage(posts[0].coverImage)?.url() ||
-                        "/placeholder.svg"
-                      : "/placeholder.svg"
+                {(() => {
+                  const coverData = getCoverImage(
+                    posts[0].cover as {
+                      source?: "asset" | "external";
+                      externalUrl?: string | null;
+                      image?: any;
+                      alt?: string | null;
+                    } | null,
+                    posts[0].title || "Featured article"
+                  );
+                  if (coverData?.src) {
+                    return (
+                      <Image
+                        src={coverData.src}
+                        alt={coverData.alt}
+                        fill
+                        unoptimized={coverData.unoptimized}
+                        className="object-cover"
+                        priority
+                      />
+                    );
                   }
-                  alt={posts[0].title || "Featured article"}
-                  fill
-                  className="object-cover"
-                  priority
-                />
+                  return (
+                    <div className="w-full h-full bg-gray-200 flex items-center justify-center">
+                      <span className="text-gray-400">No Image</span>
+                    </div>
+                  );
+                })()}
               </div>
               <div className="mt-4">
                 <h1 className="mt-2 text-xl font-semibold leading-tight md:text-3xl font-sans">
@@ -161,42 +177,57 @@ export default async function TagPage({
           )}
 
           <div className="space-y-2 divide-y divide-border border-t pt-4">
-            {posts.slice(1, 4).map((post) => (
-              <ArticleItem
-                key={post._id}
-                image={
-                  post.coverImage
-                    ? urlForImage(post.coverImage)?.url() || "/placeholder.svg"
-                    : "/placeholder.svg"
-                }
-                title={post.title || "Untitled"}
-                slug={post.slug || "#"}
-              />
-            ))}
+            {posts.slice(1, 4).map((post) => {
+              const coverData = getCoverImage(
+                post.cover as {
+                  source?: "asset" | "external";
+                  externalUrl?: string | null;
+                  image?: any;
+                  alt?: string | null;
+                } | null,
+                post.title || "Untitled"
+              );
+              return (
+                <ArticleItem
+                  key={post._id}
+                  image={coverData?.src || "/placeholder.svg"}
+                  imageUnoptimized={coverData?.unoptimized}
+                  title={post.title || "Untitled"}
+                  slug={post.slug || "#"}
+                />
+              );
+            })}
           </div>
         </div>
 
         {/* Right Column - 40% */}
         <aside className="w-full pt-0 lg:w-[40%] lg:pt-10">
           <div className="space-y-0">
-            {popularReads.slice(0, 4).map((post: any, index: number) => (
-              <div key={post._id}>
-                <NewsItem
-                  image={
-                    post.coverImage
-                      ? urlForImage(post.coverImage)?.url() ||
-                        "/placeholder.svg"
-                      : "/placeholder.svg"
-                  }
-                  title={post.title || "Untitled"}
-                  readTime={`${post.readTime || 5} MIN READ`}
-                  slug={post.slug || "#"}
-                />
-                {index < 3 && (
-                  <div className="border-b border-dotted border-border" />
-                )}
-              </div>
-            ))}
+            {popularReads.slice(0, 4).map((post: any, index: number) => {
+              const coverData = getCoverImage(
+                post.cover as {
+                  source?: "asset" | "external";
+                  externalUrl?: string | null;
+                  image?: any;
+                  alt?: string | null;
+                } | null,
+                post.title || "Untitled"
+              );
+              return (
+                <div key={post._id}>
+                  <NewsItem
+                    image={coverData?.src || "/placeholder.svg"}
+                    imageUnoptimized={coverData?.unoptimized}
+                    title={post.title || "Untitled"}
+                    readTime={`${post.readTime || 5} MIN READ`}
+                    slug={post.slug || "#"}
+                  />
+                  {index < 3 && (
+                    <div className="border-b border-dotted border-border" />
+                  )}
+                </div>
+              );
+            })}
           </div>
 
           <div className="mt-4 space-y-0 divide-y divide-border border-t">
@@ -211,17 +242,19 @@ export default async function TagPage({
         </aside>
       </div>
 
-      <ShowMoreSection posts={posts} tagSlug={slug} />
+      <ShowMoreSection posts={posts as any} tagSlug={slug} />
     </main>
   );
 }
 
 function ArticleItem({
   image,
+  imageUnoptimized,
   title,
   slug,
 }: {
   image: string;
+  imageUnoptimized?: boolean;
   title: string;
   slug: string;
 }) {
@@ -233,6 +266,7 @@ function ArticleItem({
             src={image || "/placeholder.svg"}
             alt=""
             fill
+            unoptimized={imageUnoptimized}
             className="object-cover"
             sizes="160px"
           />
@@ -249,11 +283,13 @@ function ArticleItem({
 
 function NewsItem({
   image,
+  imageUnoptimized,
   title,
   readTime,
   slug,
 }: {
   image: string;
+  imageUnoptimized?: boolean;
   title: string;
   readTime: string;
   slug: string;
@@ -276,6 +312,7 @@ function NewsItem({
             src={image || "/placeholder.svg"}
             alt=""
             fill
+            unoptimized={imageUnoptimized}
             className="object-cover"
             sizes="128px"
           />

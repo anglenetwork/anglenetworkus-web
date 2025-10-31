@@ -11,9 +11,6 @@ const postFields = `
   "title": coalesce(title, "Untitled"),
   "slug": slug.current,
   excerpt,
-  epigraph,
-  imageSource,
-  coverImage,
   // New cover (external or asset)
   cover{
     source,
@@ -48,17 +45,59 @@ const postFields = `
     "slug": slug.current
   },
 
-  "bodyImages": bodyImages[]{ "image": image, epigraph, imageSource },
+  "bodyImages": bodyImages[]{
+    source,
+    externalUrl,
+    image,
+    alt,
+    epigraph,
+    imageSource
+  },
   bodyTextOne,
   bodyTextTwo,
   bodyTextThree,
   bodyTextFour,
   bodyTextFive,
-  bodyImageOne,
-  bodyImageTwo,
-  bodyImageThree,
-  bodyImageFour,
-  bodyImageFive
+  bodyImageOne{
+    source,
+    externalUrl,
+    image,
+    alt,
+    epigraph,
+    imageSource
+  },
+  bodyImageTwo{
+    source,
+    externalUrl,
+    image,
+    alt,
+    epigraph,
+    imageSource
+  },
+  bodyImageThree{
+    source,
+    externalUrl,
+    image,
+    alt,
+    epigraph,
+    imageSource
+  },
+  bodyImageFour{
+    source,
+    externalUrl,
+    image,
+    alt,
+    epigraph,
+    imageSource
+  },
+  bodyImageFive{
+    source,
+    externalUrl,
+    image,
+    alt,
+    epigraph,
+    imageSource
+  }
 `;
 
 /** ---------------------------
@@ -139,7 +178,14 @@ export const latestNews4Query = `
   defined(publishedAt) && publishedAt <= now() &&
   _id != $currentPostId
 ] | order(publishedAt desc)[0...4] {
-  _id, title, "slug": slug.current, excerpt, coverImage, publishedAt
+  _id, title, "slug": slug.current, excerpt, 
+  cover{
+    source,
+    externalUrl,
+    image,
+    alt
+  },
+  publishedAt
 }
 `;
 
@@ -151,7 +197,14 @@ export const popularReadsTrendingQuery = `
   defined(publishedAt) && publishedAt <= now() &&
   _id != $currentPostId
 ]{
-  _id, title, "slug": slug.current, excerpt, coverImage, publishedAt,
+  _id, title, "slug": slug.current, excerpt, 
+  cover{
+    source,
+    externalUrl,
+    image,
+    alt
+  },
+  publishedAt,
   priority, featured,
   views7d, views30d, viewsAll,
   readTime,
@@ -175,7 +228,14 @@ export const popularReadsFallbackQuery = `
   defined(publishedAt) && publishedAt <= now() &&
   _id != $currentPostId
 ]{
-  _id, title, "slug": slug.current, excerpt, coverImage, publishedAt,
+  _id, title, "slug": slug.current, excerpt, 
+  cover{
+    source,
+    externalUrl,
+    image,
+    alt
+  },
+  publishedAt,
   priority, featured,
   "recencyBoost": select(publishedAt > dateTime(now()) - 60*60*24*14 => 1.5, 0),
   "editorialBoost": (coalesce(priority, 0) * 0.3) + select(featured == true => 0.4, 0)
@@ -330,7 +390,14 @@ export const mostViewedPostsQuery = `
   status == "published" &&
   defined(publishedAt) && publishedAt <= now()
 ]{
-  _id, title, "slug": slug.current, excerpt, coverImage, publishedAt,
+  _id, title, "slug": slug.current, excerpt, 
+  cover{
+    source,
+    externalUrl,
+    image,
+    alt
+  },
+  publishedAt,
   priority, featured,
   views7d, views30d, viewsAll,
   "recencyBoost": select(publishedAt > dateTime(now()) - 60*60*24*14 => 1.5, 0),
@@ -372,7 +439,14 @@ const SEARCH_FILTER = `(
 )`;
 
 const SEARCH_FIELDS = `
-  _id, _type, title, slug, excerpt, coverImage, publishedAt, priority, featured, date,
+  _id, _type, title, slug, excerpt, 
+  cover{
+    source,
+    externalUrl,
+    image,
+    alt
+  },
+  publishedAt, priority, featured, date,
   views7d, views30d, viewsAll,
   "author": select(
     defined(author->name) => {
@@ -493,7 +567,14 @@ export const secondSectionQuery = defineQuery(`
     "slug": slug.current,
     "name": name,
     "thirdMostViewed": *[_type == "post" && category->slug.current == slug.current] | order(coalesce(views7d, 0) desc, publishedAt desc) [0...5] {
-      _id, title, "slug": slug.current, excerpt, coverImage, "date": coalesce(date, _updatedAt), publishedAt,
+      _id, title, "slug": slug.current, excerpt, 
+      cover{
+        source,
+        externalUrl,
+        image,
+        alt
+      },
+      "date": coalesce(date, _updatedAt), publishedAt,
       "author": select(
         defined(author->name) => {
           "name": coalesce(author->name, "Anonymous"),
@@ -509,7 +590,14 @@ export const secondSectionQuery = defineQuery(`
       views7d
     },
     "thirdLatest": *[_type == "post" && category->slug.current == slug.current] | order(publishedAt desc, _updatedAt desc) [0...5] {
-      _id, title, "slug": slug.current, excerpt, coverImage, "date": coalesce(date, _updatedAt), publishedAt,
+      _id, title, "slug": slug.current, excerpt, 
+      cover{
+        source,
+        externalUrl,
+        image,
+        alt
+      },
+      "date": coalesce(date, _updatedAt), publishedAt,
       "author": select(
         defined(author->name) => {
           "name": coalesce(author->name, "Anonymous"),

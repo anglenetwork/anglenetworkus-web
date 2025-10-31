@@ -41,3 +41,46 @@ export function resolveHref(
       return undefined;
   }
 }
+
+/**
+ * Unified image helper for cover structure (supports both external URLs and Sanity assets)
+ * @param cover - The cover object with source, externalUrl, image, and alt
+ * @param fallbackAlt - Fallback alt text if cover.alt is not available
+ * @returns Object with src, alt, and unoptimized flag, or null if no image is available
+ */
+export function getCoverImage(
+  cover: {
+    source?: "asset" | "external";
+    externalUrl?: string | null;
+    image?: SanityImageSource | null;
+    alt?: string | null;
+  } | null | undefined,
+  fallbackAlt: string = "Image"
+): { src: string; alt: string; unoptimized: boolean } | null {
+  if (!cover || (typeof cover === 'object' && Object.keys(cover).length === 0)) {
+    return null;
+  }
+
+  // 1) External URL takes priority if source is external OR if externalUrl exists (fallback for missing source)
+  if (cover.externalUrl && (cover.source === "external" || !cover.source)) {
+    return {
+      src: cover.externalUrl,
+      alt: cover.alt || fallbackAlt,
+      unoptimized: true, // External URLs need to be unoptimized unless whitelisted in next.config
+    };
+  }
+
+  // 2) Asset image - check if source is asset OR if image exists (fallback for missing source)
+  if (cover.image && (cover.source === "asset" || !cover.source || !cover.externalUrl)) {
+    const imageUrl = urlForImage(cover.image);
+    if (imageUrl) {
+      return {
+        src: imageUrl.url(),
+        alt: cover.alt || (cover.image as any)?.alt || fallbackAlt,
+        unoptimized: false,
+      };
+    }
+  }
+
+  return null;
+}

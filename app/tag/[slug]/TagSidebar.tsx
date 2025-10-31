@@ -1,13 +1,18 @@
 import Link from "next/link";
 import Image from "next/image";
-import { urlForImage } from "@/sanity/lib/utils";
+import { getCoverImage } from "@/sanity/lib/utils";
 
 interface Post {
   _id: string;
   title: string | null;
   slug: string | null;
   excerpt?: string | null;
-  coverImage?: any;
+  cover?: {
+    source?: "asset" | "external";
+    externalUrl?: string | null;
+    image?: any;
+    alt?: string | null;
+  } | null;
   date: string;
   author?: {
     name: string;
@@ -54,17 +59,25 @@ export default function TagSidebar({ popularReads, tag }: TagSidebarProps) {
               >
                 <div className="flex gap-3">
                   <div className="flex-shrink-0 w-16 h-16 relative rounded overflow-hidden">
-                    <Image
-                      src={
-                        post.coverImage
-                          ? urlForImage(post.coverImage)?.url() ||
-                            "/placeholder.svg"
-                          : "/placeholder.svg"
+                    {(() => {
+                      const coverData = getCoverImage(post.cover, post.title || "Post image");
+                      if (coverData?.src) {
+                        return (
+                          <Image
+                            src={coverData.src}
+                            alt={coverData.alt}
+                            fill
+                            unoptimized={coverData.unoptimized}
+                            className="object-cover group-hover:scale-105 transition-transform duration-200"
+                          />
+                        );
                       }
-                      alt={post.title || "Post image"}
-                      fill
-                      className="object-cover group-hover:scale-105 transition-transform duration-200"
-                    />
+                      return (
+                        <div className="w-full h-full bg-gray-200 flex items-center justify-center">
+                          <span className="text-gray-400 text-xs">No Image</span>
+                        </div>
+                      );
+                    })()}
                   </div>
                   <div className="flex-1 min-w-0">
                     <h4 className="text-sm font-medium text-gray-900 group-hover:text-blue-600 transition-colors line-clamp-2">

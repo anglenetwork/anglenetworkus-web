@@ -5,14 +5,19 @@ import ArticleCard from "./article-card";
 import ArticleCardAlternative from "./articleCardAlternative";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { urlForImage } from "@/sanity/lib/utils";
+import { getCoverImage } from "@/sanity/lib/utils";
 
 interface Post {
   _id: string;
   title: string | null;
   slug: string | null;
   excerpt?: string | null;
-  coverImage?: any;
+  cover?: {
+    source?: "asset" | "external";
+    externalUrl?: string | null;
+    image?: any;
+    alt?: string | null;
+  } | null;
   date: string;
   author?: {
     name: string;
@@ -56,11 +61,21 @@ export default function MainSecondSection({
           title: category.thirdArticle.title || "Untitled",
           description: category.thirdArticle.excerpt || "",
           author: category.thirdArticle.author?.name || "Anonymous",
-          image: category.thirdArticle.coverImage
-            ? urlForImage(category.thirdArticle.coverImage)?.url()
+          image: category.thirdArticle.cover
+            ? getCoverImage(
+                category.thirdArticle.cover,
+                category.thirdArticle.title || "Article image"
+              )?.src
             : undefined,
-          imageAlt: category.thirdArticle.title || "Article image",
-          isDecorative: !category.thirdArticle.coverImage,
+          imageAlt: category.thirdArticle.cover
+            ? getCoverImage(
+                category.thirdArticle.cover,
+                category.thirdArticle.title || "Article image"
+              )?.alt ||
+              category.thirdArticle.title ||
+              "Article image"
+            : "Article image",
+          isDecorative: !category.thirdArticle.cover,
           slug: category.thirdArticle.slug,
           views7d: category.thirdArticle.views7d || 0,
           readTime: category.thirdArticle.readTime || 5,
@@ -112,7 +127,7 @@ export default function MainSecondSection({
       <div className="px-6">
         {/* Title Section */}
         <div className="flex items-center mb-4">
-          <div className="w-2 h-2 bg-red-600 rounded-full mr-3"></div>
+          <div className="w-2 h-2 bg-blue-600 rounded-full mr-3"></div>
           <h2 className="text-xs font-medium text-neutral-900 uppercase tracking-wider font-secondary">
             Featured Stories
           </h2>

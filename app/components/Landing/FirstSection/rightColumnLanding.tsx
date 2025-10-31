@@ -1,12 +1,17 @@
 import Link from "next/link";
 import Image from "next/image";
-import { urlForImage } from "@/sanity/lib/utils";
+import { getCoverImage } from "@/sanity/lib/utils";
 
 interface Post {
   _id: string;
   title: string;
   slug: string;
-  coverImage?: any;
+  cover?: {
+    source?: "asset" | "external";
+    externalUrl?: string | null;
+    image?: any;
+    alt?: string | null;
+  } | null;
   author?: {
     name: string;
     picture?: any;
@@ -26,24 +31,24 @@ export function RightColumnLanding({
     <div className="text-left px-0 md:px-4">
       {sideStories.map((post, index) => (
         <article key={post._id} className="mb-4">
-          {post.coverImage &&
-            (() => {
-              const imageUrl = urlForImage(post.coverImage);
-              if (!imageUrl) return null;
-              return (
-                <Link href={`/post/${post.slug}`}>
-                  <div className="mb-4">
-                    <Image
-                      src={imageUrl.url()}
-                      alt={post.title}
-                      width={400}
-                      height={192}
-                      className="w-full h-48 object-cover rounded-xl"
-                    />
-                  </div>
-                </Link>
-              );
-            })()}
+          {(() => {
+            const coverData = getCoverImage(post.cover, post.title);
+            if (!coverData) return null;
+            return (
+              <Link href={`/post/${post.slug}`}>
+                <div className="mb-4">
+                  <Image
+                    src={coverData.src}
+                    alt={coverData.alt}
+                    width={400}
+                    height={192}
+                    unoptimized={coverData.unoptimized}
+                    className="w-full h-48 object-cover rounded-xl"
+                  />
+                </div>
+              </Link>
+            );
+          })()}
           <Link href={`/post/${post.slug}`} className="hover:text-red-600">
             <h3 className="text-xl font-sans font-medium text-neutral-900 leading-tight">
               {post.title}
@@ -58,7 +63,7 @@ export function RightColumnLanding({
       {/* MOST READ section */}
       <div className="border-t border-neutral-300 pt-4">
         <div className="flex items-center justify-start mb-4">
-          <div className="w-2 h-2 bg-red-600 rounded-full mr-3"></div>
+          <div className="w-2 h-2 bg-blue-600 rounded-full mr-3"></div>
           <h2 className="text-xs font-medium text-neutral-900 uppercase tracking-wider font-sans">
             Most Read
           </h2>
@@ -68,24 +73,27 @@ export function RightColumnLanding({
 
         <div className="space-y-6">
           {/* Featured image */}
-          {mostRead[0]?.coverImage &&
-            (() => {
-              const imageUrl = urlForImage(mostRead[0].coverImage);
-              if (!imageUrl) return null;
-              return (
-                <Link href={`/post/${mostRead[0].slug}`}>
-                  <div className="mb-6">
-                    <Image
-                      src={imageUrl.url()}
-                      alt={mostRead[0].title}
-                      width={400}
-                      height={256}
-                      className="w-full h-48 object-cover rounded-xl"
-                    />
-                  </div>
-                </Link>
-              );
-            })()}
+          {(() => {
+            const coverData = getCoverImage(
+              mostRead[0]?.cover,
+              mostRead[0]?.title || "Article"
+            );
+            if (!coverData) return null;
+            return (
+              <Link href={`/post/${mostRead[0].slug}`}>
+                <div className="mb-6">
+                  <Image
+                    src={coverData.src}
+                    alt={coverData.alt}
+                    width={400}
+                    height={256}
+                    unoptimized={coverData.unoptimized}
+                    className="w-full h-48 object-cover rounded-xl"
+                  />
+                </div>
+              </Link>
+            );
+          })()}
 
           {/* Numbered list of most read articles */}
           <div className="space-y-4">
@@ -94,7 +102,7 @@ export function RightColumnLanding({
                 key={post._id}
                 className={`flex items-start justify-center lg:justify-start space-x-3 ${index < mostRead.length - 1 ? "border-b border-gray-200" : ""} pb-4`}
               >
-                <span className="text-lg font-bold text-red-600 flex-shrink-0 font-sans">
+                <span className="text-lg font-bold text-blue-600 flex-shrink-0 font-sans">
                   {index + 1}
                 </span>
                 <Link

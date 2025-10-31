@@ -6,7 +6,7 @@ import {
   mostViewedQuery,
 } from "@/sanity/lib/queries";
 import { CategoryPage } from "@/app/components/CategoryPage";
-import { urlForImage } from "@/sanity/lib/utils";
+import { getCoverImage } from "@/sanity/lib/utils";
 
 // Generate static params for SSG
 export async function generateStaticParams() {
@@ -96,17 +96,21 @@ export default async function CategoryPageRoute({
       .join(" ");
 
   // Transform posts to Article format
-  const transformPostToArticle = (post: any) => ({
-    id: post._id,
-    title: post.title || "Untitled",
-    excerpt: post.excerpt || "",
-    author: post.author?.name || "Anonymous",
-    publishedAt: post.date || post._updatedAt,
-    readTime: "5 min read", // You can calculate this based on content length
-    category: post.category?.title || categoryName,
-    imageUrl: post.coverImage ? urlForImage(post.coverImage)?.url() : undefined,
-    slug: post.slug || "#",
-  });
+  const transformPostToArticle = (post: any) => {
+    const coverData = getCoverImage(post.cover, post.title || "Article image");
+    return {
+      id: post._id,
+      title: post.title || "Untitled",
+      excerpt: post.excerpt || "",
+      author: post.author?.name || "Anonymous",
+      publishedAt: post.date || post._updatedAt,
+      readTime: "5 min read", // You can calculate this based on content length
+      category: post.category?.title || categoryName,
+      imageUrl: coverData?.src,
+      imageUnoptimized: coverData?.unoptimized,
+      slug: post.slug || "#",
+    };
+  };
 
   // Organize articles according to the new structure:
   // Featured articles: posts 0-4 (latest 5 articles)

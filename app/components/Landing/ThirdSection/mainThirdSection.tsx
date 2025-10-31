@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { FourthSectionQueryResult } from "@/sanity.types";
-import { urlForImage } from "@/sanity/lib/utils";
+import { getCoverImage } from "@/sanity/lib/utils";
 
 interface MainThirdSectionProps {
   posts: FourthSectionQueryResult;
@@ -12,10 +12,10 @@ export default function MainThirdSection({
   posts,
   categoryTitle,
 }: MainThirdSectionProps) {
-  // Helper function to get image URL from Sanity image
-  const getImageUrl = (coverImage: any) => {
-    const imageUrl = urlForImage(coverImage);
-    return imageUrl ? imageUrl.url() : "/placeholder.svg";
+  // Helper function to get image data from cover
+  const getImageData = (cover: any, fallbackTitle: string = "Article") => {
+    const coverData = getCoverImage(cover, fallbackTitle);
+    return coverData ? coverData.src : "/placeholder.svg";
   };
 
   // Get main article (first post)
@@ -33,7 +33,7 @@ export default function MainThirdSection({
           {/* Section Header */}
           <div className="col-span-12 mb-4">
             <div className="flex items-center mb-4">
-              <div className="w-2 h-2 bg-red-500 rounded-full mr-2"></div>
+              <div className="w-2 h-2 bg-blue-600 rounded-full mr-2"></div>
               <h2 className="text-sm font-semibold text-gray-700 uppercase tracking-wide font-sans">
                 <Link
                   href={`/category/${categoryTitle.toLowerCase().replace(/\s+/g, "-")}`}
@@ -54,21 +54,36 @@ export default function MainThirdSection({
                   href={`/post/${mainArticle.slug || "#"}`}
                   className="group block"
                 >
-                  <div className="relative aspect-[16/9] overflow-hidden rounded-xl">
+                  <div className="relative aspect-[16/9] overflow-hidden rounded-xl mb-3">
                     <Image
-                      src={getImageUrl(mainArticle.coverImage)}
+                      src={getImageData(
+                        mainArticle.cover,
+                        mainArticle.title || "Featured article"
+                      )}
                       alt={mainArticle.title || "Featured article"}
                       fill
+                      unoptimized={
+                        getCoverImage(
+                          mainArticle.cover as {
+                            source?: "asset" | "external";
+                            externalUrl?: string | null;
+                            image?: any;
+                            alt?: string | null;
+                          } | null,
+                          mainArticle.title || "Featured article"
+                        )?.unoptimized || false
+                      }
                       className="object-cover rounded-xl"
                     />
-                    <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-4">
-                      <h3 className="text-white text-2xl tracking-wide font-semibold leading-tight font-sans">
-                        {mainArticle.title || "Untitled"}
-                      </h3>
-                    </div>
                   </div>
+                  <h3 className="text-black text-2xl tracking-wide font-semibold leading-tight font-sans">
+                    {mainArticle.title || "Untitled"}
+                  </h3>
                 </Link>
               )}
+
+              {/* Separator after main article */}
+              <hr className="border-t border-gray-300 my-4" />
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 {secondaryArticles[0] && (
@@ -78,14 +93,28 @@ export default function MainThirdSection({
                   >
                     <div className="relative aspect-[16/9] sm:aspect-[4/3] overflow-hidden rounded-xl">
                       <Image
-                        src={getImageUrl(secondaryArticles[0].coverImage)}
+                        src={getImageData(
+                          secondaryArticles[0].cover,
+                          secondaryArticles[0].title || "Article image"
+                        )}
                         alt={secondaryArticles[0].title || "Article image"}
                         fill
+                        unoptimized={
+                          getCoverImage(
+                            secondaryArticles[0].cover as {
+                              source?: "asset" | "external";
+                              externalUrl?: string | null;
+                              image?: any;
+                              alt?: string | null;
+                            } | null,
+                            secondaryArticles[0].title || "Article image"
+                          )?.unoptimized || false
+                        }
                         className="object-cover rounded-xl"
                       />
                     </div>
                     <div className="mt-2">
-                      <h4 className="text-base font-semibold leading-tight mt-1 tracking-wide font-sans">
+                      <h4 className="text-lg font-semibold leading-tight mt-1 tracking-wide font-sans">
                         {secondaryArticles[0].title || "Untitled"}
                       </h4>
                     </div>
@@ -99,20 +128,37 @@ export default function MainThirdSection({
                   >
                     <div className="relative aspect-[16/9] sm:aspect-[4/3] overflow-hidden rounded-xl">
                       <Image
-                        src={getImageUrl(secondaryArticles[1].coverImage)}
+                        src={getImageData(
+                          secondaryArticles[1].cover,
+                          secondaryArticles[1].title || "Article image"
+                        )}
                         alt={secondaryArticles[1].title || "Article image"}
                         fill
+                        unoptimized={
+                          getCoverImage(
+                            secondaryArticles[1].cover as {
+                              source?: "asset" | "external";
+                              externalUrl?: string | null;
+                              image?: any;
+                              alt?: string | null;
+                            } | null,
+                            secondaryArticles[1].title || "Article image"
+                          )?.unoptimized || false
+                        }
                         className="object-cover rounded-xl"
                       />
                     </div>
                     <div className="mt-2">
-                      <h4 className="text-base font-semibold leading-tight mt-1 tracking-wide font-sans">
+                      <h4 className="text-lg font-semibold leading-tight mt-1 tracking-wide font-sans">
                         {secondaryArticles[1].title || "Untitled"}
                       </h4>
                     </div>
                   </Link>
                 )}
               </div>
+
+              {/* Separator after secondary articles */}
+              <hr className="border-t border-gray-300 my-4 lg:hidden" />
             </div>
 
             {/* Right Column - Full width on mobile (appears after left), 5 columns on desktop */}
@@ -120,28 +166,43 @@ export default function MainThirdSection({
               {/* Left sidebar column */}
               <div className="flex flex-col gap-4">
                 {rightColumnArticles[0] && (
-                  <Link
-                    href={`/post/${rightColumnArticles[0].slug || "#"}`}
-                    className="group block"
-                  >
-                    <div className="relative aspect-[16/9] lg:aspect-[3/4] overflow-hidden rounded-xl">
-                      <Image
-                        src={getImageUrl(rightColumnArticles[0].coverImage)}
-                        alt={rightColumnArticles[0].title || "Article image"}
-                        fill
-                        className="object-cover rounded-xl"
-                      />
-                    </div>
-                    <div className="mt-2">
-                      <h4 className="text-sm font-semibold leading-tight mt-1 tracking-wide font-sans">
-                        {rightColumnArticles[0].title || "Untitled"}
-                      </h4>
-                    </div>
-                  </Link>
+                  <>
+                    <Link
+                      href={`/post/${rightColumnArticles[0].slug || "#"}`}
+                      className="group block"
+                    >
+                      <div className="relative aspect-[16/9] lg:aspect-[3/4] overflow-hidden rounded-xl">
+                        <Image
+                          src={getImageData(
+                            rightColumnArticles[0].cover,
+                            rightColumnArticles[0].title || "Article image"
+                          )}
+                          alt={rightColumnArticles[0].title || "Article image"}
+                          fill
+                          unoptimized={
+                            getCoverImage(
+                              rightColumnArticles[0].cover as {
+                                source?: "asset" | "external";
+                                externalUrl?: string | null;
+                                image?: any;
+                                alt?: string | null;
+                              } | null,
+                              rightColumnArticles[0].title || "Article image"
+                            )?.unoptimized || false
+                          }
+                          className="object-cover rounded-xl"
+                        />
+                      </div>
+                      <div className="mt-2">
+                        <h4 className="text-lg font-semibold leading-tight mt-1 tracking-wide font-sans">
+                          {rightColumnArticles[0].title || "Untitled"}
+                        </h4>
+                      </div>
+                    </Link>
+                    {/* Separator after featured article */}
+                    <hr className="border-t border-gray-300 my-3" />
+                  </>
                 )}
-
-                {/* Separator between featured article and text links */}
-                <div className="border-t border-neutral-200 mt-1"></div>
 
                 {/* Text-only article links */}
                 <div className="flex flex-col gap-4">
@@ -149,12 +210,12 @@ export default function MainThirdSection({
                     <div key={article._id}>
                       <Link
                         href={`/post/${article.slug || "#"}`}
-                        className="text-sm font-semibold leading-tight mt-1 tracking-wide font-sans"
+                        className="text-sm font-semibold leading-tight mt-1 tracking-wide font-sans block"
                       >
                         {article.title || "Untitled"}
                       </Link>
                       {index < 3 && (
-                        <div className="border-t border-neutral-200 mt-4"></div>
+                        <hr className="border-t border-gray-300 mt-4" />
                       )}
                     </div>
                   ))}
@@ -166,38 +227,57 @@ export default function MainThirdSection({
                 {rightColumnArticles[
                   Math.ceil(rightColumnArticles.length / 2)
                 ] && (
-                  <Link
-                    href={`/post/${rightColumnArticles[Math.ceil(rightColumnArticles.length / 2)].slug || "#"}`}
-                    className="group block"
-                  >
-                    <div className="relative aspect-[16/9] lg:aspect-[3/4] overflow-hidden rounded-xl">
-                      <Image
-                        src={getImageUrl(
-                          rightColumnArticles[
+                  <>
+                    <Link
+                      href={`/post/${rightColumnArticles[Math.ceil(rightColumnArticles.length / 2)].slug || "#"}`}
+                      className="group block"
+                    >
+                      <div className="relative aspect-[16/9] lg:aspect-[3/4] overflow-hidden rounded-xl">
+                        <Image
+                          src={getImageData(
+                            rightColumnArticles[
+                              Math.ceil(rightColumnArticles.length / 2)
+                            ].cover,
+                            rightColumnArticles[
+                              Math.ceil(rightColumnArticles.length / 2)
+                            ].title || "Article image"
+                          )}
+                          alt={
+                            rightColumnArticles[
+                              Math.ceil(rightColumnArticles.length / 2)
+                            ].title || "Article image"
+                          }
+                          fill
+                          unoptimized={
+                            getCoverImage(
+                              rightColumnArticles[
+                                Math.ceil(rightColumnArticles.length / 2)
+                              ].cover as {
+                                source?: "asset" | "external";
+                                externalUrl?: string | null;
+                                image?: any;
+                                alt?: string | null;
+                              } | null,
+                              rightColumnArticles[
+                                Math.ceil(rightColumnArticles.length / 2)
+                              ].title || "Article image"
+                            )?.unoptimized || false
+                          }
+                          className="object-cover rounded-xl"
+                        />
+                      </div>
+                      <div className="mt-2">
+                        <h4 className="text-lg font-semibold leading-tight mt-1 tracking-wide font-sans">
+                          {rightColumnArticles[
                             Math.ceil(rightColumnArticles.length / 2)
-                          ].coverImage
-                        )}
-                        alt={
-                          rightColumnArticles[
-                            Math.ceil(rightColumnArticles.length / 2)
-                          ].title || "Article image"
-                        }
-                        fill
-                        className="object-cover rounded-xl"
-                      />
-                    </div>
-                    <div className="mt-2">
-                      <h4 className="text-sm font-semibold leading-tight mt-1 tracking-wide font-sans">
-                        {rightColumnArticles[
-                          Math.ceil(rightColumnArticles.length / 2)
-                        ].title || "Untitled"}
-                      </h4>
-                    </div>
-                  </Link>
+                          ].title || "Untitled"}
+                        </h4>
+                      </div>
+                    </Link>
+                    {/* Separator after featured article */}
+                    <hr className="border-t border-gray-300 my-3" />
+                  </>
                 )}
-
-                {/* Separator between featured article and text links */}
-                <div className="border-t border-neutral-200 mt-1"></div>
 
                 {/* Text-only article links */}
                 <div className="flex flex-col gap-4">
@@ -205,12 +285,12 @@ export default function MainThirdSection({
                     <div key={article._id}>
                       <Link
                         href={`/post/${article.slug || "#"}`}
-                        className="text-sm font-semibold leading-tight mt-1 tracking-wide font-sans"
+                        className="text-sm font-semibold leading-tight mt-1 tracking-wide font-sans block"
                       >
                         {article.title || "Untitled"}
                       </Link>
                       {index < 3 && (
-                        <div className="border-t border-neutral-200 mt-4"></div>
+                        <hr className="border-t border-gray-300 mt-4" />
                       )}
                     </div>
                   ))}

@@ -2,7 +2,7 @@ import { LeftColumnFourth } from "./leftColumnFourth";
 import { CenterColumnFourthSection } from "./CenterColumnFourthSection";
 import { RightColumnFourth } from "./rightColumnFourth";
 import { FourthSectionQueryResult } from "@/sanity.types";
-import { urlForImage } from "@/sanity/lib/utils";
+import { getCoverImage } from "@/sanity/lib/utils";
 
 interface MainFourthSectionProps {
   posts: FourthSectionQueryResult;
@@ -52,10 +52,10 @@ export default function MainFourthSection({
   categoryTitle,
   categorySlug,
 }: MainFourthSectionProps) {
-  // Helper function to get image URL from Sanity image
-  const getImageUrl = (coverImage: any) => {
-    const imageUrl = urlForImage(coverImage);
-    return imageUrl ? imageUrl.url() : "/placeholder.svg";
+  // Helper function to get image data from cover
+  const getImageData = (cover: any, fallbackTitle: string = "Article") => {
+    const coverData = getCoverImage(cover, fallbackTitle);
+    return coverData?.src || "/placeholder.svg";
   };
 
   // Transform posts data into the format expected by CenterColumnFourthSection
@@ -63,7 +63,7 @@ export default function MainFourthSection({
     section: categoryTitle,
     mainStory: posts[0]
       ? {
-          image: getImageUrl(posts[0].coverImage),
+          image: getImageData(posts[0].cover, posts[0].title || "Untitled"),
           title: posts[0].title || "Untitled",
           authors: posts[0].author ? [posts[0].author.name] : ["Anonymous"],
           slug: posts[0].slug || "#",
@@ -75,7 +75,7 @@ export default function MainFourthSection({
           slug: "#",
         },
     extraStories: posts.slice(1, 4).map((post) => ({
-      image: getImageUrl(post.coverImage),
+      image: getImageData(post.cover, post.title || "Untitled"),
       title: post.title || "Untitled",
       authors: post.author ? [post.author.name] : ["Anonymous"],
       slug: post.slug || "#",

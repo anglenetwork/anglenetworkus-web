@@ -1,13 +1,18 @@
 import Image from "next/image";
 import Link from "next/link";
-import { urlForImage } from "@/sanity/lib/utils";
+import { getCoverImage } from "@/sanity/lib/utils";
 
 interface Post {
   _id: string;
   title: string;
   slug: string | null;
   excerpt?: string | null;
-  coverImage?: any;
+  cover?: {
+    source?: "asset" | "external";
+    externalUrl?: string | null;
+    image?: any;
+    alt?: string | null;
+  } | null;
   date: string;
   author?: {
     name: string;
@@ -59,24 +64,26 @@ export default function MainSeventhSection({
                 className="group block"
               >
                 <div className="relative aspect-[16/10] w-full overflow-hidden rounded-lg">
-                  {mainArticle.coverImage ? (
-                    <Image
-                      src={
-                        urlForImage(mainArticle.coverImage)
-                          ?.width(800)
-                          .height(500)
-                          .url() || ""
-                      }
-                      alt={mainArticle.title || "Article image"}
-                      fill
-                      className="object-cover rounded-xl transition-opacity group-hover:opacity-90"
-                      priority
-                    />
-                  ) : (
-                    <div className="flex h-full w-full items-center justify-center bg-neutral-200">
-                      <span className="text-neutral-500">No Image</span>
-                    </div>
-                  )}
+                  {(() => {
+                    const coverData = getCoverImage(mainArticle.cover, mainArticle.title || "Article image");
+                    if (coverData?.src) {
+                      return (
+                        <Image
+                          src={coverData.src}
+                          alt={coverData.alt}
+                          fill
+                          unoptimized={coverData.unoptimized}
+                          className="object-cover rounded-xl transition-opacity group-hover:opacity-90"
+                          priority
+                        />
+                      );
+                    }
+                    return (
+                      <div className="flex h-full w-full items-center justify-center bg-neutral-200">
+                        <span className="text-neutral-500">No Image</span>
+                      </div>
+                    );
+                  })()}
                 </div>
                 <h2 className="mt-6 text-balance text-2xl font-bold leading-tight text-neutral-900 font-sans">
                   {mainArticle.title || "Untitled"}

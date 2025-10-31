@@ -1,14 +1,19 @@
 import { ArrowRight } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
-import { urlForImage } from "@/sanity/lib/utils";
+import { getCoverImage } from "@/sanity/lib/utils";
 
 interface Post {
   _id: string;
   title: string;
   slug: string | null;
   excerpt?: string | null;
-  coverImage?: any;
+  cover?: {
+    source?: "asset" | "external";
+    externalUrl?: string | null;
+    image?: any;
+    alt?: string | null;
+  } | null;
   date: string;
   author?: {
     name: string;
@@ -54,7 +59,7 @@ export default function MainFourthSection({
               <article key={category.slug} className="space-y-4">
                 {/* Category Header */}
                 <div className="flex items-center mb-4">
-                  <div className="w-2 h-2 bg-red-600 rounded-full mr-3"></div>
+                  <div className="w-2 h-2 bg-blue-600 rounded-full mr-3"></div>
                   <h2 className="text-xs font-medium text-neutral-900 uppercase tracking-wider font-secondary">
                     {category.name}
                   </h2>
@@ -63,27 +68,34 @@ export default function MainFourthSection({
 
                 {/* Featured Image */}
                 <Link href={`/post/${mainPost.slug}`} className="block mt-4">
-                  {mainPost?.coverImage && (
-                    <div className="relative overflow-hidden rounded-lg bg-black">
-                      <Image
-                        src={
-                          urlForImage(mainPost.coverImage)?.url() ||
-                          "/placeholder.svg"
-                        }
-                        alt={mainPost.title}
-                        width={800}
-                        height={300}
-                        className="h-[300px] w-full object-cover rounded-xl"
-                      />
-                    </div>
-                  )}
+                  {(() => {
+                    const coverData = getCoverImage(
+                      mainPost?.cover,
+                      mainPost?.title || "Article image"
+                    );
+                    if (coverData?.src) {
+                      return (
+                        <div className="relative overflow-hidden rounded-lg bg-black">
+                          <Image
+                            src={coverData.src}
+                            alt={coverData.alt}
+                            width={800}
+                            height={300}
+                            unoptimized={coverData.unoptimized}
+                            className="h-[300px] w-full object-cover rounded-xl"
+                          />
+                        </div>
+                      );
+                    }
+                    return null;
+                  })()}
                 </Link>
 
                 {/* Main Article */}
                 {mainPost && mainPost.slug && (
                   <div className="space-y-2">
                     <Link href={`/post/${mainPost.slug}`}>
-                      <h1 className=" text-base font-sans font-medium leading-tight tracking-wide text-foreground">
+                      <h1 className=" text-lg font-sans font-medium leading-tight tracking-wide text-foreground">
                         {mainPost.title}
                       </h1>
                     </Link>
@@ -91,19 +103,22 @@ export default function MainFourthSection({
                 )}
 
                 {/* Divider */}
-                <hr className="border-border" />
+                <hr className="border-t border-neutral-200" />
 
                 {/* Related Articles */}
                 <div className="space-y-4">
                   {secondPost && secondPost.slug && (
-                    <Link href={`/post/${secondPost.slug}`}>
-                      <h3 className="text-base font-sans font-medium leading-tight tracking-wide text-foreground mb-4">
-                        {secondPost.title}
-                      </h3>
-                    </Link>
+                    <>
+                      <Link href={`/post/${secondPost.slug}`}>
+                        <h3 className="text-base font-sans font-medium leading-tight tracking-wide text-foreground mb-4">
+                          {secondPost.title}
+                        </h3>
+                      </Link>
+                    </>
                   )}
                   {thirdPost && thirdPost.slug && (
                     <Link href={`/post/${thirdPost.slug}`}>
+                      <hr className="border-1 border-neutral-200 my-4" />
                       <h3 className="text-base font-sans font-medium leading-tight tracking-wide text-foreground">
                         {thirdPost.title}
                       </h3>
