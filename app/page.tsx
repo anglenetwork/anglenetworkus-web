@@ -46,14 +46,20 @@ export default async function Page() {
   return (
     <div className="container mx-auto border-2 border-red-500">
       <div className="space-y-10 md:space-y-14">
-        <MainFirstSection posts={posts} mostReadPosts={mostReadPosts} />
-        <MainSecondSection categoriesData={secondSectionData} />
+        <MainFirstSection
+          posts={posts as any}
+          mostReadPosts={mostReadPosts as any}
+        />
+        <MainSecondSection categoriesData={secondSectionData as any} />
         <MainThirdSection
-          posts={sixthSectionPosts}
+          posts={sixthSectionPosts as any}
           categoryTitle="International"
         />
-        <MainFourthSection categoriesData={fourthSectionData} />
-        <MainFifthSection posts={fifthSectionPosts} categoryTitle="politics" />
+        <MainFourthSection categoriesData={fourthSectionData as any} />
+        <MainFifthSection
+          posts={fifthSectionPosts as any}
+          categoryTitle="politics"
+        />
         <MainSixthSection />
         {/* <MainFourthSection
           posts={mostReadPosts}

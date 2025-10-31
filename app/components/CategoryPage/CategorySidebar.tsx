@@ -1,13 +1,18 @@
 import Image from "next/image";
 import Link from "next/link";
-import { urlForImage } from "@/sanity/lib/utils";
+import { getCoverImage } from "@/sanity/lib/utils";
 
 interface Post {
   _id: string;
   title: string;
   slug: string | null;
   excerpt?: string | null;
-  coverImage?: any;
+  cover?: {
+    source?: "asset" | "external";
+    externalUrl?: string | null;
+    image?: any;
+    alt?: string | null;
+  } | null;
   date: string;
   author?: {
     name: string;
@@ -28,10 +33,18 @@ export default function CategorySidebar({
   posts,
   categoryName,
 }: CategorySidebarProps) {
-  // Helper function to get image URL from Sanity image
-  const getImageUrl = (coverImage: any) => {
-    const imageUrl = urlForImage(coverImage);
-    return imageUrl ? imageUrl.url() : "/placeholder.svg";
+  // Helper function to get image data from cover
+  const getImageData = (cover: any, fallbackTitle: string = "Article") => {
+    const coverData = getCoverImage(cover, fallbackTitle);
+    return coverData ? {
+      src: coverData.src,
+      alt: coverData.alt,
+      unoptimized: coverData.unoptimized,
+    } : {
+      src: "/placeholder.svg",
+      alt: fallbackTitle,
+      unoptimized: false,
+    };
   };
 
   // Helper function to format date
@@ -59,13 +72,19 @@ export default function CategorySidebar({
             <div key={post._id} className="flex gap-3">
               <div className="flex-shrink-0">
                 <Link href={`/post/${post.slug || "#"}`}>
-                  <Image
-                    src={getImageUrl(post.coverImage)}
-                    alt={post.title || "Article image"}
-                    width={80}
-                    height={60}
-                    className="w-20 h-15 object-cover cursor-pointer hover:opacity-90 transition-opacity rounded"
-                  />
+                  {(() => {
+                    const imageData = getImageData(post.cover, post.title || "Article image");
+                    return (
+                      <Image
+                        src={imageData.src}
+                        alt={imageData.alt}
+                        width={80}
+                        height={60}
+                        unoptimized={imageData.unoptimized}
+                        className="w-20 h-15 object-cover cursor-pointer hover:opacity-90 transition-opacity rounded"
+                      />
+                    );
+                  })()}
                 </Link>
               </div>
               <div className="flex-1 min-w-0">

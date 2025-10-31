@@ -7,6 +7,7 @@ interface MostReadArticle {
   title: string;
   image?: string;
   imageAlt?: string;
+  imageUnoptimized?: boolean;
   hasImage: boolean;
   slug: string;
 }
@@ -22,7 +23,7 @@ export function RightColumnFifth({ mostReadArticles }: RightColumnThirdProps) {
         {/* Most Read Section */}
         <div className="mb-8">
           <div className="flex items-center mb-4">
-            <div className="w-2 h-2 bg-red-500 rounded-full mr-2"></div>
+            <div className="w-2 h-2 bg-blue-600 rounded-full mr-2"></div>
             <h2 className="text-sm font-semibold text-gray-700 uppercase tracking-wide font-sans">
               MOST READ
             </h2>
@@ -47,11 +48,12 @@ export function RightColumnFifth({ mostReadArticles }: RightColumnThirdProps) {
                         alt={article.imageAlt || "Article image"}
                         width={64}
                         height={64}
+                        unoptimized={article.imageUnoptimized}
                         className="w-16 h-16 object-cover rounded-xl flex-shrink-0 cursor-pointer hover:opacity-90 transition-opacity"
                       />
                     </Link>
                     <div className="flex-1">
-                      <span className="text-red-500 font-bold text-sm mr-2 font-sans">
+                      <span className="text-blue-500 font-bold text-sm mr-2 font-sans">
                         {index + 1}
                       </span>
                       <Link href={`/post/${article.slug}`}>
@@ -63,7 +65,7 @@ export function RightColumnFifth({ mostReadArticles }: RightColumnThirdProps) {
                   </>
                 ) : (
                   <>
-                    <span className="text-red-500 font-bold text-sm mr-2 font-sans">
+                    <span className="text-blue-500 font-bold text-sm mr-2 font-sans">
                       {index + 1}
                     </span>
                     <Link href={`/post/${article.slug}`}>
@@ -83,7 +85,7 @@ export function RightColumnFifth({ mostReadArticles }: RightColumnThirdProps) {
         {/* Opinion Section */}
         <div>
           <div className="flex items-center mb-4">
-            <div className="w-2 h-2 bg-red-500 rounded-full mr-2"></div>
+            <div className="w-2 h-2 bg-blue-600 rounded-full mr-2"></div>
             <h2 className="text-sm font-semibold text-gray-700 uppercase tracking-wide font-sans">
               Opinion
             </h2>

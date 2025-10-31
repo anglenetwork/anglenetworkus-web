@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { urlForImage } from "@/sanity/lib/utils";
+import { getCoverImage } from "@/sanity/lib/utils";
 import CategorySidebar from "./CategorySidebar";
 
 interface Post {
@@ -8,7 +8,12 @@ interface Post {
   title: string;
   slug: string | null;
   excerpt?: string | null;
-  coverImage?: any;
+  cover?: {
+    source?: "asset" | "external";
+    externalUrl?: string | null;
+    image?: any;
+    alt?: string | null;
+  } | null;
   date: string;
   author?: {
     name: string;
@@ -29,10 +34,18 @@ export default function CategoryContent({
   posts,
   categoryName,
 }: CategoryContentProps) {
-  // Helper function to get image URL from Sanity image
-  const getImageUrl = (coverImage: any) => {
-    const imageUrl = urlForImage(coverImage);
-    return imageUrl ? imageUrl.url() : "/placeholder.svg";
+  // Helper function to get image data from cover
+  const getImageData = (cover: any, fallbackTitle: string = "Article") => {
+    const coverData = getCoverImage(cover, fallbackTitle);
+    return coverData ? {
+      src: coverData.src,
+      alt: coverData.alt,
+      unoptimized: coverData.unoptimized,
+    } : {
+      src: "/placeholder.svg",
+      alt: fallbackTitle,
+      unoptimized: false,
+    };
   };
 
   // Helper function to format date
@@ -82,13 +95,19 @@ export default function CategoryContent({
               <article className="border-b border-gray-200 pb-8">
                 <div className="relative mb-4">
                   <Link href={`/post/${mainArticle.slug || "#"}`}>
-                    <Image
-                      src={getImageUrl(mainArticle.coverImage)}
-                      alt={mainArticle.title || "Article image"}
-                      width={800}
-                      height={400}
-                      className="w-full h-64 md:h-80 object-cover cursor-pointer hover:opacity-90 transition-opacity rounded-lg"
-                    />
+                    {(() => {
+                      const imageData = getImageData(mainArticle.cover, mainArticle.title || "Article image");
+                      return (
+                        <Image
+                          src={imageData.src}
+                          alt={imageData.alt}
+                          width={800}
+                          height={400}
+                          unoptimized={imageData.unoptimized}
+                          className="w-full h-64 md:h-80 object-cover cursor-pointer hover:opacity-90 transition-opacity rounded-lg"
+                        />
+                      );
+                    })()}
                   </Link>
                   <div className="absolute bottom-4 right-4 bg-black/70 text-white text-sm px-3 py-1 rounded">
                     {mainArticle.author?.name || "Anonymous"}
@@ -127,13 +146,19 @@ export default function CategoryContent({
                   >
                     <div className="relative mb-4">
                       <Link href={`/post/${article.slug || "#"}`}>
-                        <Image
-                          src={getImageUrl(article.coverImage)}
-                          alt={article.title || "Article image"}
-                          width={400}
-                          height={250}
-                          className="w-full h-48 object-cover cursor-pointer hover:opacity-90 transition-opacity rounded-lg"
-                        />
+                        {(() => {
+                          const imageData = getImageData(article.cover, article.title || "Article image");
+                          return (
+                            <Image
+                              src={imageData.src}
+                              alt={imageData.alt}
+                              width={400}
+                              height={250}
+                              unoptimized={imageData.unoptimized}
+                              className="w-full h-48 object-cover cursor-pointer hover:opacity-90 transition-opacity rounded-lg"
+                            />
+                          );
+                        })()}
                       </Link>
                       <div className="absolute bottom-2 right-2 bg-black/70 text-white text-xs px-2 py-1 rounded">
                         {article.author?.name || "Anonymous"}
@@ -174,13 +199,19 @@ export default function CategoryContent({
                   >
                     <div className="relative mb-3">
                       <Link href={`/post/${article.slug || "#"}`}>
+                    {(() => {
+                      const imageData = getImageData(article.cover, article.title || "Article image");
+                      return (
                         <Image
-                          src={getImageUrl(article.coverImage)}
-                          alt={article.title || "Article image"}
+                          src={imageData.src}
+                          alt={imageData.alt}
                           width={300}
                           height={200}
+                          unoptimized={imageData.unoptimized}
                           className="w-full h-40 object-cover cursor-pointer hover:opacity-90 transition-opacity rounded-lg"
                         />
+                      );
+                    })()}
                       </Link>
                       <div className="absolute bottom-1 right-1 bg-black/70 text-white text-xs px-1 py-0.5 rounded">
                         {article.author?.name || "Anonymous"}

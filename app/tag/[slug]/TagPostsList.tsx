@@ -1,6 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
-import { urlForImage } from "@/sanity/lib/utils";
+import { getCoverImage } from "@/sanity/lib/utils";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
@@ -9,7 +9,12 @@ interface Post {
   title: string | null;
   slug: string | null;
   excerpt?: string | null;
-  coverImage?: any;
+  cover?: {
+    source?: "asset" | "external";
+    externalUrl?: string | null;
+    image?: any;
+    alt?: string | null;
+  } | null;
   date: string;
   author?: {
     name: string;
@@ -78,17 +83,25 @@ export default function TagPostsList({
               {/* Image */}
               <div className="md:w-1/3 h-48 md:h-auto relative">
                 <Link href={`/post/${post.slug}`} className="block h-full">
-                  <Image
-                    src={
-                      post.coverImage
-                        ? urlForImage(post.coverImage)?.url() ||
-                          "/placeholder.svg"
-                        : "/placeholder.svg"
+                  {(() => {
+                    const coverData = getCoverImage(post.cover, post.title || "Post image");
+                    if (coverData?.src) {
+                      return (
+                        <Image
+                          src={coverData.src}
+                          alt={coverData.alt}
+                          fill
+                          unoptimized={coverData.unoptimized}
+                          className="object-cover"
+                        />
+                      );
                     }
-                    alt={post.title || "Post image"}
-                    fill
-                    className="object-cover"
-                  />
+                    return (
+                      <div className="w-full h-full bg-gray-200 flex items-center justify-center">
+                        <span className="text-gray-400">No Image</span>
+                      </div>
+                    );
+                  })()}
                 </Link>
               </div>
 

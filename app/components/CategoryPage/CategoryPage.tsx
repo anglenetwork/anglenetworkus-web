@@ -17,6 +17,7 @@ interface Article {
   readTime: string;
   category: string;
   imageUrl?: string;
+  imageUnoptimized?: boolean;
   slug: string;
 }
 
@@ -44,6 +45,7 @@ function FeatureHero({ article }: { article: Article }) {
             }
             alt={article.title}
             fill
+            unoptimized={article.imageUnoptimized}
             className="object-cover"
             priority
           />
@@ -71,6 +73,7 @@ function FeatureSideItem({ article }: { article: Article }) {
               }
               alt={article.title}
               fill
+              unoptimized={article.imageUnoptimized}
               className="object-cover"
             />
           </div>
@@ -90,6 +93,7 @@ function FeatureSideItem({ article }: { article: Article }) {
               }
               alt={article.title}
               fill
+              unoptimized={article.imageUnoptimized}
               className="object-cover"
             />
           </div>
@@ -144,6 +148,7 @@ function LatestArticleItem({ article }: { article: Article }) {
                       src={article.imageUrl || "/placeholder.svg"}
                       alt={article.title}
                       fill
+                      unoptimized={article.imageUnoptimized}
                       className="object-cover"
                     />
                   </div>

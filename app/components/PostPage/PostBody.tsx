@@ -1,7 +1,16 @@
 import { PortableText } from "@portabletext/react";
 import Image from "next/image";
-import { urlForImage } from "@/sanity/lib/utils";
+import { getCoverImage, urlForImage } from "@/sanity/lib/utils";
 import SocialShareButtons from "./SocialShareButtons";
+
+interface BodyImage {
+  source?: "asset" | "external";
+  externalUrl?: string | null;
+  image?: any;
+  alt?: string | null;
+  epigraph?: string | null;
+  imageSource?: string | null;
+}
 
 interface PostBodyProps {
   bodyTextOne: any;
@@ -9,20 +18,21 @@ interface PostBodyProps {
   bodyTextThree?: any;
   bodyTextFour?: any;
   bodyTextFive?: any;
-  coverImage?: any;
-  title: string;
-  epigraph?: string | null;
-  imageSource?: string | null;
-  bodyImageOne?: any;
-  bodyImageTwo?: any;
-  bodyImageThree?: any;
-  bodyImageFour?: any;
-  bodyImageFive?: any;
-  bodyImages?: Array<{
-    image: any;
+  cover?: {
+    source?: "asset" | "external";
+    externalUrl?: string | null;
+    image?: any;
+    alt?: string | null;
     epigraph?: string | null;
     imageSource?: string | null;
-  }> | null;
+  } | null;
+  title: string;
+  bodyImageOne?: BodyImage | null;
+  bodyImageTwo?: BodyImage | null;
+  bodyImageThree?: BodyImage | null;
+  bodyImageFour?: BodyImage | null;
+  bodyImageFive?: BodyImage | null;
+  bodyImages?: Array<BodyImage> | null;
   author?: { name: string; picture?: any };
   date: string;
   slug?: string;
@@ -128,10 +138,8 @@ export default function PostBody({
   bodyTextThree,
   bodyTextFour,
   bodyTextFive,
-  coverImage,
+  cover,
   title,
-  epigraph,
-  imageSource,
   bodyImageOne,
   bodyImageTwo,
   bodyImageThree,
@@ -142,44 +150,79 @@ export default function PostBody({
   date,
   slug,
 }: PostBodyProps) {
-  // Helper function to render body image
-  const renderBodyImage = (image: any, index: number) => {
-    if (!image) return null;
+  // Helper function to get body image URL and metadata
+  const getBodyImage = (bodyImage: BodyImage | null | undefined): {
+    src: string | null;
+    alt: string;
+    unoptimized: boolean;
+    epigraph?: string | null;
+    imageSource?: string | null;
+  } | null => {
+    if (!bodyImage) return null;
 
-    const imageUrl = urlForImage(image);
-    if (!imageUrl) return null;
+    // 1) External URL takes priority if source is external OR if externalUrl exists (fallback for missing source)
+    if (bodyImage.externalUrl && (bodyImage.source === "external" || !bodyImage.source)) {
+      return {
+        src: bodyImage.externalUrl,
+        alt: bodyImage.alt || `Body image`,
+        unoptimized: true,
+        epigraph: bodyImage.epigraph,
+        imageSource: bodyImage.imageSource,
+      };
+    }
+    // 2) Asset image - check if source is asset OR if image exists (fallback for missing source)
+    if (bodyImage.image && (bodyImage.source === "asset" || !bodyImage.source || !bodyImage.externalUrl)) {
+      const imageUrl = urlForImage(bodyImage.image);
+      if (imageUrl) {
+        return {
+          src: imageUrl.width(1000).height(750).fit("max").quality(85).url(),
+          alt: bodyImage.alt || bodyImage.image?.alt || `Body image`,
+          unoptimized: false,
+          epigraph: bodyImage.epigraph,
+          imageSource: bodyImage.imageSource,
+        };
+      }
+    }
+    return null;
+  };
+
+  // Helper function to render body image
+  const renderBodyImage = (bodyImage: BodyImage | null | undefined, index: number) => {
+    const imageData = getBodyImage(bodyImage);
+    if (!imageData || !imageData.src) return null;
 
     return (
       <div key={`body-image-${index}`} className="my-8">
         <Image
-          src={imageUrl.width(1000).height(750).fit("max").quality(85).url()}
-          alt={image.alt || `Body image ${index}`}
+          src={imageData.src}
+          alt={imageData.alt}
           width={1000}
           height={750}
+          unoptimized={imageData.unoptimized}
           className="w-full h-auto rounded-lg shadow-lg"
         />
         <div className="mt-2 space-y-1">
-          {(image.epigraph || image.imageSource) && (
+          {(imageData.epigraph || imageData.imageSource) && (
             <p className="text-sm text-gray-500 font-secondary">
-              {image.epigraph && (
-                <span className="italic">{image.epigraph}</span>
+              {imageData.epigraph && (
+                <span className="italic">{imageData.epigraph}</span>
               )}
-              {image.epigraph && image.imageSource && (
+              {imageData.epigraph && imageData.imageSource && (
                 <span className="text-gray-400"> • </span>
               )}
-              {image.imageSource && (
+              {imageData.imageSource && (
                 <span className="text-gray-400">
-                  Source: {image.imageSource}
+                  Source: {imageData.imageSource}
                 </span>
               )}
             </p>
           )}
-          {image.alt && (
+          {imageData.alt && (
             <p
               className="text-sm text-white font-secondary font-light"
               aria-hidden="true"
             >
-              {image.alt}
+              {imageData.alt}
             </p>
           )}
         </div>
@@ -227,104 +270,80 @@ export default function PostBody({
         {slug && <SocialShareButtons title={title} url={`/post/${slug}`} />}
       </div>
 
-      {coverImage && (
-        <div className="mb-8">
-          {(() => {
-            const imageUrl = urlForImage(coverImage);
-            if (!imageUrl) return null;
+      {(() => {
+        const coverData = getCoverImage(cover, title);
+        if (!coverData || !coverData.src) {
+          return null;
+        }
 
-            // Debug: Log image specifications
-            console.log("Cover Image Debug:", {
-              originalImage: coverImage,
-              imageUrl: imageUrl.url(),
-              width: coverImage.asset?.metadata?.dimensions?.width,
-              height: coverImage.asset?.metadata?.dimensions?.height,
-              format: coverImage.asset?.metadata?.format,
-              size: coverImage.asset?.metadata?.size,
-              hotspot: coverImage.hotspot,
-              crop: coverImage.crop,
-            });
-            return (
-              <div className="relative w-full h-96 md:h-[500px] overflow-hidden rounded-lg shadow-lg">
-                <Image
-                  src={imageUrl.fit("crop").crop("center").quality(95).url()}
-                  alt={coverImage.alt || title}
-                  className="w-full h-full object-cover object-center"
-                  priority
-                  fill
-                />
-              </div>
-            );
-          })()}
-          <div className="mt-2 space-y-1">
-            {(epigraph || imageSource) && (
-              <p className="text-sm text-gray-500 font-secondary">
-                {epigraph && <span className="italic">{epigraph}</span>}
-                {epigraph && imageSource && (
-                  <span className="text-gray-400"> • </span>
-                )}
-                {imageSource && (
-                  <span className="text-gray-400">Source: {imageSource}</span>
-                )}
-              </p>
-            )}
-            {/* {coverImage.alt && (
-              <p
-                className="text-sm text-white font-secondary font-light"
-                aria-hidden="true"
-              >
-                {coverImage.alt}
-              </p>
-            )} */}
+        return (
+          <div className="mb-8">
+            <div className="relative w-full h-96 md:h-[500px] overflow-hidden rounded-lg shadow-lg">
+              <Image
+                src={coverData.src}
+                alt={coverData.alt}
+                className="w-full h-full object-cover object-center"
+                priority
+                fill
+                unoptimized={coverData.unoptimized}
+              />
+            </div>
+            <div className="mt-2 space-y-1">
+              {(cover?.epigraph || cover?.imageSource) && (
+                <p className="text-sm text-gray-500 font-secondary">
+                  {cover.epigraph && <span className="italic">{cover.epigraph}</span>}
+                  {cover.epigraph && cover.imageSource && (
+                    <span className="text-gray-400"> • </span>
+                  )}
+                  {cover.imageSource && (
+                    <span className="text-gray-400">Source: {cover.imageSource}</span>
+                  )}
+                </p>
+              )}
+            </div>
           </div>
-        </div>
-      )}
+        );
+      })()}
 
       {/* Body Images */}
       {bodyImages && bodyImages.length > 0 && (
         <div className="space-y-8 mb-8">
           {bodyImages.map((bodyImage, index) => {
-            if (!bodyImage.image) return null;
-
-            const imageUrl = urlForImage(bodyImage.image);
-            if (!imageUrl) return null;
+            const imageData = getBodyImage(bodyImage);
+            if (!imageData || !imageData.src) return null;
 
             return (
               <div key={index} className="my-8">
                 <Image
-                  src={imageUrl
-                    .width(1000)
-                    .height(750)
-                    .fit("max")
-                    .quality(85)
-                    .url()}
-                  alt={bodyImage.image.alt || `Body image ${index + 1}`}
+                  src={imageData.src}
+                  alt={imageData.alt}
                   width={1000}
                   height={750}
+                  unoptimized={imageData.unoptimized}
                   className="w-full h-auto rounded-lg shadow-lg"
                 />
                 <div className="mt-2 space-y-1">
-                  {(bodyImage.epigraph || bodyImage.imageSource) && (
+                  {(imageData.epigraph || imageData.imageSource) && (
                     <p className="text-sm text-gray-500 font-secondary">
-                      {bodyImage.epigraph && (
-                        <span className="italic">{bodyImage.epigraph}</span>
+                      {imageData.epigraph && (
+                        <span className="italic">{imageData.epigraph}</span>
                       )}
-                      {bodyImage.epigraph && bodyImage.imageSource && (
+                      {imageData.epigraph && imageData.imageSource && (
                         <span className="text-gray-400"> • </span>
                       )}
-                      {bodyImage.imageSource && (
+                      {imageData.imageSource && (
                         <span className="text-gray-400">
-                          Source: {bodyImage.imageSource}
+                          Source: {imageData.imageSource}
                         </span>
                       )}
                     </p>
                   )}
-                  {bodyImage.image.alt && (
+                  {imageData.alt && (
                     <p
                       className="text-sm text-white font-secondary font-light"
                       aria-hidden="true"
                     >
-                      {bodyImage.image.alt}
+                      {imageData.alt}
                     </p>
                   )}
                 </div>

@@ -7,7 +7,6 @@ interface Post {
   title: string;
   slug: string;
   excerpt?: string | null;
-  coverImage?: any;
   cover?: {
     source?: "asset" | "external";
     externalUrl?: string;
@@ -51,20 +50,13 @@ export function CenterColumnLanding({
         };
       }
     }
-    // 3) Legacy coverImage
-    if (post.coverImage) {
-      const b = urlForImage(post.coverImage);
-      if (b) {
-        return { src: b.url(), alt: post.title, unoptimized: false };
-      }
-    }
     return { src: null, alt: post.title, unoptimized: false };
   };
 
   return (
     <div className="lg:border-r border-gray-300 lg:px-8">
       <div className="flex items-center mb-4">
-        <div className="w-2 h-2 bg-red-600 rounded-full mr-3"></div>
+        <div className="w-2 h-2 bg-blue-600 rounded-full mr-3"></div>
         <h2 className="text-xs font-medium text-neutral-900 uppercase tracking-wider font-secondary">
           Top News
         </h2>
@@ -140,7 +132,7 @@ export function CenterColumnLanding({
       <div className="border-b border-gray-300 mb-4"></div>
 
       <div className="flex items-center mb-6">
-        <div className="w-2 h-2 bg-red-600 rounded-full mr-3"></div>
+        <div className="w-2 h-2 bg-blue-600 rounded-full mr-3"></div>
         <h2 className="text-xs font-medium text-neutral-900 uppercase tracking-wider font-sans">
           More Top Headlines
         </h2>

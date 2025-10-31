@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
-import { urlForImage } from "@/sanity/lib/utils";
+import { getCoverImage } from "@/sanity/lib/utils";
 import PostHeader from "@/app/components/PostPage/PostHeader";
 import PostBody from "@/app/components/PostPage/PostBody";
 import PostSelectedNews from "@/app/components/PostPage/PostSelectedNews";
@@ -77,9 +77,17 @@ export async function generateMetadata({
   const description = post.excerpt ?? "";
 
   let image: string | undefined;
-  const builder = urlForImage(post.coverImage);
-  if (builder) {
-    image = builder.width(1200).height(627).fit("crop").url();
+  const coverData = getCoverImage(
+    post.cover as {
+      source?: "asset" | "external";
+      externalUrl?: string | null;
+      image?: any;
+      alt?: string | null;
+    } | null,
+    title
+  );
+  if (coverData) {
+    image = coverData.src;
   }
 
   return {
@@ -109,6 +117,10 @@ async function getPostData(slug: string) {
     params: { slug },
   });
 
+  if (!postData) {
+    notFound();
+  }
+
   // Fetch sidebar rails in parallel (independent of category presence)
   const [latestOverall, trendingReads] = await Promise.all([
     client.fetch(latestNews4Query, { currentPostId: postData._id }),
@@ -117,8 +129,6 @@ async function getPostData(slug: string) {
 
   // Use fallback if no trending data or all posts have 0 views
   const hasViews = trendingReads?.some((post: any) => post.views7d > 0);
-  console.log("Trending reads raw data:", trendingReads);
-  console.log("Has views check:", hasViews);
 
   const popularReads = hasViews
     ? trendingReads
@@ -126,7 +136,7 @@ async function getPostData(slug: string) {
         currentPostId: postData._id,
       });
 
-  if (!postData || !postData.category) {
+  if (!postData.category) {
     // Fallback to general related articles if no category
     const data = await sanityFetch({
       query: postQueryWithRelated,
@@ -175,36 +185,17 @@ export default async function PostPage({
 
   // Filter out posts with null slugs for the sidebar components
   const validLatestNews = latestNews.filter(
-    (post) => post.slug !== null
+    (post: any) => post.slug !== null
   ) as any[];
   const validNewsForYou = newsForYou.filter(
-    (post) => post.slug !== null
+    (post: any) => post.slug !== null
   ) as any[];
   const validPopularReads = popularReads.filter(
-    (post) => post.slug !== null
+    (post: any) => post.slug !== null
   ) as any[];
   const validNextArticles = nextArticles.filter(
-    (post) => post.slug !== null
+    (post: any) => post.slug !== null
   ) as any[];
-
-  // Debug: Log post data
-  console.log("Post data:", { _id: post._id, title: post.title });
-  console.log("Popular reads data:", popularReads);
-  console.log(
-    "Has views:",
-    popularReads?.some((p: any) => p.views7d > 0)
-  );
-  console.log(
-    "View counts:",
-    popularReads?.map((p: any) => ({
-      title: p.title,
-      hasViews: p.hasViews,
-      views7d: p.views7d,
-      views30d: p.views30d,
-      viewsAll: p.viewsAll,
-      totalScore: p.totalScore,
-    }))
-  );
 
   return (
     <div className="min-h-screen">
@@ -257,16 +248,23 @@ export default async function PostPage({
                 bodyTextThree={post.bodyTextThree}
                 bodyTextFour={post.bodyTextFour}
                 bodyTextFive={post.bodyTextFive}
-                coverImage={post.coverImage}
+                cover={
+                  post.cover as {
+                    source?: "asset" | "external";
+                    externalUrl?: string | null;
+                    image?: any;
+                    alt?: string | null;
+                    epigraph?: string | null;
+                    imageSource?: string | null;
+                  } | null
+                }
                 title={post.title || "Untitled"}
-                epigraph={post.epigraph}
-                imageSource={post.imageSource}
-                bodyImageOne={post.bodyImageOne}
-                bodyImageTwo={post.bodyImageTwo}
-                bodyImageThree={post.bodyImageThree}
-                bodyImageFour={post.bodyImageFour}
-                bodyImageFive={post.bodyImageFive}
-                bodyImages={post.bodyImages}
+                bodyImageOne={post.bodyImageOne as any}
+                bodyImageTwo={post.bodyImageTwo as any}
+                bodyImageThree={post.bodyImageThree as any}
+                bodyImageFour={post.bodyImageFour as any}
+                bodyImageFive={post.bodyImageFive as any}
+                bodyImages={post.bodyImages as any}
                 author={post.author}
                 date={post.date}
                 slug={post.slug || undefined}

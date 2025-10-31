@@ -9,6 +9,7 @@ interface CenterArticle {
   thirdAuthor?: string;
   image: string;
   imageAlt: string;
+  imageUnoptimized?: boolean;
   isMain: boolean;
   slug: string;
 }
@@ -27,7 +28,7 @@ export function CenterColumnFifth({
       {/* Congress Section */}
       <div className="mb-8">
         <div className="flex items-center mb-4">
-          <div className="w-2 h-2 bg-red-500 rounded-full mr-2"></div>
+          <div className="w-2 h-2 bg-blue-600 rounded-full mr-2"></div>
           <h2 className="text-sm font-semibold text-gray-700 uppercase tracking-wide font-sans">
             {categoryTitle}
           </h2>
@@ -46,6 +47,7 @@ export function CenterColumnFifth({
                     alt={article.imageAlt}
                     width={800}
                     height={320}
+                    unoptimized={article.imageUnoptimized}
                     className="w-full h-80 object-cover rounded-xl mb-4 cursor-pointer hover:opacity-90 transition-opacity"
                   />
                 </Link>
@@ -73,6 +75,7 @@ export function CenterColumnFifth({
                         alt={article.imageAlt}
                         width={240}
                         height={160}
+                        unoptimized={article.imageUnoptimized}
                         className="w-full h-48 object-cover rounded-xl mb-3 cursor-pointer hover:opacity-90 transition-opacity"
                       />
                     </Link>

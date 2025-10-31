@@ -1,14 +1,19 @@
 import Link from "next/link";
 import Image from "next/image";
 import { format, parseISO } from "date-fns";
-import { urlForImage } from "@/sanity/lib/utils";
+import { getCoverImage } from "@/sanity/lib/utils";
 
 interface Post {
   _id: string;
   title: string;
   slug: string;
   excerpt?: string;
-  coverImage?: any;
+  cover?: {
+    source?: "asset" | "external";
+    externalUrl?: string | null;
+    image?: any;
+    alt?: string | null;
+  } | null;
   date: string;
   author?: {
     name: string;
@@ -57,25 +62,26 @@ export default function PostSelectedNewsAlt({
           >
             {/* Article Image */}
             <div className="flex-shrink-0">
-              {post.coverImage ? (
-                (() => {
-                  const imageUrl = urlForImage(post.coverImage);
-                  if (!imageUrl) return null;
+              {(() => {
+                const coverData = getCoverImage(post.cover, post.title || "Article image");
+                if (coverData?.src) {
                   return (
                     <Image
-                      src={imageUrl.width(80).height(64).fit("crop").url()}
-                      alt={post.title}
+                      src={coverData.src}
+                      alt={coverData.alt}
                       width={80}
                       height={64}
+                      unoptimized={coverData.unoptimized}
                       className="w-20 h-16 object-cover rounded-md border border-border group-hover:border-primary/30 transition-colors duration-200"
                     />
                   );
-                })()
-              ) : (
-                <div className="w-20 h-16 bg-gray-200 rounded-md border border-border flex items-center justify-center">
-                  <span className="text-gray-400 text-xs">No Image</span>
-                </div>
-              )}
+                }
+                return (
+                  <div className="w-20 h-16 bg-gray-200 rounded-md border border-border flex items-center justify-center">
+                    <span className="text-gray-400 text-xs">No Image</span>
+                  </div>
+                );
+              })()}
             </div>
 
             {/* Article Content */}

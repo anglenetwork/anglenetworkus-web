@@ -1,14 +1,19 @@
 import Link from "next/link";
 import Image from "next/image";
 import { format, parseISO } from "date-fns";
-import { urlForImage } from "@/sanity/lib/utils";
+import { getCoverImage } from "@/sanity/lib/utils";
 
 interface Post {
   _id: string;
   title: string;
   slug: string;
   excerpt?: string;
-  coverImage?: any;
+  cover?: {
+    source?: "asset" | "external";
+    externalUrl?: string | null;
+    image?: any;
+    alt?: string | null;
+  } | null;
   date: string;
   author?: {
     name: string;
@@ -53,24 +58,26 @@ export default function BottomArticleModule({
                 className="group block"
               >
                 <div className="relative aspect-[16/10] w-full overflow-hidden rounded-lg">
-                  {posts[0].coverImage ? (
-                    <Image
-                      src={
-                        urlForImage(posts[0].coverImage)
-                          ?.width(800)
-                          .height(500)
-                          .url() || ""
-                      }
-                      alt={posts[0].title || "Article image"}
-                      fill
-                      className="object-cover transition-opacity group-hover:opacity-90"
-                      priority
-                    />
-                  ) : (
-                    <div className="flex h-full w-full items-center justify-center bg-neutral-200">
-                      <span className="text-neutral-500">No Image</span>
-                    </div>
-                  )}
+                  {(() => {
+                    const coverData = getCoverImage(posts[0].cover, posts[0].title || "Article image");
+                    if (coverData?.src) {
+                      return (
+                        <Image
+                          src={coverData.src}
+                          alt={coverData.alt}
+                          fill
+                          unoptimized={coverData.unoptimized}
+                          className="object-cover transition-opacity group-hover:opacity-90"
+                          priority
+                        />
+                      );
+                    }
+                    return (
+                      <div className="flex h-full w-full items-center justify-center bg-neutral-200">
+                        <span className="text-neutral-500">No Image</span>
+                      </div>
+                    );
+                  })()}
                 </div>
                 <h2 className="mt-6 text-3xl font-medium leading-tight text-neutral-900 font-sans">
                   {posts[0].title || "Untitled"}

@@ -1,14 +1,19 @@
 import Link from "next/link";
 import Image from "next/image";
 import { format, parseISO } from "date-fns";
-import { urlForImage } from "@/sanity/lib/utils";
+import { getCoverImage } from "@/sanity/lib/utils";
 
 interface Post {
   _id: string;
   title: string;
   slug: string;
   excerpt?: string;
-  coverImage?: any;
+  cover?: {
+    source?: "asset" | "external";
+    externalUrl?: string | null;
+    image?: any;
+    alt?: string | null;
+  } | null;
   date?: string; // normalized in queries (coalesce(publishedAt, date))
   author?: {
     name: string;
@@ -41,11 +46,8 @@ export default function PostSelectedNews({
       {/* Articles List */}
       <div className="space-y-4">
         {latestNews.slice(0, 4).map((post, index) => {
-          const imgBuilder = post.coverImage
-            ? urlForImage(post.coverImage)
-            : undefined;
-          const imgUrl =
-            imgBuilder?.width(192).height(154).fit("crop").url() ?? null;
+          const coverData = getCoverImage(post.cover, post.title || "Article image");
+          const imgUrl = coverData?.src ?? null;
 
           return (
             <Link
@@ -58,9 +60,10 @@ export default function PostSelectedNews({
                 {imgUrl ? (
                   <Image
                     src={imgUrl}
-                    alt={post.title || "Article image"}
+                    alt={coverData?.alt || post.title || "Article image"}
                     width={96}
                     height={77}
+                    unoptimized={coverData?.unoptimized}
                     className="w-24 h-[77px] object-cover rounded-md  transition-opacity duration-200"
                     quality={95}
                     priority={index === 0}

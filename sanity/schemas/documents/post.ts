@@ -120,11 +120,10 @@ export default defineType({
       validation: (rule) =>
         rule.custom((cover, ctx) => {
           const doc = ctx.document as any;
-          const hasLegacyAsset = !!doc?.coverImage?.asset?._ref;
           const usingExternal = cover?.source === "external" && !!cover?.externalUrl;
           const usingAsset = cover?.source === "asset" && !!cover?.image?.asset?._ref;
           const isPublishing = doc?.status === "published";
-          if (isPublishing && !(usingExternal || usingAsset || hasLegacyAsset)) {
+          if (isPublishing && !(usingExternal || usingAsset)) {
             return "Provide a cover image (external URL or uploaded asset) before publishing";
           }
           return true;
@@ -132,30 +131,8 @@ export default defineType({
       description:
         "Choose between an uploaded/selected image or a pasted external URL. Alt text is required for accessibility.",
     }),
-    defineField({
-      name: "coverImage",
-      title: "Cover Image (Legacy)",
-      type: "image",
-      options: { hotspot: true, aiAssist: { imageDescriptionField: "alt" } },
-      fields: [
-        {
-          name: "alt",
-          type: "string",
-          title: "Alternative text",
-          description: "Important for SEO and accessibility.",
-          validation: (rule) =>
-            rule.custom((alt, context) => {
-              const hasAsset = (context.document as any)?.coverImage?.asset?._ref;
-              if (hasAsset && !alt) return "Required";
-              return true;
-            }),
-        },
-      ],
-      description:
-        "Legacy field. Prefer the new Cover field above. This remains to avoid breaking older content.",
-    }),
-    defineField({ name: "epigraph", title: "Epigraph", type: "string" }),
-    defineField({ name: "imageSource", title: "Image Source", type: "string" }),
+    // Removed legacy top-level epigraph/imageSource (use cover.epigraph/imageSource)
+    // Removed legacy top-level epigraph/imageSource (use cover.epigraph/imageSource)
     defineField({
       name: "slug",
       title: "Slug",
@@ -169,16 +146,516 @@ export default defineType({
       validation: (rule) => rule.required(),
     }),
     defineField({ name: "bodyTextOne", title: "Body Text One", type: "array", of: [{ type: "block" }], validation: (rule) => rule.required() }),
-    defineField({ name: "bodyImageOne", title: "Body Image One", type: "image", options: { hotspot: true, aiAssist: { imageDescriptionField: "alt" } }, fields: [{ name: "alt", type: "string", title: "Alternative text", description: "Important for SEO and accessibility." }, { name: "epigraph", type: "string", title: "Epigraph" }, { name: "imageSource", type: "string", title: "Image Source" }] }),
+    defineField({
+      name: "bodyImageOne",
+      title: "Body Image One",
+      type: "object",
+      options: { collapsible: false },
+      fields: [
+        defineField({
+          name: "source",
+          title: "Source",
+          type: "string",
+          options: {
+            list: [
+              { title: "Upload / Asset", value: "asset" },
+              { title: "External URL", value: "external" },
+            ],
+            layout: "radio",
+            direction: "horizontal",
+          },
+          initialValue: "asset",
+          validation: (rule) => rule.required(),
+        }),
+        defineField({
+          name: "externalUrl",
+          title: "External image URL",
+          type: "url",
+          description:
+            "Paste a direct image URL (e.g., Wikimedia Commons). Must be a direct file URL (http/https).",
+          hidden: ({ parent }) => parent?.source !== "external",
+          validation: (rule) =>
+            rule.custom((value, ctx) => {
+              const parent = ctx.parent as any;
+              if (parent?.source === "external") {
+                if (!value) return "External image URL is required";
+              }
+              return true;
+            }),
+        }),
+        defineField({
+          name: "image",
+          title: "Image",
+          type: "image",
+          options: { hotspot: true, aiAssist: { imageDescriptionField: "alt" } },
+          fields: [
+            {
+              name: "alt",
+              type: "string",
+              title: "Alternative text",
+              description: "Important for SEO and accessibility.",
+            },
+          ],
+          hidden: ({ parent }) => parent?.source !== "asset",
+          validation: (rule) =>
+            rule.custom((value, ctx) => {
+              const parent = ctx.parent as any;
+              if (parent?.source === "asset") {
+                if (!value?.asset?._ref) return "Select or upload an image";
+              }
+              return true;
+            }),
+        }),
+        defineField({
+          name: "alt",
+          title: "Alt text",
+          type: "string",
+          description:
+            "Describe the image for screen readers. Required if an external URL is used or an asset is present without nested alt.",
+          validation: (rule) =>
+            rule.custom((val, ctx) => {
+              const parent = ctx.parent as any;
+              const usingExternal = parent?.source === "external" && parent?.externalUrl;
+              const usingAsset = parent?.source === "asset" && parent?.image?.asset?._ref;
+              if (usingExternal && !val) return "Alt text is required for external images";
+              const nestedAlt = parent?.image?.alt;
+              if (usingAsset && !nestedAlt && !val) {
+                return "Alt text is required (fill nested alt or this field)";
+              }
+              return true;
+            }),
+        }),
+        defineField({ name: "epigraph", title: "Epigraph", type: "string" }),
+        defineField({ name: "imageSource", title: "Image Source / Credit", type: "string" }),
+      ],
+    }),
     defineField({ name: "bodyTextTwo", title: "Body Text Two", type: "array", of: [{ type: "block" }] }),
-    defineField({ name: "bodyImageTwo", title: "Body Image Two", type: "image", options: { hotspot: true, aiAssist: { imageDescriptionField: "alt" } }, fields: [{ name: "alt", type: "string", title: "Alternative text", description: "Important for SEO and accessibility." }, { name: "epigraph", type: "string", title: "Epigraph" }, { name: "imageSource", type: "string", title: "Image Source" }] }),
+    defineField({
+      name: "bodyImageTwo",
+      title: "Body Image Two",
+      type: "object",
+      options: { collapsible: false },
+      fields: [
+        defineField({
+          name: "source",
+          title: "Source",
+          type: "string",
+          options: {
+            list: [
+              { title: "Upload / Asset", value: "asset" },
+              { title: "External URL", value: "external" },
+            ],
+            layout: "radio",
+            direction: "horizontal",
+          },
+          initialValue: "asset",
+          validation: (rule) => rule.required(),
+        }),
+        defineField({
+          name: "externalUrl",
+          title: "External image URL",
+          type: "url",
+          description:
+            "Paste a direct image URL (e.g., Wikimedia Commons). Must be a direct file URL (http/https).",
+          hidden: ({ parent }) => parent?.source !== "external",
+          validation: (rule) =>
+            rule.custom((value, ctx) => {
+              const parent = ctx.parent as any;
+              if (parent?.source === "external") {
+                if (!value) return "External image URL is required";
+              }
+              return true;
+            }),
+        }),
+        defineField({
+          name: "image",
+          title: "Image",
+          type: "image",
+          options: { hotspot: true, aiAssist: { imageDescriptionField: "alt" } },
+          fields: [
+            {
+              name: "alt",
+              type: "string",
+              title: "Alternative text",
+              description: "Important for SEO and accessibility.",
+            },
+          ],
+          hidden: ({ parent }) => parent?.source !== "asset",
+          validation: (rule) =>
+            rule.custom((value, ctx) => {
+              const parent = ctx.parent as any;
+              if (parent?.source === "asset") {
+                if (!value?.asset?._ref) return "Select or upload an image";
+              }
+              return true;
+            }),
+        }),
+        defineField({
+          name: "alt",
+          title: "Alt text",
+          type: "string",
+          description:
+            "Describe the image for screen readers. Required if an external URL is used or an asset is present without nested alt.",
+          validation: (rule) =>
+            rule.custom((val, ctx) => {
+              const parent = ctx.parent as any;
+              const usingExternal = parent?.source === "external" && parent?.externalUrl;
+              const usingAsset = parent?.source === "asset" && parent?.image?.asset?._ref;
+              if (usingExternal && !val) return "Alt text is required for external images";
+              const nestedAlt = parent?.image?.alt;
+              if (usingAsset && !nestedAlt && !val) {
+                return "Alt text is required (fill nested alt or this field)";
+              }
+              return true;
+            }),
+        }),
+        defineField({ name: "epigraph", title: "Epigraph", type: "string" }),
+        defineField({ name: "imageSource", title: "Image Source / Credit", type: "string" }),
+      ],
+    }),
     defineField({ name: "bodyTextThree", title: "Body Text Three", type: "array", of: [{ type: "block" }] }),
-    defineField({ name: "bodyImageThree", title: "Body Image Three", type: "image", options: { hotspot: true, aiAssist: { imageDescriptionField: "alt" } }, fields: [{ name: "alt", type: "string", title: "Alternative text", description: "Important for SEO and accessibility." }, { name: "epigraph", type: "string", title: "Epigraph" }, { name: "imageSource", type: "string", title: "Image Source" }] }),
+    defineField({
+      name: "bodyImageThree",
+      title: "Body Image Three",
+      type: "object",
+      options: { collapsible: false },
+      fields: [
+        defineField({
+          name: "source",
+          title: "Source",
+          type: "string",
+          options: {
+            list: [
+              { title: "Upload / Asset", value: "asset" },
+              { title: "External URL", value: "external" },
+            ],
+            layout: "radio",
+            direction: "horizontal",
+          },
+          initialValue: "asset",
+          validation: (rule) => rule.required(),
+        }),
+        defineField({
+          name: "externalUrl",
+          title: "External image URL",
+          type: "url",
+          description:
+            "Paste a direct image URL (e.g., Wikimedia Commons). Must be a direct file URL (http/https).",
+          hidden: ({ parent }) => parent?.source !== "external",
+          validation: (rule) =>
+            rule.custom((value, ctx) => {
+              const parent = ctx.parent as any;
+              if (parent?.source === "external") {
+                if (!value) return "External image URL is required";
+              }
+              return true;
+            }),
+        }),
+        defineField({
+          name: "image",
+          title: "Image",
+          type: "image",
+          options: { hotspot: true, aiAssist: { imageDescriptionField: "alt" } },
+          fields: [
+            {
+              name: "alt",
+              type: "string",
+              title: "Alternative text",
+              description: "Important for SEO and accessibility.",
+            },
+          ],
+          hidden: ({ parent }) => parent?.source !== "asset",
+          validation: (rule) =>
+            rule.custom((value, ctx) => {
+              const parent = ctx.parent as any;
+              if (parent?.source === "asset") {
+                if (!value?.asset?._ref) return "Select or upload an image";
+              }
+              return true;
+            }),
+        }),
+        defineField({
+          name: "alt",
+          title: "Alt text",
+          type: "string",
+          description:
+            "Describe the image for screen readers. Required if an external URL is used or an asset is present without nested alt.",
+          validation: (rule) =>
+            rule.custom((val, ctx) => {
+              const parent = ctx.parent as any;
+              const usingExternal = parent?.source === "external" && parent?.externalUrl;
+              const usingAsset = parent?.source === "asset" && parent?.image?.asset?._ref;
+              if (usingExternal && !val) return "Alt text is required for external images";
+              const nestedAlt = parent?.image?.alt;
+              if (usingAsset && !nestedAlt && !val) {
+                return "Alt text is required (fill nested alt or this field)";
+              }
+              return true;
+            }),
+        }),
+        defineField({ name: "epigraph", title: "Epigraph", type: "string" }),
+        defineField({ name: "imageSource", title: "Image Source / Credit", type: "string" }),
+      ],
+    }),
     defineField({ name: "bodyTextFour", title: "Body Text Four", type: "array", of: [{ type: "block" }] }),
-    defineField({ name: "bodyImageFour", title: "Body Image Four", type: "image", options: { hotspot: true, aiAssist: { imageDescriptionField: "alt" } }, fields: [{ name: "alt", type: "string", title: "Alternative text", description: "Important for SEO and accessibility." }, { name: "epigraph", type: "string", title: "Epigraph" }, { name: "imageSource", type: "string", title: "Image Source" }] }),
+    defineField({
+      name: "bodyImageFour",
+      title: "Body Image Four",
+      type: "object",
+      options: { collapsible: false },
+      fields: [
+        defineField({
+          name: "source",
+          title: "Source",
+          type: "string",
+          options: {
+            list: [
+              { title: "Upload / Asset", value: "asset" },
+              { title: "External URL", value: "external" },
+            ],
+            layout: "radio",
+            direction: "horizontal",
+          },
+          initialValue: "asset",
+          validation: (rule) => rule.required(),
+        }),
+        defineField({
+          name: "externalUrl",
+          title: "External image URL",
+          type: "url",
+          description:
+            "Paste a direct image URL (e.g., Wikimedia Commons). Must be a direct file URL (http/https).",
+          hidden: ({ parent }) => parent?.source !== "external",
+          validation: (rule) =>
+            rule.custom((value, ctx) => {
+              const parent = ctx.parent as any;
+              if (parent?.source === "external") {
+                if (!value) return "External image URL is required";
+              }
+              return true;
+            }),
+        }),
+        defineField({
+          name: "image",
+          title: "Image",
+          type: "image",
+          options: { hotspot: true, aiAssist: { imageDescriptionField: "alt" } },
+          fields: [
+            {
+              name: "alt",
+              type: "string",
+              title: "Alternative text",
+              description: "Important for SEO and accessibility.",
+            },
+          ],
+          hidden: ({ parent }) => parent?.source !== "asset",
+          validation: (rule) =>
+            rule.custom((value, ctx) => {
+              const parent = ctx.parent as any;
+              if (parent?.source === "asset") {
+                if (!value?.asset?._ref) return "Select or upload an image";
+              }
+              return true;
+            }),
+        }),
+        defineField({
+          name: "alt",
+          title: "Alt text",
+          type: "string",
+          description:
+            "Describe the image for screen readers. Required if an external URL is used or an asset is present without nested alt.",
+          validation: (rule) =>
+            rule.custom((val, ctx) => {
+              const parent = ctx.parent as any;
+              const usingExternal = parent?.source === "external" && parent?.externalUrl;
+              const usingAsset = parent?.source === "asset" && parent?.image?.asset?._ref;
+              if (usingExternal && !val) return "Alt text is required for external images";
+              const nestedAlt = parent?.image?.alt;
+              if (usingAsset && !nestedAlt && !val) {
+                return "Alt text is required (fill nested alt or this field)";
+              }
+              return true;
+            }),
+        }),
+        defineField({ name: "epigraph", title: "Epigraph", type: "string" }),
+        defineField({ name: "imageSource", title: "Image Source / Credit", type: "string" }),
+      ],
+    }),
     defineField({ name: "bodyTextFive", title: "Body Text Five", type: "array", of: [{ type: "block" }] }),
-    defineField({ name: "bodyImageFive", title: "Body Image Five", type: "image", options: { hotspot: true, aiAssist: { imageDescriptionField: "alt" } }, fields: [{ name: "alt", type: "string", title: "Alternative text", description: "Important for SEO and accessibility." }, { name: "epigraph", type: "string", title: "Epigraph" }, { name: "imageSource", type: "string", title: "Image Source" }] }),
-    defineField({ name: "bodyImages", title: "Body Images", type: "array", of: [{ type: "object", name: "bodyImage", title: "Body Image", fields: [{ name: "image", title: "Image", type: "image", options: { hotspot: true } }, { name: "epigraph", title: "Epigraph", type: "string" }, { name: "imageSource", title: "Image Source", type: "string" }] }], validation: (rule) => rule.max(3) }),
+    defineField({
+      name: "bodyImageFive",
+      title: "Body Image Five",
+      type: "object",
+      options: { collapsible: false },
+      fields: [
+        defineField({
+          name: "source",
+          title: "Source",
+          type: "string",
+          options: {
+            list: [
+              { title: "Upload / Asset", value: "asset" },
+              { title: "External URL", value: "external" },
+            ],
+            layout: "radio",
+            direction: "horizontal",
+          },
+          initialValue: "asset",
+          validation: (rule) => rule.required(),
+        }),
+        defineField({
+          name: "externalUrl",
+          title: "External image URL",
+          type: "url",
+          description:
+            "Paste a direct image URL (e.g., Wikimedia Commons). Must be a direct file URL (http/https).",
+          hidden: ({ parent }) => parent?.source !== "external",
+          validation: (rule) =>
+            rule.custom((value, ctx) => {
+              const parent = ctx.parent as any;
+              if (parent?.source === "external") {
+                if (!value) return "External image URL is required";
+              }
+              return true;
+            }),
+        }),
+        defineField({
+          name: "image",
+          title: "Image",
+          type: "image",
+          options: { hotspot: true, aiAssist: { imageDescriptionField: "alt" } },
+          fields: [
+            {
+              name: "alt",
+              type: "string",
+              title: "Alternative text",
+              description: "Important for SEO and accessibility.",
+            },
+          ],
+          hidden: ({ parent }) => parent?.source !== "asset",
+          validation: (rule) =>
+            rule.custom((value, ctx) => {
+              const parent = ctx.parent as any;
+              if (parent?.source === "asset") {
+                if (!value?.asset?._ref) return "Select or upload an image";
+              }
+              return true;
+            }),
+        }),
+        defineField({
+          name: "alt",
+          title: "Alt text",
+          type: "string",
+          description:
+            "Describe the image for screen readers. Required if an external URL is used or an asset is present without nested alt.",
+          validation: (rule) =>
+            rule.custom((val, ctx) => {
+              const parent = ctx.parent as any;
+              const usingExternal = parent?.source === "external" && parent?.externalUrl;
+              const usingAsset = parent?.source === "asset" && parent?.image?.asset?._ref;
+              if (usingExternal && !val) return "Alt text is required for external images";
+              const nestedAlt = parent?.image?.alt;
+              if (usingAsset && !nestedAlt && !val) {
+                return "Alt text is required (fill nested alt or this field)";
+              }
+              return true;
+            }),
+        }),
+        defineField({ name: "epigraph", title: "Epigraph", type: "string" }),
+        defineField({ name: "imageSource", title: "Image Source / Credit", type: "string" }),
+      ],
+    }),
+    defineField({
+      name: "bodyImages",
+      title: "Body Images",
+      type: "array",
+      of: [
+        {
+          type: "object",
+          name: "bodyImage",
+          title: "Body Image",
+          options: { collapsible: false },
+          fields: [
+            defineField({
+              name: "source",
+              title: "Source",
+              type: "string",
+              options: {
+                list: [
+                  { title: "Upload / Asset", value: "asset" },
+                  { title: "External URL", value: "external" },
+                ],
+                layout: "radio",
+                direction: "horizontal",
+              },
+              initialValue: "asset",
+              validation: (rule) => rule.required(),
+            }),
+            defineField({
+              name: "externalUrl",
+              title: "External image URL",
+              type: "url",
+              description:
+                "Paste a direct image URL (e.g., Wikimedia Commons). Must be a direct file URL (http/https).",
+              hidden: ({ parent }) => parent?.source !== "external",
+              validation: (rule) =>
+                rule.custom((value, ctx) => {
+                  const parent = ctx.parent as any;
+                  if (parent?.source === "external") {
+                    if (!value) return "External image URL is required";
+                  }
+                  return true;
+                }),
+            }),
+            defineField({
+              name: "image",
+              title: "Image",
+              type: "image",
+              options: { hotspot: true, aiAssist: { imageDescriptionField: "alt" } },
+              fields: [
+                {
+                  name: "alt",
+                  type: "string",
+                  title: "Alternative text",
+                  description: "Important for SEO and accessibility.",
+                },
+              ],
+              hidden: ({ parent }) => parent?.source !== "asset",
+              validation: (rule) =>
+                rule.custom((value, ctx) => {
+                  const parent = ctx.parent as any;
+                  if (parent?.source === "asset") {
+                    if (!value?.asset?._ref) return "Select or upload an image";
+                  }
+                  return true;
+                }),
+            }),
+            defineField({
+              name: "alt",
+              title: "Alt text",
+              type: "string",
+              description:
+                "Describe the image for screen readers. Required if an external URL is used or an asset is present without nested alt.",
+              validation: (rule) =>
+                rule.custom((val, ctx) => {
+                  const parent = ctx.parent as any;
+                  const usingExternal = parent?.source === "external" && parent?.externalUrl;
+                  const usingAsset = parent?.source === "asset" && parent?.image?.asset?._ref;
+                  if (usingExternal && !val) return "Alt text is required for external images";
+                  const nestedAlt = parent?.image?.alt;
+                  if (usingAsset && !nestedAlt && !val) {
+                    return "Alt text is required (fill nested alt or this field)";
+                  }
+                  return true;
+                }),
+            }),
+            defineField({ name: "epigraph", title: "Epigraph", type: "string" }),
+            defineField({ name: "imageSource", title: "Image Source / Credit", type: "string" }),
+          ],
+        },
+      ],
+      validation: (rule) => rule.max(3),
+    }),
     defineField({ name: "date", title: "Date", type: "datetime", initialValue: () => new Date().toISOString() }),
     defineField({ name: "status", title: "Status", type: "string", options: { list: ["draft", "scheduled", "published"] }, initialValue: "draft" }),
     defineField({ name: "publishedAt", title: "Published at", type: "datetime", description: 'Use for ordering/SEO. Keep "date" for legacy if needed.', initialValue: () => new Date().toISOString(), validation: (rule) => rule.custom((val, ctx) => (ctx.document as any)?.status === "published" && !val ? "publishedAt is required when status is published" : true) }),
@@ -198,20 +675,17 @@ export default defineType({
     select: {
       title: "title",
       author: "author.name",
-      mediaCoverImage: "coverImage",
       mediaCoverAsset: "cover.image",
-      media: "cover.image",
       featured: "featured",
       date: "publishedAt",
-      coverExternalUrl: "cover.externalUrl",
     },
     prepare(selection) {
-      const { author, featured, date, mediaCoverImage, mediaCoverAsset } = selection as any;
+      const { author, featured, date, mediaCoverAsset } = selection as any;
       const bits: string[] = [];
       if (author) bits.push(`by ${author}`);
       if (date) bits.push(new Date(date).toLocaleDateString());
       if (featured) bits.push("★ Featured");
-      const media = mediaCoverAsset || mediaCoverImage || undefined;
+      const media = mediaCoverAsset || undefined;
       return { ...selection, media, subtitle: bits.join(" • ") };
     },
   },

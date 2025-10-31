@@ -14,7 +14,7 @@ export function LeftColumnLanding({ latestNews }: LeftColumnLandingProps) {
   return (
     <div className="lg:border-r border-neutral-300 lg:sticky lg:top-20 lg:h-[calc(100vh-180px)] lg:overflow-hidden text-left px-0 md:px-4">
       <div className="flex items-center justify-start mb-4">
-        <div className="w-2 h-2 bg-red-600 rounded-full mr-3"></div>
+        <div className="w-2 h-2 bg-blue-600 rounded-full mr-3"></div>
         <h2 className="text-xs font-medium text-neutral-900 uppercase tracking-wider font-sans">
           Latest News
         </h2>

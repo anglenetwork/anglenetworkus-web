@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { urlForImage } from "@/sanity/lib/utils";
+import { getCoverImage, urlForImage } from "@/sanity/lib/utils";
 import { Button } from "../components/ui/button";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
@@ -16,7 +16,12 @@ interface SearchPost {
   title: string;
   slug: string;
   excerpt?: string;
-  coverImage?: any;
+  cover?: {
+    source?: "asset" | "external";
+    externalUrl?: string | null;
+    image?: any;
+    alt?: string | null;
+  } | null;
   date: string;
   author?: {
     name: string;
@@ -321,33 +326,41 @@ export default function SearchResults() {
                         <Link key={result._id} href={getHref()}>
                           <article className="flex gap-6 border-t border-neutral-200 pt-8 transition-colors pb-4">
                             <div className="relative h-48 w-64 flex-shrink-0 overflow-hidden">
-                              {result.type === "post" && result.coverImage ? (
-                                <Image
-                                  src={
-                                    getImageUrl(result.coverImage) ||
-                                    "/placeholder.svg"
+                              {(() => {
+                                if (result.type === "post" && result.cover) {
+                                  const coverData = getImageData(result.cover, result.title);
+                                  if (coverData?.src) {
+                                    return (
+                                      <Image
+                                        src={coverData.src}
+                                        alt={coverData.alt}
+                                        fill
+                                        unoptimized={coverData.unoptimized}
+                                        className="object-cover"
+                                      />
+                                    );
                                   }
-                                  alt={result.coverImage.alt || result.title}
-                                  fill
-                                  className="object-cover"
-                                />
-                              ) : result.type === "topic" && result.image ? (
-                                <Image
-                                  src={
-                                    getImageUrl(result.image, 360, 240) ||
-                                    "/placeholder.svg"
+                                } else if (result.type === "topic" && result.image) {
+                                  const imageUrl = urlForImage(result.image);
+                                  if (imageUrl) {
+                                    return (
+                                      <Image
+                                        src={imageUrl.width(360).height(240).fit("max").quality(85).url()}
+                                        alt={result.image.alt || result.title}
+                                        fill
+                                        className="object-cover"
+                                      />
+                                    );
                                   }
-                                  alt={result.image.alt || result.title}
-                                  fill
-                                  className="object-cover"
-                                />
-                              ) : (
-                                <div className="w-full h-full bg-gray-200 flex items-center justify-center">
-                                  <span className="text-gray-400">
-                                    No Image
-                                  </span>
-                                </div>
-                              )}
+                                }
+                                return (
+                                  <div className="w-full h-full bg-gray-200 flex items-center justify-center">
+                                    <span className="text-gray-400">
+                                      No Image
+                                    </span>
+                                  </div>
+                                );
+                              })()}
                             </div>
                             <div className="flex flex-col">
                               <h2 className="mb-3 font-sans text-2xl font-medium leading-tight text-foreground">
