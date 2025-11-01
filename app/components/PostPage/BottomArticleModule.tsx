@@ -42,7 +42,7 @@ export default function BottomArticleModule({
         {/* Section Header */}
         <div className="mb-6">
           <div className="flex items-center mb-4">
-            <div className="w-2 h-2 bg-red-500 rounded-full mr-2"></div>
+            <div className="w-2 h-2 bg-blue-600 rounded-full mr-2"></div>
             <h2 className="text-sm uppercase font-medium text-neutral-900 tracking-wide font-sans">
               Related Articles
             </h2>
@@ -59,7 +59,10 @@ export default function BottomArticleModule({
               >
                 <div className="relative aspect-[16/10] w-full overflow-hidden rounded-lg">
                   {(() => {
-                    const coverData = getCoverImage(posts[0].cover, posts[0].title || "Article image");
+                    const coverData = getCoverImage(
+                      posts[0].cover,
+                      posts[0].title || "Article image"
+                    );
                     if (coverData?.src) {
                       return (
                         <Image
@@ -93,7 +96,7 @@ export default function BottomArticleModule({
                   href={`/post/${post.slug || "#"}`}
                   className="block py-4 transition-opacity"
                 >
-                  <h3 className="text-base font-regular leading-relaxed text-neutral-900 font-sans">
+                  <h3 className="text-base font-medium leading-relaxed text-neutral-900 font-sans">
                     {post.title || "Untitled"}
                   </h3>
                 </Link>

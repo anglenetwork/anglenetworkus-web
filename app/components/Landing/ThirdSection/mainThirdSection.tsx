@@ -194,7 +194,7 @@ export default function MainThirdSection({
                         />
                       </div>
                       <div className="mt-2">
-                        <h4 className="text-lg font-semibold leading-tight mt-1 tracking-wide font-sans">
+                        <h4 className="text-lg font-sans font-semibold leading-tight tracking-wide text-foreground">
                           {rightColumnArticles[0].title || "Untitled"}
                         </h4>
                       </div>
@@ -210,7 +210,7 @@ export default function MainThirdSection({
                     <div key={article._id}>
                       <Link
                         href={`/post/${article.slug || "#"}`}
-                        className="text-sm font-semibold leading-tight mt-1 tracking-wide font-sans block"
+                        className="text-base font-sans font-medium leading-tight tracking-wide text-foreground "
                       >
                         {article.title || "Untitled"}
                       </Link>
@@ -285,7 +285,7 @@ export default function MainThirdSection({
                     <div key={article._id}>
                       <Link
                         href={`/post/${article.slug || "#"}`}
-                        className="text-sm font-semibold leading-tight mt-1 tracking-wide font-sans block"
+                        className="text-base font-sans font-medium leading-tight tracking-wide text-foreground "
                       >
                         {article.title || "Untitled"}
                       </Link>

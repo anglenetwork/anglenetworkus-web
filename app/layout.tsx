@@ -9,7 +9,7 @@ import {
   type PortableTextBlock,
 } from "next-sanity";
 import { draftMode } from "next/headers";
-import { Inter, Outfit } from "next/font/google";
+import { Inter, Outfit, Spectral } from "next/font/google";
 
 import { AlertBanner, ContentLayoutWrapper } from "./components/layout";
 
@@ -19,7 +19,7 @@ import { settingsQuery } from "@/sanity/lib/queries";
 import { resolveOpenGraphImage } from "@/sanity/lib/utils";
 
 // Configure Google Fonts
-const inter = Inter({
+const interTight = Inter({
   subsets: ["latin"],
   weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
   variable: "--font-secondary",
@@ -30,6 +30,13 @@ const outfit = Outfit({
   subsets: ["latin"],
   weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
   variable: "--font-sans",
+  display: "swap",
+});
+
+const spectral = Spectral({
+  subsets: ["latin"],
+  weight: ["200", "300", "400", "500", "600", "700", "800"],
+  variable: "--font-serif",
   display: "swap",
 });
 
@@ -77,8 +84,9 @@ export default async function RootLayout({
     <html lang="en">
       <body
         className={`
-        ${inter.variable}
+        ${interTight.variable}
         ${outfit.variable}
+        ${spectral.variable}
       `}
       >
         <section className="min-h-screen">

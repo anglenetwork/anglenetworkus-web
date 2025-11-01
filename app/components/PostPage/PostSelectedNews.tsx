@@ -13,6 +13,8 @@ interface Post {
     externalUrl?: string | null;
     image?: any;
     alt?: string | null;
+    epigraph?: string | null;
+    imageSource?: string | null;
   } | null;
   date?: string; // normalized in queries (coalesce(publishedAt, date))
   author?: {
@@ -46,53 +48,58 @@ export default function PostSelectedNews({
       {/* Articles List */}
       <div className="space-y-4">
         {latestNews.slice(0, 4).map((post, index) => {
-          const coverData = getCoverImage(post.cover, post.title || "Article image");
+          const coverData = getCoverImage(
+            post.cover,
+            post.title || "Article image"
+          );
           const imgUrl = coverData?.src ?? null;
 
           return (
-            <Link
-              key={post._id}
-              href={`/post/${post.slug}`}
-              className="group flex items-start gap-4 rounded-lg  transition-colors duration-200 cursor-pointer"
-            >
-              {/* Article Image */}
-              <div className="flex-shrink-0">
-                {imgUrl ? (
-                  <Image
-                    src={imgUrl}
-                    alt={coverData?.alt || post.title || "Article image"}
-                    width={96}
-                    height={77}
-                    unoptimized={coverData?.unoptimized}
-                    className="w-24 h-[77px] object-cover rounded-md  transition-opacity duration-200"
-                    quality={95}
-                    priority={index === 0}
-                  />
-                ) : (
-                  <div className="w-24 h-[77px] rounded-md bg-gray-200/80 flex items-center justify-center text-[10px] text-gray-500">
-                    No Image
-                  </div>
-                )}
-              </div>
+            <article key={post._id} className="group">
+              <Link
+                href={`/post/${post.slug}`}
+                className="flex items-start gap-4 rounded-lg transition-colors duration-200 cursor-pointer"
+              >
+                {/* Article Image */}
+                <div className="flex-shrink-0">
+                  {imgUrl ? (
+                    <div className="relative w-24 h-[77px] overflow-hidden rounded-lg">
+                      <Image
+                        src={imgUrl}
+                        alt={coverData?.alt || post.title || "Article image"}
+                        unoptimized={coverData?.unoptimized}
+                        className="w-full h-full object-cover transition-opacity duration-200"
+                        quality={95}
+                        priority={index === 0}
+                        fill
+                      />
+                    </div>
+                  ) : (
+                    <div className="w-24 h-[77px] rounded-lg bg-gray-200/80 flex items-center justify-center text-[10px] text-gray-500 font-secondary">
+                      No Image
+                    </div>
+                  )}
+                </div>
 
-              {/* Article Content */}
-              <div className="flex-1 min-w-0">
-                <h3 className="font-secondary text-sm font-semibold text-foreground leading-tight group-hover:text-primary transition-colors duration-200 line-clamp-2">
-                  {post.title}
-                </h3>
-                {post.date && (
-                  <p className="text-xs text-muted-foreground mt-1 font-secondary">
-                    {(() => {
-                      try {
-                        return format(parseISO(post.date), "MMM dd, h:mm a");
-                      } catch {
-                        return "";
-                      }
-                    })()}
-                  </p>
-                )}
-              </div>
-            </Link>
+                {/* Article Content */}
+                <div className="flex-1 min-w-0">
+                  <h3 className="font-secondary text-sm font-semibold text-neutral-900 leading-tight group-hover:text-primary transition-colors duration-200 line-clamp-2">
+                    {post.title}
+                  </h3>
+                  {post.date && (
+                    <p className="text-xs text-neutral-500 mt-1 font-secondary">
+                      {(() => {
+                        try {
+                          return format(parseISO(post.date), "MMM dd, h:mm a");
+                        } catch {
+                          return "";
+                        }
+                      })()}
+                    </p>
+                  )}
+                </div>
+              </Link>
+            </article>
           );
         })}
       </div>

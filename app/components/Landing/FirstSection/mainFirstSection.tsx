@@ -24,11 +24,45 @@ interface Post {
   } | null;
 }
 
-interface ValidPost extends Omit<Post, "slug" | "category"> {
+// Type for LeftColumnLanding - only needs slug
+interface PostForLeftColumn {
+  _id: string;
+  title: string;
   slug: string;
-  category?: {
-    title: string;
-    slug: string;
+}
+
+// Type for CenterColumnLanding - needs slug and cover (optional, not nullable)
+interface PostForCenterColumn {
+  _id: string;
+  title: string;
+  slug: string;
+  excerpt?: string | null;
+  cover?: {
+    source?: "asset" | "external";
+    externalUrl?: string;
+    image?: any;
+    alt?: string;
+  };
+  author?: {
+    name: string;
+    picture?: any;
+  } | null;
+}
+
+// Type for RightColumnLanding - needs slug and cover (nullable)
+interface PostForRightColumn {
+  _id: string;
+  title: string;
+  slug: string;
+  cover?: {
+    source?: "asset" | "external";
+    externalUrl?: string | null;
+    image?: any;
+    alt?: string | null;
+  } | null;
+  author?: {
+    name: string;
+    picture?: any;
   } | null;
 }
 
@@ -41,26 +75,71 @@ export function MainFirstSection({
   posts,
   mostReadPosts,
 }: MainFirstSectionProps) {
-  // Filter out posts without slugs and organize posts for different sections
-  const validPosts = posts.filter(
-    (post): post is ValidPost =>
-      !!post.slug &&
-      (!post.category || (!!post.category.title && !!post.category.slug))
-  );
-  const mainStory = validPosts.slice(0, 2); // First 2 posts for main story section
-  const moreTopHeadlines = validPosts.slice(2, 7); // Next 5 posts for more headlines
-  const sideStories = validPosts.slice(7, 9); // Next 2 posts for side stories
+  // Filter and type posts for LeftColumnLanding (only needs slug)
+  const validPostsForLeft = posts
+    .filter((post) => !!post.slug)
+    .map((post) => ({
+      _id: post._id,
+      title: post.title,
+      slug: post.slug!,
+    })) as PostForLeftColumn[];
+  const latestNews = validPostsForLeft.slice(0, 8);
 
-  // Filter most read posts to ensure they have valid slugs
-  const validMostReadPosts = mostReadPosts.filter(
-    (post): post is ValidPost =>
-      !!post.slug &&
-      (!post.category || (!!post.category.title && !!post.category.slug))
-  );
-  const mostRead = validMostReadPosts.slice(0, 5); // Top 5 most viewed posts
+  // Filter and type posts for CenterColumnLanding (needs slug and cover as optional, not null)
+  const validPostsForCenter = posts
+    .filter((post) => !!post.slug)
+    .map(
+      (post): PostForCenterColumn => ({
+        _id: post._id,
+        title: post.title,
+        slug: post.slug!,
+        excerpt: post.excerpt,
+        cover:
+          post.cover && typeof post.cover === "object"
+            ? {
+                source: post.cover.source,
+                externalUrl: post.cover.externalUrl ?? undefined,
+                image: post.cover.image,
+                alt: post.cover.alt ?? undefined,
+              }
+            : undefined,
+        author: post.author,
+      })
+    );
+  const mainStory = validPostsForCenter.slice(0, 2);
+  const moreTopHeadlines = validPostsForCenter.slice(2, 7);
 
-  // Use first 6 posts for latest news section
-  const latestNews = validPosts.slice(0, 8);
+  // Filter and type posts for RightColumnLanding (needs slug and cover nullable)
+  const validPostsForRight = posts
+    .filter(
+      (post) =>
+        !!post.slug &&
+        (!post.category || (!!post.category.title && !!post.category.slug))
+    )
+    .map((post) => ({
+      _id: post._id,
+      title: post.title,
+      slug: post.slug!,
+      cover: post.cover,
+      author: post.author,
+    })) as PostForRightColumn[];
+  const sideStories = validPostsForRight.slice(7, 9);
+
+  // Filter most read posts
+  const validMostReadPosts = mostReadPosts
+    .filter(
+      (post) =>
+        !!post.slug &&
+        (!post.category || (!!post.category.title && !!post.category.slug))
+    )
+    .map((post) => ({
+      _id: post._id,
+      title: post.title,
+      slug: post.slug!,
+      cover: post.cover,
+      author: post.author,
+    })) as PostForRightColumn[];
+  const mostRead = validMostReadPosts.slice(0, 5);
 
   return (
     <main className="w-full px-4 md:px-0 pt-8">

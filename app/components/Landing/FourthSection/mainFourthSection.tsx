@@ -95,7 +95,7 @@ export default function MainFourthSection({
                 {mainPost && mainPost.slug && (
                   <div className="space-y-2">
                     <Link href={`/post/${mainPost.slug}`}>
-                      <h1 className=" text-lg font-sans font-medium leading-tight tracking-wide text-foreground">
+                      <h1 className=" text-lg font-sans font-semibold leading-tight tracking-wide text-foreground">
                         {mainPost.title}
                       </h1>
                     </Link>
