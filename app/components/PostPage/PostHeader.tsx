@@ -35,7 +35,7 @@ export default function PostHeader({
       </h1>
 
       {excerpt && (
-        <p className="text-base lg:text-base text-neutral-900 mb-6 leading-relaxed font-secondary font-light">
+        <p className="text-base lg:text-sm text-neutral-600 mb-6 leading-relaxed font-secondary font-light tracking-wide">
           {excerpt}
         </p>
       )}

@@ -38,34 +38,53 @@ interface PostBodyProps {
   slug?: string;
 }
 
+/** Portable Text renderers (Spectral for body, Outfit for headings) */
 const portableTextComponents = {
   types: {
     image: ({ value }: any) => {
-      if (!value?.asset?._ref) {
-        return null;
-      }
-      const imageUrl = urlForImage(value);
-      if (!imageUrl) {
-        return null;
-      }
+      if (!value?.asset?._ref) return null;
+      const builder = urlForImage(value);
+      if (!builder) return null;
+
       return (
-        <div className="my-8">
+        <figure className="my-8 text-left">
           <Image
-            src={imageUrl.width(1000).height(750).fit("max").quality(85).url()}
+            src={builder.width(1200).height(800).fit("max").quality(85).url()}
             alt={value.alt || ""}
-            width={1000}
-            height={750}
+            width={1200}
+            height={800}
             className="w-full h-auto rounded-lg shadow-lg"
           />
-          {value.alt && (
-            <p
-              className="text-sm text-white mt-2 text-center italic"
-              aria-hidden="true"
-            >
-              {value.alt}
-            </p>
+          {(value.alt || value.epigraph || value.imageSource) && (
+            <figcaption className="mt-2 text-left">
+              {/* Epigraph + Source in secondary font */}
+              {(value.epigraph || value.imageSource) && (
+                <p className="font-secondary text-[12px] sm:text-xs text-neutral-500">
+                  {value.epigraph && (
+                    <span className="italic">{value.epigraph}</span>
+                  )}
+                  {value.epigraph && value.imageSource && (
+                    <span className="text-neutral-400"> • </span>
+                  )}
+                  {value.imageSource && (
+                    <span className="text-neutral-400">
+                      Source: {value.imageSource}
+                    </span>
+                  )}
+                </p>
+              )}
+              {/* Optional alt-as-caption (muted) */}
+              {value.alt && (
+                <p
+                  className="font-secondary text-[12px] sm:text-xs text-neutral-400"
+                  aria-hidden="true"
+                >
+                  {value.alt}
+                </p>
+              )}
+            </figcaption>
           )}
-        </div>
+        </figure>
       );
     },
   },
@@ -79,7 +98,7 @@ const portableTextComponents = {
           href={value?.href}
           target={target}
           rel={target === "_blank" ? "noopener noreferrer" : undefined}
-          className="text-blue-600 hover:text-blue-800 underline"
+          className="underline decoration-neutral-300 underline-offset-[3px] hover:decoration-neutral-700 transition-colors"
         >
           {children}
         </a>
@@ -88,49 +107,145 @@ const portableTextComponents = {
   },
   block: {
     h1: ({ children }: any) => (
-      <h1 className="text-3xl font-bold text-gray-900 mt-8 mb-4 font-secondary">
+      <h1 className="font-sans font-semibold tracking-tight text-[34px] sm:text-[40px] md:text-[44px] text-neutral-900 mt-10 mb-4 leading-tight text-left">
         {children}
       </h1>
     ),
     h2: ({ children }: any) => (
-      <h2 className="text-2xl font-bold text-gray-900 mt-6 mb-3 font-secondary">
+      <h2 className="font-sans font-semibold tracking-tight text-2xl sm:text-[28px] md:text-[32px] lg:text-[36px] text-neutral-900 mt-10 md:mt-12 mb-4 leading-snug text-left">
         {children}
       </h2>
     ),
     h3: ({ children }: any) => (
-      <h3 className="text-xl font-bold text-gray-900 mt-5 mb-2 font-secondary">
+      <h3 className="font-sans font-semibold text-[20px] sm:text-[22px] md:text-[24px] text-neutral-900 mt-8 mb-3 leading-snug text-left">
         {children}
       </h3>
     ),
     h4: ({ children }: any) => (
-      <h4 className="text-lg font-bold text-gray-900 mt-4 mb-2 font-secondary">
+      <h4 className="font-sans font-medium text-lg text-neutral-900 mt-6 mb-2 leading-snug text-left">
         {children}
       </h4>
     ),
     normal: ({ children }: any) => (
-      <p className="text-gray-800 leading-relaxed mb-4 font-secondary text-lg font-light">
+      <p className="font-body text-[17px] leading-8 sm:text-[18px] text-neutral-900 mb-4 text-left">
         {children}
       </p>
     ),
     blockquote: ({ children }: any) => (
-      <blockquote className="border-l-4 border-blue-500 pl-4 italic text-gray-700 my-6 font-secondary">
-        {children}
+      <blockquote className="my-10 md:my-12 border-l-2 border-neutral-200 pl-4 md:pl-6 text-left">
+        <div className="font-sans text-2xl md:text-3xl leading-tight text-neutral-900">
+          {children}
+        </div>
       </blockquote>
     ),
   },
   list: {
     bullet: ({ children }: any) => (
-      <ul className="list-disc list-inside text-gray-700 mb-4 space-y-1">
+      <ul className="font-body list-disc pl-6 space-y-2 text-neutral-900 mb-4 text-left">
         {children}
       </ul>
     ),
     number: ({ children }: any) => (
-      <ol className="list-decimal list-inside text-gray-700 mb-4 space-y-1">
+      <ol className="font-body list-decimal pl-6 space-y-2 text-neutral-900 mb-4 text-left">
         {children}
       </ol>
     ),
   },
 };
+
+/** Helpers */
+function buildBodyImage(bodyImage: BodyImage | null | undefined): {
+  src: string | null;
+  alt: string;
+  unoptimized: boolean;
+  epigraph?: string | null;
+  imageSource?: string | null;
+} | null {
+  if (!bodyImage) return null;
+
+  // Prefer explicit external URL when present or source === "external"
+  if (
+    bodyImage.externalUrl &&
+    (bodyImage.source === "external" || !bodyImage.source)
+  ) {
+    return {
+      src: bodyImage.externalUrl,
+      alt: bodyImage.alt || "Body image",
+      unoptimized: true,
+      epigraph: bodyImage.epigraph,
+      imageSource: bodyImage.imageSource,
+    };
+  }
+
+  // Fallback to Sanity asset
+  if (
+    bodyImage.image &&
+    (bodyImage.source === "asset" ||
+      !bodyImage.source ||
+      !bodyImage.externalUrl)
+  ) {
+    const builder = urlForImage(bodyImage.image);
+    if (builder) {
+      return {
+        src: builder.width(1200).height(800).fit("max").quality(85).url(),
+        alt: bodyImage.alt || bodyImage.image?.alt || "Body image",
+        unoptimized: false,
+        epigraph: bodyImage.epigraph,
+        imageSource: bodyImage.imageSource,
+      };
+    }
+  }
+  return null;
+}
+
+function renderBodyImage(
+  bodyImage: BodyImage | null | undefined,
+  key: string | number
+) {
+  const imageData = buildBodyImage(bodyImage);
+  if (!imageData?.src) return null;
+
+  return (
+    <figure key={key} className="my-8 text-left">
+      <Image
+        src={imageData.src}
+        alt={imageData.alt}
+        width={1200}
+        height={800}
+        unoptimized={imageData.unoptimized}
+        className="w-full h-auto rounded-lg shadow-lg"
+      />
+      {(imageData.epigraph || imageData.imageSource || imageData.alt) && (
+        <figcaption className="mt-2 text-left">
+          {(imageData.epigraph || imageData.imageSource) && (
+            <p className="font-secondary text-[12px] sm:text-xs text-neutral-500">
+              {imageData.epigraph && (
+                <span className="">{imageData.epigraph}</span>
+              )}
+              {imageData.epigraph && imageData.imageSource && (
+                <span className="text-neutral-400"> • </span>
+              )}
+              {imageData.imageSource && (
+                <span className="text-neutral-400">
+                  Source: {imageData.imageSource}
+                </span>
+              )}
+            </p>
+          )}
+        </figcaption>
+      )}
+    </figure>
+  );
+}
+
+function renderBodyText(content: any, key: string | number) {
+  if (!content) return null;
+  return (
+    <div key={key} className="font-body space-y-5 sm:space-y-6 text-left">
+      <PortableText value={content} components={portableTextComponents} />
+    </div>
+  );
+}
 
 export default function PostBody({
   bodyTextOne,
@@ -150,112 +265,18 @@ export default function PostBody({
   date,
   slug,
 }: PostBodyProps) {
-  // Helper function to get body image URL and metadata
-  const getBodyImage = (bodyImage: BodyImage | null | undefined): {
-    src: string | null;
-    alt: string;
-    unoptimized: boolean;
-    epigraph?: string | null;
-    imageSource?: string | null;
-  } | null => {
-    if (!bodyImage) return null;
-
-    // 1) External URL takes priority if source is external OR if externalUrl exists (fallback for missing source)
-    if (bodyImage.externalUrl && (bodyImage.source === "external" || !bodyImage.source)) {
-      return {
-        src: bodyImage.externalUrl,
-        alt: bodyImage.alt || `Body image`,
-        unoptimized: true,
-        epigraph: bodyImage.epigraph,
-        imageSource: bodyImage.imageSource,
-      };
-    }
-    // 2) Asset image - check if source is asset OR if image exists (fallback for missing source)
-    if (bodyImage.image && (bodyImage.source === "asset" || !bodyImage.source || !bodyImage.externalUrl)) {
-      const imageUrl = urlForImage(bodyImage.image);
-      if (imageUrl) {
-        return {
-          src: imageUrl.width(1000).height(750).fit("max").quality(85).url(),
-          alt: bodyImage.alt || bodyImage.image?.alt || `Body image`,
-          unoptimized: false,
-          epigraph: bodyImage.epigraph,
-          imageSource: bodyImage.imageSource,
-        };
-      }
-    }
-    return null;
-  };
-
-  // Helper function to render body image
-  const renderBodyImage = (bodyImage: BodyImage | null | undefined, index: number) => {
-    const imageData = getBodyImage(bodyImage);
-    if (!imageData || !imageData.src) return null;
-
-    return (
-      <div key={`body-image-${index}`} className="my-8">
-        <Image
-          src={imageData.src}
-          alt={imageData.alt}
-          width={1000}
-          height={750}
-          unoptimized={imageData.unoptimized}
-          className="w-full h-auto rounded-lg shadow-lg"
-        />
-        <div className="mt-2 space-y-1">
-          {(imageData.epigraph || imageData.imageSource) && (
-            <p className="text-sm text-gray-500 font-secondary">
-              {imageData.epigraph && (
-                <span className="italic">{imageData.epigraph}</span>
-              )}
-              {imageData.epigraph && imageData.imageSource && (
-                <span className="text-gray-400"> • </span>
-              )}
-              {imageData.imageSource && (
-                <span className="text-gray-400">
-                  Source: {imageData.imageSource}
-                </span>
-              )}
-            </p>
-          )}
-          {imageData.alt && (
-            <p
-              className="text-sm text-white font-secondary font-light"
-              aria-hidden="true"
-            >
-              {imageData.alt}
-            </p>
-          )}
-        </div>
-      </div>
-    );
-  };
-
-  // Helper function to render body text
-  const renderBodyText = (content: any, index: number) => {
-    if (!content) return null;
-
-    return (
-      <div
-        key={`body-text-${index}`}
-        className="text-gray-700 leading-relaxed mb-8"
-      >
-        <PortableText value={content} components={portableTextComponents} />
-      </div>
-    );
-  };
-
   return (
-    <div className="">
-      {/* Author, Date, and Social Share Section */}
-      <div className="flex items-center justify-between mb-6">
+    <div className="antialiased text-left">
+      {/* Byline / Meta / Share — secondary font */}
+      <div className="flex items-center justify-between mb-6 font-secondary">
         <div className="flex flex-col">
-          <div className="text-xs font-secondary text-muted-foreground">
+          <div className="text-xs text-muted-foreground">
             By{" "}
-            <span className="text-blue-600 font-medium font-secondary">
+            <span className="text-blue-600 font-medium">
               {author?.name || "Unknown Author"}
             </span>
           </div>
-          <div className="text-xs font-secondary text-muted-foreground">
+          <div className="text-xs text-muted-foreground">
             {new Date(date).toLocaleDateString("en-US", {
               year: "numeric",
               month: "long",
@@ -266,18 +287,16 @@ export default function PostBody({
           </div>
         </div>
 
-        {/* Social Share Buttons */}
         {slug && <SocialShareButtons title={title} url={`/post/${slug}`} />}
       </div>
 
+      {/* Cover image with epigraphs in secondary font */}
       {(() => {
         const coverData = getCoverImage(cover, title);
-        if (!coverData || !coverData.src) {
-          return null;
-        }
+        if (!coverData?.src) return null;
 
         return (
-          <div className="mb-8">
+          <figure className="mb-8 text-left">
             <div className="relative w-full h-96 md:h-[500px] overflow-hidden rounded-lg shadow-lg">
               <Image
                 src={coverData.src}
@@ -288,92 +307,46 @@ export default function PostBody({
                 unoptimized={coverData.unoptimized}
               />
             </div>
-            <div className="mt-2 space-y-1">
-              {(cover?.epigraph || cover?.imageSource) && (
-                <p className="text-sm text-gray-500 font-secondary">
-                  {cover.epigraph && <span className="italic">{cover.epigraph}</span>}
-                  {cover.epigraph && cover.imageSource && (
-                    <span className="text-gray-400"> • </span>
-                  )}
-                  {cover.imageSource && (
-                    <span className="text-gray-400">Source: {cover.imageSource}</span>
-                  )}
-                </p>
-              )}
-            </div>
-          </div>
+            {(cover?.epigraph || cover?.imageSource) && (
+              <figcaption className="mt-2 font-secondary text-[12px] sm:text-xs text-neutral-500 text-left">
+                {cover?.epigraph && <span className="">{cover.epigraph}</span>}
+                {cover?.epigraph && cover?.imageSource && (
+                  <span className="text-neutral-400"> • </span>
+                )}
+                {cover?.imageSource && (
+                  <span className="text-neutral-400">
+                    Source: {cover.imageSource}
+                  </span>
+                )}
+              </figcaption>
+            )}
+          </figure>
         );
       })()}
 
-      {/* Body Images */}
-      {bodyImages && bodyImages.length > 0 && (
-        <div className="space-y-8 mb-8">
-          {bodyImages.map((bodyImage, index) => {
-            const imageData = getBodyImage(bodyImage);
-            if (!imageData || !imageData.src) return null;
-
-            return (
-              <div key={index} className="my-8">
-                <Image
-                  src={imageData.src}
-                  alt={imageData.alt}
-                  width={1000}
-                  height={750}
-                  unoptimized={imageData.unoptimized}
-                  className="w-full h-auto rounded-lg shadow-lg"
-                />
-                <div className="mt-2 space-y-1">
-                  {(imageData.epigraph || imageData.imageSource) && (
-                    <p className="text-sm text-gray-500 font-secondary">
-                      {imageData.epigraph && (
-                        <span className="italic">{imageData.epigraph}</span>
-                      )}
-                      {imageData.epigraph && imageData.imageSource && (
-                        <span className="text-gray-400"> • </span>
-                      )}
-                      {imageData.imageSource && (
-                        <span className="text-gray-400">
-                          Source: {imageData.imageSource}
-                        </span>
-                      )}
-                    </p>
-                  )}
-                  {imageData.alt && (
-                    <p
-                      className="text-sm text-white font-secondary font-light"
-                      aria-hidden="true"
-                    >
-                      {imageData.alt}
-                    </p>
-                  )}
-                </div>
-              </div>
-            );
-          })}
+      {/* Optional gallery block */}
+      {bodyImages?.length ? (
+        <div className="space-y-8 mb-8 text-left">
+          {bodyImages.map((img, i) => renderBodyImage(img, `gallery-${i}`))}
         </div>
-      )}
+      ) : null}
 
-      {/* New alternating text-image pattern */}
-      <div className="space-y-8">
-        {/* bodyTextOne (required) */}
-        {renderBodyText(bodyTextOne, 1)}
-        {renderBodyImage(bodyImageOne, 1)}
+      {/* Alternating text / images */}
+      <div className="space-y-8 text-left">
+        {renderBodyText(bodyTextOne, "t1")}
+        {renderBodyImage(bodyImageOne, "i1")}
 
-        {/* bodyTextTwo + bodyImageTwo */}
-        {renderBodyText(bodyTextTwo, 2)}
-        {renderBodyImage(bodyImageTwo, 2)}
+        {renderBodyText(bodyTextTwo, "t2")}
+        {renderBodyImage(bodyImageTwo, "i2")}
 
-        {/* bodyTextThree + bodyImageThree */}
-        {renderBodyText(bodyTextThree, 3)}
-        {renderBodyImage(bodyImageThree, 3)}
+        {renderBodyText(bodyTextThree, "t3")}
+        {renderBodyImage(bodyImageThree, "i3")}
 
-        {/* bodyTextFour + bodyImageFour */}
-        {renderBodyText(bodyTextFour, 4)}
-        {renderBodyImage(bodyImageFour, 4)}
+        {renderBodyText(bodyTextFour, "t4")}
+        {renderBodyImage(bodyImageFour, "i4")}
 
-        {/* bodyTextFive + bodyImageFive */}
-        {renderBodyText(bodyTextFive, 5)}
-        {renderBodyImage(bodyImageFive, 5)}
+        {renderBodyText(bodyTextFive, "t5")}
+        {renderBodyImage(bodyImageFive, "i5")}
       </div>
     </div>
   );

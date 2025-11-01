@@ -183,7 +183,9 @@ export const latestNews4Query = `
     source,
     externalUrl,
     image,
-    alt
+    alt,
+    epigraph,
+    imageSource
   },
   publishedAt
 }
@@ -202,7 +204,9 @@ export const popularReadsTrendingQuery = `
     source,
     externalUrl,
     image,
-    alt
+    alt,
+    epigraph,
+    imageSource
   },
   publishedAt,
   priority, featured,
@@ -233,7 +237,9 @@ export const popularReadsFallbackQuery = `
     source,
     externalUrl,
     image,
-    alt
+    alt,
+    epigraph,
+    imageSource
   },
   publishedAt,
   priority, featured,

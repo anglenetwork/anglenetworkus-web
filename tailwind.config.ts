@@ -17,6 +17,9 @@ export default {
 			secondary: [
 				'var(--font-secondary)'
 			],
+			serif: [
+				'var(--font-serif)'
+			],
 		},
   		borderRadius: {
   			lg: 'var(--radius)',
