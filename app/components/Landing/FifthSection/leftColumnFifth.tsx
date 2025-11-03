@@ -8,7 +8,7 @@ export function LeftColumnFifth() {
         <p className="text-sm text-gray-500 mb-4 text-center font-sans">
           Advertisement
         </p>
-        <div className="border-t border-black mb-4"></div>
+        <div className="border-t border-neutral-200 mb-4"></div>
         <Card className="p-4">
           <Image
             src="https://images.unsplash.com/photo-1554224155-6726b3ff858f?auto=format&fit=crop"

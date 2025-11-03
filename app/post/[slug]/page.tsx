@@ -267,6 +267,7 @@ export default async function PostPage({
                 bodyImages={post.bodyImages as any}
                 author={post.author}
                 date={post.date}
+                updatedAt={post.updatedAt || null}
                 slug={post.slug || undefined}
               />
             </div>

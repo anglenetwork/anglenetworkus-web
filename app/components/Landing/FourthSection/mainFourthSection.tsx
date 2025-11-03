@@ -60,7 +60,7 @@ export default function MainFourthSection({
                 {/* Category Header */}
                 <div className="flex items-center mb-4">
                   <div className="w-2 h-2 bg-blue-600 rounded-full mr-3"></div>
-                  <h2 className="text-xs font-medium text-neutral-900 uppercase tracking-wider font-secondary">
+                  <h2 className="text-xs font-medium text-neutral-900 uppercase tracking-wider font-sans">
                     {category.name}
                   </h2>
                 </div>
@@ -95,7 +95,7 @@ export default function MainFourthSection({
                 {mainPost && mainPost.slug && (
                   <div className="space-y-2">
                     <Link href={`/post/${mainPost.slug}`}>
-                      <h1 className=" text-lg font-sans font-semibold leading-tight tracking-wide text-foreground">
+                      <h1 className="text-neutral-900 leading-normal mb-2 font-sans text-lg font-semibold tracking-wide">
                         {mainPost.title}
                       </h1>
                     </Link>
@@ -110,7 +110,7 @@ export default function MainFourthSection({
                   {secondPost && secondPost.slug && (
                     <>
                       <Link href={`/post/${secondPost.slug}`}>
-                        <h3 className="text-base font-sans font-medium leading-tight tracking-wide text-foreground mb-4">
+                        <h3 className="text-neutral-900 leading-normal font-sans text-base font-medium tracking-wide mb-4">
                           {secondPost.title}
                         </h3>
                       </Link>
@@ -119,7 +119,7 @@ export default function MainFourthSection({
                   {thirdPost && thirdPost.slug && (
                     <Link href={`/post/${thirdPost.slug}`}>
                       <hr className="border-1 border-neutral-200 my-4" />
-                      <h3 className="text-base font-sans font-medium leading-tight tracking-wide text-foreground">
+                      <h3 className="text-neutral-900 leading-normal mb-2 font-sans text-base font-medium tracking-wide">
                         {thirdPost.title}
                       </h3>
                     </Link>

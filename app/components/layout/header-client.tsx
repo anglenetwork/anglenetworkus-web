@@ -186,7 +186,7 @@ export function HeaderClient({
                       key={category.slug}
                       href={`/category/${category.slug}`}
                       onClick={() => setIsMenuOpen(false)}
-                      className={`hover:text-red-600 font-light text-neutral-900 capitalize transition-all duration-500 ease-out whitespace-nowrap font-sans ${
+                      className={`hover:text-red-600 font-medium tracking-wide text-neutral-900 capitalize transition-all duration-500 ease-out whitespace-nowrap font-sans ${
                         isScrolled ? "lg:text-sm" : "lg:text-base"
                       } text-base`}
                     >

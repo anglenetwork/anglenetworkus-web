@@ -33,7 +33,7 @@ export function CenterColumnFifth({
             {categoryTitle}
           </h2>
         </div>
-        <div className="border-t border-black mb-6"></div>
+        <div className="border-t border-neutral-200 mb-6"></div>
 
         {/* Articles */}
         {centerArticles.map((article, index) => (
@@ -48,11 +48,11 @@ export function CenterColumnFifth({
                     width={800}
                     height={320}
                     unoptimized={article.imageUnoptimized}
-                    className="w-full h-80 object-cover rounded-xl mb-4 cursor-pointer hover:opacity-90 transition-opacity"
+                    className="w-full h-80 object-cover rounded-xl mb-4 cursor-pointer"
                   />
                 </Link>
                 <Link href={`/post/${article.slug}`}>
-                  <h1 className="text-3xl font-semibold text-gray-900 mb-3 font-sans cursor-pointer hover:text-gray-700 transition-colors">
+                  <h1 className="text-3xl md:text-3xl lg:text-3xl font-semibold text-gray-900 leading-tight mb-4 font-sans text-start">
                     {article.title}
                   </h1>
                 </Link>
@@ -80,7 +80,7 @@ export function CenterColumnFifth({
                       />
                     </Link>
                     <Link href={`/post/${article.slug}`}>
-                      <h3 className="text-base font-semibold text-neutral-900 font-sans cursor-pointer hover:text-gray-700 transition-colors line-clamp-3">
+                      <h3 className="text-neutral-900 leading-normal mb-2 font-sans text-lg line-clamp-3 font-medium tracking-wide">
                         {article.title}
                       </h3>
                     </Link>

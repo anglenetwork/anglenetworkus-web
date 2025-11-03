@@ -34,7 +34,7 @@ export default function MainThirdSection({
           <div className="col-span-12 mb-4">
             <div className="flex items-center mb-4">
               <div className="w-2 h-2 bg-blue-600 rounded-full mr-2"></div>
-              <h2 className="text-sm font-semibold text-gray-700 uppercase tracking-wide font-sans">
+              <h2 className="text-xs font-medium text-neutral-900 uppercase tracking-wider font-sans">
                 <Link
                   href={`/category/${categoryTitle.toLowerCase().replace(/\s+/g, "-")}`}
                   className="hover:text-red-600 transition-colors cursor-pointer"
@@ -43,7 +43,7 @@ export default function MainThirdSection({
                 </Link>
               </h2>
             </div>
-            <div className="border-t border-black mb-6"></div>
+            <div className="border-t border-neutral-200 mb-6"></div>
           </div>
 
           <div className="col-span-12 flex flex-col lg:grid lg:grid-cols-12 gap-3">
@@ -76,7 +76,7 @@ export default function MainThirdSection({
                       className="object-cover rounded-xl"
                     />
                   </div>
-                  <h3 className="text-black text-2xl tracking-wide font-semibold leading-tight font-sans">
+                  <h3 className="text-black text-2xl md:text-3xl tracking-wide font-semibold leading-tight font-sans">
                     {mainArticle.title || "Untitled"}
                   </h3>
                 </Link>
@@ -114,7 +114,7 @@ export default function MainThirdSection({
                       />
                     </div>
                     <div className="mt-2">
-                      <h4 className="text-lg font-semibold leading-tight mt-1 tracking-wide font-sans">
+                      <h4 className="text-neutral-900 leading-normal mb-2 font-sans text-lg font-medium tracking-wide">
                         {secondaryArticles[0].title || "Untitled"}
                       </h4>
                     </div>
@@ -149,7 +149,7 @@ export default function MainThirdSection({
                       />
                     </div>
                     <div className="mt-2">
-                      <h4 className="text-lg font-semibold leading-tight mt-1 tracking-wide font-sans">
+                      <h4 className="text-neutral-900 leading-normal mb-2 font-sans text-lg font-medium tracking-wide">
                         {secondaryArticles[1].title || "Untitled"}
                       </h4>
                     </div>
@@ -194,7 +194,7 @@ export default function MainThirdSection({
                         />
                       </div>
                       <div className="mt-2">
-                        <h4 className="text-lg font-sans font-semibold leading-tight tracking-wide text-foreground">
+                        <h4 className="text-neutral-900 leading-normal mb-2 font-sans text-lg font-semibold tracking-wide">
                           {rightColumnArticles[0].title || "Untitled"}
                         </h4>
                       </div>
@@ -210,7 +210,7 @@ export default function MainThirdSection({
                     <div key={article._id}>
                       <Link
                         href={`/post/${article.slug || "#"}`}
-                        className="text-base font-sans font-medium leading-tight tracking-wide text-foreground "
+                        className="text-neutral-900 leading-normal mb-2 font-sans text-base font-medium tracking-wide"
                       >
                         {article.title || "Untitled"}
                       </Link>
@@ -285,7 +285,7 @@ export default function MainThirdSection({
                     <div key={article._id}>
                       <Link
                         href={`/post/${article.slug || "#"}`}
-                        className="text-base font-sans font-medium leading-tight tracking-wide text-foreground "
+                        className="text-neutral-900 leading-normal mb-2 font-sans text-base font-medium tracking-wide"
                       >
                         {article.title || "Untitled"}
                       </Link>

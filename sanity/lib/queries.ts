@@ -22,6 +22,7 @@ const postFields = `
   },
   "date": coalesce(date, _updatedAt),
   publishedAt,
+  updatedAt,
   priority,
   featured,
 

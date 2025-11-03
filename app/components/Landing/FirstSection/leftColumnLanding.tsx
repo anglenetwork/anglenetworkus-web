@@ -16,7 +16,7 @@ export function LeftColumnLanding({ latestNews }: LeftColumnLandingProps) {
       <div className="flex items-center justify-start mb-4">
         <div className="w-2 h-2 bg-blue-600 rounded-full mr-3"></div>
         <h2 className="text-xs font-medium text-neutral-900 uppercase tracking-wider font-sans">
-          Latest News
+          Just in
         </h2>
       </div>
 
@@ -29,7 +29,7 @@ export function LeftColumnLanding({ latestNews }: LeftColumnLandingProps) {
             className={`${index < latestNews.length - 1 ? "border-b border-neutral-200" : ""} pb-4`}
           >
             <Link href={`/post/${post.slug}`} className="hover:text-red-600">
-              <h3 className="text-neutral-900 leading-snug mb-2 font-sans text-base line-clamp-2 font-semibold tracking-normal">
+              <h3 className="text-neutral-900 leading-normal mb-2 font-sans text-lg line-clamp-2 font-medium tracking-wide">
                 {post.title}
               </h3>
             </Link>

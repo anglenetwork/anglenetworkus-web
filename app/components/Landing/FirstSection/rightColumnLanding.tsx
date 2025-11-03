@@ -50,7 +50,7 @@ export function RightColumnLanding({
             );
           })()}
           <Link href={`/post/${post.slug}`} className="hover:text-red-600">
-            <h3 className="text-xl font-sans font-medium text-neutral-900 leading-tight">
+            <h3 className="text-xl font-sans font-medium text-neutral-900 leading-normal tracking-wide">
               {post.title}
             </h3>
           </Link>
@@ -109,7 +109,7 @@ export function RightColumnLanding({
                   href={`/post/${post.slug}`}
                   className="hover:text-red-600"
                 >
-                  <h3 className="text-base font-sans font-medium text-neutral-900 leading-tight line-clamp-2">
+                  <h3 className="text-neutral-900 leading-snug font-sans text-base line-clamp-2 font-medium tracking-wide">
                     {post.title}
                   </h3>
                 </Link>
