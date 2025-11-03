@@ -57,7 +57,7 @@ export function CenterColumnLanding({
     <div className="lg:border-r border-gray-300 lg:px-8">
       <div className="flex items-center mb-4">
         <div className="w-2 h-2 bg-blue-600 rounded-full mr-3"></div>
-        <h2 className="text-xs font-medium text-neutral-900 uppercase tracking-wider font-secondary">
+        <h2 className="text-xs font-medium text-neutral-900 uppercase tracking-wider font-sans">
           Top News
         </h2>
       </div>
@@ -70,7 +70,7 @@ export function CenterColumnLanding({
           {index === 0 ? (
             <>
               <Link href={`/post/${post.slug}`} className="hover:text-red-600">
-                <h1 className="text-3xl md:text-3xl lg:text-5xl font-semibold md:font-bold text-gray-900 leading-tight mb-4 font-sans text-start">
+                <h1 className="text-3xl md:text-3xl lg:text-5xl font-semibold text-gray-900 leading-tight mb-4 font-sans text-start md:text-center">
                   {post.title}
                 </h1>
               </Link>
@@ -119,7 +119,7 @@ export function CenterColumnLanding({
                   href={`/post/${post.slug}`}
                   className="hover:text-red-600"
                 >
-                  <h3 className="text-lg md:text-2xl font-medium md:font-semibold text-neutral-900 leading-tight mb-2 md:mb-4 font-sans">
+                  <h3 className="text-xl md:text-3xl font-medium text-neutral-900 leading-tight mb-2 md:mb-4 font-sans">
                     {post.title}
                   </h3>
                 </Link>
@@ -168,18 +168,10 @@ export function CenterColumnLanding({
                   href={`/post/${post.slug}`}
                   className="hover:text-red-600"
                 >
-                  <h3 className="text-sm md:text-xl font-sans font-medium md:font-medium text-neutral-900 tracking-wide leading-snug mb-2">
+                  <h3 className="text-sm md:text-xl font-sans font-medium text-neutral-900 tracking-wide leading-normal mb-2">
                     {post.title}
                   </h3>
                 </Link>
-                {/* {post.author && (
-                  <p className="text-xs text-neutral-400 font-sans font-light">
-                    By{" "}
-                    <span className="font-semibold text-neutral-500">
-                      {post.author.name}
-                    </span>
-                  </p>
-                )} */}
               </div>
             </article>
           ))}
@@ -212,18 +204,10 @@ export function CenterColumnLanding({
                   href={`/post/${post.slug}`}
                   className="hover:text-red-600"
                 >
-                  <h3 className="text-sm md:text-base font-sans font-medium md:font-medium text-neutral-900 tracking-wide leading-tight mb-2">
+                  <h3 className="text-sm md:text-base font-sans font-medium text-neutral-900 tracking-wide leading-normal mb-2">
                     {post.title}
                   </h3>
                 </Link>
-                {/* {post.author && (
-                  <p className="text-xs text-neutral-400 font-sans font-light">
-                    By{" "}
-                    <span className="font-semibold text-neutral-500">
-                      {post.author.name}
-                    </span>
-                  </p>
-                )} */}
               </div>
             </article>
           ))}

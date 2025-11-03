@@ -28,7 +28,7 @@ export function RightColumnFifth({ mostReadArticles }: RightColumnThirdProps) {
               MOST READ
             </h2>
           </div>
-          <div className="border-t border-black mb-4"></div>
+          <div className="border-t border-border-200 mb-4"></div>
 
           <div className="space-y-4">
             {mostReadArticles.map((article, index) => (
@@ -52,28 +52,28 @@ export function RightColumnFifth({ mostReadArticles }: RightColumnThirdProps) {
                         className="w-16 h-16 object-cover rounded-xl flex-shrink-0 cursor-pointer hover:opacity-90 transition-opacity"
                       />
                     </Link>
-                    <div className="flex-1">
-                      <span className="text-blue-500 font-bold text-sm mr-2 font-sans">
+                    <div className="flex-1 flex items-start gap-2">
+                      <span className="text-blue-500 font-bold text-sm font-sans flex-shrink-0">
                         {index + 1}
                       </span>
-                      <Link href={`/post/${article.slug}`}>
-                        <h4 className="text-sm font-semibold text-gray-900 leading-tight font-sans cursor-pointer hover:text-gray-700 transition-colors">
+                      <Link href={`/post/${article.slug}`} className="flex-1">
+                        <h4 className="text-neutral-900 leading-normal mb-2 font-sans text-base line-clamp-3 font-medium tracking-wide">
                           {article.title}
                         </h4>
                       </Link>
                     </div>
                   </>
                 ) : (
-                  <>
-                    <span className="text-blue-500 font-bold text-sm mr-2 font-sans">
+                  <div className="flex items-start gap-2">
+                    <span className="text-blue-500 font-bold text-sm font-sans flex-shrink-0">
                       {index + 1}
                     </span>
-                    <Link href={`/post/${article.slug}`}>
-                      <h4 className="text-sm font-semibold text-gray-900 leading-tight mb-1 font-sans cursor-pointer hover:text-gray-700 transition-colors">
+                    <Link href={`/post/${article.slug}`} className="flex-1">
+                      <h4 className="text-neutral-900 leading-normal mb-2 font-sans text-base line-clamp-3 font-medium tracking-wide">
                         {article.title}
                       </h4>
                     </Link>
-                  </>
+                  </div>
                 )}
               </div>
             ))}
@@ -83,7 +83,7 @@ export function RightColumnFifth({ mostReadArticles }: RightColumnThirdProps) {
         <div className="border-t border-gray-300 mb-6"></div>
 
         {/* Opinion Section */}
-        <div>
+        {/* <div>
           <div className="flex items-center mb-4">
             <div className="w-2 h-2 bg-blue-600 rounded-full mr-2"></div>
             <h2 className="text-sm font-semibold text-gray-700 uppercase tracking-wide font-sans">
@@ -121,7 +121,7 @@ export function RightColumnFifth({ mostReadArticles }: RightColumnThirdProps) {
               </div>
             );
           })()}
-        </div>
+        </div> */}
       </div>
     </div>
   );

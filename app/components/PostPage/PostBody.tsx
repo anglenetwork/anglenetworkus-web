@@ -35,6 +35,7 @@ interface PostBodyProps {
   bodyImages?: Array<BodyImage> | null;
   author?: { name: string; picture?: any };
   date: string;
+  updatedAt?: string | null;
   slug?: string;
 }
 
@@ -263,6 +264,7 @@ export default function PostBody({
   bodyImages,
   author,
   date,
+  updatedAt,
   slug,
 }: PostBodyProps) {
   return (
@@ -285,6 +287,18 @@ export default function PostBody({
               minute: "2-digit",
             })}
           </div>
+          {updatedAt && updatedAt !== date && (
+            <div className="text-xs text-muted-foreground">
+              Updated:{" "}
+              {new Date(updatedAt).toLocaleDateString("en-US", {
+                year: "numeric",
+                month: "long",
+                day: "numeric",
+                hour: "2-digit",
+                minute: "2-digit",
+              })}
+            </div>
+          )}
         </div>
 
         {slug && <SocialShareButtons title={title} url={`/post/${slug}`} />}
