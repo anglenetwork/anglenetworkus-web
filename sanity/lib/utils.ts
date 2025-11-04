@@ -61,8 +61,16 @@ export function getCoverImage(
     return null;
   }
 
+  // Check if cover has actual image data
+  const hasExternalUrl = cover.externalUrl && cover.externalUrl.trim() !== "";
+  const hasImageAsset = cover.image && (cover.image as any)?.asset?._ref;
+  
+  if (!hasExternalUrl && !hasImageAsset) {
+    return null;
+  }
+
   // 1) External URL takes priority if source is external OR if externalUrl exists (fallback for missing source)
-  if (cover.externalUrl && (cover.source === "external" || !cover.source)) {
+  if (hasExternalUrl && (cover.source === "external" || !cover.source)) {
     return {
       src: cover.externalUrl,
       alt: cover.alt || fallbackAlt,
@@ -71,7 +79,7 @@ export function getCoverImage(
   }
 
   // 2) Asset image - check if source is asset OR if image exists (fallback for missing source)
-  if (cover.image && (cover.source === "asset" || !cover.source || !cover.externalUrl)) {
+  if (hasImageAsset && (cover.source === "asset" || !cover.source || !hasExternalUrl)) {
     const imageUrl = urlForImage(cover.image);
     if (imageUrl) {
       return {

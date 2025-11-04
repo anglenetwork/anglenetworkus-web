@@ -48,7 +48,7 @@ export function CenterColumnFifth({
                     width={800}
                     height={320}
                     unoptimized={article.imageUnoptimized}
-                    className="w-full h-80 object-cover rounded-xl mb-4 cursor-pointer"
+                    className="w-full h-80 object-cover rounded-sm mb-4 cursor-pointer"
                   />
                 </Link>
                 <Link href={`/post/${article.slug}`}>
@@ -76,7 +76,7 @@ export function CenterColumnFifth({
                         width={240}
                         height={160}
                         unoptimized={article.imageUnoptimized}
-                        className="w-full h-48 object-cover rounded-xl mb-3 cursor-pointer hover:opacity-90 transition-opacity"
+                        className="w-full h-48 object-cover rounded-sm mb-3 cursor-pointer hover:opacity-90 transition-opacity"
                       />
                     </Link>
                     <Link href={`/post/${article.slug}`}>

@@ -136,4 +136,28 @@
   h1.leading-loose {
     line-height: 2 !important;
   }
+
+  /* Shimmer animation */
+  @keyframes shimmer {
+    0% {
+      transform: translateX(-100%);
+    }
+    100% {
+      transform: translateX(100%);
+    }
+  }
+
+  .shimmer-container {
+    position: relative;
+  }
+
+  .shimmer-sweep {
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(255, 255, 255, 0.4),
+      transparent
+    );
+    animation: shimmer 2s infinite;
+  }
 }

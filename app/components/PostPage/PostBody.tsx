@@ -12,12 +12,14 @@ interface BodyImage {
   imageSource?: string | null;
 }
 
+interface BodyBlock {
+  bodyText?: any;
+  bodyImage?: BodyImage | null;
+}
+
 interface PostBodyProps {
   bodyTextOne: any;
-  bodyTextTwo?: any;
-  bodyTextThree?: any;
-  bodyTextFour?: any;
-  bodyTextFive?: any;
+  bodyBlocks?: Array<BodyBlock> | null;
   cover?: {
     source?: "asset" | "external";
     externalUrl?: string | null;
@@ -27,12 +29,6 @@ interface PostBodyProps {
     imageSource?: string | null;
   } | null;
   title: string;
-  bodyImageOne?: BodyImage | null;
-  bodyImageTwo?: BodyImage | null;
-  bodyImageThree?: BodyImage | null;
-  bodyImageFour?: BodyImage | null;
-  bodyImageFive?: BodyImage | null;
-  bodyImages?: Array<BodyImage> | null;
   author?: { name: string; picture?: any };
   date: string;
   updatedAt?: string | null;
@@ -164,10 +160,21 @@ function buildBodyImage(bodyImage: BodyImage | null | undefined): {
 } | null {
   if (!bodyImage) return null;
 
+  // Check if bodyImage is essentially empty (no actual image data)
+  const hasExternalUrl =
+    bodyImage.externalUrl && bodyImage.externalUrl.trim() !== "";
+  const hasImageAsset =
+    bodyImage.image && (bodyImage.image as any)?.asset?._ref;
+
+  if (!hasExternalUrl && !hasImageAsset) {
+    return null;
+  }
+
   // Prefer explicit external URL when present or source === "external"
   if (
-    bodyImage.externalUrl &&
-    (bodyImage.source === "external" || !bodyImage.source)
+    hasExternalUrl &&
+    (bodyImage.source === "external" || !bodyImage.source) &&
+    bodyImage.externalUrl
   ) {
     return {
       src: bodyImage.externalUrl,
@@ -180,15 +187,13 @@ function buildBodyImage(bodyImage: BodyImage | null | undefined): {
 
   // Fallback to Sanity asset
   if (
-    bodyImage.image &&
-    (bodyImage.source === "asset" ||
-      !bodyImage.source ||
-      !bodyImage.externalUrl)
+    hasImageAsset &&
+    (bodyImage.source === "asset" || !bodyImage.source || !hasExternalUrl)
   ) {
     const builder = urlForImage(bodyImage.image);
     if (builder) {
       return {
-        src: builder.width(1200).height(800).fit("max").quality(85).url(),
+        src: builder.width(1200).height(600).fit("max").quality(85).url(),
         alt: bodyImage.alt || bodyImage.image?.alt || "Body image",
         unoptimized: false,
         epigraph: bodyImage.epigraph,
@@ -208,14 +213,15 @@ function renderBodyImage(
 
   return (
     <figure key={key} className="my-8 text-left">
-      <Image
-        src={imageData.src}
-        alt={imageData.alt}
-        width={1200}
-        height={800}
-        unoptimized={imageData.unoptimized}
-        className="w-full h-auto rounded-lg shadow-lg"
-      />
+      <div className="relative w-full aspect-[4/3] max-h-[600px] overflow-hidden rounded-lg shadow-lg">
+        <Image
+          src={imageData.src}
+          alt={imageData.alt}
+          fill
+          unoptimized={imageData.unoptimized}
+          className="object-cover rounded-lg"
+        />
+      </div>
       {(imageData.epigraph || imageData.imageSource || imageData.alt) && (
         <figcaption className="mt-2 text-left">
           {(imageData.epigraph || imageData.imageSource) && (
@@ -250,18 +256,9 @@ function renderBodyText(content: any, key: string | number) {
 
 export default function PostBody({
   bodyTextOne,
-  bodyTextTwo,
-  bodyTextThree,
-  bodyTextFour,
-  bodyTextFive,
+  bodyBlocks,
   cover,
   title,
-  bodyImageOne,
-  bodyImageTwo,
-  bodyImageThree,
-  bodyImageFour,
-  bodyImageFive,
-  bodyImages,
   author,
   date,
   updatedAt,
@@ -339,29 +336,22 @@ export default function PostBody({
       })()}
 
       {/* Optional gallery block */}
-      {bodyImages?.length ? (
-        <div className="space-y-8 mb-8 text-left">
-          {bodyImages.map((img, i) => renderBodyImage(img, `gallery-${i}`))}
-        </div>
-      ) : null}
-
-      {/* Alternating text / images */}
+      {/* Main text */}
       <div className="space-y-8 text-left">
-        {renderBodyText(bodyTextOne, "t1")}
-        {renderBodyImage(bodyImageOne, "i1")}
-
-        {renderBodyText(bodyTextTwo, "t2")}
-        {renderBodyImage(bodyImageTwo, "i2")}
-
-        {renderBodyText(bodyTextThree, "t3")}
-        {renderBodyImage(bodyImageThree, "i3")}
-
-        {renderBodyText(bodyTextFour, "t4")}
-        {renderBodyImage(bodyImageFour, "i4")}
-
-        {renderBodyText(bodyTextFive, "t5")}
-        {renderBodyImage(bodyImageFive, "i5")}
+        {renderBodyText(bodyTextOne, "main-text")}
       </div>
+
+      {/* Dynamic body blocks */}
+      {bodyBlocks && bodyBlocks.length > 0 && (
+        <div className="space-y-8 text-left mt-8">
+          {bodyBlocks.map((block, index) => (
+            <div key={`block-${index}`}>
+              {renderBodyImage(block.bodyImage, `block-image-${index}`)}
+              {renderBodyText(block.bodyText, `block-text-${index}`)}
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

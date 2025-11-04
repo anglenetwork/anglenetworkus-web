@@ -49,7 +49,7 @@ export function RightColumnFifth({ mostReadArticles }: RightColumnThirdProps) {
                         width={64}
                         height={64}
                         unoptimized={article.imageUnoptimized}
-                        className="w-16 h-16 object-cover rounded-xl flex-shrink-0 cursor-pointer hover:opacity-90 transition-opacity"
+                        className="w-16 h-16 object-cover rounded-sm flex-shrink-0 cursor-pointer hover:opacity-90 transition-opacity"
                       />
                     </Link>
                     <div className="flex-1 flex items-start gap-2">

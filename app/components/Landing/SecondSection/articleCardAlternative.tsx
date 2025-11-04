@@ -35,7 +35,7 @@ export default function ArticleCardAlternative({
             src={image || "/placeholder.svg"}
             alt={imageAlt || title}
             fill
-            className="object-cover rounded-xl"
+            className="object-cover rounded-sm"
           />
         </div>
 

@@ -43,7 +43,7 @@ export function RightColumnLanding({
                     width={400}
                     height={192}
                     unoptimized={coverData.unoptimized}
-                    className="w-full h-48 object-cover rounded-xl"
+                    className="w-full h-48 object-cover rounded-sm"
                   />
                 </div>
               </Link>
@@ -88,7 +88,7 @@ export function RightColumnLanding({
                     width={400}
                     height={256}
                     unoptimized={coverData.unoptimized}
-                    className="w-full h-48 object-cover rounded-xl"
+                    className="w-full h-48 object-cover rounded-sm"
                   />
                 </div>
               </Link>

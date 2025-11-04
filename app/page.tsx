@@ -60,7 +60,7 @@ export default async function Page() {
           posts={fifthSectionPosts as any}
           categoryTitle="politics"
         />
-        <MainSixthSection />
+        {/* <MainSixthSection /> */}
         {/* <MainFourthSection
           posts={mostReadPosts}
           categoryTitle="politics"
