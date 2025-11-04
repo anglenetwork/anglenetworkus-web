@@ -25,6 +25,7 @@ const postFields = `
   updatedAt,
   priority,
   featured,
+  labels,
 
   "author": select(
     defined(author->name) => {
@@ -46,58 +47,18 @@ const postFields = `
     "slug": slug.current
   },
 
-  "bodyImages": bodyImages[]{
-    source,
-    externalUrl,
-    image,
-    alt,
-    epigraph,
-    imageSource
-  },
   bodyTextOne,
-  bodyTextTwo,
-  bodyTextThree,
-  bodyTextFour,
-  bodyTextFive,
-  bodyImageOne{
-    source,
-    externalUrl,
-    image,
-    alt,
-    epigraph,
-    imageSource
-  },
-  bodyImageTwo{
-    source,
-    externalUrl,
-    image,
-    alt,
-    epigraph,
-    imageSource
-  },
-  bodyImageThree{
-    source,
-    externalUrl,
-    image,
-    alt,
-    epigraph,
-    imageSource
-  },
-  bodyImageFour{
-    source,
-    externalUrl,
-    image,
-    alt,
-    epigraph,
-    imageSource
-  },
-  bodyImageFive{
-    source,
-    externalUrl,
-    image,
-    alt,
-    epigraph,
-    imageSource
+  
+  "bodyBlocks": bodyBlocks[]{
+    bodyText,
+    bodyImage{
+      source,
+      externalUrl,
+      image,
+      alt,
+      epigraph,
+      imageSource
+    }
   }
 `;
 
@@ -434,10 +395,8 @@ const SEARCH_FILTER = `(
   epigraph match $term ||
   pt::text(bodyRich) match $term ||
   pt::text(bodyTextOne) match $term ||
-  pt::text(bodyTextTwo) match $term ||
-  pt::text(bodyTextThree) match $term ||
-  pt::text(bodyTextFour) match $term ||
-  pt::text(bodyTextFive) match $term ||
+  // Search in bodyBlocks text content
+  count(bodyBlocks[pt::text(bodyText) match $term]) > 0 ||
   category->name match $term ||
   coalesce(tags[]->title, tags[]->name) match $term ||   // <— supports both
   // Check tag aliases on referenced tag documents (prefix tokenized)

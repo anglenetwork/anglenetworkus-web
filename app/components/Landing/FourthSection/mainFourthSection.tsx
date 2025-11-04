@@ -75,14 +75,14 @@ export default function MainFourthSection({
                     );
                     if (coverData?.src) {
                       return (
-                        <div className="relative overflow-hidden rounded-lg bg-black">
+                        <div className="relative overflow-hidden rounded-sm bg-black">
                           <Image
                             src={coverData.src}
                             alt={coverData.alt}
                             width={800}
                             height={300}
                             unoptimized={coverData.unoptimized}
-                            className="h-[300px] w-full object-cover rounded-xl"
+                            className="h-[300px] w-full object-cover rounded-sm"
                           />
                         </div>
                       );

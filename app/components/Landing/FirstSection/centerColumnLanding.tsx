@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { urlForImage } from "@/sanity/lib/utils";
+import { PlayCircle } from "lucide-react";
 
 interface Post {
   _id: string;
@@ -87,7 +88,7 @@ export function CenterColumnLanding({
                         width={800}
                         height={400}
                         unoptimized={unoptimized}
-                        className="w-full h-80 md:h-[500px] object-cover rounded-xl"
+                        className="w-full h-80 md:h-[500px] object-cover rounded-sm"
                       />
                     </div>
                   </Link>
@@ -95,36 +96,69 @@ export function CenterColumnLanding({
               })()}
             </>
           ) : (
-            <div className="flex gap-4 md:grid md:grid-cols-5 md:gap-8 md:items-start">
-              <div className="flex-shrink-0 md:col-span-3 md:order-2">
-                {(() => {
-                  const { src, alt, unoptimized } = getCover(post);
-                  if (!src) return null;
-                  return (
-                    <Link href={`/post/${post.slug}`}>
-                      <Image
-                        src={src}
-                        alt={alt}
-                        width={600}
-                        height={256}
-                        unoptimized={unoptimized}
-                        className="w-32 h-24 md:w-full md:h-64 object-cover rounded-xl"
-                      />
-                    </Link>
-                  );
-                })()}
+            // <div className="flex gap-4 md:grid md:grid-cols-5 md:gap-8 md:items-start">
+            //   <div className="flex-shrink-0 md:col-span-3 md:order-2">
+            //     {(() => {
+            //       const { src, alt, unoptimized } = getCover(post);
+            //       if (!src) return null;
+            //       return (
+            //         <Link href={`/post/${post.slug}`}>
+            //           <Image
+            //             src={src}
+            //             alt={alt}
+            //             width={600}
+            //             height={256}
+            //             unoptimized={unoptimized}
+            //             className="w-32 h-24 md:w-full md:h-64 object-cover rounded-sm"
+            //           />
+            //         </Link>
+            //       );
+            //     })()}
+            //   </div>
+            //   <div className="flex-1 md:col-span-2 md:order-1">
+            //     <Link
+            //       href={`/post/${post.slug}`}
+            //       className="hover:text-red-600"
+            //     >
+            //       <h3 className="text-xl md:text-3xl font-medium text-neutral-900 leading-tight mb-2 md:mb-4 font-sans">
+            //         {post.title}
+            //       </h3>
+            //     </Link>
+            //   </div>
+            // </div>
+            <main className=" bg-white">
+              <div className="mx-auto max-w-5xl px-6 py-4">
+                {/* Live Updates Section */}
+                <article className="border-b border-gray-200 pb-8 font-sans">
+                  <h1 className="text-xl font-medium leading-tight text-balance">
+                    <span className="text-red-600">Live Updates:</span>{" "}
+                    <span className="text-black">
+                      Voting underway in races that pose early test of Trump
+                      presidency
+                    </span>
+                  </h1>
+                </article>
+
+                {/* Analysis Section 1 */}
+                <article className="border-b border-gray-200 py-8 font-sans">
+                  <h2 className="text-xl font-medium leading-tight text-balance">
+                    <span className="text-black">Analysis:</span>{" "}
+                    <span className="text-black">
+                      5 big questions about Election Day
+                    </span>
+                  </h2>
+                </article>
+
+                {/* Video Section */}
+                <article className="border-b border-gray-200 py-8 font-sans">
+                  <div className="flex items-center gap-3">
+                    <h2 className="text-xl font-medium leading-tight text-balance flex-1">
+                      New Yorkers share who they voted for mayor on Election Day
+                    </h2>
+                  </div>
+                </article>
               </div>
-              <div className="flex-1 md:col-span-2 md:order-1">
-                <Link
-                  href={`/post/${post.slug}`}
-                  className="hover:text-red-600"
-                >
-                  <h3 className="text-xl md:text-3xl font-medium text-neutral-900 leading-tight mb-2 md:mb-4 font-sans">
-                    {post.title}
-                  </h3>
-                </Link>
-              </div>
-            </div>
+            </main>
           )}
         </article>
       ))}
@@ -157,7 +191,7 @@ export function CenterColumnLanding({
                         width={400}
                         height={192}
                         unoptimized={unoptimized}
-                        className="w-24 h-20 md:w-full md:h-48 object-cover rounded-xl"
+                        className="w-24 h-20 md:w-full md:h-48 object-cover rounded-sm"
                       />
                     </div>
                   </Link>
@@ -193,7 +227,7 @@ export function CenterColumnLanding({
                         width={300}
                         height={128}
                         unoptimized={unoptimized}
-                        className="w-24 h-20 md:w-full md:h-32 object-cover rounded-xl"
+                        className="w-24 h-20 md:w-full md:h-32 object-cover rounded-sm"
                       />
                     </div>
                   </Link>

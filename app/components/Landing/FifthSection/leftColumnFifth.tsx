@@ -15,7 +15,7 @@ export function LeftColumnFifth() {
             alt="Generic placeholder"
             width={300}
             height={400}
-            className="w-full h-96 object-cover rounded-xl"
+            className="w-full h-96 object-cover rounded-sm"
           />
           <p className="text-sm text-gray-600 mt-2 text-center font-sans">
             Generic Content

@@ -22,6 +22,7 @@ interface Post {
     title: string | null;
     slug: string | null;
   } | null;
+  labels?: string[] | null;
 }
 
 // Type for LeftColumnLanding - only needs slug
@@ -75,15 +76,17 @@ export function MainFirstSection({
   posts,
   mostReadPosts,
 }: MainFirstSectionProps) {
-  // Filter and type posts for LeftColumnLanding (only needs slug)
+  // Filter and type posts for LeftColumnLanding (needs slug, cover, and labels for first article)
   const validPostsForLeft = posts
     .filter((post) => !!post.slug)
     .map((post) => ({
       _id: post._id,
       title: post.title,
       slug: post.slug!,
-    })) as PostForLeftColumn[];
-  const latestNews = validPostsForLeft.slice(0, 8);
+      cover: post.cover,
+      labels: post.labels,
+    }));
+  const latestNews = validPostsForLeft.slice(0, 4);
 
   // Filter and type posts for CenterColumnLanding (needs slug and cover as optional, not null)
   const validPostsForCenter = posts

@@ -33,7 +33,7 @@ export default function ArticleCard({
             alt={imageAlt || "Article image"}
             width={400}
             height={240}
-            className="w-full h-60 object-cover object-center rounded-xl"
+            className="w-full h-60 object-cover object-center rounded-sm"
             style={{ width: "100%", height: "240px" }}
           />
         )}

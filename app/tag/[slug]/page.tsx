@@ -138,41 +138,46 @@ export default async function TagPage({
           {/* Featured Article */}
           {posts.length > 0 && (
             <article className="mb-8">
-              <div className="relative aspect-video w-full overflow-hidden rounded-xl">
-                {(() => {
-                  const coverData = getCoverImage(
-                    posts[0].cover as {
-                      source?: "asset" | "external";
-                      externalUrl?: string | null;
-                      image?: any;
-                      alt?: string | null;
-                    } | null,
-                    posts[0].title || "Featured article"
-                  );
-                  if (coverData?.src) {
-                    return (
-                      <Image
-                        src={coverData.src}
-                        alt={coverData.alt}
-                        fill
-                        unoptimized={coverData.unoptimized}
-                        className="object-cover"
-                        priority
-                      />
+              <Link
+                href={`/post/${posts[0].slug || "#"}`}
+                className="block group"
+              >
+                <div className="relative aspect-video w-full overflow-hidden rounded-xl">
+                  {(() => {
+                    const coverData = getCoverImage(
+                      posts[0].cover as {
+                        source?: "asset" | "external";
+                        externalUrl?: string | null;
+                        image?: any;
+                        alt?: string | null;
+                      } | null,
+                      posts[0].title || "Featured article"
                     );
-                  }
-                  return (
-                    <div className="w-full h-full bg-gray-200 flex items-center justify-center">
-                      <span className="text-gray-400">No Image</span>
-                    </div>
-                  );
-                })()}
-              </div>
-              <div className="mt-4">
-                <h1 className="mt-2 text-xl font-semibold leading-tight md:text-3xl font-sans">
-                  {posts[0].title}
-                </h1>
-              </div>
+                    if (coverData?.src) {
+                      return (
+                        <Image
+                          src={coverData.src}
+                          alt={coverData.alt}
+                          fill
+                          unoptimized={coverData.unoptimized}
+                          className="object-cover"
+                          priority
+                        />
+                      );
+                    }
+                    return (
+                      <div className="w-full h-full bg-gray-200 flex items-center justify-center">
+                        <span className="text-gray-400">No Image</span>
+                      </div>
+                    );
+                  })()}
+                </div>
+                <div className="mt-4">
+                  <h1 className="mt-2 text-xl font-semibold leading-tight md:text-3xl font-sans">
+                    {posts[0].title}
+                  </h1>
+                </div>
+              </Link>
             </article>
           )}
 

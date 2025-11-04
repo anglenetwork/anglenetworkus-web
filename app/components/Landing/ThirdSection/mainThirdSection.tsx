@@ -54,7 +54,7 @@ export default function MainThirdSection({
                   href={`/post/${mainArticle.slug || "#"}`}
                   className="group block"
                 >
-                  <div className="relative aspect-[16/9] overflow-hidden rounded-xl mb-3">
+                  <div className="relative aspect-[16/9] overflow-hidden rounded-sm mb-3">
                     <Image
                       src={getImageData(
                         mainArticle.cover,
@@ -73,7 +73,7 @@ export default function MainThirdSection({
                           mainArticle.title || "Featured article"
                         )?.unoptimized || false
                       }
-                      className="object-cover rounded-xl"
+                      className="object-cover rounded-sm"
                     />
                   </div>
                   <h3 className="text-black text-2xl md:text-3xl tracking-wide font-semibold leading-tight font-sans">
@@ -91,7 +91,7 @@ export default function MainThirdSection({
                     href={`/post/${secondaryArticles[0].slug || "#"}`}
                     className="group block"
                   >
-                    <div className="relative aspect-[16/9] sm:aspect-[4/3] overflow-hidden rounded-xl">
+                    <div className="relative aspect-[16/9] sm:aspect-[4/3] overflow-hidden rounded-sm">
                       <Image
                         src={getImageData(
                           secondaryArticles[0].cover,
@@ -110,7 +110,7 @@ export default function MainThirdSection({
                             secondaryArticles[0].title || "Article image"
                           )?.unoptimized || false
                         }
-                        className="object-cover rounded-xl"
+                        className="object-cover rounded-sm"
                       />
                     </div>
                     <div className="mt-2">
@@ -126,7 +126,7 @@ export default function MainThirdSection({
                     href={`/post/${secondaryArticles[1].slug || "#"}`}
                     className="group block"
                   >
-                    <div className="relative aspect-[16/9] sm:aspect-[4/3] overflow-hidden rounded-xl">
+                    <div className="relative aspect-[16/9] sm:aspect-[4/3] overflow-hidden rounded-sm">
                       <Image
                         src={getImageData(
                           secondaryArticles[1].cover,
@@ -145,7 +145,7 @@ export default function MainThirdSection({
                             secondaryArticles[1].title || "Article image"
                           )?.unoptimized || false
                         }
-                        className="object-cover rounded-xl"
+                        className="object-cover rounded-sm"
                       />
                     </div>
                     <div className="mt-2">
@@ -171,7 +171,7 @@ export default function MainThirdSection({
                       href={`/post/${rightColumnArticles[0].slug || "#"}`}
                       className="group block"
                     >
-                      <div className="relative aspect-[16/9] lg:aspect-[3/4] overflow-hidden rounded-xl">
+                      <div className="relative aspect-[16/9] lg:aspect-[3/4] overflow-hidden rounded-sm">
                         <Image
                           src={getImageData(
                             rightColumnArticles[0].cover,
@@ -190,7 +190,7 @@ export default function MainThirdSection({
                               rightColumnArticles[0].title || "Article image"
                             )?.unoptimized || false
                           }
-                          className="object-cover rounded-xl"
+                          className="object-cover rounded-sm"
                         />
                       </div>
                       <div className="mt-2">
@@ -232,7 +232,7 @@ export default function MainThirdSection({
                       href={`/post/${rightColumnArticles[Math.ceil(rightColumnArticles.length / 2)].slug || "#"}`}
                       className="group block"
                     >
-                      <div className="relative aspect-[16/9] lg:aspect-[3/4] overflow-hidden rounded-xl">
+                      <div className="relative aspect-[16/9] lg:aspect-[3/4] overflow-hidden rounded-sm">
                         <Image
                           src={getImageData(
                             rightColumnArticles[
@@ -263,7 +263,7 @@ export default function MainThirdSection({
                               ].title || "Article image"
                             )?.unoptimized || false
                           }
-                          className="object-cover rounded-xl"
+                          className="object-cover rounded-sm"
                         />
                       </div>
                       <div className="mt-2">

@@ -38,7 +38,7 @@ export function RightColumnFourth({ videosData }: RightColumnFourthProps) {
                     alt={`Video thumbnail ${video.number}`}
                     width={64}
                     height={64}
-                    className="w-16 h-16 object-cover rounded-xl flex-shrink-0"
+                    className="w-16 h-16 object-cover rounded-sm flex-shrink-0"
                   />
                 )}
                 <div className="flex-1">

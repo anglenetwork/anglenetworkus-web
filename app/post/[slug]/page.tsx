@@ -51,8 +51,8 @@ export const revalidate = 60;
 export async function generateStaticParams() {
   const slugs = await client.fetch(postSlugsQuery);
   return slugs
-    .filter((slug: string | null): slug is string => slug !== null)
-    .map((slug) => ({ slug }));
+    .filter((item: { slug?: string | null }) => item?.slug != null)
+    .map((item: { slug: string }) => ({ slug: item.slug }));
 }
 
 // Generate metadata for SEO
@@ -244,10 +244,7 @@ export default async function PostPage({
               />
               <PostBody
                 bodyTextOne={post.bodyTextOne}
-                bodyTextTwo={post.bodyTextTwo}
-                bodyTextThree={post.bodyTextThree}
-                bodyTextFour={post.bodyTextFour}
-                bodyTextFive={post.bodyTextFive}
+                bodyBlocks={post.bodyBlocks as any}
                 cover={
                   post.cover as {
                     source?: "asset" | "external";
@@ -259,12 +256,6 @@ export default async function PostPage({
                   } | null
                 }
                 title={post.title || "Untitled"}
-                bodyImageOne={post.bodyImageOne as any}
-                bodyImageTwo={post.bodyImageTwo as any}
-                bodyImageThree={post.bodyImageThree as any}
-                bodyImageFour={post.bodyImageFour as any}
-                bodyImageFive={post.bodyImageFive as any}
-                bodyImages={post.bodyImages as any}
                 author={post.author}
                 date={post.date}
                 updatedAt={post.updatedAt || null}

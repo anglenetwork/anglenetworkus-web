@@ -84,7 +84,10 @@ export default function TagPostsList({
               <div className="md:w-1/3 h-48 md:h-auto relative">
                 <Link href={`/post/${post.slug}`} className="block h-full">
                   {(() => {
-                    const coverData = getCoverImage(post.cover, post.title || "Post image");
+                    const coverData = getCoverImage(
+                      post.cover,
+                      post.title || "Post image"
+                    );
                     if (coverData?.src) {
                       return (
                         <Image
