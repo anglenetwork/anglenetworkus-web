@@ -26,6 +26,14 @@ const postFields = `
   priority,
   featured,
   labels,
+  justIn,
+  breakingNews,
+  developingStory,
+  mainHeadline,
+  frontline,
+  frontRank,
+  frontUntil,
+  rightHeadline,
 
   "author": select(
     defined(author->name) => {

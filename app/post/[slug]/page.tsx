@@ -207,7 +207,7 @@ export default async function PostPage({
         <CategoryViewTracker categorySlug={post.category.slug} />
       )}
 
-      <div className="container mx-auto px-4 lg:px-40 py-4 border-2 border-lime-500">
+      <div className="container mx-auto px-4 lg:px-40 py-4">
         <article className="mt-4 lg:mt-8">
           {/* <PostHeader
             category={

@@ -2,6 +2,7 @@ import { ArrowRight } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import { getCoverImage } from "@/sanity/lib/utils";
+import { SectionHeader } from "../../ui/section-header";
 
 interface Post {
   _id: string;
@@ -13,6 +14,7 @@ interface Post {
     externalUrl?: string | null;
     image?: any;
     alt?: string | null;
+    imageSource?: string | null;
   } | null;
   date: string;
   author?: {
@@ -49,7 +51,7 @@ export default function MainFourthSection({
     }));
 
   return (
-    <main className="bg-background px-4 border-2 border-yellow-200">
+    <main className="bg-background px-4">
       <div className="">
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
           {validCategories.map((category, index) => {
@@ -58,13 +60,14 @@ export default function MainFourthSection({
             return (
               <article key={category.slug} className="space-y-4">
                 {/* Category Header */}
-                <div className="flex items-center mb-4">
-                  <div className="w-2 h-2 bg-blue-600 rounded-full mr-3"></div>
-                  <h2 className="text-xs font-medium text-neutral-900 uppercase tracking-wider font-sans">
-                    {category.name}
-                  </h2>
-                </div>
-                <div className="border-b border-gray-300 mb-10"></div>
+                <SectionHeader
+                  title={category.name || "Category"}
+                  variant="gradient"
+                  href={
+                    category.slug ? `/category/${category.slug}` : undefined
+                  }
+                />
+                <div className="mb-6"></div>
 
                 {/* Featured Image */}
                 <Link href={`/post/${mainPost.slug}`} className="block mt-4">
@@ -84,6 +87,11 @@ export default function MainFourthSection({
                             unoptimized={coverData.unoptimized}
                             className="h-[300px] w-full object-cover rounded-sm"
                           />
+                          {mainPost?.cover?.imageSource && (
+                            <div className="absolute bottom-2 right-2 bg-black/30 text-white text-xs px-2 py-1 rounded font-secondary">
+                              {mainPost.cover.imageSource}
+                            </div>
+                          )}
                         </div>
                       );
                     }
@@ -95,7 +103,7 @@ export default function MainFourthSection({
                 {mainPost && mainPost.slug && (
                   <div className="space-y-2">
                     <Link href={`/post/${mainPost.slug}`}>
-                      <h1 className="text-neutral-900 leading-normal mb-2 font-sans text-lg font-semibold tracking-wide">
+                      <h1 className="text-neutral-900 leading-normal mb-2 font-sans text-lg font-medium tracking-wide">
                         {mainPost.title}
                       </h1>
                     </Link>
@@ -110,7 +118,7 @@ export default function MainFourthSection({
                   {secondPost && secondPost.slug && (
                     <>
                       <Link href={`/post/${secondPost.slug}`}>
-                        <h3 className="text-neutral-900 leading-normal font-sans text-base font-medium tracking-wide mb-4">
+                        <h3 className="text-neutral-900 leading-normal font-sans text-base font-normal tracking-wide mb-4">
                           {secondPost.title}
                         </h3>
                       </Link>
@@ -119,7 +127,7 @@ export default function MainFourthSection({
                   {thirdPost && thirdPost.slug && (
                     <Link href={`/post/${thirdPost.slug}`}>
                       <hr className="border-1 border-neutral-200 my-4" />
-                      <h3 className="text-neutral-900 leading-normal mb-2 font-sans text-base font-medium tracking-wide">
+                      <h3 className="text-neutral-900 leading-normal mb-2 font-sans text-base font-normal tracking-wide">
                         {thirdPost.title}
                       </h3>
                     </Link>

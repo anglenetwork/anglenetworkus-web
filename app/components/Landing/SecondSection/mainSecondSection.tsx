@@ -6,6 +6,7 @@ import ArticleCardAlternative from "./articleCardAlternative";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { getCoverImage } from "@/sanity/lib/utils";
+import { SectionHeader } from "../../ui/section-header";
 
 interface Post {
   _id: string;
@@ -17,6 +18,7 @@ interface Post {
     externalUrl?: string | null;
     image?: any;
     alt?: string | null;
+    imageSource?: string | null;
   } | null;
   date: string;
   author?: {
@@ -75,6 +77,7 @@ export default function MainSecondSection({
               category.thirdArticle.title ||
               "Article image"
             : "Article image",
+          imageSource: category.thirdArticle.cover?.imageSource || undefined,
           isDecorative: !category.thirdArticle.cover,
           slug: category.thirdArticle.slug,
           views7d: category.thirdArticle.views7d || 0,
@@ -126,14 +129,7 @@ export default function MainSecondSection({
     <div className="bg-white">
       <div className="px-6">
         {/* Title Section */}
-        <div className="flex items-center mb-4">
-          <div className="w-2 h-2 bg-blue-600 rounded-full mr-3"></div>
-          <h2 className="text-xs font-medium text-neutral-900 uppercase tracking-wider font-sans">
-            Featured Stories
-          </h2>
-        </div>
-
-        <div className="border-b border-neutral-200 mb-6"></div>
+        <SectionHeader title="Featured Stories" variant="gradient" />
 
         <div className="relative">
           {/* Left Arrow */}
@@ -174,6 +170,7 @@ export default function MainSecondSection({
                   author={story.author}
                   image={story.image}
                   imageAlt={story.imageAlt}
+                  imageSource={story.imageSource}
                   isDecorative={story.isDecorative}
                   slug={story.slug}
                   views7d={story.views7d}

@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { getCoverImage } from "@/sanity/lib/utils";
+import { SectionHeader } from "../../ui/section-header";
 
 interface Post {
   _id: string;
@@ -11,6 +12,7 @@ interface Post {
     externalUrl?: string | null;
     image?: any;
     alt?: string | null;
+    imageSource?: string | null;
   } | null;
   author?: {
     name: string;
@@ -36,7 +38,7 @@ export function RightColumnLanding({
             if (!coverData) return null;
             return (
               <Link href={`/post/${post.slug}`}>
-                <div className="mb-4">
+                <div className="mb-4 relative">
                   <Image
                     src={coverData.src}
                     alt={coverData.alt}
@@ -45,6 +47,11 @@ export function RightColumnLanding({
                     unoptimized={coverData.unoptimized}
                     className="w-full h-48 object-cover rounded-sm"
                   />
+                  {post.cover?.imageSource && (
+                    <div className="absolute bottom-2 right-2 bg-black/30 text-white text-xs px-2 py-1 rounded font-secondary">
+                      {post.cover.imageSource}
+                    </div>
+                  )}
                 </div>
               </Link>
             );
@@ -61,15 +68,8 @@ export function RightColumnLanding({
       ))}
 
       {/* MOST READ section */}
-      <div className="border-t border-neutral-300 pt-4">
-        <div className="flex items-center justify-start mb-4">
-          <div className="w-2 h-2 bg-blue-600 rounded-full mr-3"></div>
-          <h2 className="text-xs font-medium text-neutral-900 uppercase tracking-wider font-sans">
-            Most Read
-          </h2>
-        </div>
-
-        <div className="border-b border-gray-300 mb-6"></div>
+      <div className="border-t border-neutral-300 pt-8">
+        <SectionHeader title="The Rundown" variant="gradient" />
 
         <div className="space-y-6">
           {/* Featured image */}
@@ -81,7 +81,7 @@ export function RightColumnLanding({
             if (!coverData) return null;
             return (
               <Link href={`/post/${mostRead[0].slug}`}>
-                <div className="mb-6">
+                <div className="mb-6 relative">
                   <Image
                     src={coverData.src}
                     alt={coverData.alt}
@@ -90,6 +90,11 @@ export function RightColumnLanding({
                     unoptimized={coverData.unoptimized}
                     className="w-full h-48 object-cover rounded-sm"
                   />
+                  {mostRead[0]?.cover?.imageSource && (
+                    <div className="absolute bottom-2 right-2 bg-black/30 text-white text-xs px-2 py-1 rounded font-secondary">
+                      {mostRead[0].cover.imageSource}
+                    </div>
+                  )}
                 </div>
               </Link>
             );
@@ -109,7 +114,7 @@ export function RightColumnLanding({
                   href={`/post/${post.slug}`}
                   className="hover:text-red-600"
                 >
-                  <h3 className="text-neutral-900 leading-snug font-sans text-base line-clamp-2 font-medium tracking-wide">
+                  <h3 className="text-neutral-900 leading-snug font-sans text-base font-normal tracking-wide">
                     {post.title}
                   </h3>
                 </Link>

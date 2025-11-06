@@ -34,7 +34,7 @@ export function MainLayoutWrapper({
   const isStudioRoute = pathname?.startsWith("/studio");
 
   return (
-    <div className="min-h-screen bg-white border-2 border-orange-400">
+    <div className="min-h-screen bg-white">
       {!isStudioRoute && (
         <HeaderClient
           categories={categories}

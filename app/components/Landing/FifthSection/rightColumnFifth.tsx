@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Card } from "@/components/ui/card";
+import { SectionHeader } from "../../ui/section-header";
 
 interface MostReadArticle {
   id: string;
@@ -8,6 +9,7 @@ interface MostReadArticle {
   image?: string;
   imageAlt?: string;
   imageUnoptimized?: boolean;
+  imageSource?: string;
   hasImage: boolean;
   slug: string;
 }
@@ -22,13 +24,7 @@ export function RightColumnFifth({ mostReadArticles }: RightColumnThirdProps) {
       <div className="sticky top-6">
         {/* Most Read Section */}
         <div className="mb-8">
-          <div className="flex items-center mb-4">
-            <div className="w-2 h-2 bg-blue-600 rounded-full mr-2"></div>
-            <h2 className="text-sm font-semibold text-gray-700 uppercase tracking-wide font-sans">
-              MOST READ
-            </h2>
-          </div>
-          <div className="border-t border-border-200 mb-4"></div>
+          <SectionHeader title="MOST READ" variant="gradient" />
 
           <div className="space-y-4">
             {mostReadArticles.map((article, index) => (
@@ -53,11 +49,8 @@ export function RightColumnFifth({ mostReadArticles }: RightColumnThirdProps) {
                       />
                     </Link>
                     <div className="flex-1 flex items-start gap-2">
-                      <span className="text-blue-500 font-bold text-sm font-sans flex-shrink-0">
-                        {index + 1}
-                      </span>
                       <Link href={`/post/${article.slug}`} className="flex-1">
-                        <h4 className="text-neutral-900 leading-normal mb-2 font-sans text-base line-clamp-3 font-medium tracking-wide">
+                        <h4 className="text-neutral-900 leading-normal mb-2 font-sans text-base font-normal tracking-wide">
                           {article.title}
                         </h4>
                       </Link>
@@ -69,7 +62,7 @@ export function RightColumnFifth({ mostReadArticles }: RightColumnThirdProps) {
                       {index + 1}
                     </span>
                     <Link href={`/post/${article.slug}`} className="flex-1">
-                      <h4 className="text-neutral-900 leading-normal mb-2 font-sans text-base line-clamp-3 font-medium tracking-wide">
+                      <h4 className="text-neutral-900 leading-normal mb-2 font-sans text-base font-normal tracking-wide">
                         {article.title}
                       </h4>
                     </Link>

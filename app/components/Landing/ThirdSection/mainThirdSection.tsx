@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { FourthSectionQueryResult } from "@/sanity.types";
 import { getCoverImage } from "@/sanity/lib/utils";
+import { SectionHeader } from "../../ui/section-header";
 
 interface MainThirdSectionProps {
   posts: FourthSectionQueryResult;
@@ -31,19 +32,12 @@ export default function MainThirdSection({
       <div className="px-4">
         <div className="grid grid-cols-12 gap-0">
           {/* Section Header */}
-          <div className="col-span-12 mb-4">
-            <div className="flex items-center mb-4">
-              <div className="w-2 h-2 bg-blue-600 rounded-full mr-2"></div>
-              <h2 className="text-xs font-medium text-neutral-900 uppercase tracking-wider font-sans">
-                <Link
-                  href={`/category/${categoryTitle.toLowerCase().replace(/\s+/g, "-")}`}
-                  className="hover:text-red-600 transition-colors cursor-pointer"
-                >
-                  {categoryTitle}
-                </Link>
-              </h2>
-            </div>
-            <div className="border-t border-neutral-200 mb-6"></div>
+          <div className="col-span-12">
+            <SectionHeader
+              title={categoryTitle}
+              variant="gradient"
+              href={`/category/${categoryTitle.toLowerCase().replace(/\s+/g, "-")}`}
+            />
           </div>
 
           <div className="col-span-12 flex flex-col lg:grid lg:grid-cols-12 gap-3">
@@ -52,9 +46,9 @@ export default function MainThirdSection({
               {mainArticle && (
                 <Link
                   href={`/post/${mainArticle.slug || "#"}`}
-                  className="group block"
+                  className="group block mb-4"
                 >
-                  <div className="relative aspect-[16/9] overflow-hidden rounded-sm mb-3">
+                  <div className="relative aspect-[16/9] overflow-hidden rounded-sm mb-4">
                     <Image
                       src={getImageData(
                         mainArticle.cover,
@@ -75,15 +69,17 @@ export default function MainThirdSection({
                       }
                       className="object-cover rounded-sm"
                     />
+                    {mainArticle.cover?.imageSource && (
+                      <div className="absolute bottom-2 right-2 bg-black/30 text-white text-xs px-2 py-1 rounded font-secondary">
+                        {mainArticle.cover.imageSource}
+                      </div>
+                    )}
                   </div>
-                  <h3 className="text-black text-2xl md:text-3xl tracking-wide font-semibold leading-tight font-sans">
+                  <h3 className="text-black text-2xl md:text-2xl tracking-wide font-medium leading-tight font-sans">
                     {mainArticle.title || "Untitled"}
                   </h3>
                 </Link>
               )}
-
-              {/* Separator after main article */}
-              <hr className="border-t border-gray-300 my-4" />
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 {secondaryArticles[0] && (
@@ -112,6 +108,11 @@ export default function MainThirdSection({
                         }
                         className="object-cover rounded-sm"
                       />
+                      {secondaryArticles[0].cover?.imageSource && (
+                        <div className="absolute bottom-2 right-2 bg-black/30 text-white text-xs px-2 py-1 rounded font-secondary">
+                          {secondaryArticles[0].cover.imageSource}
+                        </div>
+                      )}
                     </div>
                     <div className="mt-2">
                       <h4 className="text-neutral-900 leading-normal mb-2 font-sans text-lg font-medium tracking-wide">
@@ -147,6 +148,11 @@ export default function MainThirdSection({
                         }
                         className="object-cover rounded-sm"
                       />
+                      {secondaryArticles[1].cover?.imageSource && (
+                        <div className="absolute bottom-2 right-2 bg-black/30 text-white text-xs px-2 py-1 rounded font-secondary">
+                          {secondaryArticles[1].cover.imageSource}
+                        </div>
+                      )}
                     </div>
                     <div className="mt-2">
                       <h4 className="text-neutral-900 leading-normal mb-2 font-sans text-lg font-medium tracking-wide">
@@ -164,7 +170,7 @@ export default function MainThirdSection({
             {/* Right Column - Full width on mobile (appears after left), 5 columns on desktop */}
             <div className="w-full lg:col-span-5 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-3">
               {/* Left sidebar column */}
-              <div className="flex flex-col gap-4">
+              <div className="flex flex-col gap-0">
                 {rightColumnArticles[0] && (
                   <>
                     <Link
@@ -192,9 +198,14 @@ export default function MainThirdSection({
                           }
                           className="object-cover rounded-sm"
                         />
+                        {rightColumnArticles[0].cover?.imageSource && (
+                          <div className="absolute bottom-2 right-2 bg-black/30 text-white text-xs px-2 py-1 rounded font-secondary">
+                            {rightColumnArticles[0].cover.imageSource}
+                          </div>
+                        )}
                       </div>
                       <div className="mt-2">
-                        <h4 className="text-neutral-900 leading-normal mb-2 font-sans text-lg font-semibold tracking-wide">
+                        <h4 className="text-neutral-900 leading-normal mb-2 font-sans text-lg font-medium tracking-wide">
                           {rightColumnArticles[0].title || "Untitled"}
                         </h4>
                       </div>
@@ -210,7 +221,7 @@ export default function MainThirdSection({
                     <div key={article._id}>
                       <Link
                         href={`/post/${article.slug || "#"}`}
-                        className="text-neutral-900 leading-normal mb-2 font-sans text-base font-medium tracking-wide"
+                        className="text-neutral-900 leading-normal mb-2 font-sans text-base font-normal tracking-wide"
                       >
                         {article.title || "Untitled"}
                       </Link>
@@ -223,7 +234,7 @@ export default function MainThirdSection({
               </div>
 
               {/* Right sidebar column */}
-              <div className="flex flex-col gap-4">
+              <div className="flex flex-col gap-0">
                 {rightColumnArticles[
                   Math.ceil(rightColumnArticles.length / 2)
                 ] && (
@@ -265,9 +276,20 @@ export default function MainThirdSection({
                           }
                           className="object-cover rounded-sm"
                         />
+                        {rightColumnArticles[
+                          Math.ceil(rightColumnArticles.length / 2)
+                        ]?.cover?.imageSource && (
+                          <div className="absolute bottom-2 right-2 bg-black/30 text-white text-xs px-2 py-1 rounded font-secondary">
+                            {
+                              rightColumnArticles[
+                                Math.ceil(rightColumnArticles.length / 2)
+                              ]?.cover?.imageSource
+                            }
+                          </div>
+                        )}
                       </div>
                       <div className="mt-2">
-                        <h4 className="text-lg font-semibold leading-tight mt-1 tracking-wide font-sans">
+                        <h4 className="text-neutral-900 leading-normal mb-2 font-sans text-lg font-medium tracking-wide">
                           {rightColumnArticles[
                             Math.ceil(rightColumnArticles.length / 2)
                           ].title || "Untitled"}
@@ -285,7 +307,7 @@ export default function MainThirdSection({
                     <div key={article._id}>
                       <Link
                         href={`/post/${article.slug || "#"}`}
-                        className="text-neutral-900 leading-normal mb-2 font-sans text-base font-medium tracking-wide"
+                        className="text-neutral-900 leading-normal mb-2 font-sans text-base font-normal tracking-wide"
                       >
                         {article.title || "Untitled"}
                       </Link>

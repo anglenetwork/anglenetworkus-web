@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import { SectionHeader } from "../../ui/section-header";
 
 interface CenterArticle {
   id: string;
@@ -10,6 +11,7 @@ interface CenterArticle {
   image: string;
   imageAlt: string;
   imageUnoptimized?: boolean;
+  imageSource?: string;
   isMain: boolean;
   slug: string;
 }
@@ -27,13 +29,11 @@ export function CenterColumnFifth({
     <div className="border-r border-gray-200 px-6">
       {/* Congress Section */}
       <div className="mb-8">
-        <div className="flex items-center mb-4">
-          <div className="w-2 h-2 bg-blue-600 rounded-full mr-2"></div>
-          <h2 className="text-sm font-semibold text-gray-700 uppercase tracking-wide font-sans">
-            {categoryTitle}
-          </h2>
-        </div>
-        <div className="border-t border-neutral-200 mb-6"></div>
+        <SectionHeader
+          title={categoryTitle}
+          variant="gradient"
+          href={`/category/${categoryTitle.toLowerCase()}`}
+        />
 
         {/* Articles */}
         {centerArticles.map((article, index) => (
@@ -42,17 +42,24 @@ export function CenterColumnFifth({
               // Main Article
               <div className="mb-6">
                 <Link href={`/post/${article.slug}`}>
-                  <Image
-                    src={article.image}
-                    alt={article.imageAlt}
-                    width={800}
-                    height={320}
-                    unoptimized={article.imageUnoptimized}
-                    className="w-full h-80 object-cover rounded-sm mb-4 cursor-pointer"
-                  />
+                  <div className="relative mb-4">
+                    <Image
+                      src={article.image}
+                      alt={article.imageAlt}
+                      width={800}
+                      height={320}
+                      unoptimized={article.imageUnoptimized}
+                      className="w-full h-80 object-cover rounded-sm cursor-pointer"
+                    />
+                    {article.imageSource && (
+                      <div className="absolute bottom-2 right-2 bg-black/30 text-white text-xs px-2 py-1 rounded font-secondary">
+                        {article.imageSource}
+                      </div>
+                    )}
+                  </div>
                 </Link>
                 <Link href={`/post/${article.slug}`}>
-                  <h1 className="text-3xl md:text-3xl lg:text-3xl font-semibold text-gray-900 leading-tight mb-4 font-sans text-start">
+                  <h1 className="text-3xl md:text-3xl lg:text-3xl font-medium text-gray-900 leading-tight mb-4 font-sans text-start">
                     {article.title}
                   </h1>
                 </Link>
@@ -70,17 +77,24 @@ export function CenterColumnFifth({
                 .map((article, index) => (
                   <div key={article.id} className="flex flex-col">
                     <Link href={`/post/${article.slug}`}>
-                      <Image
-                        src={article.image}
-                        alt={article.imageAlt}
-                        width={240}
-                        height={160}
-                        unoptimized={article.imageUnoptimized}
-                        className="w-full h-48 object-cover rounded-sm mb-3 cursor-pointer hover:opacity-90 transition-opacity"
-                      />
+                      <div className="relative mb-3">
+                        <Image
+                          src={article.image}
+                          alt={article.imageAlt}
+                          width={240}
+                          height={160}
+                          unoptimized={article.imageUnoptimized}
+                          className="w-full h-48 object-cover rounded-sm cursor-pointer hover:opacity-90 transition-opacity"
+                        />
+                        {article.imageSource && (
+                          <div className="absolute bottom-2 right-2 bg-black/30 text-white text-xs px-2 py-1 rounded font-secondary">
+                            {article.imageSource}
+                          </div>
+                        )}
+                      </div>
                     </Link>
                     <Link href={`/post/${article.slug}`}>
-                      <h3 className="text-neutral-900 leading-normal mb-2 font-sans text-lg line-clamp-3 font-medium tracking-wide">
+                      <h3 className="text-neutral-900 leading-normal mb-2 font-sans text-base font-normal tracking-wide">
                         {article.title}
                       </h3>
                     </Link>

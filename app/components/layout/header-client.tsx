@@ -170,11 +170,11 @@ export function HeaderClient({
               {/* Logo (shrinks only on lg+) */}
               <Link href="/" className="hover:opacity-80 transition-opacity">
                 <h1
-                  className={`font-bold text-red-600 tracking-tight transition-all duration-500 ease-out font-sans ${
+                  className={`font-bold text-blue-600 tracking-tight transition-all duration-500 ease-out font-sans ${
                     isScrolled ? "lg:text-xl" : "lg:text-4xl"
                   } text-4xl`}
                 >
-                  POLITICO
+                  CURRENTS
                 </h1>
               </Link>
 
@@ -186,8 +186,8 @@ export function HeaderClient({
                       key={category.slug}
                       href={`/category/${category.slug}`}
                       onClick={() => setIsMenuOpen(false)}
-                      className={`hover:text-red-600 font-medium tracking-wide text-neutral-900 capitalize transition-all duration-500 ease-out whitespace-nowrap font-sans ${
-                        isScrolled ? "lg:text-sm" : "lg:text-base"
+                      className={`hover:text-red-600 font-normal tracking-wide text-neutral-900 capitalize transition-all duration-500 ease-out whitespace-nowrap font-sans ${
+                        isScrolled ? "lg:text-base" : "lg:text-base"
                       } text-base`}
                     >
                       {category.name}

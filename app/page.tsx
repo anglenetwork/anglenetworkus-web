@@ -44,7 +44,7 @@ export default async function Page() {
   const secondSectionData = await getSecondSectionData();
 
   return (
-    <div className="container mx-auto border-2 border-red-500">
+    <div className="container mx-auto">
       <div className="space-y-10 md:space-y-14">
         <MainFirstSection
           posts={posts as any}
