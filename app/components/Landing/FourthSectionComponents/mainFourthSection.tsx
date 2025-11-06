@@ -64,18 +64,21 @@ export default function MainFourthSection({
     mainStory: posts[0]
       ? {
           image: getImageData(posts[0].cover, posts[0].title || "Untitled"),
+          imageSource: posts[0].cover?.imageSource || undefined,
           title: posts[0].title || "Untitled",
           authors: posts[0].author ? [posts[0].author.name] : ["Anonymous"],
           slug: posts[0].slug || "#",
         }
       : {
           image: "/placeholder.svg",
+          imageSource: undefined,
           title: "No articles available",
           authors: ["No Author"],
           slug: "#",
         },
     extraStories: posts.slice(1, 4).map((post) => ({
       image: getImageData(post.cover, post.title || "Untitled"),
+      imageSource: post.cover?.imageSource || undefined,
       title: post.title || "Untitled",
       authors: post.author ? [post.author.name] : ["Anonymous"],
       slug: post.slug || "#",

@@ -1,8 +1,10 @@
 import Image from "next/image";
 import Link from "next/link";
+import { SectionHeader } from "../../ui/section-header";
 
 interface Story {
   image: string;
+  imageSource?: string;
   title: string;
   authors: string[];
   slug: string;
@@ -29,33 +31,29 @@ export function CenterColumnFourthSection({
     <div className="border-r border-gray-200 px-6">
       {/* News Section */}
       <div className="mb-8">
-        <div className="flex items-center mb-4">
-          <div className="w-2 h-2 bg-red-500 rounded-full mr-2"></div>
-          <h2 className="text-sm font-semibold text-gray-700 uppercase tracking-wide font-sans">
-            {categorySlug ? (
-              <Link
-                href={`/category/${categorySlug}`}
-                className="hover:text-red-600 transition-colors cursor-pointer"
-              >
-                {categoryTitle}
-              </Link>
-            ) : (
-              categoryTitle
-            )}
-          </h2>
-        </div>
-        <div className="border-t border-black mb-6"></div>
+        <SectionHeader
+          title={categoryTitle}
+          variant="gradient"
+          href={categorySlug ? `/category/${categorySlug}` : undefined}
+        />
 
         {/* Main Article */}
         <div className="mb-6">
           <Link href={`/post/${data.mainStory.slug}`}>
-            <Image
-              src={data.mainStory.image || "/placeholder.svg"}
-              alt={data.mainStory.title}
-              width={800}
-              height={320}
-              className="w-full h-80 object-cover rounded-sm mb-4 cursor-pointer hover:opacity-90 transition-opacity"
-            />
+            <div className="relative mb-4">
+              <Image
+                src={data.mainStory.image || "/placeholder.svg"}
+                alt={data.mainStory.title}
+                width={800}
+                height={320}
+                className="w-full h-80 object-cover rounded-sm cursor-pointer hover:opacity-90 transition-opacity"
+              />
+              {data.mainStory.imageSource && (
+                <div className="absolute bottom-2 right-2 bg-black/30 text-white text-xs px-2 py-1 rounded font-secondary">
+                  {data.mainStory.imageSource}
+                </div>
+              )}
+            </div>
           </Link>
           <Link href={`/post/${data.mainStory.slug}`}>
             <h1 className="text-3xl font-semibold text-gray-900 mb-3 font-sans cursor-pointer hover:text-gray-700 transition-colors">
@@ -72,13 +70,20 @@ export function CenterColumnFourthSection({
           >
             <div className="flex gap-4">
               <Link href={`/post/${story.slug}`}>
-                <Image
-                  src={story.image || "/placeholder.svg"}
-                  alt={story.title}
-                  width={160}
-                  height={112}
-                  className="w-40 h-28 object-cover rounded-sm flex-shrink-0 cursor-pointer hover:opacity-90 transition-opacity"
-                />
+                <div className="relative flex-shrink-0">
+                  <Image
+                    src={story.image || "/placeholder.svg"}
+                    alt={story.title}
+                    width={160}
+                    height={112}
+                    className="w-40 h-28 object-cover rounded-sm cursor-pointer hover:opacity-90 transition-opacity"
+                  />
+                  {story.imageSource && (
+                    <div className="absolute bottom-2 right-2 bg-black/30 text-white text-xs px-2 py-1 rounded font-secondary">
+                      {story.imageSource}
+                    </div>
+                  )}
+                </div>
               </Link>
               <div className="flex-1">
                 <Link href={`/post/${story.slug}`}>

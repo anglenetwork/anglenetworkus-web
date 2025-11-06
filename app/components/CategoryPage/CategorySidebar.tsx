@@ -36,15 +36,17 @@ export default function CategorySidebar({
   // Helper function to get image data from cover
   const getImageData = (cover: any, fallbackTitle: string = "Article") => {
     const coverData = getCoverImage(cover, fallbackTitle);
-    return coverData ? {
-      src: coverData.src,
-      alt: coverData.alt,
-      unoptimized: coverData.unoptimized,
-    } : {
-      src: "/placeholder.svg",
-      alt: fallbackTitle,
-      unoptimized: false,
-    };
+    return coverData
+      ? {
+          src: coverData.src,
+          alt: coverData.alt,
+          unoptimized: coverData.unoptimized,
+        }
+      : {
+          src: "/placeholder.svg",
+          alt: fallbackTitle,
+          unoptimized: false,
+        };
   };
 
   // Helper function to format date
@@ -73,7 +75,10 @@ export default function CategorySidebar({
               <div className="flex-shrink-0">
                 <Link href={`/post/${post.slug || "#"}`}>
                   {(() => {
-                    const imageData = getImageData(post.cover, post.title || "Article image");
+                    const imageData = getImageData(
+                      post.cover,
+                      post.title || "Article image"
+                    );
                     return (
                       <Image
                         src={imageData.src}
@@ -141,7 +146,7 @@ export default function CategorySidebar({
           category. Our team brings you comprehensive coverage and analysis of
           the most important stories.
         </p>
-        <div className="mt-4 pt-4 border-t border-blue-200">
+        <div className="mt-4 pt-4">
           <div className="flex items-center justify-between text-sm">
             <span className="text-gray-600">Total Articles:</span>
             <span className="font-semibold text-blue-600">{posts.length}</span>

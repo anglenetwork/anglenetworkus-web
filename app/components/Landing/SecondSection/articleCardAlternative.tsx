@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Play } from "lucide-react";
+import { SectionHeader } from "../../ui/section-header";
 
 interface ArticleCardAlternativeProps {
   category: string;
@@ -9,6 +10,7 @@ interface ArticleCardAlternativeProps {
   author?: string;
   image?: string;
   imageAlt?: string;
+  imageSource?: string;
   isDecorative?: boolean;
   slug?: string;
   views7d?: number;
@@ -22,6 +24,7 @@ export default function ArticleCardAlternative({
   author,
   image,
   imageAlt,
+  imageSource,
   isDecorative = false,
   slug = "#",
   views7d = 0,
@@ -37,16 +40,18 @@ export default function ArticleCardAlternative({
             fill
             className="object-cover rounded-sm"
           />
+          {imageSource && (
+            <div className="absolute bottom-2 right-2 bg-black/30 text-white text-xs px-2 py-1 rounded font-secondary">
+              {imageSource}
+            </div>
+          )}
         </div>
 
         <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent" />
 
         <div className="absolute bottom-0 left-0 right-0 p-4 text-white">
-          <div className="flex items-center mb-2">
-            <div className="w-2 h-2 bg-blue-600 rounded-full mr-3"></div>
-            <span className="text-xs font-medium uppercase tracking-wider font-sans">
-              {category}
-            </span>
+          <div className="mb-2 [&_span]:text-white">
+            <SectionHeader title={category} variant="gradient" />
           </div>
 
           <h3

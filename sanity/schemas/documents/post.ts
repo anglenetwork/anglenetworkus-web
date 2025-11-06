@@ -24,6 +24,148 @@ export default defineType({
       description: "Public topical keywords (tag docs only).",
     }),
     defineField({
+      name: "mainHeadline",
+      title: "Main Headline",
+      type: "boolean",
+      initialValue: false,
+      description: "Mark this post as a main headline.",
+      validation: (rule) =>
+        rule.custom((value, ctx) => {
+          const doc = ctx.document as any;
+          if (value) {
+            if (doc?.frontline) {
+              return "Cannot be both Main Headline and Front Page (Hero) at the same time";
+            }
+            if (doc?.rightHeadline) {
+              return "Cannot be both Main Headline and Right Headline at the same time";
+            }
+            if (doc?.justIn) {
+              return "Cannot be both Main Headline and Just In at the same time";
+            }
+          }
+          return true;
+        }),
+    }),
+    defineField({
+      name: "frontline",
+      title: "Front Page (Hero)",
+      type: "boolean",
+      initialValue: false,
+      description: "Pin this post to the main headlines area.",
+      validation: (rule) =>
+        rule.custom((value, ctx) => {
+          const doc = ctx.document as any;
+          if (value) {
+            if (doc?.mainHeadline) {
+              return "Cannot be both Front Page (Hero) and Main Headline at the same time";
+            }
+            if (doc?.rightHeadline) {
+              return "Cannot be both Front Page (Hero) and Right Headline at the same time";
+            }
+            if (doc?.justIn) {
+              return "Cannot be both Front Page (Hero) and Just In at the same time";
+            }
+            if (!doc?.publishedAt) {
+              return "Warning: Published date is recommended when showing on front page";
+            }
+          }
+          return true;
+        }),
+    }),
+    defineField({
+      name: "frontRank",
+      title: "Front Rank",
+      type: "number",
+      description: "Higher number shows earlier in the hero (e.g., 10 = top).",
+      hidden: ({ parent }) => !parent?.frontline,
+      validation: (rule) => rule.min(0).max(10),
+    }),
+    defineField({
+      name: "frontUntil",
+      title: "Front Until",
+      type: "datetime",
+      description: "Optional. Auto-remove from hero after this date/time.",
+      hidden: ({ parent }) => !parent?.frontline,
+    }),
+    defineField({
+      name: "rightHeadline",
+      title: "Right Headline",
+      type: "boolean",
+      initialValue: false,
+      description: "Mark this post as a right headline.",
+      validation: (rule) =>
+        rule.custom((value, ctx) => {
+          const doc = ctx.document as any;
+          if (value) {
+            if (doc?.mainHeadline) {
+              return "Cannot be both Right Headline and Main Headline at the same time";
+            }
+            if (doc?.frontline) {
+              return "Cannot be both Right Headline and Front Page (Hero) at the same time";
+            }
+            if (doc?.justIn) {
+              return "Cannot be both Right Headline and Just In at the same time";
+            }
+          }
+          return true;
+        }),
+    }),
+    defineField({
+      name: "justIn",
+      title: "Just In",
+      type: "boolean",
+      initialValue: false,
+      description: "Show this post in the 'Just in' section.",
+      validation: (rule) =>
+        rule.custom((value, ctx) => {
+          const doc = ctx.document as any;
+          if (value) {
+            if (doc?.mainHeadline) {
+              return "Cannot be both Just In and Main Headline at the same time";
+            }
+            if (doc?.frontline) {
+              return "Cannot be both Just In and Front Page (Hero) at the same time";
+            }
+            if (doc?.rightHeadline) {
+              return "Cannot be both Just In and Right Headline at the same time";
+            }
+          }
+          return true;
+        }),
+    }),
+    defineField({
+      name: "breakingNews",
+      title: "Breaking News",
+      type: "boolean",
+      initialValue: false,
+      description: "Mark this as breaking news.",
+      hidden: ({ parent }) => !parent?.justIn,
+      validation: (rule) =>
+        rule.custom((value, ctx) => {
+          const doc = ctx.document as any;
+          if (doc?.justIn && value && doc?.developingStory) {
+            return "Cannot be both breaking news and developing story at the same time";
+          }
+          return true;
+        }),
+    }),
+    defineField({
+      name: "developingStory",
+      title: "Developing Story",
+      type: "boolean",
+      initialValue: false,
+      description: "Mark this as a developing story.",
+      hidden: ({ parent }) => !parent?.justIn,
+      validation: (rule) =>
+        rule.custom((value, ctx) => {
+          const doc = ctx.document as any;
+          if (doc?.justIn && value && doc?.breakingNews) {
+            return "Cannot be both breaking news and developing story at the same time";
+          }
+          return true;
+        }),
+    }),
+    defineField({
       name: "featured",
       title: "Featured",
       type: "boolean",

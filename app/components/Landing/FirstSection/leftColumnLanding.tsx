@@ -2,6 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { getCoverImage } from "@/sanity/lib/utils";
 import { BreakingNewsLabel } from "../../ui/breaking-news-label";
+import { SectionHeader } from "../../ui/section-header";
 
 interface Post {
   _id: string;
@@ -12,8 +13,10 @@ interface Post {
     externalUrl?: string | null;
     image?: any;
     alt?: string | null;
+    imageSource?: string | null;
   } | null;
-  labels?: string[] | null;
+  breakingNews?: boolean | null;
+  developingStory?: boolean | null;
 }
 
 interface LeftColumnLandingProps {
@@ -23,14 +26,7 @@ interface LeftColumnLandingProps {
 export function LeftColumnLanding({ latestNews }: LeftColumnLandingProps) {
   return (
     <div className="lg:border-r border-neutral-300 lg:sticky lg:top-20 lg:h-auto lg:overflow-hidden text-left px-0 md:px-4">
-      <div className="flex items-center justify-start mb-4">
-        <div className="w-2 h-2 bg-blue-600 rounded-full mr-3"></div>
-        <h2 className="text-xs font-medium text-neutral-900 uppercase tracking-wider font-sans">
-          Just in
-        </h2>
-      </div>
-
-      <div className="border-b border-neutral-300 mb-6"></div>
+      <SectionHeader title="Just in" variant="gradient" />
 
       <div className="space-y-6">
         {latestNews.map((post, index) => {
@@ -55,21 +51,23 @@ export function LeftColumnLanding({ latestNews }: LeftColumnLandingProps) {
                       className="object-cover rounded-sm"
                       priority
                     />
+                    {post.cover?.imageSource && (
+                      <div className="absolute bottom-2 right-2 bg-black/30 text-white text-xs px-2 py-1 rounded font-secondary">
+                        {post.cover.imageSource}
+                      </div>
+                    )}
                   </div>
                 </Link>
               )}
-              {isFirstArticle && (
-                <div className="mb-3">
-                  <BreakingNewsLabel
-                    variant="default"
-                    text={
-                      post.labels?.includes("breaking")
-                        ? "Breaking"
-                        : "Developing story"
-                    }
-                  />
-                </div>
-              )}
+              {isFirstArticle &&
+                (post.breakingNews || post.developingStory) && (
+                  <div className="mb-3">
+                    <BreakingNewsLabel
+                      variant="default"
+                      text={post.breakingNews ? "Breaking" : "Developing story"}
+                    />
+                  </div>
+                )}
               <Link href={`/post/${post.slug}`} className="hover:text-red-600">
                 <h3 className="text-neutral-900 leading-normal mb-2 font-sans text-lg font-normal tracking-wide">
                   {post.title}

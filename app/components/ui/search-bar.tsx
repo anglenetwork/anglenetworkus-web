@@ -12,8 +12,8 @@ interface SearchBarProps {
 }
 
 export function SearchBar({
-  placeholder = "Search any topic on BI",
-  ariaLabel = "BI search",
+  placeholder = "Search news, articles, topics and more",
+  ariaLabel = "search bar",
   onSubmit,
   onClose,
   className = "",
@@ -52,7 +52,7 @@ export function SearchBar({
         type="search"
         name="search"
         placeholder={placeholder}
-        className="w-full h-12 pl-6 pr-16 text-lg border border-foreground rounded-lg bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-all"
+        className="w-full h-12 pl-6 pr-16 border border-foreground rounded-lg bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-all font-secondary text-sm"
       />
       <button
         type="submit"

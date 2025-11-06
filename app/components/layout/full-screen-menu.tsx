@@ -76,14 +76,16 @@ export function FullScreenMenu({
           {/* Shared wrapper: search + nav same horizontal padding */}
           <div
             className={`px-4 md:px-0 space-y-10 md:space-y-12 transition-all duration-700 ease-out ${
-              isOpen ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
+              isOpen
+                ? "opacity-100 translate-y-0 pt-2 md:pt-0"
+                : "opacity-0 translate-y-8"
             }`}
             style={{ transitionDelay: isOpen ? "150ms" : "0ms" }}
           >
             {/* Search */}
             <SearchBar
-              placeholder="Search any topic on BI"
-              ariaLabel="BI search"
+              placeholder="Search news, articles, topics and more"
+              ariaLabel="search bar"
               onClose={onClose}
             />
 

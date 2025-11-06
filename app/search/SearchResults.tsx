@@ -235,8 +235,8 @@ export default function SearchResults() {
         {/* Search Bar */}
         <div className="mb-8">
           <SearchBar
-            placeholder="Search any topic on BI"
-            ariaLabel="BI search"
+            placeholder="Search news, articles, topics and more"
+            ariaLabel="search bar"
             onSubmit={handleSearch}
           />
         </div>
@@ -328,7 +328,10 @@ export default function SearchResults() {
                             <div className="relative h-48 w-64 flex-shrink-0 overflow-hidden">
                               {(() => {
                                 if (result.type === "post" && result.cover) {
-                                  const coverData = getImageData(result.cover, result.title);
+                                  const coverData = getCoverImage(
+                                    result.cover,
+                                    result.title
+                                  );
                                   if (coverData?.src) {
                                     return (
                                       <Image
@@ -340,12 +343,20 @@ export default function SearchResults() {
                                       />
                                     );
                                   }
-                                } else if (result.type === "topic" && result.image) {
+                                } else if (
+                                  result.type === "topic" &&
+                                  result.image
+                                ) {
                                   const imageUrl = urlForImage(result.image);
                                   if (imageUrl) {
                                     return (
                                       <Image
-                                        src={imageUrl.width(360).height(240).fit("max").quality(85).url()}
+                                        src={imageUrl
+                                          .width(360)
+                                          .height(240)
+                                          .fit("max")
+                                          .quality(85)
+                                          .url()}
                                         alt={result.image.alt || result.title}
                                         fill
                                         className="object-cover"

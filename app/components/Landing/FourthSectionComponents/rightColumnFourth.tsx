@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { SectionHeader } from "../../ui/section-header";
 
 interface VideoData {
   thumbnail: string;
@@ -16,13 +17,7 @@ export function RightColumnFourth({ videosData }: RightColumnFourthProps) {
       <div className="sticky top-6">
         {/* Videos Section (replacing Most Read) */}
         <div className="mb-8">
-          <div className="flex items-center mb-4">
-            <div className="w-2 h-2 bg-red-500 rounded-full mr-2"></div>
-            <h2 className="text-sm font-semibold text-gray-700 uppercase tracking-wide font-sans">
-              Videos
-            </h2>
-          </div>
-          <div className="border-t border-black mb-4"></div>
+          <SectionHeader title="Videos" variant="gradient" />
 
           <div className="space-y-4">
             {videosData.map((video, index) => (
@@ -58,13 +53,7 @@ export function RightColumnFourth({ videosData }: RightColumnFourthProps) {
 
         {/* Additional Section */}
         <div>
-          <div className="flex items-center mb-4">
-            <div className="w-2 h-2 bg-red-500 rounded-full mr-2"></div>
-            <h2 className="text-sm font-semibold text-gray-700 uppercase tracking-wide font-sans">
-              TRENDING
-            </h2>
-          </div>
-          <div className="border-t border-gray-300 mb-4"></div>
+          <SectionHeader title="TRENDING" variant="gradient" />
           <div className="p-2 border border-gray-200 rounded">
             <div className="text-sm text-gray-600 text-center font-sans">
               Trending content placeholder

@@ -96,7 +96,7 @@ export default async function RootLayout({
             </Suspense>
           )}
           <ContentLayoutWrapper>
-            <main className="border-2 border-blue-500">{children}</main>
+            <main className="">{children}</main>
           </ContentLayoutWrapper>
         </section>
         {isDraftMode && <VisualEditing />}

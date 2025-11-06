@@ -3,3 +3,4 @@ export { Card } from './card';
 export { Badge } from './badge';
 export { Separator } from './separator';
 export { Input } from './input';
+export { SectionHeader } from './section-header';

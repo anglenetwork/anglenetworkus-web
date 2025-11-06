@@ -16,11 +16,13 @@ export default function MainFifthSection({
   // Helper function to get image data from cover
   const getImageData = (cover: any, fallbackTitle: string = "Article") => {
     const coverData = getCoverImage(cover, fallbackTitle);
-    return coverData ? {
-      src: coverData.src,
-      alt: coverData.alt,
-      unoptimized: coverData.unoptimized,
-    } : null;
+    return coverData
+      ? {
+          src: coverData.src,
+          alt: coverData.alt,
+          unoptimized: coverData.unoptimized,
+        }
+      : null;
   };
 
   // First 4 to center column
@@ -35,31 +37,31 @@ export default function MainFifthSection({
       image: imageData?.src || "/placeholder.svg",
       imageAlt: imageData?.alt || post.title || "Article image",
       imageUnoptimized: imageData?.unoptimized || false,
+      imageSource: post.cover?.imageSource || undefined,
       isMain: index === 0,
       slug: post.slug || "#",
     };
   });
 
   // Remaining 5 (of 9) to right column under Most Read block
-  const mostReadArticles = posts
-    .slice(4, 9)
-    .map((post: any, index: number) => {
-      const imageData = getImageData(post.cover, post.title || "Article image");
-      return {
-        id: post._id,
-        title: post.title || "Untitled",
-        image: imageData?.src,
-        imageAlt: imageData?.alt || post.title || "Article image",
-        imageUnoptimized: imageData?.unoptimized || false,
-        hasImage: !!imageData,
-        slug: post.slug || "#",
-      };
-    });
+  const mostReadArticles = posts.slice(4, 9).map((post: any, index: number) => {
+    const imageData = getImageData(post.cover, post.title || "Article image");
+    return {
+      id: post._id,
+      title: post.title || "Untitled",
+      image: imageData?.src,
+      imageAlt: imageData?.alt || post.title || "Article image",
+      imageUnoptimized: imageData?.unoptimized || false,
+      imageSource: post.cover?.imageSource || undefined,
+      hasImage: !!imageData,
+      slug: post.slug || "#",
+    };
+  });
 
   return (
-    <div className="border-2 border-blue-500">
+    <div className="">
       {/* Main container with three columns */}
-      <div className="border-2 border-orange-500">
+      <div className="">
         <div className="grid grid-cols-12 gap-0">
           {/* Mobile order: Center, Left, Right */}
           {/* Desktop order: Left, Center, Right */}
