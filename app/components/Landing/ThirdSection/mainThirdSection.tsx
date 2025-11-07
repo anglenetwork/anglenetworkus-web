@@ -56,6 +56,7 @@ export default function MainThirdSection({
                       )}
                       alt={mainArticle.title || "Featured article"}
                       fill
+                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 58vw, 700px"
                       unoptimized={
                         getCoverImage(
                           mainArticle.cover as {
@@ -95,6 +96,7 @@ export default function MainThirdSection({
                         )}
                         alt={secondaryArticles[0].title || "Article image"}
                         fill
+                        sizes="(max-width: 640px) 100vw, (max-width: 1200px) 50vw, 350px"
                         unoptimized={
                           getCoverImage(
                             secondaryArticles[0].cover as {
@@ -135,6 +137,7 @@ export default function MainThirdSection({
                         )}
                         alt={secondaryArticles[1].title || "Article image"}
                         fill
+                        sizes="(max-width: 640px) 100vw, (max-width: 1200px) 50vw, 350px"
                         unoptimized={
                           getCoverImage(
                             secondaryArticles[1].cover as {
@@ -185,6 +188,7 @@ export default function MainThirdSection({
                           )}
                           alt={rightColumnArticles[0].title || "Article image"}
                           fill
+                          sizes="(max-width: 640px) 100vw, (max-width: 1200px) 42vw, 250px"
                           unoptimized={
                             getCoverImage(
                               rightColumnArticles[0].cover as {
@@ -259,6 +263,7 @@ export default function MainThirdSection({
                             ].title || "Article image"
                           }
                           fill
+                          sizes="(max-width: 640px) 100vw, (max-width: 1200px) 42vw, 250px"
                           unoptimized={
                             getCoverImage(
                               rightColumnArticles[

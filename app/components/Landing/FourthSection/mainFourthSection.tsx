@@ -89,6 +89,7 @@ export default function MainFourthSection({
                             width={800}
                             height={300}
                             unoptimized={coverData.unoptimized}
+                            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 25vw, 800px"
                             className="h-[300px] w-full object-cover rounded-sm"
                           />
                           {mainPost?.cover?.imageSource && (

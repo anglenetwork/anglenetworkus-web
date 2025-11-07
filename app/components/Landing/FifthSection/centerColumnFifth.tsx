@@ -49,6 +49,7 @@ export function CenterColumnFifth({
                       width={800}
                       height={320}
                       unoptimized={article.imageUnoptimized}
+                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 800px"
                       className="w-full h-80 object-cover rounded-sm cursor-pointer"
                     />
                     {article.imageSource && (
@@ -84,6 +85,7 @@ export function CenterColumnFifth({
                           width={240}
                           height={160}
                           unoptimized={article.imageUnoptimized}
+                          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 33vw, 240px"
                           className="w-full h-48 object-cover rounded-sm cursor-pointer hover:opacity-90 transition-opacity"
                         />
                         {article.imageSource && (

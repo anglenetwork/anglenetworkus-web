@@ -38,6 +38,7 @@ export default function ArticleCardAlternative({
             src={image || "/placeholder.svg"}
             alt={imageAlt || title}
             fill
+            sizes="(max-width: 768px) 100vw, 300px"
             className="object-cover rounded-sm"
           />
           {imageSource && (
