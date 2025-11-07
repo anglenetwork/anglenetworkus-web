@@ -50,9 +50,9 @@ export function RightColumnFifth({ mostReadArticles }: RightColumnThirdProps) {
                     </Link>
                     <div className="flex-1 flex items-start gap-2">
                       <Link href={`/post/${article.slug}`} className="flex-1">
-                        <h4 className="text-neutral-900 leading-normal mb-2 font-sans text-base font-normal tracking-wide">
+                        <h3 className="text-neutral-900 leading-normal mb-2 font-sans text-base font-normal tracking-wide">
                           {article.title}
-                        </h4>
+                        </h3>
                       </Link>
                     </div>
                   </>
@@ -62,9 +62,9 @@ export function RightColumnFifth({ mostReadArticles }: RightColumnThirdProps) {
                       {index + 1}
                     </span>
                     <Link href={`/post/${article.slug}`} className="flex-1">
-                      <h4 className="text-neutral-900 leading-normal mb-2 font-sans text-base font-normal tracking-wide">
+                      <h3 className="text-neutral-900 leading-normal mb-2 font-sans text-base font-normal tracking-wide">
                         {article.title}
-                      </h4>
+                      </h3>
                     </Link>
                   </div>
                 )}

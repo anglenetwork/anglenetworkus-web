@@ -1,5 +1,11 @@
 {
   "private": true,
+  "browserslist": [
+    "chrome >= 92",
+    "firefox >= 90",
+    "safari >= 15.4",
+    "edge >= 92"
+  ],
   "scripts": {
     "predev": "npm run typegen",
     "dev": "next --turbo",

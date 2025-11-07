@@ -5,6 +5,16 @@ const nextConfig: NextConfig = {
     // Matches the behavior of `sanity dev` which sets styled-components to use the fastest way of inserting CSS rules in both dev and production. It's default behavior is to disable it in dev mode.
     SC_DISABLE_SPEEDY: "false",
   },
+  // Optimize bundle splitting
+  experimental: {
+    optimizePackageImports: ['lucide-react', '@radix-ui/react-slot'],
+  },
+  // Configure compiler to target modern browsers and avoid unnecessary polyfills
+  compiler: {
+    removeConsole: process.env.NODE_ENV === 'production' ? {
+      exclude: ['error', 'warn'],
+    } : false,
+  },
   images: {
     remotePatterns: [
       {
@@ -27,6 +37,16 @@ const nextConfig: NextConfig = {
       {
         // Apply cache headers to Next.js image optimization route
         source: '/_next/image',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=31536000, immutable',
+          },
+        ],
+      },
+      {
+        // Apply cache headers to CSS files
+        source: '/_next/static/css/:path*',
         headers: [
           {
             key: 'Cache-Control',

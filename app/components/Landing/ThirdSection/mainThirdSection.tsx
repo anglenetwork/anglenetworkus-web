@@ -115,9 +115,9 @@ export default function MainThirdSection({
                       )}
                     </div>
                     <div className="mt-2">
-                      <h4 className="text-neutral-900 leading-normal mb-2 font-sans text-lg font-medium tracking-wide">
+                      <h3 className="text-neutral-900 leading-normal mb-2 font-sans text-lg font-medium tracking-wide">
                         {secondaryArticles[0].title || "Untitled"}
-                      </h4>
+                      </h3>
                     </div>
                   </Link>
                 )}
@@ -155,9 +155,9 @@ export default function MainThirdSection({
                       )}
                     </div>
                     <div className="mt-2">
-                      <h4 className="text-neutral-900 leading-normal mb-2 font-sans text-lg font-medium tracking-wide">
+                      <h3 className="text-neutral-900 leading-normal mb-2 font-sans text-lg font-medium tracking-wide">
                         {secondaryArticles[1].title || "Untitled"}
-                      </h4>
+                      </h3>
                     </div>
                   </Link>
                 )}
@@ -205,9 +205,9 @@ export default function MainThirdSection({
                         )}
                       </div>
                       <div className="mt-2">
-                        <h4 className="text-neutral-900 leading-normal mb-2 font-sans text-lg font-medium tracking-wide">
+                        <h3 className="text-neutral-900 leading-normal mb-2 font-sans text-lg font-medium tracking-wide">
                           {rightColumnArticles[0].title || "Untitled"}
-                        </h4>
+                        </h3>
                       </div>
                     </Link>
                     {/* Separator after featured article */}
@@ -289,11 +289,11 @@ export default function MainThirdSection({
                         )}
                       </div>
                       <div className="mt-2">
-                        <h4 className="text-neutral-900 leading-normal mb-2 font-sans text-lg font-medium tracking-wide">
+                        <h3 className="text-neutral-900 leading-normal mb-2 font-sans text-lg font-medium tracking-wide">
                           {rightColumnArticles[
                             Math.ceil(rightColumnArticles.length / 2)
                           ].title || "Untitled"}
-                        </h4>
+                        </h3>
                       </div>
                     </Link>
                     {/* Separator after featured article */}

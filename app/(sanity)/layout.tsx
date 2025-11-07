@@ -24,7 +24,7 @@ export default function SanityStudioLayout({
       </head>
       <body className="min-h-screen">
         {children}
-        <SpeedInsights />
+        {(process.env.NEXT_PUBLIC_VERCEL_ENV || process.env.VERCEL) && <SpeedInsights />}
       </body>
     </html>
   );

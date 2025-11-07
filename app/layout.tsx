@@ -18,26 +18,29 @@ import { sanityFetch } from "@/sanity/lib/fetch";
 import { settingsQuery } from "@/sanity/lib/queries";
 import { resolveOpenGraphImage } from "@/sanity/lib/utils";
 
-// Configure Google Fonts
+// Configure Google Fonts - optimized to only load weights actually used
 const interTight = Inter({
   subsets: ["latin"],
-  weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
+  weight: ["300", "400", "500", "600", "700"], // Only weights actually used
   variable: "--font-secondary",
   display: "swap",
+  preload: true,
 });
 
 const outfit = Outfit({
   subsets: ["latin"],
-  weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
+  weight: ["300", "400", "500", "600", "700"], // Only weights actually used
   variable: "--font-sans",
   display: "swap",
+  preload: true,
 });
 
 const spectral = Spectral({
   subsets: ["latin"],
-  weight: ["200", "300", "400", "500", "600", "700", "800"],
+  weight: ["300", "400", "500", "600", "700"], // Only weights actually used
   variable: "--font-serif",
   display: "swap",
+  preload: false, // Less critical, can load later
 });
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -100,7 +103,7 @@ export default async function RootLayout({
           </ContentLayoutWrapper>
         </section>
         {isDraftMode && <VisualEditing />}
-        <SpeedInsights />
+        {(process.env.NEXT_PUBLIC_VERCEL_ENV || process.env.VERCEL) && <SpeedInsights />}
       </body>
     </html>
   );

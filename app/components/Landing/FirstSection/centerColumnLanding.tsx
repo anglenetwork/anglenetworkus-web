@@ -1,6 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
-import { urlForImage } from "@/sanity/lib/utils";
+import { urlForImage, isWhitelistedDomain } from "@/sanity/lib/utils";
 import { PlayCircle } from "lucide-react";
 import { SectionHeader } from "../../ui/section-header";
 
@@ -43,10 +43,12 @@ export function CenterColumnLanding({
   } => {
     // 1) External URL
     if (post.cover?.source === "external" && post.cover?.externalUrl) {
+      // Allow optimization for whitelisted domains to enable proper caching
+      const canOptimize = isWhitelistedDomain(post.cover.externalUrl);
       return {
         src: post.cover.externalUrl,
         alt: post.cover.alt || post.title,
-        unoptimized: true, // unless domain is whitelisted in next.config
+        unoptimized: !canOptimize, // Only unoptimize if domain is not whitelisted
         imageSource: post.cover.imageSource,
       };
     }
@@ -92,6 +94,8 @@ export function CenterColumnLanding({
                     unoptimized={unoptimized}
                     sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 1200px"
                     className="w-full h-80 md:h-[500px] object-cover rounded-sm"
+                    priority
+                    fetchPriority="high"
                   />
                   {imageSource && (
                     <div className="absolute bottom-2 right-2 bg-black/30 text-white text-xs px-2 py-1 rounded font-secondary">

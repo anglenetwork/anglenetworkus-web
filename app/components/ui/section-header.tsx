@@ -14,9 +14,9 @@ export function SectionHeader({
   if (variant === "gradient") {
     const content = (
       <div className="flex flex-col items-start gap-1.5 w-full mb-6">
-        <span className="text-sm font-sans font-medium uppercase tracking-wide text-foreground">
+        <h2 className="text-sm font-sans font-medium uppercase tracking-wide text-foreground">
           {title}
-        </span>
+        </h2>
         <div className="h-0.5 w-full bg-gradient-to-r from-blue-600 to-transparent" />
       </div>
     );

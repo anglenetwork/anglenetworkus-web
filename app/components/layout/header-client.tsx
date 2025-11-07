@@ -91,6 +91,7 @@ export function HeaderClient({
               variant="ghost"
               size="sm"
               onClick={() => setIsMenuOpen((v) => !v)}
+              aria-label={isMenuOpen ? "Close menu" : "Open menu"}
               className={`rounded-full bg-transparent p-0 relative flex items-center justify-center transition-all duration-500 ease-out h-10 w-10`}
             >
               <div className="relative flex items-center justify-center w-5 h-5">
@@ -123,6 +124,7 @@ export function HeaderClient({
               variant="ghost"
               size="sm"
               onClick={() => setIsMenuOpen((v) => !v)}
+              aria-label="Open search menu"
               className="rounded-full bg-transparent p-0 flex items-center justify-center hover:bg-gray-100 h-10 w-10"
             >
               <Search className="text-black h-5 w-5" />
@@ -138,6 +140,7 @@ export function HeaderClient({
                 variant="ghost"
                 size="sm"
                 onClick={() => setIsMenuOpen((v) => !v)}
+                aria-label={isMenuOpen ? "Close menu" : "Open menu"}
                 className={`rounded-full bg-transparent p-0 relative flex items-center justify-center transition-all duration-500 ease-out ${
                   isScrolled ? "lg:h-8 lg:w-8" : "lg:h-10 lg:w-10"
                 } h-10 w-10`} // mobile fallback (not used here but keeps consistency)
@@ -228,6 +231,7 @@ export function HeaderClient({
                 variant="ghost"
                 size="sm"
                 onClick={() => setIsMenuOpen((v) => !v)}
+                aria-label="Open search menu"
                 className={`rounded-full bg-transparent p-0 flex items-center justify-center hover:bg-gray-100 transition-all duration-500 ease-out ${
                   isScrolled ? "lg:h-8 lg:w-8" : "lg:h-10 lg:w-10"
                 } h-10 w-10`}

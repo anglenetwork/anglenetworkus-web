@@ -137,6 +137,7 @@ export default function MainSecondSection({
           <Button
             variant="outline"
             size="icon"
+            aria-label="Scroll left"
             className="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-white shadow-lg hover:bg-gray-50"
             onClick={scrollLeft}
           >
@@ -147,6 +148,7 @@ export default function MainSecondSection({
           <Button
             variant="outline"
             size="icon"
+            aria-label="Scroll right"
             className="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-white shadow-lg hover:bg-gray-50"
             onClick={scrollRight}
           >

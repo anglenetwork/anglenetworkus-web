@@ -70,7 +70,11 @@ export default function MainFourthSection({
                 <div className="mb-6"></div>
 
                 {/* Featured Image */}
-                <Link href={`/post/${mainPost.slug}`} className="block mt-4">
+                <Link 
+                  href={`/post/${mainPost.slug}`} 
+                  className="block mt-4"
+                  aria-label={`Read article: ${mainPost?.title || "Featured article"}`}
+                >
                   {(() => {
                     const coverData = getCoverImage(
                       mainPost?.cover,
