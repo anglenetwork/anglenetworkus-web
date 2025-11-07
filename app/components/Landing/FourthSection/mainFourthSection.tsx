@@ -107,9 +107,9 @@ export default function MainFourthSection({
                 {mainPost && mainPost.slug && (
                   <div className="space-y-2">
                     <Link href={`/post/${mainPost.slug}`}>
-                      <h1 className="text-neutral-900 leading-normal mb-2 font-sans text-lg font-medium tracking-wide">
+                      <h3 className="text-neutral-900 leading-normal mb-2 font-sans text-lg font-medium tracking-wide">
                         {mainPost.title}
-                      </h1>
+                      </h3>
                     </Link>
                   </div>
                 )}

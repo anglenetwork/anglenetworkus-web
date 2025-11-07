@@ -59,9 +59,9 @@ export function CenterColumnFifth({
                   </div>
                 </Link>
                 <Link href={`/post/${article.slug}`}>
-                  <h1 className="text-3xl md:text-3xl lg:text-3xl font-medium text-gray-900 leading-tight mb-4 font-sans text-start">
+                  <h3 className="text-3xl md:text-3xl lg:text-3xl font-medium text-gray-900 leading-tight mb-4 font-sans text-start">
                     {article.title}
-                  </h1>
+                  </h3>
                 </Link>
               </div>
             ) : null}
