@@ -45,7 +45,8 @@ export function RightColumnLanding({
                     width={600}
                     height={400}
                     unoptimized={coverData.unoptimized}
-                    sizes="(max-width: 768px) 100vw, 400px"
+                    quality={60}
+                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 100vw, 384px"
                     className="w-full h-48 object-cover rounded-sm"
                   />
                   {post.cover?.imageSource && (
@@ -89,7 +90,8 @@ export function RightColumnLanding({
                     width={600}
                     height={400}
                     unoptimized={coverData.unoptimized}
-                    sizes="(max-width: 768px) 100vw, 400px"
+                    quality={60}
+                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 100vw, 384px"
                     className="w-full h-48 object-cover rounded-sm"
                   />
                   {mostRead[0]?.cover?.imageSource && (

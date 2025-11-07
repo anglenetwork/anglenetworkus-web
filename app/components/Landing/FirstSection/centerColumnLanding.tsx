@@ -57,7 +57,7 @@ export function CenterColumnLanding({
       const b = urlForImage(post.cover.image);
       if (b) {
         return {
-          src: b.quality(85).url(),
+          src: b.quality(60).url(),
           alt: post.cover.alt || post.cover.image?.alt || post.title,
           unoptimized: false,
           imageSource: post.cover.imageSource,
@@ -86,7 +86,7 @@ export function CenterColumnLanding({
             return (
               <Link href={`/post/${post.slug}`}>
                 <div className="mb-8 relative">
-                  <Image
+                  {/* <Image
                     src={src}
                     alt={alt}
                     width={1200}
@@ -96,7 +96,20 @@ export function CenterColumnLanding({
                     className="w-full h-80 md:h-[500px] object-cover rounded-sm"
                     priority
                     fetchPriority="high"
+                  /> */}
+                  <Image
+                    src={src}
+                    alt={alt}
+                    width={1200}
+                    height={675}
+                    unoptimized={unoptimized}
+                    quality={60}
+                    priority
+                    fetchPriority="high"
+                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 90vw, (max-width: 1280px) 70vw, 800px"
+                    className="w-full h-80 md:h-[500px] object-cover rounded-sm"
                   />
+
                   {imageSource && (
                     <div className="absolute bottom-2 right-2 bg-black/30 text-white text-xs px-2 py-1 rounded font-secondary">
                       {imageSource}
@@ -153,7 +166,8 @@ export function CenterColumnLanding({
                         width={600}
                         height={400}
                         unoptimized={unoptimized}
-                        sizes="(max-width: 768px) 96px, (max-width: 1200px) 50vw, 600px"
+                        quality={60}
+                        sizes="(max-width: 640px) 96px, (max-width: 768px) 96px, (max-width: 1024px) 50vw, 384px"
                         className="w-24 h-20 md:w-full md:h-48 object-cover rounded-sm"
                       />
                       {imageSource && (
@@ -195,7 +209,8 @@ export function CenterColumnLanding({
                         width={400}
                         height={300}
                         unoptimized={unoptimized}
-                        sizes="(max-width: 768px) 96px, (max-width: 1200px) 33vw, 400px"
+                        quality={60}
+                        sizes="(max-width: 640px) 96px, (max-width: 768px) 96px, (max-width: 1024px) 33vw, 256px"
                         className="w-24 h-20 md:w-full md:h-32 object-cover rounded-sm"
                       />
                       {imageSource && (

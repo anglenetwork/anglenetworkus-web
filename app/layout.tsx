@@ -19,12 +19,14 @@ import { settingsQuery } from "@/sanity/lib/queries";
 import { resolveOpenGraphImage } from "@/sanity/lib/utils";
 
 // Configure Google Fonts - optimized to only load weights actually used
+// Using subset optimization and font-display swap to prevent render blocking
 const interTight = Inter({
   subsets: ["latin"],
   weight: ["300", "400", "500", "600", "700"], // Only weights actually used
   variable: "--font-secondary",
   display: "swap",
   preload: true,
+  adjustFontFallback: true,
 });
 
 const outfit = Outfit({
@@ -33,6 +35,7 @@ const outfit = Outfit({
   variable: "--font-sans",
   display: "swap",
   preload: true,
+  adjustFontFallback: true,
 });
 
 const spectral = Spectral({
@@ -41,6 +44,7 @@ const spectral = Spectral({
   variable: "--font-serif",
   display: "swap",
   preload: false, // Less critical, can load later
+  adjustFontFallback: true,
 });
 
 export async function generateMetadata(): Promise<Metadata> {

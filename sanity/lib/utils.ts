@@ -102,7 +102,7 @@ export function getCoverImage(
     const imageUrl = urlForImage(cover.image);
     if (imageUrl) {
       return {
-        src: imageUrl.quality(85).url(),
+        src: imageUrl.quality(60).url(),
         alt: cover.alt || (cover.image as any)?.alt || fallbackAlt,
         unoptimized: false,
       };
