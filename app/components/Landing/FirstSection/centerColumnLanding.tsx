@@ -55,7 +55,7 @@ export function CenterColumnLanding({
       const b = urlForImage(post.cover.image);
       if (b) {
         return {
-          src: b.url(),
+          src: b.quality(85).url(),
           alt: post.cover.alt || post.cover.image?.alt || post.title,
           unoptimized: false,
           imageSource: post.cover.imageSource,
@@ -87,9 +87,10 @@ export function CenterColumnLanding({
                   <Image
                     src={src}
                     alt={alt}
-                    width={800}
-                    height={400}
+                    width={1200}
+                    height={675}
                     unoptimized={unoptimized}
+                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 1200px"
                     className="w-full h-80 md:h-[500px] object-cover rounded-sm"
                   />
                   {imageSource && (
@@ -145,9 +146,10 @@ export function CenterColumnLanding({
                       <Image
                         src={src}
                         alt={alt}
-                        width={400}
-                        height={192}
+                        width={600}
+                        height={400}
                         unoptimized={unoptimized}
+                        sizes="(max-width: 768px) 96px, (max-width: 1200px) 50vw, 600px"
                         className="w-24 h-20 md:w-full md:h-48 object-cover rounded-sm"
                       />
                       {imageSource && (
@@ -186,9 +188,10 @@ export function CenterColumnLanding({
                       <Image
                         src={src}
                         alt={alt}
-                        width={300}
-                        height={128}
+                        width={400}
+                        height={300}
                         unoptimized={unoptimized}
+                        sizes="(max-width: 768px) 96px, (max-width: 1200px) 33vw, 400px"
                         className="w-24 h-20 md:w-full md:h-32 object-cover rounded-sm"
                       />
                       {imageSource && (

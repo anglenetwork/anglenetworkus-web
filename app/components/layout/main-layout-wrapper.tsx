@@ -38,20 +38,29 @@ export async function ContentLayoutWrapper({
     }),
   ]);
 
-  const categories: Category[] = categoriesData.filter(
-    (cat): cat is { slug: string; name: string } =>
-      cat.slug !== null && cat.name !== null
-  );
+  const categories: Category[] = categoriesData
+    .filter((cat) => cat.slug !== null && cat.name !== null)
+    .map((cat) => ({
+      slug: cat.slug!,
+      name: cat.name!,
+      views: cat.views ?? undefined,
+    }));
 
-  const tags: Tag[] = tagsData.filter(
-    (tag): tag is { slug: string; title: string } =>
-      tag.slug !== null && tag.title !== null
-  );
+  const tags: Tag[] = tagsData
+    .filter((tag) => tag.slug !== null && tag.title !== null)
+    .map((tag) => ({
+      slug: tag.slug!,
+      title: tag.title!,
+      views: tag.views ?? undefined,
+    }));
 
-  const showsTags: Tag[] = showsTagsData.filter(
-    (tag): tag is { slug: string; title: string } =>
-      tag.slug !== null && tag.title !== null
-  );
+  const showsTags: Tag[] = showsTagsData
+    .filter((tag) => tag.slug !== null && tag.title !== null)
+    .map((tag) => ({
+      slug: tag.slug!,
+      title: tag.title!,
+      views: tag.views ?? undefined,
+    }));
 
   return (
     <MainLayoutWrapper

@@ -20,6 +20,21 @@ const nextConfig: NextConfig = {
         hostname: 'upload.wikimedia.org',
       },
     ],
+    minimumCacheTTL: 31536000, // 1 year in seconds
+  },
+  async headers() {
+    return [
+      {
+        // Apply cache headers to Next.js image optimization route
+        source: '/_next/image',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=31536000, immutable',
+          },
+        ],
+      },
+    ];
   },
 };
 

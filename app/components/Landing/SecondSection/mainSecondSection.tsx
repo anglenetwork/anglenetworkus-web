@@ -100,6 +100,7 @@ export default function MainSecondSection({
             author: "Sample Author",
             image: undefined,
             imageAlt: "Sample image",
+            imageSource: undefined,
             isDecorative: true,
             slug: "#",
             views7d: 0,

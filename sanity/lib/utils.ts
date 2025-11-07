@@ -72,7 +72,7 @@ export function getCoverImage(
   // 1) External URL takes priority if source is external OR if externalUrl exists (fallback for missing source)
   if (hasExternalUrl && (cover.source === "external" || !cover.source)) {
     return {
-      src: cover.externalUrl,
+      src: cover.externalUrl!,
       alt: cover.alt || fallbackAlt,
       unoptimized: true, // External URLs need to be unoptimized unless whitelisted in next.config
     };
@@ -83,7 +83,7 @@ export function getCoverImage(
     const imageUrl = urlForImage(cover.image);
     if (imageUrl) {
       return {
-        src: imageUrl.url(),
+        src: imageUrl.quality(85).url(),
         alt: cover.alt || (cover.image as any)?.alt || fallbackAlt,
         unoptimized: false,
       };

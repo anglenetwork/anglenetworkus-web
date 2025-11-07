@@ -50,9 +50,9 @@ export const revalidate = 60;
 // Generate static params for SSG
 export async function generateStaticParams() {
   const slugs = await client.fetch(postSlugsQuery);
-  return slugs
-    .filter((item: { slug?: string | null }) => item?.slug != null)
-    .map((item: { slug: string }) => ({ slug: item.slug }));
+  return (slugs as (string | null)[])
+    .filter((slug): slug is string => slug != null)
+    .map((slug) => ({ slug }));
 }
 
 // Generate metadata for SEO

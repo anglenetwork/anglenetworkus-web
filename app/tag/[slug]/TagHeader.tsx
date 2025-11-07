@@ -42,7 +42,7 @@ export default function TagHeader({ tag }: TagHeaderProps) {
       <div className="mt-4 flex items-center gap-2 text-sm text-gray-500">
         <span>Tag</span>
         <span>•</span>
-        <span>All posts tagged with "{tag.title}"</span>
+        <span>All posts tagged with &ldquo;{tag.title}&rdquo;</span>
       </div>
     </div>
   );

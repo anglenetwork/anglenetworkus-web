@@ -62,6 +62,7 @@ export function HeaderClient({
   // Close menu on route change
   useEffect(() => {
     if (isMenuOpen) setIsMenuOpen(false);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pathname]);
 
   useEffect(() => {

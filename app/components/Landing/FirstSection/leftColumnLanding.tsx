@@ -48,6 +48,7 @@ export function LeftColumnLanding({ latestNews }: LeftColumnLandingProps) {
                       alt={coverData.alt}
                       fill
                       unoptimized={coverData.unoptimized}
+                      sizes="(max-width: 768px) 100vw, 300px"
                       className="object-cover rounded-sm"
                       priority
                     />
