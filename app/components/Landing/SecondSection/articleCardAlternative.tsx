@@ -55,15 +55,7 @@ export default function ArticleCardAlternative({
             <SectionHeader title={category} variant="gradient" />
           </div>
 
-          <h3
-            className="leading-normal mb-2 font-sans text-lg line-clamp-2 font-medium tracking-wide"
-            style={{
-              display: "-webkit-box",
-              WebkitLineClamp: 2,
-              WebkitBoxOrient: "vertical",
-              overflow: "hidden",
-            }}
-          >
+          <h3 className="leading-normal mb-2 font-sans text-lg line-clamp-2 font-medium tracking-wide">
             {title}
           </h3>
 

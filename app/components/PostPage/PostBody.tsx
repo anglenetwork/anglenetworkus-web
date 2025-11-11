@@ -46,10 +46,12 @@ const portableTextComponents = {
       return (
         <figure className="my-8 text-left">
           <Image
-            src={builder.width(1200).height(800).fit("max").quality(85).url()}
+            src={builder.width(1200).height(800).fit("max").quality(75).url()}
             alt={value.alt || ""}
             width={1200}
             height={800}
+            // Body images are content width; tell Next so it doesn't fetch overly large sizes
+            sizes="(max-width: 768px) 100vw, (max-width: 1280px) 66vw, 800px"
             className="w-full h-auto rounded-lg shadow-lg"
           />
           {(value.alt || value.epigraph || value.imageSource) && (
@@ -124,7 +126,7 @@ const portableTextComponents = {
       </h4>
     ),
     normal: ({ children }: any) => (
-      <p className="font-body text-[17px] leading-8 sm:text-[18px] text-neutral-900 mb-4 text-left">
+      <p className="font-body text-xl !leading-relaxed sm:text-xl text-neutral-900 mb-4 text-left">
         {children}
       </p>
     ),
@@ -193,7 +195,7 @@ function buildBodyImage(bodyImage: BodyImage | null | undefined): {
     const builder = urlForImage(bodyImage.image);
     if (builder) {
       return {
-        src: builder.width(1200).height(600).fit("max").quality(85).url(),
+        src: builder.width(1200).height(675).fit("max").quality(75).url(),
         alt: bodyImage.alt || bodyImage.image?.alt || "Body image",
         unoptimized: false,
         epigraph: bodyImage.epigraph,
@@ -219,6 +221,8 @@ function renderBodyImage(
           alt={imageData.alt}
           fill
           unoptimized={imageData.unoptimized}
+          // Same logical width assumptions as the cover/body images
+          sizes="(max-width: 768px) 100vw, (max-width: 1280px) 66vw, 800px"
           className="object-cover rounded-lg"
         />
       </div>
@@ -265,7 +269,7 @@ export default function PostBody({
   slug,
 }: PostBodyProps) {
   return (
-    <div className="antialiased text-left">
+    <div className="antialiased text-left mb-8">
       {/* Byline / Meta / Share — secondary font */}
       <div className="flex items-center justify-between mb-6 font-secondary">
         <div className="flex flex-col">
@@ -314,7 +318,10 @@ export default function PostBody({
                 alt={coverData.alt}
                 className="w-full h-full object-cover object-center"
                 priority
+                fetchPriority="high"
                 fill
+                quality={75}
+                sizes="(max-width: 768px) 100vw, (max-width: 1280px) 66vw, 800px"
                 unoptimized={coverData.unoptimized}
               />
             </div>
@@ -335,7 +342,6 @@ export default function PostBody({
         );
       })()}
 
-      {/* Optional gallery block */}
       {/* Main text */}
       <div className="space-y-8 text-left">
         {renderBodyText(bodyTextOne, "main-text")}

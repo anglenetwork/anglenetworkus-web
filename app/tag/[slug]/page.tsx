@@ -1,7 +1,5 @@
 import { notFound, redirect } from "next/navigation";
 import type { Metadata } from "next";
-import Image from "next/image";
-import Link from "next/link";
 import { sanityFetch } from "@/sanity/lib/fetch";
 import { client } from "@/sanity/lib/client";
 import {
@@ -12,8 +10,14 @@ import {
   popularReadsFallbackQuery,
 } from "@/sanity/lib/queries";
 import { getCoverImage } from "@/sanity/lib/utils";
+import { SectionHeader } from "@/app/components/ui/section-header";
 import ShowMoreSection from "./ShowMoreSection";
 import TagViewTracker from "./TagViewTracker";
+import { TagHeader } from "./components/TagHeader";
+import { TagFeaturedArticle } from "./components/TagFeaturedArticle";
+import { TagArticleItem } from "./components/TagArticleItem";
+import { TagNewsItem } from "./components/TagNewsItem";
+import { TagTextNewsItem } from "./components/TagTextNewsItem";
 
 // Revalidate this page every 60s
 export const revalidate = 60;
@@ -131,55 +135,32 @@ export default async function TagPage({
       <div className="mx-auto flex max-w-7xl flex-col gap-8 lg:flex-row">
         {/* Left Column - 60% */}
         <div className="w-full lg:w-[60%]">
-          <h2 className="mb-6 text-3xl font-bold uppercase tracking-wide font-sans">
-            {tag.title}
-          </h2>
+          <TagHeader title={tag.title || "Tag"} />
 
           {/* Featured Article */}
-          {posts.length > 0 && (
-            <article className="mb-8">
-              <Link
-                href={`/post/${posts[0].slug || "#"}`}
-                className="block group"
-              >
-                <div className="relative aspect-video w-full overflow-hidden rounded-xl">
-                  {(() => {
-                    const coverData = getCoverImage(
-                      posts[0].cover as {
-                        source?: "asset" | "external";
-                        externalUrl?: string | null;
-                        image?: any;
-                        alt?: string | null;
-                      } | null,
-                      posts[0].title || "Featured article"
-                    );
-                    if (coverData?.src) {
-                      return (
-                        <Image
-                          src={coverData.src}
-                          alt={coverData.alt}
-                          fill
-                          unoptimized={coverData.unoptimized}
-                          className="object-cover"
-                          priority
-                        />
-                      );
-                    }
-                    return (
-                      <div className="w-full h-full bg-gray-200 flex items-center justify-center">
-                        <span className="text-gray-400">No Image</span>
-                      </div>
-                    );
-                  })()}
-                </div>
-                <div className="mt-4">
-                  <h1 className="mt-2 text-xl font-semibold leading-tight md:text-3xl font-sans">
-                    {posts[0].title}
-                  </h1>
-                </div>
-              </Link>
-            </article>
-          )}
+          {posts.length > 0 &&
+            (() => {
+              const coverData = getCoverImage(
+                posts[0].cover as {
+                  source?: "asset" | "external";
+                  externalUrl?: string | null;
+                  image?: any;
+                  alt?: string | null;
+                } | null,
+                posts[0].title || "Featured article"
+              );
+              return (
+                <TagFeaturedArticle
+                  image={coverData?.src || ""}
+                  imageAlt={
+                    coverData?.alt || posts[0].title || "Featured article"
+                  }
+                  imageUnoptimized={coverData?.unoptimized}
+                  title={posts[0].title || "Untitled"}
+                  slug={posts[0].slug || "#"}
+                />
+              );
+            })()}
 
           <div className="space-y-2 divide-y divide-border border-t pt-4">
             {posts.slice(1, 4).map((post) => {
@@ -193,7 +174,7 @@ export default async function TagPage({
                 post.title || "Untitled"
               );
               return (
-                <ArticleItem
+                <TagArticleItem
                   key={post._id}
                   image={coverData?.src || "/placeholder.svg"}
                   imageUnoptimized={coverData?.unoptimized}
@@ -220,11 +201,11 @@ export default async function TagPage({
               );
               return (
                 <div key={post._id}>
-                  <NewsItem
+                  <TagNewsItem
                     image={coverData?.src || "/placeholder.svg"}
                     imageUnoptimized={coverData?.unoptimized}
                     title={post.title || "Untitled"}
-                    readTime={`${post.readTime || 5} MIN READ`}
+                    readTime={`${post.readTime || 3} MIN READ`}
                     slug={post.slug || "#"}
                   />
                   {index < 3 && (
@@ -235,149 +216,22 @@ export default async function TagPage({
             })}
           </div>
 
-          <div className="mt-4 space-y-0 divide-y divide-border border-t">
-            {posts.slice(4, 8).map((post) => (
-              <TextNewsItem
-                key={post._id}
-                title={post.title || "Untitled"}
-                slug={post.slug || "#"}
-              />
-            ))}
+          <div className="mt-4">
+            <SectionHeader title="More News" variant="gradient" />
+            <div className="space-y-0 divide-y divide-border border-b">
+              {posts.slice(4, 8).map((post) => (
+                <TagTextNewsItem
+                  key={post._id}
+                  title={post.title || "Untitled"}
+                  slug={post.slug || "#"}
+                />
+              ))}
+            </div>
           </div>
         </aside>
       </div>
 
       <ShowMoreSection posts={posts as any} tagSlug={slug} />
     </main>
-  );
-}
-
-function ArticleItem({
-  image,
-  imageUnoptimized,
-  title,
-  slug,
-}: {
-  image: string;
-  imageUnoptimized?: boolean;
-  title: string;
-  slug: string;
-}) {
-  return (
-    <article className="flex gap-6 py-4 first:pt-0">
-      <div className="relative h-28 w-40 flex-shrink-0 overflow-hidden rounded-lg">
-        <Link href={`/post/${slug}`} className="block h-full">
-          <Image
-            src={image || "/placeholder.svg"}
-            alt=""
-            fill
-            unoptimized={imageUnoptimized}
-            className="object-cover"
-            sizes="160px"
-          />
-        </Link>
-      </div>
-      <Link href={`/post/${slug}`} className="block flex-1">
-        <h2 className="text-pretty text-base font-normal leading-snug md:text-lg font-sans">
-          {title}
-        </h2>
-      </Link>
-    </article>
-  );
-}
-
-function NewsItem({
-  image,
-  imageUnoptimized,
-  title,
-  readTime,
-  slug,
-}: {
-  image: string;
-  imageUnoptimized?: boolean;
-  title: string;
-  readTime: string;
-  slug: string;
-}) {
-  return (
-    <article className="flex gap-4 py-6">
-      <div className="flex-1">
-        <Link href={`/post/${slug}`} className="block">
-          <h2 className="text-base font-sans font-semibold leading-tight">
-            {title}
-          </h2>
-        </Link>
-        <p className="mt-2 text-xs font-secondary font-semibold capitalize tracking-wide text-muted-foreground">
-          {readTime}
-        </p>
-      </div>
-      <div className="relative h-24 w-32 flex-shrink-0 overflow-hidden rounded-lg">
-        <Link href={`/post/${slug}`} className="block h-full">
-          <Image
-            src={image || "/placeholder.svg"}
-            alt=""
-            fill
-            unoptimized={imageUnoptimized}
-            className="object-cover"
-            sizes="128px"
-          />
-        </Link>
-      </div>
-    </article>
-  );
-}
-
-function TextNewsItem({ title, slug }: { title: string; slug: string }) {
-  return (
-    <article className="py-5">
-      <Link href={`/post/${slug}`} className="block">
-        <h3 className="text-base font-sans font-semibold leading-tight">
-          {title}
-        </h3>
-      </Link>
-    </article>
-  );
-}
-
-function FullWidthArticle({
-  image,
-  title,
-  description,
-  readTime,
-  slug,
-}: {
-  image: string;
-  title: string;
-  description: string;
-  readTime: string;
-  slug: string;
-}) {
-  return (
-    <article className="flex flex-col gap-4 py-8 lg:flex-row lg:gap-8">
-      <div className="relative aspect-video w-full overflow-hidden rounded-lg lg:h-48 lg:w-48 lg:flex-shrink-0">
-        <Link href={`/post/${slug}`} className="block h-full">
-          <Image
-            src={image || "/placeholder.svg"}
-            alt=""
-            fill
-            className="object-cover"
-            sizes="(max-width: 1024px) 100vw, 192px"
-          />
-        </Link>
-      </div>
-      <div className="flex-1">
-        <Link href={`/post/${slug}`} className="block">
-          <h2 className="text-balance text-xl font-bold leading-tight md:text-2xl font-sans">
-            {title}
-          </h2>
-        </Link>
-        <p className="mt-3 text-pretty text-sm leading-relaxed text-muted-foreground md:text-base">
-          {description}
-        </p>
-        <p className="mt-3 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-          {readTime}
-        </p>
-      </div>
-    </article>
   );
 }

@@ -159,10 +159,6 @@ export default function MainSecondSection({
           <div
             ref={scrollContainerRef}
             className="flex gap-6 overflow-x-auto scrollbar-hide px-12"
-            style={{
-              scrollbarWidth: "none",
-              msOverflowStyle: "none",
-            }}
           >
             {displayStories.map((story) => (
               <div key={story.id} className="flex-shrink-0 w-[300px]">

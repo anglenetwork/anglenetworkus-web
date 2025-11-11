@@ -20,12 +20,13 @@ import { resolveOpenGraphImage } from "@/sanity/lib/utils";
 
 // Configure Google Fonts - optimized to only load weights actually used
 // Using subset optimization and font-display swap to prevent render blocking
+// All fonts set to preload: false to reduce render blocking - they'll load with display: swap
 const interTight = Inter({
   subsets: ["latin"],
   weight: ["300", "400", "500", "600", "700"], // Only weights actually used
   variable: "--font-secondary",
   display: "swap",
-  preload: true,
+  preload: false, // Defer to reduce render blocking
   adjustFontFallback: true,
 });
 
@@ -34,7 +35,7 @@ const outfit = Outfit({
   weight: ["300", "400", "500", "600", "700"], // Only weights actually used
   variable: "--font-sans",
   display: "swap",
-  preload: true,
+  preload: false, // Defer to reduce render blocking - main font but loads with swap
   adjustFontFallback: true,
 });
 
@@ -107,7 +108,9 @@ export default async function RootLayout({
           </ContentLayoutWrapper>
         </section>
         {isDraftMode && <VisualEditing />}
-        {(process.env.NEXT_PUBLIC_VERCEL_ENV || process.env.VERCEL) && <SpeedInsights />}
+        {(process.env.NEXT_PUBLIC_VERCEL_ENV || process.env.VERCEL) && (
+          <SpeedInsights />
+        )}
       </body>
     </html>
   );

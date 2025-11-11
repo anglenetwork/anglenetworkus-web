@@ -4,7 +4,6 @@ import { getCoverImage } from "@/sanity/lib/utils";
 import PostHeader from "@/app/components/PostPage/PostHeader";
 import PostBody from "@/app/components/PostPage/PostBody";
 import PostSelectedNews from "@/app/components/PostPage/PostSelectedNews";
-import PostSelectedNewsAlt from "@/app/components/PostPage/PostSelectedNewsAlt";
 import BottomArticleModule from "@/app/components/PostPage/BottomArticleModule";
 import { SuggestedTags } from "@/app/components/SuggestedTags";
 import { sanityFetch } from "@/sanity/lib/fetch";
@@ -209,22 +208,6 @@ export default async function PostPage({
 
       <div className="container mx-auto px-4 lg:px-40 py-4">
         <article className="mt-4 lg:mt-8">
-          {/* <PostHeader
-            category={
-              post.category && post.category.title && post.category.slug
-                ? {
-                    title: post.category.title,
-                    slug: post.category.slug,
-                  }
-                : undefined
-            }
-            title={post.title || "Untitled"}
-            excerpt={post.excerpt || undefined}
-            date={post.date}
-            author={post.author}
-            slug={post.slug || undefined}
-          /> */}
-
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-0 lg:gap-16">
             <div className="col-span-1 lg:col-span-8">
               <PostHeader
@@ -273,10 +256,6 @@ export default async function PostPage({
                 latestNews={validNewsForYou}
                 title="News for You"
               />
-              {/* <PostSelectedNewsAlt
-                latestNews={validLatestNews}
-                title="Trending"
-              /> */}
             </div>
           </div>
         </article>

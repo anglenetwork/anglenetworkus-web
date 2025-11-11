@@ -118,7 +118,7 @@ export function RightColumnLanding({
                   href={`/post/${post.slug}`}
                   className="hover:text-red-600"
                 >
-                  <h3 className="text-neutral-900 leading-snug font-sans text-base font-normal tracking-wide">
+                  <h3 className="text-neutral-900 leading-snug font-sans text-lg sm:text-base font-normal tracking-wide">
                     {post.title}
                   </h3>
                 </Link>

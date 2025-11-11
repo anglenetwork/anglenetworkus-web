@@ -1,7 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
 import { urlForImage, isWhitelistedDomain } from "@/sanity/lib/utils";
-import { PlayCircle } from "lucide-react";
 import { SectionHeader } from "../../ui/section-header";
 
 interface Post {
@@ -57,7 +56,7 @@ export function CenterColumnLanding({
       const b = urlForImage(post.cover.image);
       if (b) {
         return {
-          src: b.quality(60).url(),
+          src: b.url(),
           alt: post.cover.alt || post.cover.image?.alt || post.title,
           unoptimized: false,
           imageSource: post.cover.imageSource,
@@ -86,27 +85,16 @@ export function CenterColumnLanding({
             return (
               <Link href={`/post/${post.slug}`}>
                 <div className="mb-8 relative">
-                  {/* <Image
-                    src={src}
-                    alt={alt}
-                    width={1200}
-                    height={675}
-                    unoptimized={unoptimized}
-                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 1200px"
-                    className="w-full h-80 md:h-[500px] object-cover rounded-sm"
-                    priority
-                    fetchPriority="high"
-                  /> */}
                   <Image
                     src={src}
                     alt={alt}
-                    width={1200}
-                    height={675}
+                    width={1000}
+                    height={563} // 1000 / 16 * 9 ≈ 562.5
                     unoptimized={unoptimized}
-                    quality={60}
+                    quality={75}
                     priority
                     fetchPriority="high"
-                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 90vw, (max-width: 1280px) 70vw, 800px"
+                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 90vw, (max-width: 1280px) 70vw, 1000px"
                     className="w-full h-80 md:h-[500px] object-cover rounded-sm"
                   />
 
@@ -135,7 +123,7 @@ export function CenterColumnLanding({
                   href={`/post/${post.slug}`}
                   className="hover:text-red-600 block"
                 >
-                  <h2 className="text-lg font-normal leading-tight text-balance">
+                  <h2 className="text-lg font-normal leading-tight">
                     {post.title}
                   </h2>
                 </Link>
@@ -184,7 +172,7 @@ export function CenterColumnLanding({
                   href={`/post/${post.slug}`}
                   className="hover:text-red-600"
                 >
-                  <h3 className="text-sm md:text-xl font-sans font-medium text-neutral-900 tracking-wide leading-normal mb-2">
+                  <h3 className="text-base md:text-xl font-sans font-normal sm:font-medium text-neutral-900 tracking-wide leading-normal mb-2">
                     {post.title}
                   </h3>
                 </Link>
@@ -227,7 +215,7 @@ export function CenterColumnLanding({
                   href={`/post/${post.slug}`}
                   className="hover:text-red-600"
                 >
-                  <h3 className="text-sm md:text-base font-sans font-medium text-neutral-900 tracking-wide leading-normal mb-2">
+                  <h3 className="text-base font-sans font-normal text-neutral-900 tracking-wide leading-normal mb-2">
                     {post.title}
                   </h3>
                 </Link>

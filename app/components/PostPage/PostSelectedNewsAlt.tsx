@@ -71,6 +71,8 @@ export default function PostSelectedNewsAlt({
                       alt={coverData.alt}
                       width={80}
                       height={64}
+                      quality={60}
+                      sizes="80px"
                       unoptimized={coverData.unoptimized}
                       className="w-20 h-16 object-cover rounded-md border border-border group-hover:border-primary/30 transition-colors duration-200"
                     />

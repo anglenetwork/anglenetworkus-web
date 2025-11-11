@@ -2,6 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { format, parseISO } from "date-fns";
 import { getCoverImage } from "@/sanity/lib/utils";
+import { SectionHeader } from "@/app/components/ui/section-header";
 
 interface Post {
   _id: string;
@@ -40,15 +41,7 @@ export default function BottomArticleModule({
     <div className="">
       <div className="py-12 px-0">
         {/* Section Header */}
-        <div className="mb-6">
-          <div className="flex items-center mb-4">
-            <div className="w-2 h-2 bg-blue-600 rounded-full mr-2"></div>
-            <h2 className="text-sm uppercase font-medium text-neutral-900 tracking-wide font-sans">
-              Related Articles
-            </h2>
-          </div>
-          <div className="border-t border-black mb-6"></div>
-        </div>
+        <SectionHeader title="Related Articles" variant="gradient" />
 
         <div className="flex flex-col gap-8 lg:flex-row">
           <div className="lg:w-[60%]">
@@ -69,6 +62,8 @@ export default function BottomArticleModule({
                           src={coverData.src}
                           alt={coverData.alt}
                           fill
+                          quality={50}
+                          sizes="(max-width: 1024px) 100vw, 60vw"
                           unoptimized={coverData.unoptimized}
                           className="object-cover transition-opacity group-hover:opacity-90"
                           priority
@@ -96,7 +91,7 @@ export default function BottomArticleModule({
                   href={`/post/${post.slug || "#"}`}
                   className="block py-4 transition-opacity"
                 >
-                  <h3 className="text-base font-medium leading-relaxed text-neutral-900 font-sans">
+                  <h3 className="text-neutral-900 leading-normal mb-2 font-sans text-lg font-normal tracking-wide">
                     {post.title || "Untitled"}
                   </h3>
                 </Link>

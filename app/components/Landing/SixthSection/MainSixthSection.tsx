@@ -272,7 +272,6 @@ export function VideoPlayer() {
         <div
           ref={scrollContainerRef}
           className="flex-1 overflow-y-auto space-y-4 scrollbar-hide max-h-[calc(60vh-140px)] lg:max-h-[calc(100vh-200px)]"
-          style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
         >
           {mockVideos.map((video) => (
             <div

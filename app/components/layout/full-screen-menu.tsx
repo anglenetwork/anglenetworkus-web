@@ -262,18 +262,11 @@ export function FullScreenMenu({
                 </h3>
                 <nav className="flex flex-col gap-3">
                   <Link
-                    href="/company/about"
+                    href="/company/terms-of-service"
                     onClick={onClose}
                     className="text-base hover:text-primary transition-colors font-sans"
                   >
-                    About
-                  </Link>
-                  <Link
-                    href="/company/contact"
-                    onClick={onClose}
-                    className="text-base hover:text-primary transition-colors font-sans"
-                  >
-                    Contact Us
+                    Terms of Use
                   </Link>
                   <Link
                     href="/company/privacy-policy"
@@ -283,11 +276,18 @@ export function FullScreenMenu({
                     Privacy Policy
                   </Link>
                   <Link
-                    href="/company/terms-of-service"
+                    href="/company/advertise-with-us"
                     onClick={onClose}
                     className="text-base hover:text-primary transition-colors font-sans"
                   >
-                    Terms of Service
+                    Advertise with us
+                  </Link>
+                  <Link
+                    href="/company/contact"
+                    onClick={onClose}
+                    className="text-base hover:text-primary transition-colors font-sans"
+                  >
+                    Contact
                   </Link>
                 </nav>
               </div>
@@ -353,34 +353,6 @@ export function FullScreenMenu({
               >
                 Terms of Use
               </Link>
-              <a
-                href="#"
-                onClick={onClose}
-                className="hover:text-foreground transition-colors font-sans"
-              >
-                Do Not Sell My Personal Information
-              </a>
-              <a
-                href="#"
-                onClick={onClose}
-                className="hover:text-foreground transition-colors font-sans"
-              >
-                Children&apos;s Privacy Policy
-              </a>
-              <a
-                href="#"
-                onClick={onClose}
-                className="hover:text-foreground transition-colors font-sans"
-              >
-                Your Privacy Rights
-              </a>
-              <a
-                href="#"
-                onClick={onClose}
-                className="hover:text-foreground transition-colors font-sans"
-              >
-                Interest-Based Ads
-              </a>
             </div>
             <p className="font-sans">© 2025 News. All rights reserved.</p>
           </div>

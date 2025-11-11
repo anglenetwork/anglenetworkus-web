@@ -19,7 +19,7 @@ interface FooterProps {
 
 export function Footer({ categories, tags }: FooterProps) {
   return (
-    <footer className="bg-gray-900 text-white py-12 mt-16 font-sans">
+    <footer className="bg-gray-900 text-white py-12 mt-0 font-sans">
       <div className="max-w-7xl mx-auto px-4">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* Company Info */}
@@ -135,10 +135,10 @@ export function Footer({ categories, tags }: FooterProps) {
             <ul className="space-y-2 text-sm">
               <li>
                 <Link
-                  href="/company/about"
+                  href="/company/terms-of-service"
                   className="text-gray-300 hover:text-white"
                 >
-                  About
+                  Terms of Service
                 </Link>
               </li>
               <li>
@@ -151,10 +151,10 @@ export function Footer({ categories, tags }: FooterProps) {
               </li>
               <li>
                 <Link
-                  href="/company/terms-of-service"
+                  href="/company/advertise-with-us"
                   className="text-gray-300 hover:text-white"
                 >
-                  Terms of Service
+                  Advertise with us
                 </Link>
               </li>
               <li>

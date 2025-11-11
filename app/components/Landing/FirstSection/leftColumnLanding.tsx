@@ -65,7 +65,6 @@ export function LeftColumnLanding({ latestNews }: LeftColumnLandingProps) {
                 (post.breakingNews || post.developingStory) && (
                   <div className="mb-3">
                     <BreakingNewsLabel
-                      variant="default"
                       text={post.breakingNews ? "Breaking" : "Developing story"}
                     />
                   </div>

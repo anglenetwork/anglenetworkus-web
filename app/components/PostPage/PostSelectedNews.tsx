@@ -47,7 +47,7 @@ export default function PostSelectedNews({
 
       {/* Articles List */}
       <div className="space-y-4">
-        {latestNews.slice(0, 4).map((post, index) => {
+        {latestNews.slice(0, 4).map((post) => {
           const coverData = getCoverImage(
             post.cover,
             post.title || "Article image"
@@ -69,9 +69,11 @@ export default function PostSelectedNews({
                         alt={coverData?.alt || post.title || "Article image"}
                         unoptimized={coverData?.unoptimized}
                         className="w-full h-full object-cover transition-opacity duration-200"
-                        quality={95}
-                        priority={index === 0}
-                        fill
+                        width={96}
+                        height={77}
+                        quality={60}
+                        sizes="96px"
+                        loading="lazy"
                       />
                     </div>
                   ) : (
@@ -83,7 +85,7 @@ export default function PostSelectedNews({
 
                 {/* Article Content */}
                 <div className="flex-1 min-w-0">
-                  <h3 className="font-secondary text-sm font-semibold text-neutral-900 leading-tight group-hover:text-primary transition-colors duration-200 line-clamp-2">
+                  <h3 className="font-secondary text-sm font-semibold text-neutral-900 leading-relaxed tracking-normal">
                     {post.title}
                   </h3>
                   {post.date && (
