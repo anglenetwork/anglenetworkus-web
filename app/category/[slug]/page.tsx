@@ -8,12 +8,29 @@ import {
 import { CategoryPage } from "@/app/components/CategoryPage";
 import { getCoverImage } from "@/sanity/lib/utils";
 
+// Keep this in sync with the client Article type shape
+interface Article {
+  id: string;
+  title: string;
+  excerpt: string;
+  author: string;
+  publishedAt: string;
+  readTime: string;
+  category: string;
+  imageUrl?: string;
+  imageUnoptimized?: boolean;
+  imageWidth?: number;
+  imageHeight?: number;
+  imageBlurDataURL?: string;
+  slug: string;
+}
+
 // Generate static params for SSG
 export async function generateStaticParams() {
   const categories = await sanityFetchStatic({ query: categorySlugsQuery });
   return categories
-    .filter((category) => category.slug !== null)
-    .map((category) => ({
+    .filter((category: any) => category.slug !== null)
+    .map((category: any) => ({
       slug: category.slug,
     }));
 }
@@ -26,7 +43,6 @@ export async function generateMetadata({
 }) {
   const { slug } = await params;
 
-  // Fetch category details and posts for better metadata
   const [categoryData, posts, mostViewed] = await Promise.all([
     sanityFetchStatic({
       query: `*[_type == "category" && slug.current == $slug][0]{name, slug}`,
@@ -67,7 +83,6 @@ export default async function CategoryPageRoute({
 }) {
   const { slug } = await params;
 
-  // Fetch category data and posts
   const [categoryData, posts, mostViewed] = await Promise.all([
     sanityFetchStatic({
       query: `*[_type == "category" && slug.current == $slug][0]{name, slug}`,
@@ -83,7 +98,6 @@ export default async function CategoryPageRoute({
     }),
   ]);
 
-  // If category doesn't exist, show 404
   if (!categoryData) {
     notFound();
   }
@@ -95,16 +109,16 @@ export default async function CategoryPageRoute({
       .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
       .join(" ");
 
-  // Transform posts to Article format
-  const transformPostToArticle = (post: any) => {
+  const transformPostToArticle = (post: any): Article => {
     const coverData = getCoverImage(post.cover, post.title || "Article image");
+
     return {
       id: post._id,
       title: post.title || "Untitled",
       excerpt: post.excerpt || "",
       author: post.author?.name || "Anonymous",
       publishedAt: post.date || post._updatedAt,
-      readTime: "5 min read", // You can calculate this based on content length
+      readTime: "5 min read",
       category: post.category?.title || categoryName,
       imageUrl: coverData?.src,
       imageUnoptimized: coverData?.unoptimized,
@@ -112,29 +126,32 @@ export default async function CategoryPageRoute({
     };
   };
 
-  // Organize articles according to the new structure:
-  // Featured articles: posts 0-4 (latest 5 articles)
-  // Latest articles: posts 5+ (from 6th article onwards)
-
   const mostReadArticles = (mostViewed || [])
     .slice(0, 5)
     .map(transformPostToArticle);
-  const latestArticles = posts.slice(5).map(transformPostToArticle); // From 6th article onwards
 
-  // Create featured articles if we have enough posts (at least 5)
-  let featuredArticles = undefined;
+  const latestArticles = posts.slice(5).map(transformPostToArticle);
+
+  let featuredArticles:
+    | {
+        leftColumn: Article[];
+        centerArticle: Article;
+        rightColumn: Article[];
+      }
+    | undefined = undefined;
+
   if (posts.length >= 5) {
     featuredArticles = {
-      leftColumn: posts.slice(1, 3).map(transformPostToArticle), // 2nd and 3rd latest (posts 1 and 2)
-      centerArticle: transformPostToArticle(posts[0]), // Latest article (post 0)
-      rightColumn: posts.slice(3, 5).map(transformPostToArticle), // 4th and 5th latest (posts 3 and 4)
+      leftColumn: posts.slice(1, 3).map(transformPostToArticle),
+      centerArticle: transformPostToArticle(posts[0]),
+      rightColumn: posts.slice(3, 5).map(transformPostToArticle),
     };
   }
 
   return (
     <CategoryPage
       categoryName={categoryName}
-      categoryDescription={`Stay updated with the latest news and insights in the ${categoryName} category.`}
+      // categoryDescription={`Stay updated with the latest news and insights in the ${categoryName} category.`}
       latestArticles={latestArticles}
       mostReadArticles={mostReadArticles}
       featuredArticles={featuredArticles}

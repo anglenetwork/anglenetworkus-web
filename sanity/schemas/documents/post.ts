@@ -270,7 +270,8 @@ export default defineType({
         rule.custom((cover, ctx) => {
           const doc = ctx.document as any;
           const usingExternal = cover?.source === "external" && !!cover?.externalUrl;
-          const usingAsset = cover?.source === "asset" && !!cover?.image?.asset?._ref;
+          const coverImage = cover?.image as any;
+          const usingAsset = cover?.source === "asset" && coverImage?.asset?._ref;
           const isPublishing = doc?.status === "published";
           if (isPublishing && !(usingExternal || usingAsset)) {
             return "Provide a cover image (external URL or uploaded asset) before publishing";
@@ -303,7 +304,7 @@ export default defineType({
       options: {
         modal: {
           type: "dialog",
-          width: "large",
+          width: 800,
         },
       },
       of: [

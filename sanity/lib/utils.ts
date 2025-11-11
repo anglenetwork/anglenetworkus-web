@@ -43,6 +43,23 @@ export function resolveHref(
 }
 
 /**
+ * Check if an external URL is from a whitelisted domain that can be optimized
+ */
+export function isWhitelistedDomain(url: string): boolean {
+  try {
+    const urlObj = new URL(url);
+    const whitelistedDomains = [
+      'images.unsplash.com',
+      'cdn.sanity.io',
+      'upload.wikimedia.org',
+    ];
+    return whitelistedDomains.some(domain => urlObj.hostname === domain);
+  } catch {
+    return false;
+  }
+}
+
+/**
  * Unified image helper for cover structure (supports both external URLs and Sanity assets)
  * @param cover - The cover object with source, externalUrl, image, and alt
  * @param fallbackAlt - Fallback alt text if cover.alt is not available
@@ -71,10 +88,12 @@ export function getCoverImage(
 
   // 1) External URL takes priority if source is external OR if externalUrl exists (fallback for missing source)
   if (hasExternalUrl && (cover.source === "external" || !cover.source)) {
+    // Allow optimization for whitelisted domains to enable proper caching
+    const canOptimize = isWhitelistedDomain(cover.externalUrl!);
     return {
-      src: cover.externalUrl,
+      src: cover.externalUrl!,
       alt: cover.alt || fallbackAlt,
-      unoptimized: true, // External URLs need to be unoptimized unless whitelisted in next.config
+      unoptimized: !canOptimize, // Only unoptimize if domain is not whitelisted
     };
   }
 
@@ -83,7 +102,7 @@ export function getCoverImage(
     const imageUrl = urlForImage(cover.image);
     if (imageUrl) {
       return {
-        src: imageUrl.url(),
+        src: imageUrl.quality(60).url(),
         alt: cover.alt || (cover.image as any)?.alt || fallbackAlt,
         unoptimized: false,
       };

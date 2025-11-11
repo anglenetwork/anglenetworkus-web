@@ -175,6 +175,7 @@ export default function SearchResults() {
       setSearchResults(null);
       setError(null);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [query]);
 
   // Reset pagination and re-search when sort changes

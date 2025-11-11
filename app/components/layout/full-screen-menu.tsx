@@ -34,7 +34,7 @@ export function FullScreenMenu({
   onClose,
   headerOffset,
 }: FullScreenMenuProps) {
-  // ESC + body scroll lock
+  // ESC + body scroll lock + disable focusable elements when closed
   useEffect(() => {
     const handleEscKey = (event: KeyboardEvent) => {
       if (event.key === "Escape") onClose();
@@ -46,6 +46,21 @@ export function FullScreenMenu({
       const sw = window.innerWidth - document.documentElement.clientWidth;
       document.body.style.overflow = "hidden";
       if (sw > 0) document.body.style.paddingRight = `${sw}px`;
+    }
+
+    // Disable/enable focusable elements based on menu state
+    const menuElement = document.querySelector('[role="dialog"][aria-label="Navigation menu"]');
+    if (menuElement) {
+      const focusableElements = menuElement.querySelectorAll(
+        'a, button, input, textarea, select, [tabindex]:not([tabindex="-1"])'
+      );
+      focusableElements.forEach((el) => {
+        if (!isOpen) {
+          (el as HTMLElement).setAttribute('tabindex', '-1');
+        } else {
+          (el as HTMLElement).removeAttribute('tabindex');
+        }
+      });
     }
 
     return () => {
@@ -64,6 +79,9 @@ export function FullScreenMenu({
       }`}
       style={{ height: "100svh" }}
       aria-hidden={!isOpen}
+      role="dialog"
+      aria-modal={isOpen ? "true" : "false"}
+      aria-label="Navigation menu"
       onClick={onClose}
     >
       {/* Only this area can scroll; top padding = current header height */}
@@ -83,11 +101,13 @@ export function FullScreenMenu({
             style={{ transitionDelay: isOpen ? "150ms" : "0ms" }}
           >
             {/* Search */}
-            <SearchBar
-              placeholder="Search news, articles, topics and more"
-              ariaLabel="search bar"
-              onClose={onClose}
-            />
+            <div data-menu-state={isOpen ? "open" : "closed"}>
+              <SearchBar
+                placeholder="Search news, articles, topics and more"
+                ariaLabel="search bar"
+                onClose={onClose}
+              />
+            </div>
 
             {/* Navigation Sections */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 md:gap-12">
@@ -242,18 +262,11 @@ export function FullScreenMenu({
                 </h3>
                 <nav className="flex flex-col gap-3">
                   <Link
-                    href="/company/about"
+                    href="/company/terms-of-service"
                     onClick={onClose}
                     className="text-base hover:text-primary transition-colors font-sans"
                   >
-                    About
-                  </Link>
-                  <Link
-                    href="/company/contact"
-                    onClick={onClose}
-                    className="text-base hover:text-primary transition-colors font-sans"
-                  >
-                    Contact Us
+                    Terms of Use
                   </Link>
                   <Link
                     href="/company/privacy-policy"
@@ -263,11 +276,18 @@ export function FullScreenMenu({
                     Privacy Policy
                   </Link>
                   <Link
-                    href="/company/terms-of-service"
+                    href="/company/advertise-with-us"
                     onClick={onClose}
                     className="text-base hover:text-primary transition-colors font-sans"
                   >
-                    Terms of Service
+                    Advertise with us
+                  </Link>
+                  <Link
+                    href="/company/contact"
+                    onClick={onClose}
+                    className="text-base hover:text-primary transition-colors font-sans"
+                  >
+                    Contact
                   </Link>
                 </nav>
               </div>
@@ -333,34 +353,6 @@ export function FullScreenMenu({
               >
                 Terms of Use
               </Link>
-              <a
-                href="#"
-                onClick={onClose}
-                className="hover:text-foreground transition-colors font-sans"
-              >
-                Do Not Sell My Personal Information
-              </a>
-              <a
-                href="#"
-                onClick={onClose}
-                className="hover:text-foreground transition-colors font-sans"
-              >
-                Children&apos;s Privacy Policy
-              </a>
-              <a
-                href="#"
-                onClick={onClose}
-                className="hover:text-foreground transition-colors font-sans"
-              >
-                Your Privacy Rights
-              </a>
-              <a
-                href="#"
-                onClick={onClose}
-                className="hover:text-foreground transition-colors font-sans"
-              >
-                Interest-Based Ads
-              </a>
             </div>
             <p className="font-sans">© 2025 News. All rights reserved.</p>
           </div>

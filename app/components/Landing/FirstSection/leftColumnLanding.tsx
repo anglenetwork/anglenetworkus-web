@@ -48,6 +48,8 @@ export function LeftColumnLanding({ latestNews }: LeftColumnLandingProps) {
                       alt={coverData.alt}
                       fill
                       unoptimized={coverData.unoptimized}
+                      quality={60}
+                      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 100vw, 300px"
                       className="object-cover rounded-sm"
                       priority
                     />
@@ -63,7 +65,6 @@ export function LeftColumnLanding({ latestNews }: LeftColumnLandingProps) {
                 (post.breakingNews || post.developingStory) && (
                   <div className="mb-3">
                     <BreakingNewsLabel
-                      variant="default"
                       text={post.breakingNews ? "Breaking" : "Developing story"}
                     />
                   </div>

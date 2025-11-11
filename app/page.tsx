@@ -1,11 +1,5 @@
-import {
-  MainFirstSection,
-  MainSecondSection,
-  MainThirdSection,
-  MainFourthSection,
-  MainFifthSection,
-  MainSixthSection,
-} from "./components/Landing/index";
+import { MainFirstSection } from "./components/Landing/index";
+import dynamic from "next/dynamic";
 import { sanityFetchStatic } from "@/sanity/lib/fetch";
 import {
   indexQuery,
@@ -14,6 +8,27 @@ import {
   sixthSectionQuery,
 } from "@/sanity/lib/queries";
 import { getFourthSectionData, getSecondSectionData } from "./lib/homepage";
+
+// Dynamically import below-the-fold sections to reduce initial bundle size
+const MainSecondSection = dynamic(
+  () => import("./components/Landing/SecondSection/mainSecondSection"),
+  { ssr: true }
+);
+
+const MainThirdSection = dynamic(
+  () => import("./components/Landing/ThirdSection/mainThirdSection"),
+  { ssr: true }
+);
+
+const MainFourthSection = dynamic(
+  () => import("./components/Landing/FourthSection/mainFourthSection"),
+  { ssr: true }
+);
+
+const MainFifthSection = dynamic(
+  () => import("./components/Landing/FifthSection/mainFifthSection"),
+  { ssr: true }
+);
 
 export default async function Page() {
   //LANDING PAGE DATA FETCHING

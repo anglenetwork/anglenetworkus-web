@@ -40,9 +40,9 @@ export function RightColumnFourth({ videosData }: RightColumnFourthProps) {
                   <span className="text-red-500 font-bold text-sm mr-2 font-sans">
                     {video.number}
                   </span>
-                  <h4 className="text-sm font-semibold text-gray-900 leading-tight font-sans">
+                  <h3 className="text-sm font-semibold text-gray-900 leading-tight font-sans">
                     {video.title}
-                  </h4>
+                  </h3>
                 </div>
               </div>
             ))}

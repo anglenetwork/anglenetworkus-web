@@ -42,9 +42,11 @@ export function RightColumnLanding({
                   <Image
                     src={coverData.src}
                     alt={coverData.alt}
-                    width={400}
-                    height={192}
+                    width={600}
+                    height={400}
                     unoptimized={coverData.unoptimized}
+                    quality={60}
+                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 100vw, 384px"
                     className="w-full h-48 object-cover rounded-sm"
                   />
                   {post.cover?.imageSource && (
@@ -85,9 +87,11 @@ export function RightColumnLanding({
                   <Image
                     src={coverData.src}
                     alt={coverData.alt}
-                    width={400}
-                    height={256}
+                    width={600}
+                    height={400}
                     unoptimized={coverData.unoptimized}
+                    quality={60}
+                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 100vw, 384px"
                     className="w-full h-48 object-cover rounded-sm"
                   />
                   {mostRead[0]?.cover?.imageSource && (
@@ -114,7 +118,7 @@ export function RightColumnLanding({
                   href={`/post/${post.slug}`}
                   className="hover:text-red-600"
                 >
-                  <h3 className="text-neutral-900 leading-snug font-sans text-base font-normal tracking-wide">
+                  <h3 className="text-neutral-900 leading-snug font-sans text-lg sm:text-base font-normal tracking-wide">
                     {post.title}
                   </h3>
                 </Link>

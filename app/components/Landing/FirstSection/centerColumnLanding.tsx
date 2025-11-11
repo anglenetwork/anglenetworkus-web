@@ -1,7 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
-import { urlForImage } from "@/sanity/lib/utils";
-import { PlayCircle } from "lucide-react";
+import { urlForImage, isWhitelistedDomain } from "@/sanity/lib/utils";
 import { SectionHeader } from "../../ui/section-header";
 
 interface Post {
@@ -43,10 +42,12 @@ export function CenterColumnLanding({
   } => {
     // 1) External URL
     if (post.cover?.source === "external" && post.cover?.externalUrl) {
+      // Allow optimization for whitelisted domains to enable proper caching
+      const canOptimize = isWhitelistedDomain(post.cover.externalUrl);
       return {
         src: post.cover.externalUrl,
         alt: post.cover.alt || post.title,
-        unoptimized: true, // unless domain is whitelisted in next.config
+        unoptimized: !canOptimize, // Only unoptimize if domain is not whitelisted
         imageSource: post.cover.imageSource,
       };
     }
@@ -87,11 +88,16 @@ export function CenterColumnLanding({
                   <Image
                     src={src}
                     alt={alt}
-                    width={800}
-                    height={400}
+                    width={1000}
+                    height={563} // 1000 / 16 * 9 ≈ 562.5
                     unoptimized={unoptimized}
+                    quality={75}
+                    priority
+                    fetchPriority="high"
+                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 90vw, (max-width: 1280px) 70vw, 1000px"
                     className="w-full h-80 md:h-[500px] object-cover rounded-sm"
                   />
+
                   {imageSource && (
                     <div className="absolute bottom-2 right-2 bg-black/30 text-white text-xs px-2 py-1 rounded font-secondary">
                       {imageSource}
@@ -117,7 +123,7 @@ export function CenterColumnLanding({
                   href={`/post/${post.slug}`}
                   className="hover:text-red-600 block"
                 >
-                  <h2 className="text-lg font-normal leading-tight text-balance">
+                  <h2 className="text-lg font-normal leading-tight">
                     {post.title}
                   </h2>
                 </Link>
@@ -145,9 +151,11 @@ export function CenterColumnLanding({
                       <Image
                         src={src}
                         alt={alt}
-                        width={400}
-                        height={192}
+                        width={600}
+                        height={400}
                         unoptimized={unoptimized}
+                        quality={60}
+                        sizes="(max-width: 640px) 96px, (max-width: 768px) 96px, (max-width: 1024px) 50vw, 384px"
                         className="w-24 h-20 md:w-full md:h-48 object-cover rounded-sm"
                       />
                       {imageSource && (
@@ -164,7 +172,7 @@ export function CenterColumnLanding({
                   href={`/post/${post.slug}`}
                   className="hover:text-red-600"
                 >
-                  <h3 className="text-sm md:text-xl font-sans font-medium text-neutral-900 tracking-wide leading-normal mb-2">
+                  <h3 className="text-base md:text-xl font-sans font-normal sm:font-medium text-neutral-900 tracking-wide leading-normal mb-2">
                     {post.title}
                   </h3>
                 </Link>
@@ -186,9 +194,11 @@ export function CenterColumnLanding({
                       <Image
                         src={src}
                         alt={alt}
-                        width={300}
-                        height={128}
+                        width={400}
+                        height={300}
                         unoptimized={unoptimized}
+                        quality={60}
+                        sizes="(max-width: 640px) 96px, (max-width: 768px) 96px, (max-width: 1024px) 33vw, 256px"
                         className="w-24 h-20 md:w-full md:h-32 object-cover rounded-sm"
                       />
                       {imageSource && (
@@ -205,7 +215,7 @@ export function CenterColumnLanding({
                   href={`/post/${post.slug}`}
                   className="hover:text-red-600"
                 >
-                  <h3 className="text-sm md:text-base font-sans font-medium text-neutral-900 tracking-wide leading-normal mb-2">
+                  <h3 className="text-base font-sans font-normal text-neutral-900 tracking-wide leading-normal mb-2">
                     {post.title}
                   </h3>
                 </Link>

@@ -23,7 +23,7 @@ export default function PostHeader({
         <div className="mb-2">
           <Link
             href={`/category/${category.slug}`}
-            className="font-secondary uppercase text-xs font-medium text-neutral-900 tracking-wider"
+            className="text-sm font-sans font-medium uppercase tracking-wider text-foreground text-neutral-700"
           >
             {category.title}
           </Link>

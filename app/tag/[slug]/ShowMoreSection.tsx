@@ -4,6 +4,7 @@ import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { SectionHeader } from "@/app/components/ui/section-header";
 import { ChevronDown } from "lucide-react";
 import { getCoverImage } from "@/sanity/lib/utils";
 
@@ -56,12 +57,13 @@ export default function ShowMoreSection({
 
   return (
     <div className="mx-auto mt-16 max-w-7xl">
-      <h2 className="mb-6 text-2xl font-bold font-secondary">
-        In case you missed it...
-      </h2>
-      <div className="space-y-0 divide-y divide-dotted divide-border border-t border-dotted">
+      <SectionHeader title="In case you missed it..." variant="gradient" />
+      <div className="space-y-0 divide-y divide-dotted divide-border border-b border-dotted">
         {visiblePosts.map((post) => {
-          const coverData = getCoverImage(post.cover, post.title || "Article image");
+          const coverData = getCoverImage(
+            post.cover,
+            post.title || "Article image"
+          );
           return (
             <FullWidthArticle
               key={post._id}
@@ -69,7 +71,7 @@ export default function ShowMoreSection({
               imageUnoptimized={coverData?.unoptimized}
               title={post.title || "Untitled"}
               description={post.excerpt || ""}
-              readTime={`${post.readTime || 5} MIN READ`}
+              readTime={`${post.readTime || 3} MIN READ`}
               slug={post.slug || "#"}
             />
           );
@@ -117,7 +119,11 @@ function FullWidthArticle({
   return (
     <article className="flex flex-col gap-4 py-8 lg:flex-row lg:gap-8">
       <div className="relative aspect-video w-full overflow-hidden rounded-lg lg:h-32 lg:w-32 lg:flex-shrink-0">
-        <Link href={`/post/${slug}`} className="block h-full">
+        <Link
+          href={`/post/${slug}`}
+          className="block h-full"
+          aria-label={`Read article: ${title}`}
+        >
           <Image
             src={image || "/placeholder.svg"}
             alt=""

@@ -70,7 +70,11 @@ export default function MainFourthSection({
                 <div className="mb-6"></div>
 
                 {/* Featured Image */}
-                <Link href={`/post/${mainPost.slug}`} className="block mt-4">
+                <Link 
+                  href={`/post/${mainPost.slug}`} 
+                  className="block mt-4"
+                  aria-label={`Read article: ${mainPost?.title || "Featured article"}`}
+                >
                   {(() => {
                     const coverData = getCoverImage(
                       mainPost?.cover,
@@ -85,6 +89,7 @@ export default function MainFourthSection({
                             width={800}
                             height={300}
                             unoptimized={coverData.unoptimized}
+                            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 25vw, 800px"
                             className="h-[300px] w-full object-cover rounded-sm"
                           />
                           {mainPost?.cover?.imageSource && (
@@ -103,9 +108,9 @@ export default function MainFourthSection({
                 {mainPost && mainPost.slug && (
                   <div className="space-y-2">
                     <Link href={`/post/${mainPost.slug}`}>
-                      <h1 className="text-neutral-900 leading-normal mb-2 font-sans text-lg font-medium tracking-wide">
+                      <h3 className="text-neutral-900 leading-normal mb-2 font-sans text-lg font-medium tracking-wide">
                         {mainPost.title}
-                      </h1>
+                      </h3>
                     </Link>
                   </div>
                 )}

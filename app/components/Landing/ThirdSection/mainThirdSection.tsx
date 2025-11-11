@@ -56,6 +56,7 @@ export default function MainThirdSection({
                       )}
                       alt={mainArticle.title || "Featured article"}
                       fill
+                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 58vw, 700px"
                       unoptimized={
                         getCoverImage(
                           mainArticle.cover as {
@@ -95,6 +96,7 @@ export default function MainThirdSection({
                         )}
                         alt={secondaryArticles[0].title || "Article image"}
                         fill
+                        sizes="(max-width: 640px) 100vw, (max-width: 1200px) 50vw, 350px"
                         unoptimized={
                           getCoverImage(
                             secondaryArticles[0].cover as {
@@ -115,9 +117,9 @@ export default function MainThirdSection({
                       )}
                     </div>
                     <div className="mt-2">
-                      <h4 className="text-neutral-900 leading-normal mb-2 font-sans text-lg font-medium tracking-wide">
+                      <h3 className="text-neutral-900 leading-normal mb-2 font-sans text-lg font-medium tracking-wide">
                         {secondaryArticles[0].title || "Untitled"}
-                      </h4>
+                      </h3>
                     </div>
                   </Link>
                 )}
@@ -135,6 +137,7 @@ export default function MainThirdSection({
                         )}
                         alt={secondaryArticles[1].title || "Article image"}
                         fill
+                        sizes="(max-width: 640px) 100vw, (max-width: 1200px) 50vw, 350px"
                         unoptimized={
                           getCoverImage(
                             secondaryArticles[1].cover as {
@@ -155,9 +158,9 @@ export default function MainThirdSection({
                       )}
                     </div>
                     <div className="mt-2">
-                      <h4 className="text-neutral-900 leading-normal mb-2 font-sans text-lg font-medium tracking-wide">
+                      <h3 className="text-neutral-900 leading-normal mb-2 font-sans text-lg font-medium tracking-wide">
                         {secondaryArticles[1].title || "Untitled"}
-                      </h4>
+                      </h3>
                     </div>
                   </Link>
                 )}
@@ -185,6 +188,7 @@ export default function MainThirdSection({
                           )}
                           alt={rightColumnArticles[0].title || "Article image"}
                           fill
+                          sizes="(max-width: 640px) 100vw, (max-width: 1200px) 42vw, 250px"
                           unoptimized={
                             getCoverImage(
                               rightColumnArticles[0].cover as {
@@ -205,9 +209,9 @@ export default function MainThirdSection({
                         )}
                       </div>
                       <div className="mt-2">
-                        <h4 className="text-neutral-900 leading-normal mb-2 font-sans text-lg font-medium tracking-wide">
+                        <h3 className="text-neutral-900 leading-normal mb-2 font-sans text-lg font-medium tracking-wide">
                           {rightColumnArticles[0].title || "Untitled"}
-                        </h4>
+                        </h3>
                       </div>
                     </Link>
                     {/* Separator after featured article */}
@@ -259,6 +263,7 @@ export default function MainThirdSection({
                             ].title || "Article image"
                           }
                           fill
+                          sizes="(max-width: 640px) 100vw, (max-width: 1200px) 42vw, 250px"
                           unoptimized={
                             getCoverImage(
                               rightColumnArticles[
@@ -289,11 +294,11 @@ export default function MainThirdSection({
                         )}
                       </div>
                       <div className="mt-2">
-                        <h4 className="text-neutral-900 leading-normal mb-2 font-sans text-lg font-medium tracking-wide">
+                        <h3 className="text-neutral-900 leading-normal mb-2 font-sans text-lg font-medium tracking-wide">
                           {rightColumnArticles[
                             Math.ceil(rightColumnArticles.length / 2)
                           ].title || "Untitled"}
-                        </h4>
+                        </h3>
                       </div>
                     </Link>
                     {/* Separator after featured article */}

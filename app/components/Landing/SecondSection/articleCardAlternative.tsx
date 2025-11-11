@@ -38,6 +38,7 @@ export default function ArticleCardAlternative({
             src={image || "/placeholder.svg"}
             alt={imageAlt || title}
             fill
+            sizes="(max-width: 768px) 100vw, 300px"
             className="object-cover rounded-sm"
           />
           {imageSource && (
@@ -54,15 +55,7 @@ export default function ArticleCardAlternative({
             <SectionHeader title={category} variant="gradient" />
           </div>
 
-          <h3
-            className="leading-normal mb-2 font-sans text-lg line-clamp-2 font-medium tracking-wide"
-            style={{
-              display: "-webkit-box",
-              WebkitLineClamp: 2,
-              WebkitBoxOrient: "vertical",
-              overflow: "hidden",
-            }}
-          >
+          <h3 className="leading-normal mb-2 font-sans text-lg line-clamp-2 font-medium tracking-wide">
             {title}
           </h3>
 

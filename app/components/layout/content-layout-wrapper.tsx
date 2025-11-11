@@ -2,7 +2,7 @@
 
 import type React from "react";
 import { usePathname } from "next/navigation";
-import { HeaderClient } from "./header-client";
+import { HeaderClient } from "./navbar";
 import { Footer } from "./footer";
 
 interface Category {

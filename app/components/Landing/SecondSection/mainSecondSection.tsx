@@ -100,6 +100,7 @@ export default function MainSecondSection({
             author: "Sample Author",
             image: undefined,
             imageAlt: "Sample image",
+            imageSource: undefined,
             isDecorative: true,
             slug: "#",
             views7d: 0,
@@ -136,6 +137,7 @@ export default function MainSecondSection({
           <Button
             variant="outline"
             size="icon"
+            aria-label="Scroll left"
             className="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-white shadow-lg hover:bg-gray-50"
             onClick={scrollLeft}
           >
@@ -146,6 +148,7 @@ export default function MainSecondSection({
           <Button
             variant="outline"
             size="icon"
+            aria-label="Scroll right"
             className="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-white shadow-lg hover:bg-gray-50"
             onClick={scrollRight}
           >
@@ -156,10 +159,6 @@ export default function MainSecondSection({
           <div
             ref={scrollContainerRef}
             className="flex gap-6 overflow-x-auto scrollbar-hide px-12"
-            style={{
-              scrollbarWidth: "none",
-              msOverflowStyle: "none",
-            }}
           >
             {displayStories.map((story) => (
               <div key={story.id} className="flex-shrink-0 w-[300px]">
