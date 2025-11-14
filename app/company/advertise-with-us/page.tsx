@@ -1,12 +1,13 @@
-import { VideoBanner } from "@/app/components/ui/video-banner";
+import VideoBanner from "@/app/components/ui/video-banner";
 
 export default function AdvertiseWithUsPage() {
-  // You can replace this with your actual video URL
-  const videoSrc = "https://www.pexels.com/download/video/4766149/"; // Update this path to your video
+  const videoSrc =
+    "https://videos.pexels.com/video-files/4766149/4766149-uhd_2732_1440_24fps.mp4";
 
   return (
-    <main className="flex min-h-screen flex-col items-center">
-      <div className="relative w-full h-screen">
+    <main className="flex min-h-screen flex-col items-center relative z-0">
+      <div className="relative w-full h-screen z-0">
+        {/* Background video */}
         <VideoBanner videoSrc={videoSrc} />
 
         {/* Centered contact/partnership text overlaid on video */}
@@ -53,4 +54,3 @@ export default function AdvertiseWithUsPage() {
     </main>
   );
 }
-
