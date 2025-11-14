@@ -154,7 +154,7 @@ export function Footer({ categories, tags }: FooterProps) {
                   href="/company/advertise-with-us"
                   className="text-gray-300 hover:text-white"
                 >
-                  Advertise with us
+                  Partner with us
                 </Link>
               </li>
               <li>

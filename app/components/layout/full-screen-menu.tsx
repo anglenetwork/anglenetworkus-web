@@ -49,16 +49,18 @@ export function FullScreenMenu({
     }
 
     // Disable/enable focusable elements based on menu state
-    const menuElement = document.querySelector('[role="dialog"][aria-label="Navigation menu"]');
+    const menuElement = document.querySelector(
+      '[role="dialog"][aria-label="Navigation menu"]'
+    );
     if (menuElement) {
       const focusableElements = menuElement.querySelectorAll(
         'a, button, input, textarea, select, [tabindex]:not([tabindex="-1"])'
       );
       focusableElements.forEach((el) => {
         if (!isOpen) {
-          (el as HTMLElement).setAttribute('tabindex', '-1');
+          (el as HTMLElement).setAttribute("tabindex", "-1");
         } else {
-          (el as HTMLElement).removeAttribute('tabindex');
+          (el as HTMLElement).removeAttribute("tabindex");
         }
       });
     }
@@ -280,7 +282,7 @@ export function FullScreenMenu({
                     onClick={onClose}
                     className="text-base hover:text-primary transition-colors font-sans"
                   >
-                    Advertise with us
+                    Partner with us
                   </Link>
                   <Link
                     href="/company/contact"
