@@ -7,11 +7,7 @@ import { MobileHeader } from "./mobile-header";
 import { DesktopHeader } from "./desktop-header";
 import { HeaderProps } from "./types";
 
-export function HeaderClient({
-  categories,
-  tags,
-  showsTags,
-}: HeaderProps) {
+export function HeaderClient({ categories, tags, showsTags }: HeaderProps) {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [headerOffset, setHeaderOffset] = useState(0);
@@ -69,7 +65,7 @@ export function HeaderClient({
     <>
       <header
         ref={headerRef}
-        className={`sticky top-0 bg-white z-50 transition-all duration-500 ease-out ${
+        className={`sticky top-0 bg-white z-50 transition-all duration-500 ease-out border-b border-neutral-200 ${
           isScrolled ? "shadow-sm border-b border-neutral-200" : ""
         }`}
       >
@@ -99,4 +95,3 @@ export function HeaderClient({
     </>
   );
 }
-

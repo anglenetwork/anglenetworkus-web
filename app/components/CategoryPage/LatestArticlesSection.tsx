@@ -39,8 +39,8 @@ function LatestArticleItem({ article }: { article: Article }) {
             {/* Image (optional) */}
             {article.imageUrl && (
               <div className="md:col-span-1">
-                <Link 
-                  href={`/post/${article.slug}`} 
+                <Link
+                  href={`/post/${article.slug}`}
                   className="block"
                   aria-label={`View image for article: ${article.title}`}
                 >
@@ -80,7 +80,7 @@ function LatestArticleItem({ article }: { article: Article }) {
                 </div>
               </div>
 
-              <h3 className="font-sans text-xl md:text-2xl font-semibold text-foreground text-balance leading-tight">
+              <h3 className="text-2xl font-sans font-semibold text-neutral-900 leading-snug tracking-tight">
                 <Link
                   href={`/post/${article.slug}`}
                   className="hover:underline"

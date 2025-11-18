@@ -21,9 +21,7 @@ export function CategoriesNav({
           key={category.slug}
           href={`/category/${category.slug}`}
           onClick={onCategoryClick}
-          className={`font-medium -tracking-tight text-neutral-900 capitalize transition-all duration-500 ease-out whitespace-nowrap font-sans ${
-            isScrolled ? "lg:text-base" : "lg:text-base"
-          } text-base`}
+          className="font-semibold tracking-tight text-neutral-900 capitalize transition-all duration-500 ease-out whitespace-nowrap font-sans text-base"
         >
           {category.name}
         </Link>

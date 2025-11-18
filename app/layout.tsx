@@ -9,7 +9,7 @@ import {
   type PortableTextBlock,
 } from "next-sanity";
 import { draftMode } from "next/headers";
-import { Inter, Outfit, Spectral } from "next/font/google";
+import { Inter, DM_Sans, Spectral } from "next/font/google";
 
 import { AlertBanner, ContentLayoutWrapper } from "./components/layout";
 
@@ -30,9 +30,9 @@ const interTight = Inter({
   adjustFontFallback: true,
 });
 
-const outfit = Outfit({
+const dmSans = DM_Sans({
   subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700"], // Only weights actually used
+  weight: ["300", "400", "500", "600", "700", "800", "900"], // Only weights actually used
   variable: "--font-sans",
   display: "swap",
   preload: false, // Defer to reduce render blocking - main font but loads with swap
@@ -93,7 +93,7 @@ export default async function RootLayout({
       <body
         className={`
         ${interTight.variable}
-        ${outfit.variable}
+        ${dmSans.variable}
         ${spectral.variable}
       `}
       >

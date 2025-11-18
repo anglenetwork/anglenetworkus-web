@@ -74,7 +74,7 @@ export function CenterColumnLanding({
       {mainStory.map((post, index) => (
         <article key={post._id} className="mb-8">
           <Link href={`/post/${post.slug}`} className="hover:text-red-600">
-            <h1 className="text-3xl md:text-3xl lg:text-5xl font-semibold text-gray-900 leading-tight mb-4 font-sans text-start md:text-center">
+            <h1 className="text-3xl md:text-3xl lg:text-5xl font-extrabold text-gray-900 !leading-tight tracking-tighter mb-4 font-sans text-start md:text-center">
               {post.title}
             </h1>
           </Link>
@@ -84,7 +84,7 @@ export function CenterColumnLanding({
             if (!src) return null;
             return (
               <Link href={`/post/${post.slug}`}>
-                <div className="mb-8 relative">
+                <div className="mb-8">
                   <Image
                     src={src}
                     alt={alt}
@@ -97,11 +97,10 @@ export function CenterColumnLanding({
                     sizes="(max-width: 640px) 100vw, (max-width: 1024px) 90vw, (max-width: 1280px) 70vw, 1000px"
                     className="w-full h-80 md:h-[500px] object-cover rounded-sm"
                   />
-
                   {imageSource && (
-                    <div className="absolute bottom-2 right-2 bg-black/30 text-white text-xs px-2 py-1 rounded font-secondary">
+                    <p className="text-[10px] text-gray-500 font-secondary text-right">
                       {imageSource}
-                    </div>
+                    </p>
                   )}
                 </div>
               </Link>
@@ -112,8 +111,8 @@ export function CenterColumnLanding({
 
       {/* Related Category Posts */}
       {relatedCategoryPosts.length > 0 && (
-        <main className="bg-white mb-4">
-          <div className="mx-auto max-w-5xl px-0 py-2">
+        <div className="mb-8">
+          <div className="space-y-0">
             {relatedCategoryPosts.map((post, index) => (
               <article
                 key={post._id}
@@ -130,7 +129,7 @@ export function CenterColumnLanding({
               </article>
             ))}
           </div>
-        </main>
+        </div>
       )}
 
       <SectionHeader title="More Top Headlines" variant="gradient" />
@@ -147,7 +146,7 @@ export function CenterColumnLanding({
                 if (!src) return null;
                 return (
                   <Link href={`/post/${post.slug}`}>
-                    <div className="flex-shrink-0 mb-0 md:mb-4 relative">
+                    <div className="flex-shrink-0 mb-0 md:mb-2">
                       <Image
                         src={src}
                         alt={alt}
@@ -159,9 +158,9 @@ export function CenterColumnLanding({
                         className="w-24 h-20 md:w-full md:h-48 object-cover rounded-sm"
                       />
                       {imageSource && (
-                        <div className="hidden md:block absolute bottom-2 right-2 bg-black/30 text-white text-xs px-2 py-1 rounded font-secondary">
+                        <p className="hidden md:block text-[10px] text-gray-500 font-secondary text-right">
                           {imageSource}
-                        </div>
+                        </p>
                       )}
                     </div>
                   </Link>
@@ -172,7 +171,7 @@ export function CenterColumnLanding({
                   href={`/post/${post.slug}`}
                   className="hover:text-red-600"
                 >
-                  <h3 className="text-base md:text-xl font-sans font-normal sm:font-medium text-neutral-900 tracking-wide leading-normal mb-2">
+                  <h3 className="text-base md:text-xl font-sans font-semibold text-neutral-900 leading-snug tracking-tight">
                     {post.title}
                   </h3>
                 </Link>
@@ -190,7 +189,7 @@ export function CenterColumnLanding({
                 if (!src) return null;
                 return (
                   <Link href={`/post/${post.slug}`}>
-                    <div className="flex-shrink-0 mb-0 md:mb-3 relative">
+                    <div className="flex-shrink-0 mb-0 md:mb-3">
                       <Image
                         src={src}
                         alt={alt}
@@ -201,11 +200,6 @@ export function CenterColumnLanding({
                         sizes="(max-width: 640px) 96px, (max-width: 768px) 96px, (max-width: 1024px) 33vw, 256px"
                         className="w-24 h-20 md:w-full md:h-32 object-cover rounded-sm"
                       />
-                      {imageSource && (
-                        <div className="hidden md:block absolute bottom-2 right-2 bg-black/30 text-white text-xs px-2 py-1 rounded font-secondary">
-                          {imageSource}
-                        </div>
-                      )}
                     </div>
                   </Link>
                 );

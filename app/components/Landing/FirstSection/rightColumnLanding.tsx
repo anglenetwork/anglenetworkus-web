@@ -37,8 +37,8 @@ export function RightColumnLanding({
             const coverData = getCoverImage(post.cover, post.title);
             if (!coverData) return null;
             return (
-              <Link href={`/post/${post.slug}`}>
-                <div className="mb-4 relative">
+              <div className="mb-4">
+                <Link href={`/post/${post.slug}`}>
                   <Image
                     src={coverData.src}
                     alt={coverData.alt}
@@ -49,17 +49,12 @@ export function RightColumnLanding({
                     sizes="(max-width: 640px) 100vw, (max-width: 1024px) 100vw, 384px"
                     className="w-full h-48 object-cover rounded-sm"
                   />
-                  {post.cover?.imageSource && (
-                    <div className="absolute bottom-2 right-2 bg-black/30 text-white text-xs px-2 py-1 rounded font-secondary">
-                      {post.cover.imageSource}
-                    </div>
-                  )}
-                </div>
-              </Link>
+                </Link>
+              </div>
             );
           })()}
           <Link href={`/post/${post.slug}`} className="hover:text-red-600">
-            <h3 className="text-xl font-sans font-medium text-neutral-900 leading-normal tracking-wide">
+            <h3 className="text-xl font-sans font-semibold text-neutral-900 leading-snug tracking-tight">
               {post.title}
             </h3>
           </Link>
@@ -82,8 +77,8 @@ export function RightColumnLanding({
             );
             if (!coverData) return null;
             return (
-              <Link href={`/post/${mostRead[0].slug}`}>
-                <div className="mb-6 relative">
+              <div className="mb-6">
+                <Link href={`/post/${mostRead[0].slug}`}>
                   <Image
                     src={coverData.src}
                     alt={coverData.alt}
@@ -94,13 +89,8 @@ export function RightColumnLanding({
                     sizes="(max-width: 640px) 100vw, (max-width: 1024px) 100vw, 384px"
                     className="w-full h-48 object-cover rounded-sm"
                   />
-                  {mostRead[0]?.cover?.imageSource && (
-                    <div className="absolute bottom-2 right-2 bg-black/30 text-white text-xs px-2 py-1 rounded font-secondary">
-                      {mostRead[0].cover.imageSource}
-                    </div>
-                  )}
-                </div>
-              </Link>
+                </Link>
+              </div>
             );
           })()}
 

@@ -179,6 +179,13 @@ export default defineType({
       validation: (rule) => rule.required().min(4),
     }),
     defineField({
+      name: "tickerTitle",
+      title: "Ticker title (short)",
+      type: "string",
+      description: "Very short version for the top news ticker (max ±60 characters).",
+      validation: (rule) => rule.required().max(60),
+    }),
+    defineField({
       name: "excerpt",
       title: "Excerpt",
       type: "string",

@@ -39,7 +39,7 @@ export function TagFeaturedArticle({
           )}
         </div>
         <div className="mt-4">
-          <h1 className="mt-2 text-xl font-semibold leading-tight md:text-3xl font-sans">
+          <h1 className="mt-2 text-2xl md:text-3xl font-sans font-semibold text-neutral-900 leading-snug tracking-tight text-start">
             {title}
           </h1>
         </div>
@@ -47,4 +47,3 @@ export function TagFeaturedArticle({
     </article>
   );
 }
-

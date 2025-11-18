@@ -1,4 +1,5 @@
 export { MainFirstSection } from './FirstSection/mainFirstSection';
+export { NewsTicker } from './NewsTicker/NewsTicker';
 export { CenterColumnFourthSection } from './FourthSectionComponents/CenterColumnFourthSection';
 export { default as ArticleCard } from './SecondSection/article-card';
 export { default as MainSecondSection } from './SecondSection/mainSecondSection';

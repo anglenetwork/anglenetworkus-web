@@ -41,8 +41,8 @@ export function CenterColumnFifth({
             {article.isMain ? (
               // Main Article
               <div className="mb-6">
-                <Link href={`/post/${article.slug}`}>
-                  <div className="relative mb-4">
+                <div className="mb-4">
+                  <Link href={`/post/${article.slug}`}>
                     <Image
                       src={article.image}
                       alt={article.imageAlt}
@@ -52,15 +52,15 @@ export function CenterColumnFifth({
                       sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 800px"
                       className="w-full h-80 object-cover rounded-sm cursor-pointer"
                     />
-                    {article.imageSource && (
-                      <div className="absolute bottom-2 right-2 bg-black/30 text-white text-xs px-2 py-1 rounded font-secondary">
-                        {article.imageSource}
-                      </div>
-                    )}
-                  </div>
-                </Link>
+                  </Link>
+                  {article.imageSource && (
+                    <p className="text-[10px] text-gray-500 font-secondary text-right">
+                      {article.imageSource}
+                    </p>
+                  )}
+                </div>
                 <Link href={`/post/${article.slug}`}>
-                  <h3 className="text-3xl md:text-3xl lg:text-3xl font-medium text-gray-900 leading-tight mb-4 font-sans text-start">
+                  <h3 className="text-3xl font-sans font-semibold text-neutral-900 leading-snug tracking-tight text-start">
                     {article.title}
                   </h3>
                 </Link>
@@ -77,8 +77,8 @@ export function CenterColumnFifth({
                 .filter((article) => !article.isMain)
                 .map((article, index) => (
                   <div key={article.id} className="flex flex-col">
-                    <Link href={`/post/${article.slug}`}>
-                      <div className="relative mb-3">
+                    <div className="mb-3">
+                      <Link href={`/post/${article.slug}`}>
                         <Image
                           src={article.image}
                           alt={article.imageAlt}
@@ -88,15 +88,10 @@ export function CenterColumnFifth({
                           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 33vw, 240px"
                           className="w-full h-48 object-cover rounded-sm cursor-pointer hover:opacity-90 transition-opacity"
                         />
-                        {article.imageSource && (
-                          <div className="absolute bottom-2 right-2 bg-black/30 text-white text-xs px-2 py-1 rounded font-secondary">
-                            {article.imageSource}
-                          </div>
-                        )}
-                      </div>
-                    </Link>
+                      </Link>
+                    </div>
                     <Link href={`/post/${article.slug}`}>
-                      <h3 className="text-neutral-900 leading-normal mb-2 font-sans text-base font-normal tracking-wide">
+                      <h3 className="text-base font-sans font-normal text-neutral-900 leading-normal tracking-normal">
                         {article.title}
                       </h3>
                     </Link>

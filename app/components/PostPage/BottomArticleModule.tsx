@@ -77,7 +77,7 @@ export default function BottomArticleModule({
                     );
                   })()}
                 </div>
-                <h2 className="mt-6 text-3xl font-medium leading-tight text-neutral-900 font-sans">
+                <h2 className="text-2xl md:text-3xl font-sans font-semibold text-neutral-900 leading-snug tracking-tight text-start mt-4">
                   {posts[0].title || "Untitled"}
                 </h2>
               </Link>
@@ -91,7 +91,7 @@ export default function BottomArticleModule({
                   href={`/post/${post.slug || "#"}`}
                   className="block py-4 transition-opacity"
                 >
-                  <h3 className="text-neutral-900 leading-normal mb-2 font-sans text-lg font-normal tracking-wide">
+                  <h3 className="text-lg font-sans font-normal text-neutral-900 leading-normal tracking-normal mb-2">
                     {post.title || "Untitled"}
                   </h3>
                 </Link>

@@ -764,6 +764,13 @@
         },
         "optional": true
       },
+      "tickerTitle": {
+        "type": "objectAttribute",
+        "value": {
+          "type": "string"
+        },
+        "optional": true
+      },
       "excerpt": {
         "type": "objectAttribute",
         "value": {

@@ -238,7 +238,7 @@ export function MainFirstSection({
       cover: post.cover,
       author: post.author,
     })) as PostForRightColumn[];
-  const sideStories = validPostsForRight;
+  const sideStories = validPostsForRight.slice(0, 2);
 
   // Filter most read posts
   const validMostReadPosts = mostReadPosts

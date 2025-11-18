@@ -9,8 +9,8 @@ interface FeatureSideItemProps {
 export function FeatureSideItem({ article }: FeatureSideItemProps) {
   return (
     <article className="group">
-      <Link 
-        href={`/post/${article.slug}`} 
+      <Link
+        href={`/post/${article.slug}`}
         className="block"
         aria-label={`Read article: ${article.title}`}
       >
@@ -55,7 +55,7 @@ export function FeatureSideItem({ article }: FeatureSideItemProps) {
               className="object-cover"
             />
           </div>
-          <h3 className="font-sans text-lg font-normal tracking-wide leading-tight mb-2">
+          <h3 className="text-lg font-sans font-normal text-neutral-900 leading-snug tracking-normal mb-2">
             {article.title}
           </h3>
         </div>
