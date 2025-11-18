@@ -9,8 +9,8 @@ interface FeatureHeroProps {
 export function FeatureHero({ article }: FeatureHeroProps) {
   return (
     <article className="group">
-      <Link 
-        href={`/post/${article.slug}`} 
+      <Link
+        href={`/post/${article.slug}`}
         className="block"
         aria-label={`Read article: ${article.title}`}
       >
@@ -30,7 +30,7 @@ export function FeatureHero({ article }: FeatureHeroProps) {
             priority
           />
         </div>
-        <h2 className="font-sans text-2xl font-medium sm:text-3xl sm:font-semibold text-foreground leading-tight mb-3 w-full">
+        <h2 className="text-2xl md:text-3xl lg:text-3xl font-sans font-semibold text-neutral-900 leading-snug tracking-tight text-start">
           {article.title}
         </h2>
       </Link>

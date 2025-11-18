@@ -14,7 +14,7 @@ export function MostReadItem({ article, index }: MostReadItemProps) {
           {index + 1}
         </div>
         <div className="flex-1 space-y-2">
-          <h3 className="font-sans text-lg font-normal text-foreground leading-normal">
+          <h3 className="text-lg font-sans font-normal text-neutral-900 leading-snug tracking-normal">
             <Link href={`/post/${article.slug}`} className="hover:underline">
               {article.title}
             </Link>

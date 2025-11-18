@@ -20,7 +20,7 @@ export function TagNewsItem({
     <article className="flex gap-4 py-6">
       <div className="flex-1">
         <Link href={`/post/${slug}`} className="block">
-          <h2 className="text-lg font-sans font-normal leading-snug tracking-wide">
+          <h2 className="text-lg font-sans font-normal text-neutral-900 leading-normal tracking-normal">
             {title}
           </h2>
         </Link>

@@ -20,22 +20,22 @@ export default function PostHeader({
   return (
     <header className="mb-8 not-prose">
       {category && (
-        <div className="mb-2">
+        <div className="mb-1">
           <Link
             href={`/category/${category.slug}`}
-            className="text-sm font-sans font-medium uppercase tracking-wider text-foreground text-neutral-700"
+            className="text-sm font-sans font-medium uppercase tracking-wider text-foreground text-neutral-900"
           >
             {category.title}
           </Link>
         </div>
       )}
 
-      <h1 className="font-sans text-2xl lg:text-4xl font-semibold text-neutral-900 mb-4 leading-tight">
+      <h1 className="text-3xl lg:text-5xl font-extrabold text-neutral-900 !leading-tight tracking-tighter mb-4 font-sans text-start">
         {title}
       </h1>
 
       {excerpt && (
-        <p className="text-sm lg:text-sm text-neutral-600 mb-6 leading-relaxed font-secondary font-light tracking-wide">
+        <p className="text-sm lg:text-base text-neutral-900 mb-6 leading-relaxed font-secondary font-normal tracking-snug">
           {excerpt}
         </p>
       )}

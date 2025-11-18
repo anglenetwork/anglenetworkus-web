@@ -48,35 +48,37 @@ export default function MainThirdSection({
                   href={`/post/${mainArticle.slug || "#"}`}
                   className="group block mb-4"
                 >
-                  <div className="relative aspect-[16/9] overflow-hidden rounded-sm mb-4">
-                    <Image
-                      src={getImageData(
-                        mainArticle.cover,
-                        mainArticle.title || "Featured article"
-                      )}
-                      alt={mainArticle.title || "Featured article"}
-                      fill
-                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 58vw, 700px"
-                      unoptimized={
-                        getCoverImage(
-                          mainArticle.cover as {
-                            source?: "asset" | "external";
-                            externalUrl?: string | null;
-                            image?: any;
-                            alt?: string | null;
-                          } | null,
+                  <div className="mb-4">
+                    <div className="relative aspect-[16/9] overflow-hidden rounded-sm">
+                      <Image
+                        src={getImageData(
+                          mainArticle.cover,
                           mainArticle.title || "Featured article"
-                        )?.unoptimized || false
-                      }
-                      className="object-cover rounded-sm"
-                    />
+                        )}
+                        alt={mainArticle.title || "Featured article"}
+                        fill
+                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 58vw, 700px"
+                        unoptimized={
+                          getCoverImage(
+                            mainArticle.cover as {
+                              source?: "asset" | "external";
+                              externalUrl?: string | null;
+                              image?: any;
+                              alt?: string | null;
+                            } | null,
+                            mainArticle.title || "Featured article"
+                          )?.unoptimized || false
+                        }
+                        className="object-cover rounded-sm"
+                      />
+                    </div>
                     {mainArticle.cover?.imageSource && (
-                      <div className="absolute bottom-2 right-2 bg-black/30 text-white text-xs px-2 py-1 rounded font-secondary">
+                      <p className="text-[10px] text-gray-500 font-secondary text-right">
                         {mainArticle.cover.imageSource}
-                      </div>
+                      </p>
                     )}
                   </div>
-                  <h3 className="text-black text-2xl md:text-2xl tracking-wide font-medium leading-tight font-sans">
+                  <h3 className="text-2xl font-sans font-semibold text-neutral-900 leading-snug tracking-tight">
                     {mainArticle.title || "Untitled"}
                   </h3>
                 </Link>
@@ -88,36 +90,38 @@ export default function MainThirdSection({
                     href={`/post/${secondaryArticles[0].slug || "#"}`}
                     className="group block"
                   >
-                    <div className="relative aspect-[16/9] sm:aspect-[4/3] overflow-hidden rounded-sm">
-                      <Image
-                        src={getImageData(
-                          secondaryArticles[0].cover,
-                          secondaryArticles[0].title || "Article image"
-                        )}
-                        alt={secondaryArticles[0].title || "Article image"}
-                        fill
-                        sizes="(max-width: 640px) 100vw, (max-width: 1200px) 50vw, 350px"
-                        unoptimized={
-                          getCoverImage(
-                            secondaryArticles[0].cover as {
-                              source?: "asset" | "external";
-                              externalUrl?: string | null;
-                              image?: any;
-                              alt?: string | null;
-                            } | null,
+                    <div>
+                      <div className="relative aspect-[16/9] sm:aspect-[4/3] overflow-hidden rounded-sm">
+                        <Image
+                          src={getImageData(
+                            secondaryArticles[0].cover,
                             secondaryArticles[0].title || "Article image"
-                          )?.unoptimized || false
-                        }
-                        className="object-cover rounded-sm"
-                      />
+                          )}
+                          alt={secondaryArticles[0].title || "Article image"}
+                          fill
+                          sizes="(max-width: 640px) 100vw, (max-width: 1200px) 50vw, 350px"
+                          unoptimized={
+                            getCoverImage(
+                              secondaryArticles[0].cover as {
+                                source?: "asset" | "external";
+                                externalUrl?: string | null;
+                                image?: any;
+                                alt?: string | null;
+                              } | null,
+                              secondaryArticles[0].title || "Article image"
+                            )?.unoptimized || false
+                          }
+                          className="object-cover rounded-sm"
+                        />
+                      </div>
                       {secondaryArticles[0].cover?.imageSource && (
-                        <div className="absolute bottom-2 right-2 bg-black/30 text-white text-xs px-2 py-1 rounded font-secondary">
+                        <p className="text-[10px] text-gray-500 font-secondary text-right">
                           {secondaryArticles[0].cover.imageSource}
-                        </div>
+                        </p>
                       )}
                     </div>
                     <div className="mt-2">
-                      <h3 className="text-neutral-900 leading-normal mb-2 font-sans text-lg font-medium tracking-wide">
+                      <h3 className="text-xl font-sans font-semibold text-neutral-900 leading-snug tracking-tight">
                         {secondaryArticles[0].title || "Untitled"}
                       </h3>
                     </div>
@@ -129,36 +133,38 @@ export default function MainThirdSection({
                     href={`/post/${secondaryArticles[1].slug || "#"}`}
                     className="group block"
                   >
-                    <div className="relative aspect-[16/9] sm:aspect-[4/3] overflow-hidden rounded-sm">
-                      <Image
-                        src={getImageData(
-                          secondaryArticles[1].cover,
-                          secondaryArticles[1].title || "Article image"
-                        )}
-                        alt={secondaryArticles[1].title || "Article image"}
-                        fill
-                        sizes="(max-width: 640px) 100vw, (max-width: 1200px) 50vw, 350px"
-                        unoptimized={
-                          getCoverImage(
-                            secondaryArticles[1].cover as {
-                              source?: "asset" | "external";
-                              externalUrl?: string | null;
-                              image?: any;
-                              alt?: string | null;
-                            } | null,
+                    <div>
+                      <div className="relative aspect-[16/9] sm:aspect-[4/3] overflow-hidden rounded-sm">
+                        <Image
+                          src={getImageData(
+                            secondaryArticles[1].cover,
                             secondaryArticles[1].title || "Article image"
-                          )?.unoptimized || false
-                        }
-                        className="object-cover rounded-sm"
-                      />
+                          )}
+                          alt={secondaryArticles[1].title || "Article image"}
+                          fill
+                          sizes="(max-width: 640px) 100vw, (max-width: 1200px) 50vw, 350px"
+                          unoptimized={
+                            getCoverImage(
+                              secondaryArticles[1].cover as {
+                                source?: "asset" | "external";
+                                externalUrl?: string | null;
+                                image?: any;
+                                alt?: string | null;
+                              } | null,
+                              secondaryArticles[1].title || "Article image"
+                            )?.unoptimized || false
+                          }
+                          className="object-cover rounded-sm"
+                        />
+                      </div>
                       {secondaryArticles[1].cover?.imageSource && (
-                        <div className="absolute bottom-2 right-2 bg-black/30 text-white text-xs px-2 py-1 rounded font-secondary">
+                        <p className="text-[10px] text-gray-500 font-secondary text-right">
                           {secondaryArticles[1].cover.imageSource}
-                        </div>
+                        </p>
                       )}
                     </div>
                     <div className="mt-2">
-                      <h3 className="text-neutral-900 leading-normal mb-2 font-sans text-lg font-medium tracking-wide">
+                      <h3 className="text-xl font-sans font-semibold text-neutral-900 leading-snug tracking-tight">
                         {secondaryArticles[1].title || "Untitled"}
                       </h3>
                     </div>
@@ -180,36 +186,40 @@ export default function MainThirdSection({
                       href={`/post/${rightColumnArticles[0].slug || "#"}`}
                       className="group block"
                     >
-                      <div className="relative aspect-[16/9] lg:aspect-[3/4] overflow-hidden rounded-sm">
-                        <Image
-                          src={getImageData(
-                            rightColumnArticles[0].cover,
-                            rightColumnArticles[0].title || "Article image"
-                          )}
-                          alt={rightColumnArticles[0].title || "Article image"}
-                          fill
-                          sizes="(max-width: 640px) 100vw, (max-width: 1200px) 42vw, 250px"
-                          unoptimized={
-                            getCoverImage(
-                              rightColumnArticles[0].cover as {
-                                source?: "asset" | "external";
-                                externalUrl?: string | null;
-                                image?: any;
-                                alt?: string | null;
-                              } | null,
+                      <div>
+                        <div className="relative aspect-[16/9] lg:aspect-[3/4] overflow-hidden rounded-sm">
+                          <Image
+                            src={getImageData(
+                              rightColumnArticles[0].cover,
                               rightColumnArticles[0].title || "Article image"
-                            )?.unoptimized || false
-                          }
-                          className="object-cover rounded-sm"
-                        />
+                            )}
+                            alt={
+                              rightColumnArticles[0].title || "Article image"
+                            }
+                            fill
+                            sizes="(max-width: 640px) 100vw, (max-width: 1200px) 42vw, 250px"
+                            unoptimized={
+                              getCoverImage(
+                                rightColumnArticles[0].cover as {
+                                  source?: "asset" | "external";
+                                  externalUrl?: string | null;
+                                  image?: any;
+                                  alt?: string | null;
+                                } | null,
+                                rightColumnArticles[0].title || "Article image"
+                              )?.unoptimized || false
+                            }
+                            className="object-cover rounded-sm"
+                          />
+                        </div>
                         {rightColumnArticles[0].cover?.imageSource && (
-                          <div className="absolute bottom-2 right-2 bg-black/30 text-white text-xs px-2 py-1 rounded font-secondary">
+                          <p className="text-[10px] text-gray-500 font-secondary text-right">
                             {rightColumnArticles[0].cover.imageSource}
-                          </div>
+                          </p>
                         )}
                       </div>
                       <div className="mt-2">
-                        <h3 className="text-neutral-900 leading-normal mb-2 font-sans text-lg font-medium tracking-wide">
+                        <h3 className="text-xl font-sans font-semibold text-neutral-900 leading-snug tracking-tight">
                           {rightColumnArticles[0].title || "Untitled"}
                         </h3>
                       </div>
@@ -225,7 +235,7 @@ export default function MainThirdSection({
                     <div key={article._id}>
                       <Link
                         href={`/post/${article.slug || "#"}`}
-                        className="text-neutral-900 leading-normal mb-2 font-sans text-base font-normal tracking-wide"
+                        className="text-base font-sans font-normal text-neutral-900 leading-snug tracking-normal"
                       >
                         {article.title || "Untitled"}
                       </Link>
@@ -247,54 +257,56 @@ export default function MainThirdSection({
                       href={`/post/${rightColumnArticles[Math.ceil(rightColumnArticles.length / 2)].slug || "#"}`}
                       className="group block"
                     >
-                      <div className="relative aspect-[16/9] lg:aspect-[3/4] overflow-hidden rounded-sm">
-                        <Image
-                          src={getImageData(
-                            rightColumnArticles[
-                              Math.ceil(rightColumnArticles.length / 2)
-                            ].cover,
-                            rightColumnArticles[
-                              Math.ceil(rightColumnArticles.length / 2)
-                            ].title || "Article image"
-                          )}
-                          alt={
-                            rightColumnArticles[
-                              Math.ceil(rightColumnArticles.length / 2)
-                            ].title || "Article image"
-                          }
-                          fill
-                          sizes="(max-width: 640px) 100vw, (max-width: 1200px) 42vw, 250px"
-                          unoptimized={
-                            getCoverImage(
+                      <div>
+                        <div className="relative aspect-[16/9] lg:aspect-[3/4] overflow-hidden rounded-sm">
+                          <Image
+                            src={getImageData(
                               rightColumnArticles[
                                 Math.ceil(rightColumnArticles.length / 2)
-                              ].cover as {
-                                source?: "asset" | "external";
-                                externalUrl?: string | null;
-                                image?: any;
-                                alt?: string | null;
-                              } | null,
+                              ].cover,
                               rightColumnArticles[
                                 Math.ceil(rightColumnArticles.length / 2)
                               ].title || "Article image"
-                            )?.unoptimized || false
-                          }
-                          className="object-cover rounded-sm"
-                        />
+                            )}
+                            alt={
+                              rightColumnArticles[
+                                Math.ceil(rightColumnArticles.length / 2)
+                              ].title || "Article image"
+                            }
+                            fill
+                            sizes="(max-width: 640px) 100vw, (max-width: 1200px) 42vw, 250px"
+                            unoptimized={
+                              getCoverImage(
+                                rightColumnArticles[
+                                  Math.ceil(rightColumnArticles.length / 2)
+                                ].cover as {
+                                  source?: "asset" | "external";
+                                  externalUrl?: string | null;
+                                  image?: any;
+                                  alt?: string | null;
+                                } | null,
+                                rightColumnArticles[
+                                  Math.ceil(rightColumnArticles.length / 2)
+                                ].title || "Article image"
+                              )?.unoptimized || false
+                            }
+                            className="object-cover rounded-sm"
+                          />
+                        </div>
                         {rightColumnArticles[
                           Math.ceil(rightColumnArticles.length / 2)
                         ]?.cover?.imageSource && (
-                          <div className="absolute bottom-2 right-2 bg-black/30 text-white text-xs px-2 py-1 rounded font-secondary">
+                          <p className="text-[10px] text-gray-500 font-secondary text-right">
                             {
                               rightColumnArticles[
                                 Math.ceil(rightColumnArticles.length / 2)
                               ]?.cover?.imageSource
                             }
-                          </div>
+                          </p>
                         )}
                       </div>
                       <div className="mt-2">
-                        <h3 className="text-neutral-900 leading-normal mb-2 font-sans text-lg font-medium tracking-wide">
+                        <h3 className="text-xl font-sans font-semibold text-neutral-900 leading-snug tracking-tight">
                           {rightColumnArticles[
                             Math.ceil(rightColumnArticles.length / 2)
                           ].title || "Untitled"}
@@ -312,7 +324,7 @@ export default function MainThirdSection({
                     <div key={article._id}>
                       <Link
                         href={`/post/${article.slug || "#"}`}
-                        className="text-neutral-900 leading-normal mb-2 font-sans text-base font-normal tracking-wide"
+                        className="text-base font-sans font-normal text-neutral-900 leading-snug tracking-normal"
                       >
                         {article.title || "Untitled"}
                       </Link>

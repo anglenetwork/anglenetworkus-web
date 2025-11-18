@@ -30,7 +30,7 @@ export function TagArticleItem({
         </Link>
       </div>
       <Link href={`/post/${slug}`} className="block flex-1">
-        <h2 className="text-lg font-sans font-normal leading-snug tracking-wide">
+        <h2 className="text-lg font-sans font-normal text-neutral-900 leading-normal tracking-normal">
           {title}
         </h2>
       </Link>

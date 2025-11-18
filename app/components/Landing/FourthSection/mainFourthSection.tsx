@@ -70,11 +70,7 @@ export default function MainFourthSection({
                 <div className="mb-6"></div>
 
                 {/* Featured Image */}
-                <Link 
-                  href={`/post/${mainPost.slug}`} 
-                  className="block mt-4"
-                  aria-label={`Read article: ${mainPost?.title || "Featured article"}`}
-                >
+                <div className="mt-4">
                   {(() => {
                     const coverData = getCoverImage(
                       mainPost?.cover,
@@ -82,33 +78,41 @@ export default function MainFourthSection({
                     );
                     if (coverData?.src) {
                       return (
-                        <div className="relative overflow-hidden rounded-sm bg-black">
-                          <Image
-                            src={coverData.src}
-                            alt={coverData.alt}
-                            width={800}
-                            height={300}
-                            unoptimized={coverData.unoptimized}
-                            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 25vw, 800px"
-                            className="h-[300px] w-full object-cover rounded-sm"
-                          />
-                          {mainPost?.cover?.imageSource && (
-                            <div className="absolute bottom-2 right-2 bg-black/30 text-white text-xs px-2 py-1 rounded font-secondary">
-                              {mainPost.cover.imageSource}
+                        <>
+                          <Link
+                            href={`/post/${mainPost.slug}`}
+                            className="block"
+                            aria-label={`Read article: ${mainPost?.title || "Featured article"}`}
+                          >
+                            <div className="overflow-hidden rounded-sm bg-black">
+                              <Image
+                                src={coverData.src}
+                                alt={coverData.alt}
+                                width={800}
+                                height={300}
+                                unoptimized={coverData.unoptimized}
+                                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 25vw, 800px"
+                                className="h-[300px] w-full object-cover rounded-sm"
+                              />
                             </div>
+                          </Link>
+                          {mainPost?.cover?.imageSource && (
+                            <p className="text-[10px] text-gray-500 font-secondary text-right">
+                              {mainPost.cover.imageSource}
+                            </p>
                           )}
-                        </div>
+                        </>
                       );
                     }
                     return null;
                   })()}
-                </Link>
+                </div>
 
                 {/* Main Article */}
                 {mainPost && mainPost.slug && (
                   <div className="space-y-2">
                     <Link href={`/post/${mainPost.slug}`}>
-                      <h3 className="text-neutral-900 leading-normal mb-2 font-sans text-lg font-medium tracking-wide">
+                      <h3 className="text-xl font-sans font-semibold text-neutral-900 leading-snug tracking-tight">
                         {mainPost.title}
                       </h3>
                     </Link>
@@ -123,7 +127,7 @@ export default function MainFourthSection({
                   {secondPost && secondPost.slug && (
                     <>
                       <Link href={`/post/${secondPost.slug}`}>
-                        <h3 className="text-neutral-900 leading-normal font-sans text-base font-normal tracking-wide mb-4">
+                        <h3 className="text-base font-sans font-normal text-neutral-900 leading-snug tracking-normal mb-4">
                           {secondPost.title}
                         </h3>
                       </Link>

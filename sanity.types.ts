@@ -125,6 +125,7 @@ export type Post = {
   developingStory?: boolean;
   featured?: boolean;
   title?: string;
+  tickerTitle?: string;
   excerpt?: string;
   cover?: {
     source?: "asset" | "external";

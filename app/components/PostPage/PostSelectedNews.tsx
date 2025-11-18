@@ -85,7 +85,7 @@ export default function PostSelectedNews({
 
                 {/* Article Content */}
                 <div className="flex-1 min-w-0">
-                  <h3 className="font-secondary text-sm font-semibold text-neutral-900 leading-relaxed tracking-normal">
+                  <h3 className="text-sm font-secondary font-semibold text-neutral-900 leading-snug tracking-normal mb-2">
                     {post.title}
                   </h3>
                   {post.date && (

@@ -41,25 +41,22 @@ export function LeftColumnLanding({ latestNews }: LeftColumnLandingProps) {
               className={`${index < latestNews.length - 1 ? "border-b border-neutral-200" : ""} pb-4`}
             >
               {isFirstArticle && coverData?.src && (
-                <Link href={`/post/${post.slug}`} className="block mb-3">
-                  <div className="relative w-full h-56 md:h-60 overflow-hidden rounded-sm">
-                    <Image
-                      src={coverData.src}
-                      alt={coverData.alt}
-                      fill
-                      unoptimized={coverData.unoptimized}
-                      quality={60}
-                      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 100vw, 300px"
-                      className="object-cover rounded-sm"
-                      priority
-                    />
-                    {post.cover?.imageSource && (
-                      <div className="absolute bottom-2 right-2 bg-black/30 text-white text-xs px-2 py-1 rounded font-secondary">
-                        {post.cover.imageSource}
-                      </div>
-                    )}
-                  </div>
-                </Link>
+                <div className="block mb-3">
+                  <Link href={`/post/${post.slug}`}>
+                    <div className="relative w-full h-56 md:h-60 overflow-hidden rounded-sm">
+                      <Image
+                        src={coverData.src}
+                        alt={coverData.alt}
+                        fill
+                        unoptimized={coverData.unoptimized}
+                        quality={60}
+                        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 100vw, 300px"
+                        className="object-cover rounded-sm"
+                        priority
+                      />
+                    </div>
+                  </Link>
+                </div>
               )}
               {isFirstArticle &&
                 (post.breakingNews || post.developingStory) && (
@@ -70,7 +67,13 @@ export function LeftColumnLanding({ latestNews }: LeftColumnLandingProps) {
                   </div>
                 )}
               <Link href={`/post/${post.slug}`} className="hover:text-red-600">
-                <h3 className="text-neutral-900 leading-normal mb-2 font-sans text-lg font-normal tracking-wide">
+                <h3
+                  className={
+                    isFirstArticle
+                      ? "text-xl font-sans font-semibold text-neutral-900 leading-snug tracking-tight"
+                      : "text-lg font-sans font-normal text-neutral-900 leading-snug tracking-normal"
+                  }
+                >
                   {post.title}
                 </h3>
               </Link>

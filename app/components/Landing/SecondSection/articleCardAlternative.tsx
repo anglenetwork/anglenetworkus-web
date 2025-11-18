@@ -31,42 +31,34 @@ export default function ArticleCardAlternative({
   readTime = 5,
 }: ArticleCardAlternativeProps) {
   return (
-    <Link href={`/post/${slug}`} className="block">
-      <div className="relative w-full h-[400px] bg-black rounded-lg overflow-hidden cursor-pointer hover:opacity-90 transition-opacity duration-200">
-        <div className="absolute inset-0">
-          <Image
-            src={image || "/placeholder.svg"}
-            alt={imageAlt || title}
-            fill
-            sizes="(max-width: 768px) 100vw, 300px"
-            className="object-cover rounded-sm"
-          />
-          {imageSource && (
-            <div className="absolute bottom-2 right-2 bg-black/30 text-white text-xs px-2 py-1 rounded font-secondary">
-              {imageSource}
+    <div>
+      <Link href={`/post/${slug}`} className="block">
+        <div className="relative w-full h-[400px] bg-black rounded-lg overflow-hidden cursor-pointer hover:opacity-90 transition-opacity duration-200">
+          <div className="absolute inset-0">
+            <Image
+              src={image || "/placeholder.svg"}
+              alt={imageAlt || title}
+              fill
+              sizes="(max-width: 768px) 100vw, 300px"
+              className="object-cover rounded-sm"
+            />
+          </div>
+
+          <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent" />
+          <div className="absolute bottom-0 left-0 right-0 p-4 text-white">
+            <h3 className="text-xl font-sans font-semibold text-white leading-snug tracking-tight mb-2">
+              {title}
+            </h3>
+
+            <div className="flex items-center gap-2">
+              {/* <Play className="h-4 w-4 fill-white" /> */}
+              <span className="text-xs font-secondary font-light">
+                {readTime} min read
+              </span>
             </div>
-          )}
-        </div>
-
-        <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent" />
-
-        <div className="absolute bottom-0 left-0 right-0 p-4 text-white">
-          <div className="mb-2 [&_span]:text-white">
-            <SectionHeader title={category} variant="gradient" />
-          </div>
-
-          <h3 className="leading-normal mb-2 font-sans text-lg line-clamp-2 font-medium tracking-wide">
-            {title}
-          </h3>
-
-          <div className="flex items-center gap-2">
-            {/* <Play className="h-4 w-4 fill-white" /> */}
-            <span className="text-sm font-secondary font-light">
-              {readTime} min read
-            </span>
           </div>
         </div>
-      </div>
-    </Link>
+      </Link>
+    </div>
   );
 }

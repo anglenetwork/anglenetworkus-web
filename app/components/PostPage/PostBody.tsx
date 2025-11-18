@@ -35,7 +35,7 @@ interface PostBodyProps {
   slug?: string;
 }
 
-/** Portable Text renderers (Spectral for body, Outfit for headings) */
+/** Portable Text renderers (Spectral for body, DM Sans for headings) */
 const portableTextComponents = {
   types: {
     image: ({ value }: any) => {

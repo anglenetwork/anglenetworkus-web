@@ -136,11 +136,11 @@ function FullWidthArticle({
       </div>
       <div className="flex-1">
         <Link href={`/post/${slug}`} className="block">
-          <h2 className="text-balance text-xl font-medium leading-tight md:text-2xl font-sans">
+          <h2 className="text-2xl font-sans font-semibold text-neutral-900 leading-snug tracking-tight">
             {title}
           </h2>
         </Link>
-        <p className="mt-3 text-pretty text-sm leading-relaxed text-muted-foreground md:text-base font-secondary">
+        <p className="text-muted-foreground leading-relaxed text-pretty font-secondary text-base mt-2">
           {description}
         </p>
         <p className="mt-3 text-xs font-semibold capitalize tracking-wide text-muted-foreground font-secondary">

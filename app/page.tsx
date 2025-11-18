@@ -1,4 +1,4 @@
-import { MainFirstSection } from "./components/Landing/index";
+import { MainFirstSection, NewsTicker } from "./components/Landing/index";
 import dynamic from "next/dynamic";
 import { sanityFetchStatic } from "@/sanity/lib/fetch";
 import {
@@ -60,6 +60,7 @@ export default async function Page() {
 
   return (
     <div className="container mx-auto">
+      <NewsTicker />
       <div className="space-y-10 md:space-y-14">
         <MainFirstSection
           posts={posts as any}
