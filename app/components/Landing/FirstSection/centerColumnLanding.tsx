@@ -122,7 +122,7 @@ export function CenterColumnLanding({
                   href={`/post/${post.slug}`}
                   className="hover:text-red-600 block"
                 >
-                  <h2 className="text-lg font-normal leading-tight">
+                  <h2 className="text-lg font-light leading-tight">
                     {post.title}
                   </h2>
                 </Link>

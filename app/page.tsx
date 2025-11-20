@@ -5,6 +5,7 @@ import {
   indexQuery,
   latestNineByCategoryQuery,
   mostViewedPostsQuery,
+  newsTickerQuery,
   sixthSectionQuery,
 } from "@/sanity/lib/queries";
 import { getFourthSectionData, getSecondSectionData } from "./lib/homepage";
@@ -58,9 +59,14 @@ export default async function Page() {
   // 6) Build third-latest per category for the second section
   const secondSectionData = await getSecondSectionData();
 
+  // 7) Fetch latest 6 posts for news ticker
+  const newsTickerPosts = await sanityFetchStatic({
+    query: newsTickerQuery,
+  });
+
   return (
     <div className="container mx-auto">
-      <NewsTicker />
+      <NewsTicker posts={newsTickerPosts as any} />
       <div className="space-y-10 md:space-y-14">
         <MainFirstSection
           posts={posts as any}
