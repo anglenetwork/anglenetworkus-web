@@ -12,6 +12,7 @@ import { draftMode } from "next/headers";
 import { Inter, DM_Sans, Spectral } from "next/font/google";
 
 import { AlertBanner, ContentLayoutWrapper } from "./components/layout";
+import { SessionProviderWrapper } from "./components/SessionProviderWrapper";
 
 import * as demo from "@/sanity/lib/demo";
 import { sanityFetch } from "@/sanity/lib/fetch";
@@ -97,20 +98,22 @@ export default async function RootLayout({
         ${spectral.variable}
       `}
       >
-        <section className="min-h-screen">
-          {isDraftMode && (
-            <Suspense fallback={null}>
-              <AlertBanner />
-            </Suspense>
+        <SessionProviderWrapper>
+          <section className="min-h-screen">
+            {isDraftMode && (
+              <Suspense fallback={null}>
+                <AlertBanner />
+              </Suspense>
+            )}
+            <ContentLayoutWrapper>
+              <main className="">{children}</main>
+            </ContentLayoutWrapper>
+          </section>
+          {isDraftMode && <VisualEditing />}
+          {(process.env.NEXT_PUBLIC_VERCEL_ENV || process.env.VERCEL) && (
+            <SpeedInsights />
           )}
-          <ContentLayoutWrapper>
-            <main className="">{children}</main>
-          </ContentLayoutWrapper>
-        </section>
-        {isDraftMode && <VisualEditing />}
-        {(process.env.NEXT_PUBLIC_VERCEL_ENV || process.env.VERCEL) && (
-          <SpeedInsights />
-        )}
+        </SessionProviderWrapper>
       </body>
     </html>
   );
