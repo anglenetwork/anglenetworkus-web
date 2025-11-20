@@ -10,12 +10,14 @@ export function CategoryPage({
   latestArticles,
   mostReadArticles,
   featuredArticles,
+  categoryTickerPosts,
 }: CategoryPageProps) {
   return (
     <div className="min-h-screen bg-background">
       <CategoryHeader
         categoryName={categoryName}
         categoryDescription={categoryDescription}
+        categoryTickerPosts={categoryTickerPosts}
       />
 
       {featuredArticles && (

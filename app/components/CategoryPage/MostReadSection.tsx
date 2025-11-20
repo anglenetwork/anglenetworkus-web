@@ -14,7 +14,7 @@ export function MostReadSection({ articles }: MostReadSectionProps) {
       <div className="space-y-6">
         {articles.map((article, index) => (
           <div key={article.id}>
-            <MostReadItem article={article} index={index} />
+            <MostReadItem article={article} index={index} isFirst={index === 0} />
             {index < articles.length - 1 && <Separator className="mt-6" />}
           </div>
         ))}

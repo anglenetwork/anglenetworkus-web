@@ -393,6 +393,20 @@ export const sixthSectionQuery = defineQuery(`
   }
 `);
 
+export const newsTickerQuery = defineQuery(`
+  *[_type == "post" && defined(slug.current) && defined(tickerTitle)] | order(date desc, _updatedAt desc) [0...5] {
+    tickerTitle,
+    "slug": slug.current
+  }
+`);
+
+export const categoryTickerQuery = defineQuery(`
+  *[_type == "post" && category->slug.current == $categorySlug && defined(slug.current) && defined(tickerTitle)] | order(date desc, _updatedAt desc) [5...10] {
+    tickerTitle,
+    "slug": slug.current
+  }
+`);
+
 /** ---------------------------
  *  SEARCH (posts-only) with safe relevance
  *  --------------------------- */

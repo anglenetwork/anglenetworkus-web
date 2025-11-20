@@ -14,6 +14,11 @@ export interface Article {
   slug: string;
 }
 
+export interface CategoryTickerPost {
+  tickerTitle: string;
+  slug: string;
+}
+
 export interface CategoryPageProps {
   categoryName: string;
   categoryDescription?: string;
@@ -24,5 +29,6 @@ export interface CategoryPageProps {
     centerArticle: Article;
     rightColumn: Article[];
   };
+  categoryTickerPosts?: CategoryTickerPost[];
 }
 

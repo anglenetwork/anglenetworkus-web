@@ -4,6 +4,7 @@ import {
   categorySlugsQuery,
   postsByCategoryQuery,
   mostViewedQuery,
+  categoryTickerQuery,
 } from "@/sanity/lib/queries";
 import { CategoryPage } from "@/app/components/CategoryPage";
 import { getCoverImage } from "@/sanity/lib/utils";
@@ -83,7 +84,7 @@ export default async function CategoryPageRoute({
 }) {
   const { slug } = await params;
 
-  const [categoryData, posts, mostViewed] = await Promise.all([
+  const [categoryData, posts, mostViewed, categoryTickerPosts] = await Promise.all([
     sanityFetchStatic({
       query: `*[_type == "category" && slug.current == $slug][0]{name, slug}`,
       params: { slug },
@@ -94,6 +95,10 @@ export default async function CategoryPageRoute({
     }),
     sanityFetchStatic({
       query: mostViewedQuery,
+      params: { categorySlug: slug },
+    }),
+    sanityFetchStatic({
+      query: categoryTickerQuery,
       params: { categorySlug: slug },
     }),
   ]);
@@ -155,6 +160,7 @@ export default async function CategoryPageRoute({
       latestArticles={latestArticles}
       mostReadArticles={mostReadArticles}
       featuredArticles={featuredArticles}
+      categoryTickerPosts={categoryTickerPosts as any}
     />
   );
 }

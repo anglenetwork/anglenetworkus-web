@@ -182,8 +182,8 @@ export default defineType({
       name: "tickerTitle",
       title: "Ticker title (short)",
       type: "string",
-      description: "Very short version for the top news ticker (max ±60 characters).",
-      validation: (rule) => rule.required().max(60),
+      description: "Very short version for the top news ticker (max ±40 characters).",
+      validation: (rule) => rule.required().max(40),
     }),
     defineField({
       name: "excerpt",
