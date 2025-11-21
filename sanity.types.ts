@@ -249,20 +249,19 @@ export type Author = {
     _type: "image";
   };
   slug?: Slug;
+  cmsRole?: "admin" | "editor" | "author";
+  canAccessStudio?: boolean;
+  email?: string;
   title?: string;
   pronouns?: string;
   shortBio?: string;
   bio?: BlockContent;
   location?: string;
-  email?: string;
   website?: string;
   twitter?: string;
   instagram?: string;
   linkedin?: string;
   youtube?: string;
-  featured?: boolean;
-  active?: boolean;
-  order?: number;
   seo?: Seo;
 };
 

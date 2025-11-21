@@ -11,15 +11,11 @@ export const dynamic = "force-dynamic";
 export default async function StudioPage() {
   const session = await getServerSession(authOptions);
 
-  if (!session) {
-    // User not logged in – send to login page with callback URL
-    redirect("/login?callbackUrl=/studio");
+  if (!session?.user?.email) {
+    // Not logged in (NextAuth)
+    redirect("/login");
   }
 
-  // Extra safety: ensure it's REALLY you
-  if (session.user?.email !== "myvisualdna@gmail.com") {
-    redirect("/"); // or a 403 page
-  }
-
+  // If signIn callback passed, this email is already validated against author docs
   return <NextStudio config={config} />;
 }
