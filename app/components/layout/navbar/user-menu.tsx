@@ -57,16 +57,16 @@ export function UserMenu({
           variant="outline"
           size="sm"
           aria-label="User menu"
-          className={`rounded-full bg-transparent p-0 flex items-center justify-center hover:bg-gray-100 ${buttonSize}`}
+          className={`rounded-full bg-white p-0 flex items-center justify-center hover:bg-gray-100 ${buttonSize}`}
         >
           <Avatar className={avatarSize}>
-            <AvatarFallback className="bg-transparent text-neutral-700 text-xs font-sans">
+            <AvatarFallback className="bg-white text-neutral-700 text-xs font-sans">
               {userInitials}
             </AvatarFallback>
           </Avatar>
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end">
+      <DropdownMenuContent align="end" className="bg-white">
         <DropdownMenuItem
           className="font-sans cursor-pointer"
           onClick={() => signOut({ callbackUrl: "/" })}

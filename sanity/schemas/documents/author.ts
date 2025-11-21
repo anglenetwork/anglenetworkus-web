@@ -7,7 +7,7 @@ export default defineType({
   icon: UserIcon,
   type: "document",
   fields: [
-    // --- existing fields (unchanged) ---
+    // Core fields
     defineField({
       name: "name",
       title: "Name",
@@ -39,8 +39,6 @@ export default defineType({
       ],
       validation: (rule) => rule.required(),
     }),
-
-    // --- additions (non-breaking) ---
     defineField({
       name: "slug",
       title: "Slug",
@@ -52,6 +50,39 @@ export default defineType({
       },
       validation: (rule) => rule.required(),
     }),
+    defineField({
+      name: "cmsRole",
+      title: "CMS Role",
+      type: "string",
+      description:
+        "Used for Studio access control (separate from editorial title).",
+      options: {
+        list: [
+          { title: "Admin", value: "admin" },
+          { title: "Editor", value: "editor" },
+          { title: "Author", value: "author" },
+        ],
+        layout: "radio",
+      },
+      initialValue: "author",
+    }),
+    defineField({
+      name: "canAccessStudio",
+      title: "Can access Studio",
+      type: "boolean",
+      description:
+        "If enabled, this author can log into the Sanity Studio via NextAuth gate.",
+      initialValue: false,
+    }),
+    defineField({
+      name: "email",
+      title: "Email",
+      type: "string",
+      description: "Your email address authorized to access Studio.",
+      validation: (rule) => rule.required(),
+    }),
+
+    // Editorial fields
     defineField({
       name: "title",
       title: "Role / Title",
@@ -66,7 +97,7 @@ export default defineType({
     }),
     defineField({
       name: "shortBio",
-      title: "Short Bio",
+      title: "Summary",
       type: "text",
       rows: 3,
       description: "One-liner for bylines and cards.",
@@ -74,7 +105,7 @@ export default defineType({
     defineField({
       name: "bio",
       title: "Full Bio",
-      type: "blockContent", // create this object schema if you haven't yet
+      type: "blockContent",
       description: "Rich bio for the author page.",
     }),
     defineField({
@@ -83,47 +114,19 @@ export default defineType({
       type: "string",
       description: "City, country (optional).",
     }),
-    defineField({
-      name: "email",
-      title: "Email",
-      type: "string",
-      description: "Optional contact email.",
-    }),
 
-    // Socials (add what you use)
+    // Social links
     defineField({ name: "website", title: "Website", type: "url" }),
     defineField({ name: "twitter", title: "X / Twitter", type: "string" }),
     defineField({ name: "instagram", title: "Instagram", type: "string" }),
     defineField({ name: "linkedin", title: "LinkedIn", type: "string" }),
     defineField({ name: "youtube", title: "YouTube", type: "string" }),
 
-    // Editorial flags
-    defineField({
-      name: "featured",
-      title: "Featured",
-      type: "boolean",
-      initialValue: false,
-      description: "Surface this author on the team page/homepage.",
-    }),
-    defineField({
-      name: "active",
-      title: "Active",
-      type: "boolean",
-      initialValue: true,
-      description: "Uncheck to hide from author indexes.",
-    }),
-    defineField({
-      name: "order",
-      title: "Sort Order",
-      type: "number",
-      description: "Lower numbers appear first in author lists.",
-    }),
-
-    // Optional: SEO bundle for author pages
+    // SEO
     defineField({
       name: "seo",
       title: "SEO",
-      type: "seo", // create seo object schema if you haven't yet
+      type: "seo",
     }),
   ],
 
@@ -134,21 +137,25 @@ export default defineType({
       media: "picture",
       handleX: "twitter",
       website: "website",
-      featured: "featured",
-      active: "active",
-      order: "order",
+      cmsRole: "cmsRole",
+      canAccessStudio: "canAccessStudio",
     },
     prepare(selection) {
-      const { title, subtitleAlt, handleX, website, featured, active, order, media } =
-        selection as any;
+      const {
+        title,
+        subtitleAlt,
+        handleX,
+        website,
+        cmsRole,
+        canAccessStudio,
+        media,
+      } = selection as any;
 
       const bits = [
         subtitleAlt || null,
         handleX ? `@${handleX}` : null,
         website ? new URL(website).hostname.replace(/^www\./, "") : null,
-        featured ? "★ featured" : null,
-        active === false ? "inactive" : null,
-        typeof order === "number" ? `#${order}` : null,
+        canAccessStudio ? `Studio: ${cmsRole || "yes"}` : null,
       ]
         .filter(Boolean)
         .join(" • ");
