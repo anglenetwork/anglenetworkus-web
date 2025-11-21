@@ -18,12 +18,20 @@ function LoginForm() {
           <p className="text-muted-foreground text-center mb-8 font-secondary">
             Please sign in to access the content management system.
           </p>
-          <button
-            onClick={() => signIn("github", { callbackUrl })}
-            className="w-full px-4 py-3 rounded-md border border-border bg-background hover:bg-accent hover:text-accent-foreground transition-colors font-sans font-medium"
-          >
-            Login with GitHub
-          </button>
+          <div className="space-y-3">
+            <button
+              onClick={() => signIn("github", { callbackUrl })}
+              className="w-full px-4 py-3 rounded-md border border-border bg-background hover:bg-accent hover:text-accent-foreground transition-colors font-sans font-medium"
+            >
+              Login with GitHub
+            </button>
+            <button
+              onClick={() => signIn("google", { callbackUrl })}
+              className="w-full px-4 py-3 rounded-md border border-border bg-background hover:bg-accent hover:text-accent-foreground transition-colors font-sans font-medium"
+            >
+              Login with Google
+            </button>
+          </div>
         </div>
       </div>
     </main>

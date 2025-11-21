@@ -4,6 +4,7 @@ import { HamburgerButton } from "./hamburger-button";
 import { Logo } from "./logo";
 import { SearchButton } from "./search-button";
 import { CategoriesNav } from "./categories-nav";
+import { UserMenu } from "./user-menu";
 import { Category } from "./types";
 
 interface DesktopHeaderProps {
@@ -37,12 +38,13 @@ export function DesktopHeader({
           onCategoryClick={onCategoryClick}
         />
       </div>
-      <div className="flex items-center">
+      <div className="flex items-center gap-2">
         <SearchButton
           onClick={onMenuToggle}
           isScrolled={isScrolled}
           variant="desktop"
         />
+        <UserMenu isScrolled={isScrolled} variant="desktop" />
       </div>
     </div>
   );
