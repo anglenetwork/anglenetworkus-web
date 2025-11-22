@@ -8,7 +8,11 @@ interface MostReadItemProps {
   isFirst?: boolean;
 }
 
-export function MostReadItem({ article, index, isFirst = false }: MostReadItemProps) {
+export function MostReadItem({
+  article,
+  index,
+  isFirst = false,
+}: MostReadItemProps) {
   return (
     <article className="group">
       {isFirst && article.imageUrl && (
@@ -30,19 +34,11 @@ export function MostReadItem({ article, index, isFirst = false }: MostReadItemPr
           {index + 1}
         </div>
         <div className="flex-1 space-y-2">
-          <h3 className="text-lg font-sans font-normal text-neutral-900 leading-snug tracking-normal">
+          <h3 className="text-base font-sans font-medium text-neutral-900 leading-snug tracking-normal">
             <Link href={`/post/${article.slug}`} className="hover:underline">
               {article.title}
             </Link>
           </h3>
-          <div className="flex items-center gap-3 text-xs text-muted-foreground font-secondary">
-            <time dateTime={article.publishedAt}>
-              {new Date(article.publishedAt).toLocaleDateString("en-US", {
-                month: "short",
-                day: "numeric",
-              })}
-            </time>
-          </div>
         </div>
       </div>
     </article>

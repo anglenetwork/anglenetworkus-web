@@ -4,9 +4,12 @@ import type { Article } from "./types";
 
 interface FeatureHeroProps {
   article: Article;
+  variant?: "light" | "dark";
 }
 
-export function FeatureHero({ article }: FeatureHeroProps) {
+export function FeatureHero({ article, variant = "light" }: FeatureHeroProps) {
+  const textColor = variant === "dark" ? "text-white" : "text-neutral-900";
+
   return (
     <article className="group">
       <Link
@@ -30,7 +33,9 @@ export function FeatureHero({ article }: FeatureHeroProps) {
             priority
           />
         </div>
-        <h2 className="text-2xl md:text-3xl lg:text-3xl font-sans font-semibold text-neutral-900 leading-snug tracking-tight text-start">
+        <h2
+          className={`text-2xl md:text-3xl lg:text-3xl font-sans font-semibold ${textColor} leading-snug tracking-tight text-start`}
+        >
           {article.title}
         </h2>
       </Link>

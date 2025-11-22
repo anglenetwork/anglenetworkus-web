@@ -4,9 +4,13 @@ import type { Article } from "./types";
 
 interface FeatureSideItemProps {
   article: Article;
+  variant?: "light" | "dark";
 }
 
-export function FeatureSideItem({ article }: FeatureSideItemProps) {
+export function FeatureSideItem({ article, variant = "light" }: FeatureSideItemProps) {
+  const textColor = variant === "dark" ? "text-white" : "";
+  const desktopTextColor = variant === "dark" ? "text-white" : "text-neutral-900";
+  
   return (
     <article className="group">
       <Link
@@ -32,7 +36,7 @@ export function FeatureSideItem({ article }: FeatureSideItemProps) {
             />
           </div>
           <div className="flex-1">
-            <h3 className="font-sans text-lg sm:text-base font-normal tracking-wide leading-normal">
+            <h3 className={`font-sans text-lg sm:text-base font-normal tracking-wide leading-normal ${textColor}`}>
               {article.title}
             </h3>
           </div>
@@ -55,7 +59,7 @@ export function FeatureSideItem({ article }: FeatureSideItemProps) {
               className="object-cover"
             />
           </div>
-          <h3 className="text-lg font-sans font-normal text-neutral-900 leading-snug tracking-normal mb-2">
+          <h3 className={`text-lg font-sans font-normal ${desktopTextColor} leading-snug tracking-normal mb-2`}>
             {article.title}
           </h3>
         </div>
