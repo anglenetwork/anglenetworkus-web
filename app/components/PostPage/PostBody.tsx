@@ -311,7 +311,7 @@ export default function PostBody({
         if (!coverData?.src) return null;
 
         return (
-          <figure className="mb-8 text-left">
+          <figure className="mb-12 text-left">
             <div className="relative w-full h-96 md:h-[500px] overflow-hidden rounded-lg shadow-lg">
               <Image
                 src={coverData.src}
@@ -326,13 +326,15 @@ export default function PostBody({
               />
             </div>
             {(cover?.epigraph || cover?.imageSource) && (
-              <figcaption className="mt-2 font-secondary text-[12px] sm:text-xs text-neutral-500 text-left">
-                {cover?.epigraph && <span className="">{cover.epigraph}</span>}
+              <figcaption className="mt-2 font-secondary text-sm tracking-tight leading-snug text-neutral-500 text-left">
+                {cover?.epigraph && (
+                  <span className="font-bold">{cover.epigraph}</span>
+                )}
                 {cover?.epigraph && cover?.imageSource && (
-                  <span className="text-neutral-400"> • </span>
+                  <span className="text-neutral-500"> • </span>
                 )}
                 {cover?.imageSource && (
-                  <span className="text-neutral-400">
+                  <span className="text-neutral-500">
                     Source: {cover.imageSource}
                   </span>
                 )}

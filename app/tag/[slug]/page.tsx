@@ -13,7 +13,6 @@ import { getCoverImage } from "@/sanity/lib/utils";
 import { SectionHeader } from "@/app/components/ui/section-header";
 import ShowMoreSection from "./ShowMoreSection";
 import TagViewTracker from "./TagViewTracker";
-import { TagHeader } from "./components/TagHeader";
 import { TagFeaturedArticle } from "./components/TagFeaturedArticle";
 import { TagArticleItem } from "./components/TagArticleItem";
 import { TagNewsItem } from "./components/TagNewsItem";
@@ -135,7 +134,11 @@ export default async function TagPage({
       <div className="mx-auto flex max-w-7xl flex-col gap-8 lg:flex-row">
         {/* Left Column - 60% */}
         <div className="w-full lg:w-[60%]">
-          <TagHeader title={tag.title || "Tag"} />
+          <SectionHeader
+            title={tag.title || "Tag"}
+            variant="light"
+            size="large"
+          />
 
           {/* Featured Article */}
           {posts.length > 0 &&
@@ -216,9 +219,9 @@ export default async function TagPage({
             })}
           </div>
 
-          <div className="mt-4">
-            <SectionHeader title="More News" variant="gradient" />
-            <div className="space-y-0 divide-y divide-border border-b">
+          <div className="mt-2 bg-neutral-100 p-8 rounded-lg">
+            <SectionHeader title="More News" variant="light" />
+            <div className="space-y-0 divide-y divide-border">
               {posts.slice(4, 8).map((post) => (
                 <TagTextNewsItem
                   key={post._id}

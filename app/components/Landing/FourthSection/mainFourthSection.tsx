@@ -35,10 +35,12 @@ interface CategoryData {
 
 interface MainFourthSectionProps {
   categoriesData: CategoryData[];
+  variant?: "light" | "dark";
 }
 
 export default function MainFourthSection({
   categoriesData,
+  variant = "light",
 }: MainFourthSectionProps) {
   // Filter out categories without required data and limit to 3 posts per category
   const validCategories = categoriesData
@@ -51,7 +53,9 @@ export default function MainFourthSection({
     }));
 
   return (
-    <main className="bg-background px-4">
+    <main
+      className={`p-10 rounded-lg ${variant === "dark" ? "bg-black" : "bg-background"}`}
+    >
       <div className="">
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
           {validCategories.map((category, index) => {
@@ -62,7 +66,7 @@ export default function MainFourthSection({
                 {/* Category Header */}
                 <SectionHeader
                   title={category.name || "Category"}
-                  variant="gradient"
+                  variant={variant}
                   href={
                     category.slug ? `/category/${category.slug}` : undefined
                   }
@@ -97,7 +101,9 @@ export default function MainFourthSection({
                             </div>
                           </Link>
                           {mainPost?.cover?.imageSource && (
-                            <p className="text-[10px] text-gray-500 font-secondary text-right">
+                            <p
+                              className={`text-[10px] font-secondary text-right ${variant === "dark" ? "text-gray-400" : "text-gray-500"}`}
+                            >
                               {mainPost.cover.imageSource}
                             </p>
                           )}
@@ -112,7 +118,9 @@ export default function MainFourthSection({
                 {mainPost && mainPost.slug && (
                   <div className="space-y-2">
                     <Link href={`/post/${mainPost.slug}`}>
-                      <h3 className="text-xl font-sans font-semibold text-neutral-900 leading-snug tracking-tight">
+                      <h3
+                        className={`text-xl font-sans font-semibold leading-snug tracking-tight ${variant === "dark" ? "text-white" : "text-neutral-900"}`}
+                      >
                         {mainPost.title}
                       </h3>
                     </Link>
@@ -120,14 +128,18 @@ export default function MainFourthSection({
                 )}
 
                 {/* Divider */}
-                <hr className="border-t border-neutral-200" />
+                <hr
+                  className={`border-t ${variant === "dark" ? "border-white" : "border-neutral-200"}`}
+                />
 
                 {/* Related Articles */}
                 <div className="space-y-4">
                   {secondPost && secondPost.slug && (
                     <>
                       <Link href={`/post/${secondPost.slug}`}>
-                        <h3 className="text-base font-sans font-normal text-neutral-900 leading-snug tracking-normal mb-4">
+                        <h3
+                          className={`text-base font-sans font-normal leading-snug mb-4 ${variant === "dark" ? "text-white" : "text-neutral-900"}`}
+                        >
                           {secondPost.title}
                         </h3>
                       </Link>
@@ -135,8 +147,12 @@ export default function MainFourthSection({
                   )}
                   {thirdPost && thirdPost.slug && (
                     <Link href={`/post/${thirdPost.slug}`}>
-                      <hr className="border-1 border-neutral-200 my-4" />
-                      <h3 className="text-neutral-900 leading-normal mb-2 font-sans text-base font-normal tracking-wide">
+                      <hr
+                        className={`border-1 my-4 ${variant === "dark" ? "border-white" : "border-neutral-200"}`}
+                      />
+                      <h3
+                        className={`leading-snug mb-2 font-sans text-base font-normal ${variant === "dark" ? "text-white" : "text-neutral-900"}`}
+                      >
                         {thirdPost.title}
                       </h3>
                     </Link>
