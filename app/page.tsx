@@ -77,7 +77,10 @@ export default async function Page() {
           posts={sixthSectionPosts as any}
           categoryTitle="International"
         />
-        <MainFourthSection categoriesData={fourthSectionData as any} />
+        <MainFourthSection
+          variant="dark"
+          categoriesData={fourthSectionData as any}
+        />
         <MainFifthSection
           posts={fifthSectionPosts as any}
           categoryTitle="politics"
