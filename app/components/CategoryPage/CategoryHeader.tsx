@@ -16,7 +16,7 @@ export function CategoryHeader({
     <header className="border-b border-border bg-card">
       <div className="container mx-auto px-4 py-4">
         <div className="">
-          <h1 className="font-sans text-4xl md:text-5xl lg:text-5xl font-bold capitalize text-center">
+          <h1 className="font-sans text-4xl md:text-5xl lg:text-6xl font-bold capitalize text-center">
             {categoryName}
           </h1>
         </div>
