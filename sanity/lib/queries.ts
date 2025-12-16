@@ -18,7 +18,10 @@ const postFields = `
     image,
     alt,
     epigraph,
-    imageSource
+    creditProvider,
+    creditAuthor,
+    creditSourceUrl,
+    creditLicense
   },
   "date": coalesce(date, _updatedAt),
   publishedAt,
@@ -27,13 +30,19 @@ const postFields = `
   featured,
   labels,
   justIn,
+  justInRank,
+  justInUntil,
   breakingNews,
   developingStory,
   mainHeadline,
+  mainHeadlineRank,
+  mainHeadlineUntil,
   frontline,
   frontRank,
   frontUntil,
   rightHeadline,
+  rightHeadlineRank,
+  rightHeadlineUntil,
 
   "author": select(
     defined(author->name) => {
@@ -65,7 +74,10 @@ const postFields = `
       image,
       alt,
       epigraph,
-      imageSource
+      creditProvider,
+      creditAuthor,
+      creditSourceUrl,
+      creditLicense
     }
   }
 `;
@@ -246,10 +258,11 @@ export const allCategoriesQuery = defineQuery(`
 `);
 
 export const categoriesByViewsQuery = defineQuery(`
-  *[_type == "category" && defined(slug.current)] | order(coalesce(views, 0) desc, name asc) {
+  *[_type == "category" && defined(slug.current)] | order(coalesce(order, 999) asc, name asc) {
     "slug": slug.current,
     name,
-    views
+    views,
+    order
   }
 `);
 

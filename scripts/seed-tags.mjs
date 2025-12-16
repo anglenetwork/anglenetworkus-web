@@ -41,78 +41,95 @@ const TAGS = [
   { title: 'Elections', aliases: ['election', 'vote', 'voting', 'polls', 'campaign'] },
   { title: 'White House', aliases: ['presidency', 'administration', 'Oval Office'] },
   { title: 'Congress', aliases: ['Capitol Hill', 'House', 'Senate', 'lawmakers'] },
-  { title: 'Supreme Court', aliases: ['SCOTUS', 'high court', 'justices'] },
   { title: 'Economy', aliases: ['economic growth', 'GDP', 'recession', 'consumer spending'] },
-  { title: 'Inflation', aliases: ['prices', 'cost of living', 'CPI'] },
-  { title: 'Jobs & Labor', aliases: ['employment', 'unemployment', 'unions', 'strikes'] },
   { title: 'Markets', aliases: ['stocks', 'Wall Street', 'equities', 'S&P 500'] },
-  { title: 'Small Business', aliases: ['SMB', 'entrepreneurs', 'startups'] },
-  { title: 'Big Tech', aliases: ['FAANG', 'tech giants', 'platforms'] },
   { title: 'Artificial Intelligence', aliases: ['AI', 'machine learning', 'generative AI'] },
-  { title: 'Social Media', aliases: ['platforms', 'X/Twitter', 'Facebook', 'Instagram', 'TikTok'] },
-  { title: 'Cybersecurity', aliases: ['hacking', 'ransomware', 'data breach'] },
   { title: 'Climate', aliases: ['climate change', 'global warming', 'emissions'] },
-  { title: 'Energy', aliases: ['oil', 'gas', 'renewables', 'grid', 'electricity'] },
-  { title: 'Immigration', aliases: ['border', 'migrants', 'asylum'] },
-  { title: 'Public Health', aliases: ['health policy', 'outbreaks', 'CDC', 'vaccines'] },
-  { title: 'Education', aliases: ['schools', 'universities', 'curriculum', 'student loans'] },
-  { title: 'Criminal Justice', aliases: ['police', 'crime', 'courts', 'prosecutors'] },
-  { title: 'Foreign Policy', aliases: ['diplomacy', 'sanctions', 'geopolitics'] },
+  { title: 'China', aliases: ['Beijing', 'Chinese', 'PRC', 'mainland China', "People's Republic of China"] },
+  {
+    title: 'Ukraine / Russia War',
+    aliases: [
+      'ukraine',
+      'russia',
+      'war',
+      'invasion',
+      'putin',
+      'zelensky',
+      'kremlin',
+      'kyiv',
+    ],
+  },
 ];
 
-async function upsertTag({ title, aliases = [] }) {
-  const slug = slugify(title);
-
-  // Look up by slug to keep IDs stable across runs
-  const existing = await client.fetch(
-    `*[_type=="tag" && slug.current==$slug][0]{_id, title, aliases, featured, hidden, deprecated}`,
-    { slug }
+async function deleteAllTags() {
+  console.log('Deleting all existing tags...');
+  
+  // Fetch all tags
+  const allTags = await client.fetch(
+    `*[_type=="tag"]{_id}`
   );
 
-  if (!existing?._id) {
-    // Create new tag; satisfy your schema's fields with sensible defaults
-    await client.create({
-      _type: 'tag',
-      title,
-      slug: { _type: 'slug', current: slug },
-      aliases: uniq(aliases),
-      featured: false,
-      hidden: false,
-      deprecated: false,
-      // optional fields you can add here if you want:
-      // description: '',
-      // emoji: '',
-      // color: '#0ea5e9',
-      // order: 0,
-      // analyticsKey: '',
-    });
-    console.log(`Created: ${title}`);
+  if (allTags.length === 0) {
+    console.log('No existing tags to delete.');
     return;
   }
 
-  // Merge aliases; do not flip featured/hidden/deprecated automatically
-  const mergedAliases = uniq([...(existing.aliases || []), ...aliases]);
+  console.log(`Found ${allTags.length} tags to delete.`);
 
-  await client
-    .patch(existing._id)
-    .set({
-      title,
-      aliases: mergedAliases,
-      // keep featured/hidden/deprecated as-is unless you want to control them here
-    })
-    .commit();
+  // Delete each tag
+  let deletedCount = 0;
+  for (const tag of allTags) {
+    try {
+      await client.delete(tag._id);
+      deletedCount++;
+      if (deletedCount % 10 === 0) {
+        console.log(`Deleted ${deletedCount}/${allTags.length} tags...`);
+      }
+    } catch (error) {
+      console.error(`Error deleting tag ${tag._id}:`, error.message);
+    }
+  }
 
-  console.log(`Updated: ${title}`);
+  console.log(`Successfully deleted ${deletedCount} tags.`);
+}
+
+async function createTag({ title, aliases = [] }) {
+  const slug = slugify(title);
+
+  // Create new tag
+  await client.create({
+    _type: 'tag',
+    title,
+    slug: { _type: 'slug', current: slug },
+    aliases: uniq(aliases),
+    featured: false,
+    hidden: false,
+    deprecated: false,
+  });
+
+  console.log(`Created: ${title} (${slug})`);
 }
 
 async function run() {
   if (!process.env.SANITY_API_WRITE_TOKEN) {
     throw new Error('Missing SANITY_API_WRITE_TOKEN in env');
   }
-  for (const t of TAGS) {
-    await upsertTag(t);
+
+  try {
+    // Step 1: Delete all existing tags
+    await deleteAllTags();
+
+    // Step 2: Create all tags fresh
+    console.log('\nCreating new tags...');
+    for (const t of TAGS) {
+      await createTag(t);
+    }
+
+    console.log('\nDone seeding tags.');
+  } catch (error) {
+    console.error('Error seeding tags:', error);
+    throw error;
   }
-  console.log('Done seeding tags.');
 }
 
 run().catch((e) => {

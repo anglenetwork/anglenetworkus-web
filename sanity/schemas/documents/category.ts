@@ -12,7 +12,7 @@ export default defineType({
       name: "name",
       title: "Name",
       type: "string",
-      validation: (rule) => rule.required(),
+      validation: (rule: any) => rule.required(),
     }),
     defineField({
       name: "slug",
@@ -21,9 +21,9 @@ export default defineType({
       options: {
         source: "name",
         maxLength: 96,
-        isUnique: (value, context) => context.defaultIsUnique(value, context),
+        isUnique: (value: string, context: any) => context.defaultIsUnique(value, context),
       },
-      validation: (rule) => rule.required(),
+      validation: (rule: any) => rule.required(),
     }),
 
     // --- additions (non-breaking) ---
@@ -33,12 +33,14 @@ export default defineType({
       type: "reference",
       to: [{ type: "category" }],
       description: "Use to build hierarchical sections (e.g., Sports → Football).",
-    }),
+    } as any),
     defineField({
       name: "description",
       title: "Description",
       type: "text",
-      rows: 3,
+      options: {
+        rows: 3,
+      },
     }),
     defineField({
       name: "hero",
@@ -53,20 +55,20 @@ export default defineType({
           description: "Important for SEO and accessibility.",
         },
       ],
-    }),
+    } as any),
     defineField({
       name: "emoji",
       title: "Emoji (optional)",
       type: "string",
       description: "One emoji to show with this category in UI.",
-      validation: (rule) => rule.max(4),
+      validation: (rule: any) => rule.max(4),
     }),
     defineField({
       name: "color",
       title: "Color (hex)",
       type: "string",
       description: "Optional brand color for this category (e.g. #0ea5e9).",
-      validation: (rule) =>
+      validation: (rule: any) =>
         rule
           .regex(/^#([0-9a-fA-F]{3}){1,2}$/, { name: "hex color" })
           .warning("Use a valid hex like #0ea5e9"),
@@ -123,7 +125,7 @@ export default defineType({
       type: "number",
       initialValue: 0,
       description: "Total number of visits to posts in this category.",
-      validation: (rule) => rule.min(0),
+      validation: (rule: any) => rule.min(0),
     }),
   ],
 

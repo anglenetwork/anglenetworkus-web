@@ -111,3 +111,43 @@ export function getCoverImage(
 
   return null;
 }
+
+/**
+ * Formats image credit/attribution using minimal structured fields
+ * Format: "Photo by [Author] via [Provider] ([License])"
+ * Example: "Photo by Timothy Powaleny via Wikimedia Commons (CC BY-SA 4.0)"
+ */
+export function formatImageCredit(cover: {
+  creditProvider?: string | null;
+  creditAuthor?: string | null;
+  creditSourceUrl?: string | null;
+  creditLicense?: string | null;
+} | null | undefined): string | null {
+  if (!cover) return null;
+
+  // Build credit line if we have any attribution data
+  if (cover.creditProvider || cover.creditAuthor || cover.creditLicense) {
+    const parts: string[] = ["Photo"];
+
+    // Author
+    if (cover.creditAuthor) {
+      parts.push(`by ${cover.creditAuthor}`);
+    }
+
+    // Provider/Source
+    if (cover.creditProvider) {
+      parts.push(`via ${cover.creditProvider}`);
+    }
+
+    // License (in parentheses)
+    if (cover.creditLicense) {
+      parts.push(`(${cover.creditLicense})`);
+    }
+
+    if (parts.length > 1) {
+      return parts.join(" ");
+    }
+  }
+
+  return null;
+}

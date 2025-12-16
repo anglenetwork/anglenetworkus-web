@@ -5,7 +5,7 @@ import ArticleCard from "./article-card";
 import ArticleCardAlternative from "./articleCardAlternative";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { getCoverImage } from "@/sanity/lib/utils";
+import { getCoverImage, formatImageCredit } from "@/sanity/lib/utils";
 import { SectionHeader } from "../../ui/section-header";
 
 interface Post {
@@ -77,7 +77,8 @@ export default function MainSecondSection({
               category.thirdArticle.title ||
               "Article image"
             : "Article image",
-          imageSource: category.thirdArticle.cover?.imageSource || undefined,
+          imageSource:
+            formatImageCredit(category.thirdArticle.cover) || undefined,
           isDecorative: !category.thirdArticle.cover,
           slug: category.thirdArticle.slug,
           views7d: category.thirdArticle.views7d || 0,

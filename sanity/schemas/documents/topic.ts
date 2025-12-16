@@ -5,13 +5,13 @@ export default defineType({
   title: "Topic / Entity",
   type: "document",
   fields: [
-    defineField({ name: "title", title: "Title", type: "string", validation: r => r.required() }),
+    defineField({ name: "title", title: "Title", type: "string", validation: (r: any) => r.required() }),
     defineField({
       name: "slug",
       title: "Slug",
       type: "slug",
-      options: { source: "title", maxLength: 96, isUnique: (v, c) => c.defaultIsUnique(v, c) },
-      validation: r => r.required(),
+      options: { source: "title", maxLength: 96, isUnique: (v: string, c: any) => c.defaultIsUnique(v, c) },
+      validation: (r: any) => r.required(),
     }),
     defineField({
       name: "kind",
@@ -26,7 +26,7 @@ export default defineType({
       type: "image",
       options: { hotspot: true },
       fields: [{ name: "alt", type: "string", title: "Alt" }],
-    }),
+    } as any),
     defineField({ name: "description", title: "Description", type: "text" }),
   ],
 });

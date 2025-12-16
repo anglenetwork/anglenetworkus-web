@@ -1,6 +1,10 @@
 import Link from "next/link";
 import Image from "next/image";
-import { urlForImage, isWhitelistedDomain } from "@/sanity/lib/utils";
+import {
+  urlForImage,
+  isWhitelistedDomain,
+  formatImageCredit,
+} from "@/sanity/lib/utils";
 import { SectionHeader } from "../../ui/section-header";
 
 interface Post {
@@ -13,7 +17,10 @@ interface Post {
     externalUrl?: string;
     image?: any;
     alt?: string;
-    imageSource?: string;
+    creditProvider?: string | null;
+    creditAuthor?: string | null;
+    creditSourceUrl?: string | null;
+    creditLicense?: string | null;
   };
   author?: {
     name: string;
@@ -38,7 +45,7 @@ export function CenterColumnLanding({
     src: string | null;
     alt: string;
     unoptimized: boolean;
-    imageSource?: string;
+    credit?: string | null;
   } => {
     // 1) External URL
     if (post.cover?.source === "external" && post.cover?.externalUrl) {
@@ -48,7 +55,7 @@ export function CenterColumnLanding({
         src: post.cover.externalUrl,
         alt: post.cover.alt || post.title,
         unoptimized: !canOptimize, // Only unoptimize if domain is not whitelisted
-        imageSource: post.cover.imageSource,
+        credit: formatImageCredit(post.cover),
       };
     }
     // 2) New asset image
@@ -59,7 +66,7 @@ export function CenterColumnLanding({
           src: b.url(),
           alt: post.cover.alt || post.cover.image?.alt || post.title,
           unoptimized: false,
-          imageSource: post.cover.imageSource,
+          credit: formatImageCredit(post.cover),
         };
       }
     }
@@ -80,7 +87,7 @@ export function CenterColumnLanding({
           </Link>
 
           {(() => {
-            const { src, alt, unoptimized, imageSource } = getCover(post);
+            const { src, alt, unoptimized, credit } = getCover(post);
             if (!src) return null;
             return (
               <Link href={`/post/${post.slug}`}>
@@ -97,9 +104,9 @@ export function CenterColumnLanding({
                     sizes="(max-width: 640px) 100vw, (max-width: 1024px) 90vw, (max-width: 1280px) 70vw, 1000px"
                     className="w-full h-80 md:h-[500px] object-cover rounded-sm"
                   />
-                  {imageSource && (
+                  {credit && (
                     <p className="text-[10px] text-gray-500 font-secondary text-right">
-                      {imageSource}
+                      {credit}
                     </p>
                   )}
                 </div>
@@ -142,7 +149,7 @@ export function CenterColumnLanding({
           {moreTopHeadlines.slice(0, 2).map((post) => (
             <article key={post._id} className="flex gap-4 md:block">
               {(() => {
-                const { src, alt, unoptimized, imageSource } = getCover(post);
+                const { src, alt, unoptimized, credit } = getCover(post);
                 if (!src) return null;
                 return (
                   <Link href={`/post/${post.slug}`}>
@@ -157,9 +164,9 @@ export function CenterColumnLanding({
                         sizes="(max-width: 640px) 96px, (max-width: 768px) 96px, (max-width: 1024px) 50vw, 384px"
                         className="w-24 h-20 md:w-full md:h-48 object-cover rounded-sm"
                       />
-                      {imageSource && (
+                      {credit && (
                         <p className="hidden md:block text-[10px] text-gray-500 font-secondary text-right">
-                          {imageSource}
+                          {credit}
                         </p>
                       )}
                     </div>
@@ -185,7 +192,7 @@ export function CenterColumnLanding({
           {moreTopHeadlines.slice(2, 5).map((post) => (
             <article key={post._id} className="flex gap-4 md:block">
               {(() => {
-                const { src, alt, unoptimized, imageSource } = getCover(post);
+                const { src, alt, unoptimized } = getCover(post);
                 if (!src) return null;
                 return (
                   <Link href={`/post/${post.slug}`}>
