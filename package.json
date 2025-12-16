@@ -19,7 +19,8 @@
     "setup": "npx sanity@latest init --env .env.local",
     "postsetup": "echo 'create the read token by following the rest of the guide: https://github.com/vercel/next.js/tree/canary/examples/cms-sanity#creating-a-read-token'",
     "typegen": "sanity schema extract && sanity typegen generate",
-    "seed:tags": "node scripts/seed-tags.mjs"
+    "seed:tags": "node scripts/seed-tags.mjs",
+    "seed:categories": "node scripts/seed-categories.mjs"
   },
   "dependencies": {
     "@portabletext/react": "^3.2.1",

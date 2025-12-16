@@ -13,8 +13,8 @@ export default defineType({
       title: "Category",
       type: "reference",
       to: [{ type: "category" }],
-      validation: (rule) => rule.required(),
-    }),
+      validation: (rule: any) => rule.required(),
+    } as any),
     defineField({
       name: "tags",
       title: "Tags",
@@ -22,19 +22,19 @@ export default defineType({
       of: [{ type: "reference", to: [{ type: "tag" }] }],
       options: { layout: "tags" },
       description: "Public topical keywords (tag docs only).",
-    }),
+    } as any),
     defineField({
       name: "mainHeadline",
       title: "Main Headline",
       type: "boolean",
       initialValue: false,
-      description: "Mark this post as a main headline.",
+      description: "Mark this post as a main headline. Auto-sets Main Headline Until to 24 hours (adjustable).",
       validation: (rule) =>
         rule.custom((value, ctx) => {
           const doc = ctx.document as any;
           if (value) {
             if (doc?.frontline) {
-              return "Cannot be both Main Headline and Front Page (Hero) at the same time";
+              return "Cannot be both Main Headline and Front Page (More Top Headlines) Section at the same time";
             }
             if (doc?.rightHeadline) {
               return "Cannot be both Main Headline and Right Headline at the same time";
@@ -42,31 +42,100 @@ export default defineType({
             if (doc?.justIn) {
               return "Cannot be both Main Headline and Just In at the same time";
             }
+            // Validate mainHeadlineUntil if set
+            if (doc?.mainHeadlineUntil) {
+              const mainHeadlineUntilDate = new Date(doc.mainHeadlineUntil);
+              const now = new Date();
+              const threeDaysFromNow = new Date(now);
+              threeDaysFromNow.setDate(threeDaysFromNow.getDate() + 3);
+              
+              if (mainHeadlineUntilDate > threeDaysFromNow) {
+                return "Warning: Main Headline Until date is more than 3 days away. Consider setting it to 24-48 hours to ensure content freshness.";
+              }
+            }
           }
           return true;
         }),
     }),
     defineField({
+      name: "mainHeadlineRank",
+      title: "Main Headline Rank",
+      type: "number",
+      description: "Higher number shows earlier in the main headline section (e.g., 10 = top).",
+      hidden: ({ parent }) => !parent?.mainHeadline,
+      validation: (rule) => rule.min(0).max(10),
+    }),
+    defineField({
+      name: "mainHeadlineUntil",
+      title: "Main Headline Until",
+      type: "datetime",
+      description: "Auto-removes from main headline after this date. Required when Main Headline is enabled. Recommended: 24-48 hours (max 3 days).",
+      hidden: ({ parent }) => !parent?.mainHeadline,
+      validation: (rule) =>
+        rule.custom((value, ctx) => {
+          const doc = ctx.document as any;
+          
+          // Required when mainHeadline is enabled
+          if (doc?.mainHeadline && !value) {
+            return "Main Headline Until is required when Main Headline is enabled.";
+          }
+          
+          // Allow clearing the field if mainHeadline is disabled
+          if (!value) return true;
+          
+          // Validate that value is a valid date string
+          if (typeof value !== 'string') return true;
+          
+          const mainHeadlineUntilDate = new Date(value);
+          if (isNaN(mainHeadlineUntilDate.getTime())) return true;
+          
+          const now = new Date();
+          const threeDaysFromNow = new Date(now);
+          threeDaysFromNow.setDate(threeDaysFromNow.getDate() + 3);
+          
+          if (mainHeadlineUntilDate > threeDaysFromNow) {
+            return "Warning: Main Headline Until date is more than 3 days away. This may keep the article in the main headline section longer than intended. Recommended: 24-48 hours.";
+          }
+          
+          if (mainHeadlineUntilDate < now) {
+            return "Main Headline Until date is in the past. The article will be immediately removed from the main headline section.";
+          }
+          
+          return true;
+        }),
+    }),
+    defineField({
       name: "frontline",
-      title: "Front Page (Hero)",
+      title: "Front Page (More Top Headlines) Section",
       type: "boolean",
       initialValue: false,
-      description: "Pin this post to the main headlines area.",
+      description: "Pin to main headlines. Auto-sets Front Until to 24 hours (adjustable).",
       validation: (rule) =>
         rule.custom((value, ctx) => {
           const doc = ctx.document as any;
           if (value) {
             if (doc?.mainHeadline) {
-              return "Cannot be both Front Page (Hero) and Main Headline at the same time";
+              return "Cannot be both Front Page (More Top Headlines) Section and Main Headline at the same time";
             }
             if (doc?.rightHeadline) {
-              return "Cannot be both Front Page (Hero) and Right Headline at the same time";
+              return "Cannot be both Front Page (More Top Headlines) Section and Right Headline at the same time";
             }
             if (doc?.justIn) {
-              return "Cannot be both Front Page (Hero) and Just In at the same time";
+              return "Cannot be both Front Page (More Top Headlines) Section and Just In at the same time";
             }
             if (!doc?.publishedAt) {
               return "Warning: Published date is recommended when showing on front page";
+            }
+            // Validate frontUntil if set
+            if (doc?.frontUntil) {
+              const frontUntilDate = new Date(doc.frontUntil);
+              const now = new Date();
+              const threeDaysFromNow = new Date(now);
+              threeDaysFromNow.setDate(threeDaysFromNow.getDate() + 3);
+              
+              if (frontUntilDate > threeDaysFromNow) {
+                return "Warning: Front Until date is more than 3 days away. Consider setting it to 24-48 hours to ensure content freshness.";
+              }
             }
           }
           return true;
@@ -76,7 +145,7 @@ export default defineType({
       name: "frontRank",
       title: "Front Rank",
       type: "number",
-      description: "Higher number shows earlier in the hero (e.g., 10 = top).",
+      description: "Higher number shows earlier in the More Top Headlines section (e.g., 10 = top).",
       hidden: ({ parent }) => !parent?.frontline,
       validation: (rule) => rule.min(0).max(10),
     }),
@@ -84,15 +153,48 @@ export default defineType({
       name: "frontUntil",
       title: "Front Until",
       type: "datetime",
-      description: "Optional. Auto-remove from hero after this date/time.",
+      description: "Auto-removes from More Top Headlines section after this date. Required when Front Page is enabled. Recommended: 24-48 hours (max 3 days).",
       hidden: ({ parent }) => !parent?.frontline,
+      validation: (rule) =>
+        rule.custom((value, ctx) => {
+          const doc = ctx.document as any;
+          
+          // Required when frontline is enabled
+          if (doc?.frontline && !value) {
+            return "Front Until is required when Front Page is enabled.";
+          }
+          
+          // Allow clearing the field if frontline is disabled
+          if (!value) return true;
+          
+          // Validate that value is a valid date string
+          if (typeof value !== 'string') return true;
+          
+          const frontUntilDate = new Date(value);
+          // Check if date is valid
+          if (isNaN(frontUntilDate.getTime())) return true;
+          
+          const now = new Date();
+          const threeDaysFromNow = new Date(now);
+          threeDaysFromNow.setDate(threeDaysFromNow.getDate() + 3);
+          
+          if (frontUntilDate > threeDaysFromNow) {
+            return "Warning: Front Until date is more than 3 days away. This may keep the article in the More Top Headlines section longer than intended. Recommended: 24-48 hours.";
+          }
+          
+          if (frontUntilDate < now) {
+            return "Front Until date is in the past. The article will be immediately removed from the More Top Headlines section.";
+          }
+          
+          return true;
+        }),
     }),
     defineField({
       name: "rightHeadline",
       title: "Right Headline",
       type: "boolean",
       initialValue: false,
-      description: "Mark this post as a right headline.",
+      description: "Mark this post as a right headline. Right Headline Until is required when enabled.",
       validation: (rule) =>
         rule.custom((value, ctx) => {
           const doc = ctx.document as any;
@@ -101,12 +203,70 @@ export default defineType({
               return "Cannot be both Right Headline and Main Headline at the same time";
             }
             if (doc?.frontline) {
-              return "Cannot be both Right Headline and Front Page (Hero) at the same time";
+              return "Cannot be both Right Headline and Front Page (More Top Headlines) Section at the same time";
             }
             if (doc?.justIn) {
               return "Cannot be both Right Headline and Just In at the same time";
             }
+            // Validate rightHeadlineUntil if set
+            if (doc?.rightHeadlineUntil) {
+              const rightHeadlineUntilDate = new Date(doc.rightHeadlineUntil);
+              const now = new Date();
+              const threeDaysFromNow = new Date(now);
+              threeDaysFromNow.setDate(threeDaysFromNow.getDate() + 3);
+              
+              if (rightHeadlineUntilDate > threeDaysFromNow) {
+                return "Warning: Right Headline Until date is more than 3 days away. Consider setting it to 24-48 hours to ensure content freshness.";
+              }
+            }
           }
+          return true;
+        }),
+    }),
+    defineField({
+      name: "rightHeadlineRank",
+      title: "Right Headline Rank",
+      type: "number",
+      description: "Higher number shows earlier in the right headline section (e.g., 10 = top).",
+      hidden: ({ parent }) => !parent?.rightHeadline,
+      validation: (rule) => rule.min(0).max(10),
+    }),
+    defineField({
+      name: "rightHeadlineUntil",
+      title: "Right Headline Until",
+      type: "datetime",
+      description: "Auto-removes from right headline after this date. Required when Right Headline is enabled. Recommended: 24-48 hours (max 3 days).",
+      hidden: ({ parent }) => !parent?.rightHeadline,
+      validation: (rule) =>
+        rule.custom((value, ctx) => {
+          const doc = ctx.document as any;
+          
+          // Required when rightHeadline is enabled
+          if (doc?.rightHeadline && !value) {
+            return "Right Headline Until is required when Right Headline is enabled.";
+          }
+          
+          // Allow clearing the field if rightHeadline is disabled
+          if (!value) return true;
+          
+          // Validate that value is a valid date string
+          if (typeof value !== 'string') return true;
+          
+          const rightHeadlineUntilDate = new Date(value);
+          if (isNaN(rightHeadlineUntilDate.getTime())) return true;
+          
+          const now = new Date();
+          const threeDaysFromNow = new Date(now);
+          threeDaysFromNow.setDate(threeDaysFromNow.getDate() + 3);
+          
+          if (rightHeadlineUntilDate > threeDaysFromNow) {
+            return "Warning: Right Headline Until date is more than 3 days away. This may keep the article in the right headline section longer than intended. Recommended: 24-48 hours.";
+          }
+          
+          if (rightHeadlineUntilDate < now) {
+            return "Right Headline Until date is in the past. The article will be immediately removed from the right headline section.";
+          }
+          
           return true;
         }),
     }),
@@ -115,7 +275,7 @@ export default defineType({
       title: "Just In",
       type: "boolean",
       initialValue: false,
-      description: "Show this post in the 'Just in' section.",
+      description: "Show this post in the 'Just in' section. Auto-sets Just In Until to 24 hours (adjustable).",
       validation: (rule) =>
         rule.custom((value, ctx) => {
           const doc = ctx.document as any;
@@ -124,12 +284,70 @@ export default defineType({
               return "Cannot be both Just In and Main Headline at the same time";
             }
             if (doc?.frontline) {
-              return "Cannot be both Just In and Front Page (Hero) at the same time";
+              return "Cannot be both Just In and Front Page (More Top Headlines) Section at the same time";
             }
             if (doc?.rightHeadline) {
               return "Cannot be both Just In and Right Headline at the same time";
             }
+            // Validate justInUntil if set
+            if (doc?.justInUntil) {
+              const justInUntilDate = new Date(doc.justInUntil);
+              const now = new Date();
+              const threeDaysFromNow = new Date(now);
+              threeDaysFromNow.setDate(threeDaysFromNow.getDate() + 3);
+              
+              if (justInUntilDate > threeDaysFromNow) {
+                return "Warning: Just In Until date is more than 3 days away. Consider setting it to 24-48 hours to ensure content freshness.";
+              }
+            }
           }
+          return true;
+        }),
+    }),
+    defineField({
+      name: "justInRank",
+      title: "Just In Rank",
+      type: "number",
+      description: "Higher number shows earlier in the Just In section (e.g., 10 = top).",
+      hidden: ({ parent }) => !parent?.justIn,
+      validation: (rule) => rule.min(0).max(10),
+    }),
+    defineField({
+      name: "justInUntil",
+      title: "Just In Until",
+      type: "datetime",
+      description: "Auto-removes from Just In after this date. Required when Just In is enabled. Recommended: 24-48 hours (max 3 days).",
+      hidden: ({ parent }) => !parent?.justIn,
+      validation: (rule) =>
+        rule.custom((value, ctx) => {
+          const doc = ctx.document as any;
+          
+          // Required when justIn is enabled
+          if (doc?.justIn && !value) {
+            return "Just In Until is required when Just In is enabled.";
+          }
+          
+          // Allow clearing the field if justIn is disabled
+          if (!value) return true;
+          
+          // Validate that value is a valid date string
+          if (typeof value !== 'string') return true;
+          
+          const justInUntilDate = new Date(value);
+          if (isNaN(justInUntilDate.getTime())) return true;
+          
+          const now = new Date();
+          const threeDaysFromNow = new Date(now);
+          threeDaysFromNow.setDate(threeDaysFromNow.getDate() + 3);
+          
+          if (justInUntilDate > threeDaysFromNow) {
+            return "Warning: Just In Until date is more than 3 days away. This may keep the article in the Just In section longer than intended. Recommended: 24-48 hours.";
+          }
+          
+          if (justInUntilDate < now) {
+            return "Just In Until date is in the past. The article will be immediately removed from the Just In section.";
+          }
+          
           return true;
         }),
     }),
@@ -210,7 +428,7 @@ export default defineType({
             direction: "horizontal",
           },
           initialValue: "asset",
-          validation: (rule) => rule.required(),
+          validation: (rule: any) => rule.required(),
         }),
         defineField({
           name: "externalUrl",
@@ -218,9 +436,9 @@ export default defineType({
           type: "url",
           description:
             "Paste a direct image URL (e.g., Wikimedia Commons). Must be a direct file URL (http/https).",
-          hidden: ({ parent }) => parent?.source !== "external",
-          validation: (rule) =>
-            rule.custom((value, ctx) => {
+          hidden: ({ parent }: { parent?: { source?: string } }) => parent?.source !== "external",
+          validation: (rule: any) =>
+            rule.custom((value: string | undefined, ctx: any) => {
               const parent = ctx.parent as any;
               if (parent?.source === "external") {
                 if (!value) return "External image URL is required";
@@ -241,24 +459,24 @@ export default defineType({
               description: "Important for SEO and accessibility.",
             },
           ],
-          hidden: ({ parent }) => parent?.source !== "asset",
-          validation: (rule) =>
-            rule.custom((value, ctx) => {
+          hidden: ({ parent }: { parent?: { source?: string } }) => parent?.source !== "asset",
+          validation: (rule: any) =>
+            rule.custom((value: any, ctx: any) => {
               const parent = ctx.parent as any;
               if (parent?.source === "asset") {
                 if (!value?.asset?._ref) return "Select or upload an image";
               }
               return true;
             }),
-        }),
+        } as any),
         defineField({
           name: "alt",
           title: "Alt text (cover)",
           type: "string",
           description:
             "Describe the image for screen readers. Required if an external URL is used or an asset is present without nested alt.",
-          validation: (rule) =>
-            rule.custom((val, ctx) => {
+          validation: (rule: any) =>
+            rule.custom((val: string | undefined, ctx: any) => {
               const parent = ctx.parent as any;
               const usingExternal = parent?.source === "external" && parent?.externalUrl;
               const usingAsset = parent?.source === "asset" && parent?.image?.asset?._ref;
@@ -271,10 +489,34 @@ export default defineType({
             }),
         }),
         defineField({ name: "epigraph", title: "Epigraph", type: "string" }),
-        defineField({ name: "imageSource", title: "Image Source / Credit", type: "string" }),
+        // ✅ Minimal image attribution fields (Wikimedia Commons compliant)
+        defineField({
+          name: "creditProvider",
+          title: "Credit Provider",
+          type: "string",
+          description: 'Optional. Example: "Wikimedia Commons", "Pexels".',
+        }),
+        defineField({
+          name: "creditAuthor",
+          title: "Credit Author",
+          type: "string",
+          description: "Optional. Photographer/creator name (e.g., Timothy Powaleny).",
+        }),
+        defineField({
+          name: "creditSourceUrl",
+          title: "Credit Source URL",
+          type: "url",
+          description: "Optional. Link to the photo page (Commons file page / Pexels photo page).",
+        }),
+        defineField({
+          name: "creditLicense",
+          title: "Credit License",
+          type: "string",
+          description: 'Optional. Example: "CC BY-SA 4.0", "CC BY 4.0", "Pexels", "Public Domain".',
+        }),
       ],
-      validation: (rule) =>
-        rule.custom((cover, ctx) => {
+      validation: (rule: any) =>
+        rule.custom((cover: any, ctx: any) => {
           const doc = ctx.document as any;
           const usingExternal = cover?.source === "external" && !!cover?.externalUrl;
           const coverImage = cover?.image as any;
@@ -285,9 +527,8 @@ export default defineType({
           }
           return true;
         }),
-      description:
-        "Choose between an uploaded/selected image or a pasted external URL. Alt text is required for accessibility.",
-    }),
+      description: "Upload image or paste external URL. Alt text required. Optional licensing fields for Wikimedia/CC attribution.",
+    } as any),
     // Removed legacy top-level epigraph/imageSource (use cover.epigraph/imageSource)
     // Removed legacy top-level epigraph/imageSource (use cover.epigraph/imageSource)
     defineField({
@@ -298,11 +539,11 @@ export default defineType({
       options: {
         source: "title",
         maxLength: 96,
-        isUnique: (value, context) => context.defaultIsUnique(value, context),
+        isUnique: (value: string, context: any) => context.defaultIsUnique(value, context),
       },
       validation: (rule) => rule.required(),
     }),
-    defineField({ name: "bodyTextOne", title: "Main Text", type: "array", of: [{ type: "block" }], validation: (rule) => rule.required() }),
+    defineField({ name: "bodyTextOne", title: "Main Text", type: "array", of: [{ type: "block" }], validation: (rule: any) => rule.required() } as any),
     defineField({
       name: "bodyBlocks",
       title: "Content Blocks",
@@ -332,7 +573,7 @@ export default defineType({
               type: "array",
               of: [{ type: "block" }],
               description: "Text content for this block",
-            }),
+            } as any),
             defineField({
               name: "bodyImage",
               title: "Body Image",
@@ -353,7 +594,7 @@ export default defineType({
                     direction: "horizontal",
                   },
                   initialValue: "asset",
-                  validation: (rule) => rule.custom((value, ctx) => {
+                  validation: (rule: any) => rule.custom((value: string | undefined, ctx: any) => {
                     const parent = ctx.parent as any;
                     // Only require if image is being used
                     const hasImage = parent?.image?.asset?._ref || parent?.externalUrl;
@@ -369,9 +610,9 @@ export default defineType({
                   type: "url",
                   description:
                     "Paste a direct image URL (e.g., Wikimedia Commons). Must be a direct file URL (http/https).",
-                  hidden: ({ parent }) => parent?.source !== "external",
-                  validation: (rule) =>
-                    rule.custom((value, ctx) => {
+                  hidden: ({ parent }: { parent?: { source?: string } }) => parent?.source !== "external",
+                  validation: (rule: any) =>
+                    rule.custom((value: string | undefined, ctx: any) => {
                       const parent = ctx.parent as any;
                       if (parent?.source === "external") {
                         if (!value) return "External image URL is required";
@@ -392,24 +633,24 @@ export default defineType({
                       description: "Important for SEO and accessibility.",
                     },
                   ],
-                  hidden: ({ parent }) => parent?.source !== "asset",
-                  validation: (rule) =>
-                    rule.custom((value, ctx) => {
+                  hidden: ({ parent }: { parent?: { source?: string } }) => parent?.source !== "asset",
+                  validation: (rule: any) =>
+                    rule.custom((value: any, ctx: any) => {
                       const parent = ctx.parent as any;
                       if (parent?.source === "asset") {
                         if (!value?.asset?._ref) return "Select or upload an image";
                       }
                       return true;
                     }),
-                }),
+                } as any),
                 defineField({
                   name: "alt",
                   title: "Alt text",
                   type: "string",
                   description:
                     "Describe the image for screen readers. Required if an external URL is used or an asset is present without nested alt.",
-                  validation: (rule) =>
-                    rule.custom((val, ctx) => {
+                  validation: (rule: any) =>
+                    rule.custom((val: string | undefined, ctx: any) => {
                       const parent = ctx.parent as any;
                       const usingExternal = parent?.source === "external" && parent?.externalUrl;
                       const usingAsset = parent?.source === "asset" && parent?.image?.asset?._ref;
@@ -422,9 +663,33 @@ export default defineType({
                     }),
                 }),
                 defineField({ name: "epigraph", title: "Epigraph", type: "string" }),
-                defineField({ name: "imageSource", title: "Image Source / Credit", type: "string" }),
+                // ✅ Minimal image attribution fields (Wikimedia Commons compliant)
+                defineField({
+                  name: "creditProvider",
+                  title: "Credit Provider",
+                  type: "string",
+                  description: 'Optional. Example: "Wikimedia Commons", "Pexels".',
+                }),
+                defineField({
+                  name: "creditAuthor",
+                  title: "Credit Author",
+                  type: "string",
+                  description: "Optional. Photographer/creator name (e.g., Timothy Powaleny).",
+                }),
+                defineField({
+                  name: "creditSourceUrl",
+                  title: "Credit Source URL",
+                  type: "url",
+                  description: "Optional. Link to the photo page (Commons file page / Pexels photo page).",
+                }),
+                defineField({
+                  name: "creditLicense",
+                  title: "Credit License",
+                  type: "string",
+                  description: 'Optional. Example: "CC BY-SA 4.0", "CC BY 4.0", "Pexels", "Public Domain".',
+                }),
               ],
-            }),
+            } as any),
           ],
           preview: {
             select: {
@@ -443,18 +708,18 @@ export default defineType({
           },
         },
       ],
-    }),
+    } as any),
     defineField({ name: "date", title: "Date", type: "datetime", initialValue: () => new Date().toISOString() }),
     defineField({ name: "status", title: "Status", type: "string", options: { list: ["draft", "scheduled", "published"] }, initialValue: "draft" }),
     defineField({ name: "publishedAt", title: "Published at", type: "datetime", description: 'Use for ordering/SEO. Keep "date" for legacy if needed.', initialValue: () => new Date().toISOString(), validation: (rule) => rule.custom((val, ctx) => (ctx.document as any)?.status === "published" && !val ? "publishedAt is required when status is published" : true) }),
     defineField({ name: "updatedAt", title: "Updated at", type: "datetime" }),
-    defineField({ name: "author", title: "Author", type: "reference", to: [{ type: "author" }] }),
+    defineField({ name: "author", title: "Author", type: "reference", to: [{ type: "author" }] } as any),
     defineField({ name: "priority", title: "Priority", type: "number", description: "A higher number (0–10) boosts the article in curated rails (e.g., relevance-based search results).", validation: (rule) => rule.min(0).max(10) }),
     defineField({ name: "readTime", title: "Estimated read time (min)", type: "number" }),
     defineField({ name: "viewsAll", title: "Views (all time)", type: "number", initialValue: 0, readOnly: true }),
     defineField({ name: "views30d", title: "Views (30 days)", type: "number", initialValue: 0, readOnly: true }),
     defineField({ name: "views7d", title: "Views (7 days)", type: "number", initialValue: 0, readOnly: true }),
-    defineField({ name: "labels", title: "Labels (internal)", type: "array", of: [{ type: "string" }], options: { layout: "tags", list: [{ title: "breaking", value: "breaking" }, { title: "analysis", value: "analysis" }, { title: "opinion", value: "opinion" }, { title: "exclusive", value: "exclusive" }, { title: "sponsored", value: "sponsored" }, { title: "live", value: "live" }] }, description: "Internal flags for curation/badges; not used for public search." }),
+    defineField({ name: "labels", title: "Labels (internal)", type: "array", of: [{ type: "string" }], options: { layout: "tags", list: [{ title: "breaking", value: "breaking" }, { title: "analysis", value: "analysis" }, { title: "opinion", value: "opinion" }, { title: "exclusive", value: "exclusive" }, { title: "sponsored", value: "sponsored" }, { title: "live", value: "live" }] }, description: "Internal flags for curation/badges; not used for public search." } as any),
     defineField({ name: "bodyRich", title: "Body (rich, portable text)", type: "blockContent" }),
     defineField({ name: "seo", title: "SEO", type: "seo" }),
   ],

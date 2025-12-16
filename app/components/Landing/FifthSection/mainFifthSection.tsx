@@ -2,7 +2,7 @@ import { LeftColumnFifth } from "./leftColumnFifth";
 import { CenterColumnFifth } from "./centerColumnFifth";
 import { RightColumnFifth } from "./rightColumnFifth";
 import { FourthSectionQueryResult } from "@/sanity.types";
-import { getCoverImage } from "@/sanity/lib/utils";
+import { getCoverImage, formatImageCredit } from "@/sanity/lib/utils";
 
 interface MainFifthSectionProps {
   posts: FourthSectionQueryResult;
@@ -37,7 +37,7 @@ export default function MainFifthSection({
       image: imageData?.src || "/placeholder.svg",
       imageAlt: imageData?.alt || post.title || "Article image",
       imageUnoptimized: imageData?.unoptimized || false,
-      imageSource: post.cover?.imageSource || undefined,
+      imageSource: formatImageCredit(post.cover) || undefined,
       isMain: index === 0,
       slug: post.slug || "#",
     };
@@ -52,7 +52,7 @@ export default function MainFifthSection({
       image: imageData?.src,
       imageAlt: imageData?.alt || post.title || "Article image",
       imageUnoptimized: imageData?.unoptimized || false,
-      imageSource: post.cover?.imageSource || undefined,
+      imageSource: formatImageCredit(post.cover) || undefined,
       hasImage: !!imageData,
       slug: post.slug || "#",
     };

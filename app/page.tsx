@@ -47,10 +47,10 @@ export default async function Page() {
     query: mostViewedPostsQuery,
   });
 
-  // 4) Fetch posts for the third section (International category)
+  // 4) Fetch posts for the third section (World category)
   const sixthSectionPosts = await sanityFetchStatic({
     query: sixthSectionQuery,
-    params: { categorySlug: "international" },
+    params: { categorySlug: "world" },
   });
 
   // 5) Build category tiles for the fourth section
@@ -75,7 +75,7 @@ export default async function Page() {
         <MainSecondSection categoriesData={secondSectionData as any} />
         <MainThirdSection
           posts={sixthSectionPosts as any}
-          categoryTitle="International"
+          categoryTitle="World"
         />
         <MainFourthSection
           variant="dark"

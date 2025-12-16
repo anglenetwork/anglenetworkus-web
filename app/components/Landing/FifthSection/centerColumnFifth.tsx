@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import { formatImageCredit } from "@/sanity/lib/utils";
 import { SectionHeader } from "../../ui/section-header";
 
 interface CenterArticle {

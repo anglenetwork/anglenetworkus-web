@@ -1,6 +1,10 @@
 import { PortableText } from "@portabletext/react";
 import Image from "next/image";
-import { getCoverImage, urlForImage } from "@/sanity/lib/utils";
+import {
+  getCoverImage,
+  urlForImage,
+  formatImageCredit,
+} from "@/sanity/lib/utils";
 import SocialShareButtons from "./SocialShareButtons";
 
 interface BodyImage {
@@ -9,7 +13,10 @@ interface BodyImage {
   image?: any;
   alt?: string | null;
   epigraph?: string | null;
-  imageSource?: string | null;
+  creditProvider?: string | null;
+  creditAuthor?: string | null;
+  creditSourceUrl?: string | null;
+  creditLicense?: string | null;
 }
 
 interface BodyBlock {
@@ -26,7 +33,10 @@ interface PostBodyProps {
     image?: any;
     alt?: string | null;
     epigraph?: string | null;
-    imageSource?: string | null;
+    creditProvider?: string | null;
+    creditAuthor?: string | null;
+    creditSourceUrl?: string | null;
+    creditLicense?: string | null;
   } | null;
   title: string;
   author?: { name: string; picture?: any };
@@ -54,20 +64,20 @@ const portableTextComponents = {
             sizes="(max-width: 768px) 100vw, (max-width: 1280px) 66vw, 800px"
             className="w-full h-auto rounded-lg shadow-lg"
           />
-          {(value.alt || value.epigraph || value.imageSource) && (
+          {(value.alt || value.epigraph || formatImageCredit(value)) && (
             <figcaption className="mt-2 text-left">
               {/* Epigraph + Source in secondary font */}
-              {(value.epigraph || value.imageSource) && (
+              {(value.epigraph || formatImageCredit(value)) && (
                 <p className="font-secondary text-[12px] sm:text-xs text-neutral-500">
                   {value.epigraph && (
                     <span className="italic">{value.epigraph}</span>
                   )}
-                  {value.epigraph && value.imageSource && (
+                  {value.epigraph && formatImageCredit(value) && (
                     <span className="text-neutral-400"> • </span>
                   )}
-                  {value.imageSource && (
+                  {formatImageCredit(value) && (
                     <span className="text-neutral-400">
-                      Source: {value.imageSource}
+                      {formatImageCredit(value)}
                     </span>
                   )}
                 </p>
@@ -158,7 +168,7 @@ function buildBodyImage(bodyImage: BodyImage | null | undefined): {
   alt: string;
   unoptimized: boolean;
   epigraph?: string | null;
-  imageSource?: string | null;
+  credit?: string | null;
 } | null {
   if (!bodyImage) return null;
 
@@ -183,7 +193,7 @@ function buildBodyImage(bodyImage: BodyImage | null | undefined): {
       alt: bodyImage.alt || "Body image",
       unoptimized: true,
       epigraph: bodyImage.epigraph,
-      imageSource: bodyImage.imageSource,
+      credit: formatImageCredit(bodyImage),
     };
   }
 
@@ -199,7 +209,7 @@ function buildBodyImage(bodyImage: BodyImage | null | undefined): {
         alt: bodyImage.alt || bodyImage.image?.alt || "Body image",
         unoptimized: false,
         epigraph: bodyImage.epigraph,
-        imageSource: bodyImage.imageSource,
+        credit: formatImageCredit(bodyImage),
       };
     }
   }
@@ -226,20 +236,18 @@ function renderBodyImage(
           className="object-cover rounded-lg"
         />
       </div>
-      {(imageData.epigraph || imageData.imageSource || imageData.alt) && (
+      {(imageData.epigraph || imageData.credit || imageData.alt) && (
         <figcaption className="mt-2 text-left">
-          {(imageData.epigraph || imageData.imageSource) && (
+          {(imageData.epigraph || imageData.credit) && (
             <p className="font-secondary text-[12px] sm:text-xs text-neutral-500">
               {imageData.epigraph && (
                 <span className="">{imageData.epigraph}</span>
               )}
-              {imageData.epigraph && imageData.imageSource && (
+              {imageData.epigraph && imageData.credit && (
                 <span className="text-neutral-400"> • </span>
               )}
-              {imageData.imageSource && (
-                <span className="text-neutral-400">
-                  Source: {imageData.imageSource}
-                </span>
+              {imageData.credit && (
+                <span className="text-neutral-400">{imageData.credit}</span>
               )}
             </p>
           )}
@@ -316,7 +324,7 @@ export default function PostBody({
               <Image
                 src={coverData.src}
                 alt={coverData.alt}
-                className="w-full h-full object-cover object-center"
+                className="object-cover object-center"
                 priority
                 fetchPriority="high"
                 fill
@@ -325,17 +333,17 @@ export default function PostBody({
                 unoptimized={coverData.unoptimized}
               />
             </div>
-            {(cover?.epigraph || cover?.imageSource) && (
+            {(cover?.epigraph || formatImageCredit(cover)) && (
               <figcaption className="mt-2 font-secondary text-sm tracking-tight leading-snug text-neutral-500 text-left">
                 {cover?.epigraph && (
                   <span className="font-bold">{cover.epigraph}</span>
                 )}
-                {cover?.epigraph && cover?.imageSource && (
+                {cover?.epigraph && formatImageCredit(cover) && (
                   <span className="text-neutral-500"> • </span>
                 )}
-                {cover?.imageSource && (
+                {formatImageCredit(cover) && (
                   <span className="text-neutral-500">
-                    Source: {cover.imageSource}
+                    {formatImageCredit(cover)}
                   </span>
                 )}
               </figcaption>

@@ -1,7 +1,7 @@
 import { ArrowRight } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
-import { getCoverImage } from "@/sanity/lib/utils";
+import { getCoverImage, formatImageCredit } from "@/sanity/lib/utils";
 import { SectionHeader } from "../../ui/section-header";
 
 interface Post {
@@ -100,11 +100,11 @@ export default function MainFourthSection({
                               />
                             </div>
                           </Link>
-                          {mainPost?.cover?.imageSource && (
+                          {formatImageCredit(mainPost?.cover) && (
                             <p
                               className={`text-[10px] font-secondary text-right ${variant === "dark" ? "text-gray-400" : "text-gray-500"}`}
                             >
-                              {mainPost.cover.imageSource}
+                              {formatImageCredit(mainPost?.cover)}
                             </p>
                           )}
                         </>

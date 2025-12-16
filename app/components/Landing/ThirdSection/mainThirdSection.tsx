@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { FourthSectionQueryResult } from "@/sanity.types";
-import { getCoverImage } from "@/sanity/lib/utils";
+import { getCoverImage, formatImageCredit } from "@/sanity/lib/utils";
 import { SectionHeader } from "../../ui/section-header";
 
 interface MainThirdSectionProps {
@@ -72,9 +72,9 @@ export default function MainThirdSection({
                         className="object-cover rounded-sm"
                       />
                     </div>
-                    {mainArticle.cover?.imageSource && (
+                    {formatImageCredit(mainArticle.cover) && (
                       <p className="text-[10px] text-gray-500 font-secondary text-right">
-                        {mainArticle.cover.imageSource}
+                        {formatImageCredit(mainArticle.cover)}
                       </p>
                     )}
                   </div>
@@ -114,9 +114,9 @@ export default function MainThirdSection({
                           className="object-cover rounded-sm"
                         />
                       </div>
-                      {secondaryArticles[0].cover?.imageSource && (
+                      {formatImageCredit(secondaryArticles[0].cover) && (
                         <p className="text-[10px] text-gray-500 font-secondary text-right">
-                          {secondaryArticles[0].cover.imageSource}
+                          {formatImageCredit(secondaryArticles[0].cover)}
                         </p>
                       )}
                     </div>
@@ -157,9 +157,9 @@ export default function MainThirdSection({
                           className="object-cover rounded-sm"
                         />
                       </div>
-                      {secondaryArticles[1].cover?.imageSource && (
+                      {formatImageCredit(secondaryArticles[1].cover) && (
                         <p className="text-[10px] text-gray-500 font-secondary text-right">
-                          {secondaryArticles[1].cover.imageSource}
+                          {formatImageCredit(secondaryArticles[1].cover)}
                         </p>
                       )}
                     </div>
@@ -212,9 +212,9 @@ export default function MainThirdSection({
                             className="object-cover rounded-sm"
                           />
                         </div>
-                        {rightColumnArticles[0].cover?.imageSource && (
+                        {formatImageCredit(rightColumnArticles[0].cover) && (
                           <p className="text-[10px] text-gray-500 font-secondary text-right">
-                            {rightColumnArticles[0].cover.imageSource}
+                            {formatImageCredit(rightColumnArticles[0].cover)}
                           </p>
                         )}
                       </div>
@@ -293,15 +293,17 @@ export default function MainThirdSection({
                             className="object-cover rounded-sm"
                           />
                         </div>
-                        {rightColumnArticles[
-                          Math.ceil(rightColumnArticles.length / 2)
-                        ]?.cover?.imageSource && (
+                        {formatImageCredit(
+                          rightColumnArticles[
+                            Math.ceil(rightColumnArticles.length / 2)
+                          ]?.cover
+                        ) && (
                           <p className="text-[10px] text-gray-500 font-secondary text-right">
-                            {
+                            {formatImageCredit(
                               rightColumnArticles[
                                 Math.ceil(rightColumnArticles.length / 2)
-                              ]?.cover?.imageSource
-                            }
+                              ]?.cover
+                            )}
                           </p>
                         )}
                       </div>

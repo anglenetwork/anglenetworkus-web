@@ -23,7 +23,7 @@ export function SectionHeader({
       >
         {title}
       </h2>
-      <div className="h-0.5 w-full bg-gradient-to-r from-blue-600 to-transparent" />
+      <div className="h-0.5 w-full bg-gradient-to-r from-red-600 to-transparent" />
     </div>
   );
 

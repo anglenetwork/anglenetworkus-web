@@ -14,8 +14,8 @@ export default defineType({
       title: "Title",
       type: "string",
       validation: (rule) =>
-        rule.required().min(2).custom((val) => {
-          if (!val) return true;
+        rule.required().min(2).custom((val: string | undefined) => {
+          if (!val || typeof val !== "string") return true;
           if (val.trim() !== val) return "Remove leading/trailing spaces";
           return true;
         }),
@@ -27,7 +27,7 @@ export default defineType({
       options: {
         source: "title",
         maxLength: 96,
-        isUnique: (value, context) => context.defaultIsUnique(value, context),
+        isUnique: (value: string, context: any) => context.defaultIsUnique(value, context),
       },
       validation: (rule) => rule.required(),
     }),
@@ -37,7 +37,9 @@ export default defineType({
       name: "description",
       title: "Description",
       type: "text",
-      rows: 2,
+      options: {
+        rows: 2,
+      },
     }),
     defineField({
       name: "aliases",
@@ -45,9 +47,9 @@ export default defineType({
       type: "array",
       of: [{ type: "string" }],
       description: "Optional alternate names (helps search & dedup).",
-      validation: (rule) =>
+      validation: (rule: any) =>
         rule.unique().max(20).warning("Keep aliases concise and distinct."),
-    }),
+    } as any),
 
     // Visuals (optional)
     defineField({
@@ -107,8 +109,8 @@ export default defineType({
       to: [{ type: "tag" }],
       description:
         "If deprecated, point to the canonical tag you want to consolidate into.",
-      hidden: ({ parent }) => !(parent as any)?.deprecated,
-    }),
+      hidden: ({ parent }: { parent?: { deprecated?: boolean } }) => !parent?.deprecated,
+    } as any),
     defineField({
       name: "analyticsKey",
       title: "Analytics Key",

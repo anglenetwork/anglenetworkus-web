@@ -28,8 +28,8 @@ export default defineType({
           type: "string",
           title: "Alternative text",
           description: "Important for SEO and accessiblity.",
-          validation: (rule) =>
-            rule.custom((alt, context) => {
+          validation: (rule: any) =>
+            rule.custom((alt: string | undefined, context: any) => {
               if ((context.document?.picture as any)?.asset?._ref && !alt) {
                 return "Required";
               }
@@ -37,8 +37,8 @@ export default defineType({
             }),
         },
       ],
-      validation: (rule) => rule.required(),
-    }),
+      validation: (rule: any) => rule.required(),
+    } as any),
     defineField({
       name: "slug",
       title: "Slug",
@@ -46,7 +46,7 @@ export default defineType({
       options: {
         source: "name",
         maxLength: 96,
-        isUnique: (value, context) => context.defaultIsUnique(value, context),
+        isUnique: (value: string, context: any) => context.defaultIsUnique(value, context),
       },
       validation: (rule) => rule.required(),
     }),
@@ -99,7 +99,9 @@ export default defineType({
       name: "shortBio",
       title: "Summary",
       type: "text",
-      rows: 3,
+      options: {
+        rows: 3,
+      },
       description: "One-liner for bylines and cards.",
     }),
     defineField({

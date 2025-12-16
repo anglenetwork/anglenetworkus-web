@@ -26,13 +26,19 @@ interface Post {
   } | null;
   labels?: string[] | null;
   justIn?: boolean | null;
+  justInRank?: number | null;
+  justInUntil?: string | null;
   breakingNews?: boolean | null;
   developingStory?: boolean | null;
   mainHeadline?: boolean | null;
+  mainHeadlineRank?: number | null;
+  mainHeadlineUntil?: string | null;
   frontline?: boolean | null;
   frontRank?: number | null;
   frontUntil?: string | null;
   rightHeadline?: boolean | null;
+  rightHeadlineRank?: number | null;
+  rightHeadlineUntil?: string | null;
 }
 
 // Type for LeftColumnLanding - only needs slug
@@ -53,7 +59,10 @@ interface PostForCenterColumn {
     externalUrl?: string;
     image?: any;
     alt?: string;
-    imageSource?: string;
+    creditProvider?: string | null;
+    creditAuthor?: string | null;
+    creditSourceUrl?: string | null;
+    creditLicense?: string | null;
   };
   author?: {
     name: string;
@@ -71,7 +80,10 @@ interface PostForRightColumn {
     externalUrl?: string | null;
     image?: any;
     alt?: string | null;
-    imageSource?: string | null;
+    creditProvider?: string | null;
+    creditAuthor?: string | null;
+    creditSourceUrl?: string | null;
+    creditLicense?: string | null;
   } | null;
   author?: {
     name: string;
@@ -89,8 +101,29 @@ export function MainFirstSection({
   mostReadPosts,
 }: MainFirstSectionProps) {
   // Filter and type posts for LeftColumnLanding (needs slug, cover, breakingNews, developingStory for justIn articles)
+  // Just In: articles with justIn === true, sorted by justInRank (higher first), filtered by justInUntil
+  const now = new Date();
   const validPostsForLeft = posts
-    .filter((post) => !!post.slug && post.justIn === true)
+    .filter((post) => {
+      if (!post.slug || post.justIn !== true) return false;
+      // Filter out expired articles (justInUntil is in the past)
+      // justInUntil is always present for justIn articles, so we can check it directly
+      const justInUntilDate = new Date(post.justInUntil!);
+      if (justInUntilDate < now) return false;
+      return true;
+    })
+    .sort((a, b) => {
+      // Sort by justInRank descending (higher rank first), then by date descending
+      const rankA = a.justInRank ?? 0;
+      const rankB = b.justInRank ?? 0;
+      if (rankA !== rankB) {
+        return rankB - rankA;
+      }
+      // If ranks are equal, sort by date
+      const dateA = a.publishedAt || a.date;
+      const dateB = b.publishedAt || b.date;
+      return new Date(dateB).getTime() - new Date(dateA).getTime();
+    })
     .map((post) => ({
       _id: post._id,
       title: post.title,
@@ -102,11 +135,24 @@ export function MainFirstSection({
   const latestNews = validPostsForLeft.slice(0, 4);
 
   // Filter and type posts for CenterColumnLanding
-  // Main story: latest article with mainHeadline === true
+  // Main story: articles with mainHeadline === true, sorted by mainHeadlineRank (higher first), filtered by mainHeadlineUntil
   const mainHeadlinePostsFiltered = posts
-    .filter((post) => !!post.slug && post.mainHeadline === true)
+    .filter((post) => {
+      if (!post.slug || post.mainHeadline !== true) return false;
+      // Filter out expired articles (mainHeadlineUntil is in the past)
+      // mainHeadlineUntil is always present for mainHeadline articles, so we can check it directly
+      const mainHeadlineUntilDate = new Date(post.mainHeadlineUntil!);
+      if (mainHeadlineUntilDate < now) return false;
+      return true;
+    })
     .sort((a, b) => {
-      // Sort by publishedAt or date descending (latest first)
+      // Sort by mainHeadlineRank descending (higher rank first), then by date descending
+      const rankA = a.mainHeadlineRank ?? 0;
+      const rankB = b.mainHeadlineRank ?? 0;
+      if (rankA !== rankB) {
+        return rankB - rankA;
+      }
+      // If ranks are equal, sort by date
       const dateA = a.publishedAt || a.date;
       const dateB = b.publishedAt || b.date;
       return new Date(dateB).getTime() - new Date(dateA).getTime();
@@ -129,7 +175,10 @@ export function MainFirstSection({
               externalUrl: post.cover.externalUrl ?? undefined,
               image: post.cover.image,
               alt: post.cover.alt ?? undefined,
-              imageSource: post.cover.imageSource ?? undefined,
+              creditProvider: post.cover.creditProvider ?? undefined,
+              creditAuthor: post.cover.creditAuthor ?? undefined,
+              creditSourceUrl: post.cover.creditSourceUrl ?? undefined,
+              creditLicense: post.cover.creditLicense ?? undefined,
             }
           : undefined,
       author: post.author,
@@ -169,7 +218,10 @@ export function MainFirstSection({
                     externalUrl: post.cover.externalUrl ?? undefined,
                     image: post.cover.image,
                     alt: post.cover.alt ?? undefined,
-                    imageSource: post.cover.imageSource ?? undefined,
+                    creditProvider: post.cover.creditProvider ?? undefined,
+                    creditAuthor: post.cover.creditAuthor ?? undefined,
+                    creditSourceUrl: post.cover.creditSourceUrl ?? undefined,
+                    creditLicense: post.cover.creditLicense ?? undefined,
                   }
                 : undefined,
             author: post.author,
@@ -178,15 +230,13 @@ export function MainFirstSection({
     : [];
 
   // More top headlines: articles with frontline === true, sorted by frontRank (higher first), filtered by frontUntil
-  const now = new Date();
   const frontlinePosts = posts
     .filter((post) => {
       if (!post.slug || post.frontline !== true) return false;
       // Filter out expired articles (frontUntil is in the past)
-      if (post.frontUntil) {
-        const frontUntilDate = new Date(post.frontUntil);
-        if (frontUntilDate < now) return false;
-      }
+      // frontUntil is always present for frontline articles, so we can check it directly
+      const frontUntilDate = new Date(post.frontUntil!);
+      if (frontUntilDate < now) return false;
       return true;
     })
     .sort((a, b) => {
@@ -222,11 +272,24 @@ export function MainFirstSection({
     );
   const moreTopHeadlines = frontlinePosts.slice(0, 5);
 
-  // Filter and type posts for RightColumnLanding (articles with rightHeadline === true, sorted by latest first)
+  // Filter and type posts for RightColumnLanding (articles with rightHeadline === true, sorted by rightHeadlineRank (higher first), filtered by rightHeadlineUntil)
   const validPostsForRight = posts
-    .filter((post) => !!post.slug && post.rightHeadline === true)
+    .filter((post) => {
+      if (!post.slug || post.rightHeadline !== true) return false;
+      // Filter out expired articles (rightHeadlineUntil is in the past)
+      // rightHeadlineUntil is always present for rightHeadline articles, so we can check it directly
+      const rightHeadlineUntilDate = new Date(post.rightHeadlineUntil!);
+      if (rightHeadlineUntilDate < now) return false;
+      return true;
+    })
     .sort((a, b) => {
-      // Sort by publishedAt or date descending (latest first)
+      // Sort by rightHeadlineRank descending (higher rank first), then by date descending
+      const rankA = a.rightHeadlineRank ?? 0;
+      const rankB = b.rightHeadlineRank ?? 0;
+      if (rankA !== rankB) {
+        return rankB - rankA;
+      }
+      // If ranks are equal, sort by date
       const dateA = a.publishedAt || a.date;
       const dateB = b.publishedAt || b.date;
       return new Date(dateB).getTime() - new Date(dateA).getTime();

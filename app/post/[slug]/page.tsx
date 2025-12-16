@@ -235,7 +235,10 @@ export default async function PostPage({
                     image?: any;
                     alt?: string | null;
                     epigraph?: string | null;
-                    imageSource?: string | null;
+                    creditProvider?: string | null;
+                    creditAuthor?: string | null;
+                    creditSourceUrl?: string | null;
+                    creditLicense?: string | null;
                   } | null
                 }
                 title={post.title || "Untitled"}
