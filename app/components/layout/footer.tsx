@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 
 interface Category {
   slug: string;
@@ -19,15 +20,27 @@ interface FooterProps {
 
 export function Footer({ categories, tags }: FooterProps) {
   return (
-    <footer className="bg-gray-900 text-white py-12 mt-0 font-sans">
+    <footer className="bg-black text-white py-12 mt-0 font-sans">
       <div className="max-w-7xl mx-auto px-4">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* Company Info */}
           <div className="col-span-1">
-            <Link href="/" className="hover:opacity-80 transition-opacity">
-              <h3 className="text-4xl font-bold text-blue-600 tracking-tight mb-4 font-sans">
-                CURRENTS
-              </h3>
+            <Link
+              href="/"
+              className="hover:opacity-80 transition-opacity inline-block"
+            >
+              <div className="bg-red-600 px-3 py-1 rounded flex items-center gap-2 mb-4">
+                <Image
+                  src="/angle-logo.svg"
+                  alt="The Angle Logo"
+                  width={40}
+                  height={24}
+                  className="flex-shrink-0"
+                />
+                <h3 className="text-4xl font-bold text-white tracking-tight font-sans">
+                  The Angle
+                </h3>
+              </div>
             </Link>
             <p className="text-gray-300 text-sm leading-relaxed">
               The essential source for political news and analysis in Washington
@@ -171,7 +184,7 @@ export function Footer({ categories, tags }: FooterProps) {
 
         <div className="border-t border-gray-700 mt-8 pt-8 flex flex-col md:flex-row justify-between items-center">
           <p className="text-gray-400 text-sm">
-            © 2025 CURRENTS LLC. All rights reserved.
+            © 2025 The Angle LLC. All rights reserved.
           </p>
           <div className="flex space-x-6 mt-4 md:mt-0">
             <Link
