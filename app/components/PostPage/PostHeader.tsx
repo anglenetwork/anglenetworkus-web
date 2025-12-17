@@ -30,12 +30,12 @@ export default function PostHeader({
         </div>
       )}
 
-      <h1 className="text-3xl lg:text-5xl font-extrabold text-neutral-900 !leading-tight tracking-tighter mb-4 font-sans text-start">
+      <h1 className="text-3xl lg:text-4xl font-extrabold text-neutral-900 !leading-tight tracking-tighter mb-4 font-sans text-start">
         {title}
       </h1>
 
       {excerpt && (
-        <p className="text-sm lg:text-base text-neutral-900 mb-6 leading-relaxed font-secondary font-normal tracking-snug">
+        <p className="text-sm lg:text-sm text-neutral-500 mb-6 leading-relaxed font-secondary font-light tracking-snug">
           {excerpt}
         </p>
       )}
