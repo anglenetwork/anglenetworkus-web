@@ -12,7 +12,10 @@ interface Post {
     externalUrl?: string | null;
     image?: any;
     alt?: string | null;
-    imageSource?: string | null;
+    creditProvider?: string | null;
+    creditAuthor?: string | null;
+    creditSourceUrl?: string | null;
+    creditLicense?: string | null;
   } | null;
   date: string;
   publishedAt?: string | null;
@@ -264,7 +267,10 @@ export function MainFirstSection({
                 externalUrl: post.cover.externalUrl ?? undefined,
                 image: post.cover.image,
                 alt: post.cover.alt ?? undefined,
-                imageSource: post.cover.imageSource ?? undefined,
+                creditProvider: post.cover.creditProvider ?? undefined,
+                creditAuthor: post.cover.creditAuthor ?? undefined,
+                creditSourceUrl: post.cover.creditSourceUrl ?? undefined,
+                creditLicense: post.cover.creditLicense ?? undefined,
               }
             : undefined,
         author: post.author,
@@ -320,7 +326,7 @@ export function MainFirstSection({
   const mostRead = validMostReadPosts.slice(0, 5);
 
   return (
-    <main className="w-full px-4 md:px-0 pt-8">
+    <main className="w-full px-4 md:px-0 pt-4">
       {/* Mobile order: Center, Left, Right */}
       {/* Desktop order: Left, Center, Right */}
       <div className="grid grid-cols-1 lg:grid-cols-5 gap-0">

@@ -24,7 +24,7 @@ export function CategoryPage({
         <FeaturedArticlesSection featuredArticles={featuredArticles} />
       )}
 
-      <main className="container mx-auto px-4 py-12">
+      <main className="container mx-auto px-4 md:px-20 py-12">
         {/* Mobile: Most Read + Latest */}
         <div className="block lg:hidden space-y-12">
           <MostReadSection articles={mostReadArticles} />

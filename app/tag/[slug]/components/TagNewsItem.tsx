@@ -20,15 +20,15 @@ export function TagNewsItem({
     <article className="flex gap-4 py-6">
       <div className="flex-1">
         <Link href={`/post/${slug}`} className="block">
-          <h2 className="text-lg font-sans font-normal text-neutral-900 leading-normal tracking-normal">
+          <h2 className="text-base font-sans font-normal text-white leading-normal tracking-normal">
             {title}
           </h2>
         </Link>
-        <p className="mt-2 text-xs font-secondary font-semibold capitalize tracking-wide text-muted-foreground">
+        <p className="mt-2 text-xs font-secondary font-semibold capitalize tracking-wide text-neutral-400">
           {readTime}
         </p>
       </div>
-      <div className="relative h-24 w-32 flex-shrink-0 overflow-hidden rounded-lg">
+      <div className="relative h-20 w-32 flex-shrink-0 overflow-hidden rounded-lg">
         <Link href={`/post/${slug}`} className="block h-full">
           <Image
             src={image || "/placeholder.svg"}

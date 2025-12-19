@@ -5,33 +5,33 @@ import {
 } from "@/sanity/lib/queries";
 
 //For more control, we hardcode the sections names we want to display in the eighth section
-export async function getFourthSectionData() {
-  const [politicsPosts, internationalPosts, businessPosts, usPosts] =
-    await Promise.all([
-      sanityFetchStatic({
-        query: fourthSectionQuery,
-        params: { categorySlug: "politics" },
-      }),
-      sanityFetchStatic({
-        query: fourthSectionQuery,
-        params: { categorySlug: "international" },
-      }),
-      sanityFetchStatic({
-        query: fourthSectionQuery,
-        params: { categorySlug: "business" },
-      }),
-      sanityFetchStatic({
-        query: fourthSectionQuery,
-        params: { categorySlug: "us" },
-      }),
-    ]);
+export async function getFourthSectionData(
+  slugs: string[],
+  titles: string[]
+) {
+  // Validate that slugs and titles arrays have the same length
+  if (slugs.length !== titles.length) {
+    throw new Error(
+      `getFourthSectionData: slugs and titles arrays must have the same length. Got ${slugs.length} slugs and ${titles.length} titles.`
+    );
+  }
 
-  return [
-    { name: "Politics", slug: "politics", posts: politicsPosts },
-    { name: "International", slug: "international", posts: internationalPosts },
-    { name: "Business", slug: "business", posts: businessPosts },
-    { name: "US", slug: "us", posts: usPosts },
-  ];
+  // Fetch posts for each category slug
+  const categoryPosts = await Promise.all(
+    slugs.map((slug) =>
+      sanityFetchStatic({
+        query: fourthSectionQuery,
+        params: { categorySlug: slug },
+      })
+    )
+  );
+
+  // Map the results to the expected format
+  return slugs.map((slug, index) => ({
+    name: titles[index] || slug,
+    slug: slug,
+    posts: categoryPosts[index],
+  }));
 }
 
 //For more control, we hardcode the sections names we want to display in the second section

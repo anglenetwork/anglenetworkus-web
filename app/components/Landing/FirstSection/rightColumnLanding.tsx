@@ -66,7 +66,7 @@ export function RightColumnLanding({
 
       {/* MOST READ section */}
       <div className="border-t border-neutral-300 pt-8">
-        <SectionHeader title="The Rundown" variant="gradient" />
+        <SectionHeader title="The Rundown" variant="light" />
 
         <div className="space-y-6">
           {/* Featured image */}

@@ -67,10 +67,10 @@ export async function generateMetadata({
       .join(" ");
 
   return {
-    title: `${categoryName} | News Blog`,
+    title: `${categoryName} | The Angle`,
     description: `Latest news and articles in the ${categoryName} category. ${posts.length} articles available.`,
     openGraph: {
-      title: `${categoryName} | News Blog`,
+      title: `${categoryName} | The Angle`,
       description: `Latest news and articles in the ${categoryName} category.`,
       type: "website",
     },
@@ -84,24 +84,25 @@ export default async function CategoryPageRoute({
 }) {
   const { slug } = await params;
 
-  const [categoryData, posts, mostViewed, categoryTickerPosts] = await Promise.all([
-    sanityFetchStatic({
-      query: `*[_type == "category" && slug.current == $slug][0]{name, slug}`,
-      params: { slug },
-    }),
-    sanityFetchStatic({
-      query: postsByCategoryQuery,
-      params: { categorySlug: slug },
-    }),
-    sanityFetchStatic({
-      query: mostViewedQuery,
-      params: { categorySlug: slug },
-    }),
-    sanityFetchStatic({
-      query: categoryTickerQuery,
-      params: { categorySlug: slug },
-    }),
-  ]);
+  const [categoryData, posts, mostViewed, categoryTickerPosts] =
+    await Promise.all([
+      sanityFetchStatic({
+        query: `*[_type == "category" && slug.current == $slug][0]{name, slug}`,
+        params: { slug },
+      }),
+      sanityFetchStatic({
+        query: postsByCategoryQuery,
+        params: { categorySlug: slug },
+      }),
+      sanityFetchStatic({
+        query: mostViewedQuery,
+        params: { categorySlug: slug },
+      }),
+      sanityFetchStatic({
+        query: categoryTickerQuery,
+        params: { categorySlug: slug },
+      }),
+    ]);
 
   if (!categoryData) {
     notFound();

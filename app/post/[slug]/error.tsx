@@ -40,10 +40,10 @@ export default function Error({ error }: { error: Error }) {
           </button>
 
           <Link
-            href="/blog"
+            href="/"
             className="block w-full bg-gray-100 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-200 transition-colors"
           >
-            Back to blog
+            Back to The Angle
           </Link>
         </div>
       </div>

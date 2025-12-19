@@ -37,15 +37,17 @@ export default function CategoryContent({
   // Helper function to get image data from cover
   const getImageData = (cover: any, fallbackTitle: string = "Article") => {
     const coverData = getCoverImage(cover, fallbackTitle);
-    return coverData ? {
-      src: coverData.src,
-      alt: coverData.alt,
-      unoptimized: coverData.unoptimized,
-    } : {
-      src: "/placeholder.svg",
-      alt: fallbackTitle,
-      unoptimized: false,
-    };
+    return coverData
+      ? {
+          src: coverData.src,
+          alt: coverData.alt,
+          unoptimized: coverData.unoptimized,
+        }
+      : {
+          src: "/placeholder.svg",
+          alt: fallbackTitle,
+          unoptimized: false,
+        };
   };
 
   // Helper function to format date
@@ -96,7 +98,10 @@ export default function CategoryContent({
                 <div className="relative mb-4">
                   <Link href={`/post/${mainArticle.slug || "#"}`}>
                     {(() => {
-                      const imageData = getImageData(mainArticle.cover, mainArticle.title || "Article image");
+                      const imageData = getImageData(
+                        mainArticle.cover,
+                        mainArticle.title || "Article image"
+                      );
                       return (
                         <Image
                           src={imageData.src}
@@ -147,7 +152,10 @@ export default function CategoryContent({
                     <div className="relative mb-4">
                       <Link href={`/post/${article.slug || "#"}`}>
                         {(() => {
-                          const imageData = getImageData(article.cover, article.title || "Article image");
+                          const imageData = getImageData(
+                            article.cover,
+                            article.title || "Article image"
+                          );
                           return (
                             <Image
                               src={imageData.src}
@@ -199,19 +207,22 @@ export default function CategoryContent({
                   >
                     <div className="relative mb-3">
                       <Link href={`/post/${article.slug || "#"}`}>
-                    {(() => {
-                      const imageData = getImageData(article.cover, article.title || "Article image");
-                      return (
-                        <Image
-                          src={imageData.src}
-                          alt={imageData.alt}
-                          width={300}
-                          height={200}
-                          unoptimized={imageData.unoptimized}
-                          className="w-full h-40 object-cover cursor-pointer hover:opacity-90 transition-opacity rounded-lg"
-                        />
-                      );
-                    })()}
+                        {(() => {
+                          const imageData = getImageData(
+                            article.cover,
+                            article.title || "Article image"
+                          );
+                          return (
+                            <Image
+                              src={imageData.src}
+                              alt={imageData.alt}
+                              width={300}
+                              height={200}
+                              unoptimized={imageData.unoptimized}
+                              className="w-full h-40 object-cover cursor-pointer hover:opacity-90 transition-opacity rounded-lg"
+                            />
+                          );
+                        })()}
                       </Link>
                       <div className="absolute bottom-1 right-1 bg-black/70 text-white text-xs px-1 py-0.5 rounded">
                         {article.author?.name || "Anonymous"}

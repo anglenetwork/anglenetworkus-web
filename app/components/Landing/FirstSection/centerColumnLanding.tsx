@@ -75,13 +75,13 @@ export function CenterColumnLanding({
 
   return (
     <div className="lg:border-r border-gray-300 lg:px-8">
-      <SectionHeader title="Top News" variant="gradient" />
+      {/* <SectionHeader title="Top News" variant="light" /> */}
 
       {/* Main Story */}
       {mainStory.map((post, index) => (
         <article key={post._id} className="mb-8">
           <Link href={`/post/${post.slug}`} className="hover:text-red-600">
-            <h1 className="text-3xl md:text-3xl lg:text-5xl font-extrabold text-gray-900 !leading-tight tracking-tighter mb-4 font-sans text-start md:text-center">
+            <h1 className="text-3xl md:text-3xl lg:text-4xl font-extrabold text-gray-900 !leading-tight tracking-tighter mb-4 font-sans text-start md:text-center">
               {post.title}
             </h1>
           </Link>
@@ -139,7 +139,7 @@ export function CenterColumnLanding({
         </div>
       )}
 
-      <SectionHeader title="More Top Headlines" variant="gradient" />
+      <SectionHeader title="More Top Headlines" variant="light" />
 
       {/* MORE TOP HEADLINES */}
       {/* Mobile spacing normalized; desktop untouched */}
@@ -164,11 +164,11 @@ export function CenterColumnLanding({
                         sizes="(max-width: 640px) 96px, (max-width: 768px) 96px, (max-width: 1024px) 50vw, 384px"
                         className="w-24 h-20 md:w-full md:h-48 object-cover rounded-sm"
                       />
-                      {credit && (
+                      {/* {credit && (
                         <p className="hidden md:block text-[10px] text-gray-500 font-secondary text-right">
                           {credit}
                         </p>
-                      )}
+                      )} */}
                     </div>
                   </Link>
                 );

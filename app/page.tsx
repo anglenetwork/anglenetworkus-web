@@ -1,4 +1,8 @@
-import { MainFirstSection, NewsTicker } from "./components/Landing/index";
+import {
+  MainFirstSection,
+  NewsTicker,
+  HighlightedStories,
+} from "./components/Landing/index";
 import dynamic from "next/dynamic";
 import { sanityFetchStatic } from "@/sanity/lib/fetch";
 import {
@@ -54,7 +58,10 @@ export default async function Page() {
   });
 
   // 5) Build category tiles for the fourth section
-  const fourthSectionData = await getFourthSectionData();
+  const fourthSectionData = await getFourthSectionData(
+    ["tech", "business", "entertainment", "lifestyle"],
+    ["Tech", "Business", "Entertainment", "Lifestyle"]
+  );
 
   // 6) Build third-latest per category for the second section
   const secondSectionData = await getSecondSectionData();
@@ -64,14 +71,41 @@ export default async function Page() {
     query: newsTickerQuery,
   });
 
+  // 8) Fetch posts for highlighted stories section
+  // Left column: US category (1 featured + 6 small)
+  const usPosts = await sanityFetchStatic({
+    query: latestNineByCategoryQuery,
+    params: { categorySlug: "us" },
+  });
+  // Right column: Politics category (1 featured + 6 small)
+  const politicsPostsHighlighted = await sanityFetchStatic({
+    query: latestNineByCategoryQuery,
+    params: { categorySlug: "politics" },
+  });
+
   return (
-    <div className="container mx-auto">
+    <div className="mx-auto lg:mx-32">
       <NewsTicker posts={newsTickerPosts as any} />
       <div className="space-y-10 md:space-y-14">
         <MainFirstSection
           posts={posts as any}
           mostReadPosts={mostReadPosts as any}
         />
+        {usPosts &&
+          usPosts.length > 0 &&
+          politicsPostsHighlighted &&
+          politicsPostsHighlighted.length > 0 && (
+            <HighlightedStories
+              leftArticle={usPosts[0] as any}
+              leftSmallArticles={(usPosts.slice(1, 7) as any[]).filter(
+                (p) => p.slug
+              )}
+              rightArticle={politicsPostsHighlighted[0] as any}
+              rightSmallArticles={(
+                politicsPostsHighlighted.slice(1, 7) as any[]
+              ).filter((p) => p.slug)}
+            />
+          )}
         <MainSecondSection categoriesData={secondSectionData as any} />
         <MainThirdSection
           posts={sixthSectionPosts as any}
