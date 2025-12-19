@@ -122,6 +122,7 @@ export function formatImageCredit(cover: {
   creditAuthor?: string | null;
   creditSourceUrl?: string | null;
   creditLicense?: string | null;
+  [key: string]: any; // Allow additional properties
 } | null | undefined): string | null {
   if (!cover) return null;
 

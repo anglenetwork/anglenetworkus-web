@@ -14,7 +14,10 @@ interface Post {
     externalUrl?: string | null;
     image?: any;
     alt?: string | null;
-    imageSource?: string | null;
+    creditProvider?: string | null;
+    creditAuthor?: string | null;
+    creditSourceUrl?: string | null;
+    creditLicense?: string | null;
   } | null;
   date: string;
   author?: {
@@ -100,13 +103,13 @@ export default function MainFourthSection({
                               />
                             </div>
                           </Link>
-                          {formatImageCredit(mainPost?.cover) && (
+                          {/* {formatImageCredit(mainPost?.cover) && (
                             <p
                               className={`text-[10px] font-secondary text-right ${variant === "dark" ? "text-gray-400" : "text-gray-500"}`}
                             >
                               {formatImageCredit(mainPost?.cover)}
                             </p>
-                          )}
+                          )} */}
                         </>
                       );
                     }

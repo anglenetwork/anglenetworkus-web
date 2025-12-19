@@ -16,7 +16,7 @@ export function FeaturedArticlesSection({
 }: FeaturedArticlesSectionProps) {
   return (
     <section className="border-b border-border bg-black">
-      <div className="container mx-auto px-4 py-12">
+      <div className="container mx-auto px-4 md:px-20 py-12">
         <SectionHeader title="Featured" variant="dark" />
         {/* Mobile: center hero, then left, then right (stacked) */}
         <div className="block md:hidden space-y-8">

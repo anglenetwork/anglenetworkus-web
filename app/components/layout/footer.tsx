@@ -29,12 +29,12 @@ export function Footer({ categories, tags }: FooterProps) {
               href="/"
               className="hover:opacity-80 transition-opacity inline-block"
             >
-              <div className="bg-red-600 px-3 py-1 rounded flex items-center gap-2 mb-4">
+              <div className="flex items-center gap-2 mb-4">
                 <Image
-                  src="/angle-logo.svg"
+                  src="/black-logo.svg"
                   alt="The Angle Logo"
-                  width={40}
-                  height={24}
+                  width={48}
+                  height={48}
                   className="flex-shrink-0"
                 />
                 <h3 className="text-4xl font-bold text-white tracking-tight font-sans">
@@ -42,10 +42,6 @@ export function Footer({ categories, tags }: FooterProps) {
                 </h3>
               </div>
             </Link>
-            <p className="text-gray-300 text-sm leading-relaxed">
-              The essential source for political news and analysis in Washington
-              and around the world.
-            </p>
           </div>
 
           {/* Navigation Links */}

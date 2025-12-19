@@ -10,15 +10,15 @@ export function Logo({ isScrolled = false, variant = "mobile" }: LogoProps) {
   if (variant === "mobile") {
     return (
       <Link href="/" className="flex items-center gap-2">
-        <div className="bg-red-600 px-3 py-1 rounded flex items-center gap-2">
+        <div className="flex items-center gap-2">
           <Image
-            src="/angle-logo.svg"
+            src="/black-logo.svg"
             alt="The Angle Logo"
             width={30}
-            height={18}
+            height={30}
             className="flex-shrink-0"
           />
-          <h1 className="font-bold text-white tracking-tight text-3xl font-sans">
+          <h1 className="font-bold text-neutral-900 tracking-tight text-3xl font-sans">
             The Angle
           </h1>
         </div>
@@ -29,20 +29,20 @@ export function Logo({ isScrolled = false, variant = "mobile" }: LogoProps) {
   return (
     <Link href="/" className="flex items-center gap-2">
       <div
-        className={`bg-red-600 px-3 py-1 rounded flex items-center gap-2 transition-all duration-500 ease-out ${
-          isScrolled ? "lg:px-2 lg:py-0.5" : ""
+        className={`flex items-center gap-2 transition-all duration-500 ease-out ${
+          isScrolled ? "lg:gap-1.5" : ""
         }`}
       >
         <Image
-          src="/angle-logo.svg"
+          src="/black-logo.svg"
           alt="The Angle Logo"
-          width={isScrolled ? 20 : 40}
-          height={isScrolled ? 12 : 24}
+          width={isScrolled ? 24 : 48}
+          height={isScrolled ? 24 : 48}
           className="flex-shrink-0 transition-all duration-500 ease-out"
         />
         <h1
-          className={`font-bold text-white tracking-tight transition-all duration-500 ease-out font-sans ${
-            isScrolled ? "lg:text-xl" : "lg:text-4xl"
+          className={`font-bold text-neutral-900 tracking-tight transition-all duration-500 ease-out font-sans ${
+            isScrolled ? "lg:text-xl" : "lg:text-xl"
           } text-4xl`}
         >
           The Angle

@@ -90,7 +90,7 @@ export async function generateMetadata({
   }
 
   return {
-    title: `${title} | News Blog`,
+    title: `${title} | The Angle`,
     description,
     openGraph: {
       title,

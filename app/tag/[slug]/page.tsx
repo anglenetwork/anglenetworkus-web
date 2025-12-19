@@ -51,7 +51,7 @@ export async function generateMetadata({
   const description = tag.description ?? `Posts tagged with ${title}`;
 
   return {
-    title: `${title} | News Blog`,
+    title: `${title} | The Angle`,
     description,
     openGraph: {
       title,
@@ -191,7 +191,7 @@ export default async function TagPage({
 
         {/* Right Column - 40% */}
         <aside className="w-full pt-0 lg:w-[40%] lg:pt-10">
-          <div className="space-y-0">
+          <div className="space-y-0 bg-black p-4 rounded-xl">
             {popularReads.slice(0, 4).map((post: any, index: number) => {
               const coverData = getCoverImage(
                 post.cover as {

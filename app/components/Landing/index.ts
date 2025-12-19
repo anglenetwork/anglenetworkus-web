@@ -8,3 +8,4 @@ export { default as MainFourthSection } from './FourthSection/mainFourthSection'
 export { default as MainFifthSection } from './FifthSection/mainFifthSection';
 export { default as MainSixthSection } from './SixthSection/MainSixthSection';
 export { default as MainSeventhSection } from './SeventhSectionComponents/mainSeventhSection';
+export { default as HighlightedStories } from './HighlightedStories/highlightedStories';

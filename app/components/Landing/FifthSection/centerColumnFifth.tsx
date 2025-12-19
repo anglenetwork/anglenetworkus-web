@@ -54,11 +54,11 @@ export function CenterColumnFifth({
                       className="w-full h-80 object-cover rounded-sm cursor-pointer"
                     />
                   </Link>
-                  {article.imageSource && (
+                  {/* {article.imageSource && (
                     <p className="text-[10px] text-gray-500 font-secondary text-right">
                       {article.imageSource}
                     </p>
-                  )}
+                  )} */}
                 </div>
                 <Link href={`/post/${article.slug}`}>
                   <h3 className="text-3xl font-sans font-semibold text-neutral-900 leading-snug tracking-tight text-start">

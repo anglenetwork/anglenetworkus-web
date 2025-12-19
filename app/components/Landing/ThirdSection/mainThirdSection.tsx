@@ -72,11 +72,11 @@ export default function MainThirdSection({
                         className="object-cover rounded-sm"
                       />
                     </div>
-                    {formatImageCredit(mainArticle.cover) && (
+                    {/* {formatImageCredit(mainArticle.cover) && (
                       <p className="text-[10px] text-gray-500 font-secondary text-right">
                         {formatImageCredit(mainArticle.cover)}
                       </p>
-                    )}
+                    )} */}
                   </div>
                   <h3 className="text-2xl font-sans font-semibold text-neutral-900 leading-snug tracking-tight">
                     {mainArticle.title || "Untitled"}
@@ -114,11 +114,11 @@ export default function MainThirdSection({
                           className="object-cover rounded-sm"
                         />
                       </div>
-                      {formatImageCredit(secondaryArticles[0].cover) && (
+                      {/* {formatImageCredit(secondaryArticles[0].cover) && (
                         <p className="text-[10px] text-gray-500 font-secondary text-right">
                           {formatImageCredit(secondaryArticles[0].cover)}
                         </p>
-                      )}
+                      )} */}
                     </div>
                     <div className="mt-2">
                       <h3 className="text-xl font-sans font-semibold text-neutral-900 leading-snug tracking-tight">
@@ -157,11 +157,11 @@ export default function MainThirdSection({
                           className="object-cover rounded-sm"
                         />
                       </div>
-                      {formatImageCredit(secondaryArticles[1].cover) && (
+                      {/* {formatImageCredit(secondaryArticles[1].cover) && (
                         <p className="text-[10px] text-gray-500 font-secondary text-right">
                           {formatImageCredit(secondaryArticles[1].cover)}
                         </p>
-                      )}
+                      )} */}
                     </div>
                     <div className="mt-2">
                       <h3 className="text-xl font-sans font-semibold text-neutral-900 leading-snug tracking-tight">
@@ -212,11 +212,11 @@ export default function MainThirdSection({
                             className="object-cover rounded-sm"
                           />
                         </div>
-                        {formatImageCredit(rightColumnArticles[0].cover) && (
+                        {/* {formatImageCredit(rightColumnArticles[0].cover) && (
                           <p className="text-[10px] text-gray-500 font-secondary text-right">
                             {formatImageCredit(rightColumnArticles[0].cover)}
                           </p>
-                        )}
+                        )} */}
                       </div>
                       <div className="mt-2">
                         <h3 className="text-xl font-sans font-semibold text-neutral-900 leading-snug tracking-tight">
@@ -293,7 +293,7 @@ export default function MainThirdSection({
                             className="object-cover rounded-sm"
                           />
                         </div>
-                        {formatImageCredit(
+                        {/* {formatImageCredit(
                           rightColumnArticles[
                             Math.ceil(rightColumnArticles.length / 2)
                           ]?.cover
@@ -305,7 +305,7 @@ export default function MainThirdSection({
                               ]?.cover
                             )}
                           </p>
-                        )}
+                        )} */}
                       </div>
                       <div className="mt-2">
                         <h3 className="text-xl font-sans font-semibold text-neutral-900 leading-snug tracking-tight">
