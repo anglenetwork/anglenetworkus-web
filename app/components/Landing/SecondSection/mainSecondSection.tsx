@@ -131,7 +131,7 @@ export default function MainSecondSection({
     <div className="bg-white">
       <div className="px-6">
         {/* Title Section */}
-        <SectionHeader title="Featured Stories" variant="gradient" />
+        <SectionHeader title="Featured Stories" variant="light" />
 
         <div className="relative">
           {/* Left Arrow */}

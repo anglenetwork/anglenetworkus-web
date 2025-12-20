@@ -99,9 +99,7 @@ export default defineType({
       name: "shortBio",
       title: "Summary",
       type: "text",
-      options: {
-        rows: 3,
-      },
+      rows: 3,
       description: "One-liner for bylines and cards.",
     }),
     defineField({

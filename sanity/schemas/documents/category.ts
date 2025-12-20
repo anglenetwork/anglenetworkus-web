@@ -38,9 +38,7 @@ export default defineType({
       name: "description",
       title: "Description",
       type: "text",
-      options: {
-        rows: 3,
-      },
+      rows: 3,
     }),
     defineField({
       name: "hero",

@@ -57,7 +57,7 @@ export default function ShowMoreSection({
 
   return (
     <div className="mx-auto mt-16 max-w-7xl">
-      <SectionHeader title="In case you missed it..." variant="gradient" />
+      <SectionHeader title="In case you missed it..." variant="light" />
       <div className="space-y-0 divide-y divide-dotted divide-border border-b border-dotted">
         {visiblePosts.map((post) => {
           const coverData = getCoverImage(

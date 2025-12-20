@@ -37,9 +37,7 @@ export default defineType({
       name: "description",
       title: "Description",
       type: "text",
-      options: {
-        rows: 2,
-      },
+      rows: 2,
     }),
     defineField({
       name: "aliases",

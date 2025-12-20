@@ -35,7 +35,7 @@ export default function MainThirdSection({
           <div className="col-span-12">
             <SectionHeader
               title={categoryTitle}
-              variant="gradient"
+              variant="light"
               href={`/category/${categoryTitle.toLowerCase().replace(/\s+/g, "-")}`}
             />
           </div>
