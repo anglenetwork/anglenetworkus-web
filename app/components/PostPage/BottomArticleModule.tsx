@@ -41,7 +41,7 @@ export default function BottomArticleModule({
     <div className="">
       <div className="py-12 px-0">
         {/* Section Header */}
-        <SectionHeader title="Related Articles" variant="gradient" />
+        <SectionHeader title="Related Articles" variant="light" />
 
         <div className="flex flex-col gap-8 lg:flex-row">
           <div className="lg:w-[60%]">

@@ -33,7 +33,7 @@ export function CenterColumnFourthSection({
       <div className="mb-8">
         <SectionHeader
           title={categoryTitle}
-          variant="gradient"
+          variant="light"
           href={categorySlug ? `/category/${categorySlug}` : undefined}
         />
 

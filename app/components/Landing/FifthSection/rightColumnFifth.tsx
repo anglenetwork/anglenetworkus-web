@@ -24,7 +24,7 @@ export function RightColumnFifth({ mostReadArticles }: RightColumnThirdProps) {
       <div className="sticky top-6">
         {/* Most Read Section */}
         <div className="mb-8">
-          <SectionHeader title="MOST READ" variant="gradient" />
+          <SectionHeader title="MOST READ" variant="light" />
 
           <div className="space-y-4">
             {mostReadArticles.map((article, index) => (

@@ -32,7 +32,7 @@ export function CenterColumnFifth({
       <div className="mb-8">
         <SectionHeader
           title={categoryTitle}
-          variant="gradient"
+          variant="light"
           href={`/category/${categoryTitle.toLowerCase()}`}
         />
 

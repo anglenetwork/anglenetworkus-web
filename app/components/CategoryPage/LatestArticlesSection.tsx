@@ -115,7 +115,7 @@ export function LatestArticlesSection({
   // Shared content block
   const content = (
     <>
-      <SectionHeader title="Latest Articles" variant="gradient" />
+      <SectionHeader title="Latest Articles" variant="light" />
 
       <div className="space-y-8">
         {articlesToShow.map((article, index) => (

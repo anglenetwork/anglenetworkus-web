@@ -26,7 +26,7 @@ interface LeftColumnLandingProps {
 export function LeftColumnLanding({ latestNews }: LeftColumnLandingProps) {
   return (
     <div className="lg:border-r border-neutral-300 lg:sticky lg:top-20 lg:h-auto lg:overflow-hidden text-left px-0 md:px-4">
-      <SectionHeader title="Just in" variant="gradient" />
+      <SectionHeader title="Just in" variant="light" />
 
       <div className="space-y-6">
         {latestNews.map((post, index) => {
