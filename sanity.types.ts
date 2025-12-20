@@ -13,37 +13,57 @@
  */
 
 // Source: schema.json
-export type BlockContent = Array<{
-  children?: Array<{
-    marks?: Array<string>;
-    text?: string;
-    _type: "span";
-    _key: string;
-  }>;
-  style?: "normal" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "blockquote";
-  listItem?: "bullet" | "number";
-  markDefs?: Array<{
-    href?: string;
-    _type: "link";
-    _key: string;
-  }>;
-  level?: number;
-  _type: "block";
-  _key: string;
-} | {
-  asset?: {
-    _ref: string;
-    _type: "reference";
-    _weak?: boolean;
-    [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+export type SanityImageAssetReference = {
+  _ref: string;
+  _type: "reference";
+  _weak?: boolean;
+  [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+};
+
+export type Seo = {
+  _type: "seo";
+  title?: string;
+  description?: string;
+  ogImage?: {
+    asset?: SanityImageAssetReference;
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    alt?: string;
+    _type: "image";
   };
-  media?: unknown;
-  hotspot?: SanityImageHotspot;
-  crop?: SanityImageCrop;
-  alt?: string;
-  _type: "image";
-  _key: string;
-}>;
+  canonicalUrl?: string;
+};
+
+export type BlockContent = Array<
+  | {
+      children?: Array<{
+        marks?: Array<string>;
+        text?: string;
+        _type: "span";
+        _key: string;
+      }>;
+      style?: "normal" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "blockquote";
+      listItem?: "bullet" | "number";
+      markDefs?: Array<{
+        href?: string;
+        _type: "link";
+        _key: string;
+      }>;
+      level?: number;
+      _type: "block";
+      _key: string;
+    }
+  | {
+      asset?: SanityImageAssetReference;
+      media?: unknown;
+      hotspot?: SanityImageHotspot;
+      crop?: SanityImageCrop;
+      alt?: string;
+      _type: "image";
+      _key: string;
+    }
+>;
 
 export type Topic = {
   _id: string;
@@ -55,12 +75,7 @@ export type Topic = {
   slug?: Slug;
   kind?: "person" | "organization" | "place" | "event" | "team";
   image?: {
-    asset?: {
-      _ref: string;
-      _type: "reference";
-      _weak?: boolean;
-      [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
-    };
+    asset?: SanityImageAssetReference;
     media?: unknown;
     hotspot?: SanityImageHotspot;
     crop?: SanityImageCrop;
@@ -68,6 +83,35 @@ export type Topic = {
     _type: "image";
   };
   description?: string;
+};
+
+export type SanityImageCrop = {
+  _type: "sanity.imageCrop";
+  top?: number;
+  bottom?: number;
+  left?: number;
+  right?: number;
+};
+
+export type SanityImageHotspot = {
+  _type: "sanity.imageHotspot";
+  x?: number;
+  y?: number;
+  height?: number;
+  width?: number;
+};
+
+export type Slug = {
+  _type: "slug";
+  current?: string;
+  source?: string;
+};
+
+export type TagReference = {
+  _ref: string;
+  _type: "reference";
+  _weak?: boolean;
+  [internalGroqTypeReferenceTo]?: "tag";
 };
 
 export type Tag = {
@@ -86,14 +130,23 @@ export type Tag = {
   featured?: boolean;
   hidden?: boolean;
   deprecated?: boolean;
-  redirectTo?: {
-    _ref: string;
-    _type: "reference";
-    _weak?: boolean;
-    [internalGroqTypeReferenceTo]?: "tag";
-  };
+  redirectTo?: TagReference;
   analyticsKey?: string;
   views?: number;
+};
+
+export type CategoryReference = {
+  _ref: string;
+  _type: "reference";
+  _weak?: boolean;
+  [internalGroqTypeReferenceTo]?: "category";
+};
+
+export type AuthorReference = {
+  _ref: string;
+  _type: "reference";
+  _weak?: boolean;
+  [internalGroqTypeReferenceTo]?: "author";
 };
 
 export type Post = {
@@ -102,19 +155,12 @@ export type Post = {
   _createdAt: string;
   _updatedAt: string;
   _rev: string;
-  category?: {
-    _ref: string;
-    _type: "reference";
-    _weak?: boolean;
-    [internalGroqTypeReferenceTo]?: "category";
-  };
-  tags?: Array<{
-    _ref: string;
-    _type: "reference";
-    _weak?: boolean;
-    _key: string;
-    [internalGroqTypeReferenceTo]?: "tag";
-  }>;
+  category?: CategoryReference;
+  tags?: Array<
+    {
+      _key: string;
+    } & TagReference
+  >;
   mainHeadline?: boolean;
   mainHeadlineRank?: number;
   mainHeadlineUntil?: string;
@@ -137,12 +183,7 @@ export type Post = {
     source?: "asset" | "external";
     externalUrl?: string;
     image?: {
-      asset?: {
-        _ref: string;
-        _type: "reference";
-        _weak?: boolean;
-        [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
-      };
+      asset?: SanityImageAssetReference;
       media?: unknown;
       hotspot?: SanityImageHotspot;
       crop?: SanityImageCrop;
@@ -198,12 +239,7 @@ export type Post = {
       source?: "asset" | "external";
       externalUrl?: string;
       image?: {
-        asset?: {
-          _ref: string;
-          _type: "reference";
-          _weak?: boolean;
-          [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
-        };
+        asset?: SanityImageAssetReference;
         media?: unknown;
         hotspot?: SanityImageHotspot;
         crop?: SanityImageCrop;
@@ -224,12 +260,7 @@ export type Post = {
   status?: "draft" | "scheduled" | "published";
   publishedAt?: string;
   updatedAt?: string;
-  author?: {
-    _ref: string;
-    _type: "reference";
-    _weak?: boolean;
-    [internalGroqTypeReferenceTo]?: "author";
-  };
+  author?: AuthorReference;
   priority?: number;
   readTime?: number;
   viewsAll?: number;
@@ -248,12 +279,7 @@ export type Author = {
   _rev: string;
   name?: string;
   picture?: {
-    asset?: {
-      _ref: string;
-      _type: "reference";
-      _weak?: boolean;
-      [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
-    };
+    asset?: SanityImageAssetReference;
     media?: unknown;
     hotspot?: SanityImageHotspot;
     crop?: SanityImageCrop;
@@ -285,20 +311,10 @@ export type Category = {
   _rev: string;
   name?: string;
   slug?: Slug;
-  parent?: {
-    _ref: string;
-    _type: "reference";
-    _weak?: boolean;
-    [internalGroqTypeReferenceTo]?: "category";
-  };
+  parent?: CategoryReference;
   description?: string;
   hero?: {
-    asset?: {
-      _ref: string;
-      _type: "reference";
-      _weak?: boolean;
-      [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
-    };
+    asset?: SanityImageAssetReference;
     media?: unknown;
     hotspot?: SanityImageHotspot;
     crop?: SanityImageCrop;
@@ -314,26 +330,6 @@ export type Category = {
   layout?: "standard" | "grid" | "magazine";
   seo?: Seo;
   views?: number;
-};
-
-export type Seo = {
-  _type: "seo";
-  title?: string;
-  description?: string;
-  ogImage?: {
-    asset?: {
-      _ref: string;
-      _type: "reference";
-      _weak?: boolean;
-      [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
-    };
-    media?: unknown;
-    hotspot?: SanityImageHotspot;
-    crop?: SanityImageCrop;
-    alt?: string;
-    _type: "image";
-  };
-  canonicalUrl?: string;
 };
 
 export type Settings = {
@@ -380,12 +376,7 @@ export type Settings = {
     _key: string;
   }>;
   ogImage?: {
-    asset?: {
-      _ref: string;
-      _type: "reference";
-      _weak?: boolean;
-      [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
-    };
+    asset?: SanityImageAssetReference;
     media?: unknown;
     hotspot?: SanityImageHotspot;
     crop?: SanityImageCrop;
@@ -406,17 +397,21 @@ export type SanityAssistInstructionTask = {
 
 export type SanityAssistTaskStatus = {
   _type: "sanity.assist.task.status";
-  tasks?: Array<{
-    _key: string;
-  } & SanityAssistInstructionTask>;
+  tasks?: Array<
+    {
+      _key: string;
+    } & SanityAssistInstructionTask
+  >;
 };
 
 export type SanityAssistSchemaTypeAnnotations = {
   _type: "sanity.assist.schemaType.annotations";
   title?: string;
-  fields?: Array<{
-    _key: string;
-  } & SanityAssistSchemaTypeField>;
+  fields?: Array<
+    {
+      _key: string;
+    } & SanityAssistSchemaTypeField
+  >;
 };
 
 export type SanityAssistOutputType = {
@@ -429,14 +424,16 @@ export type SanityAssistOutputField = {
   path?: string;
 };
 
+export type AssistInstructionContextReference = {
+  _ref: string;
+  _type: "reference";
+  _weak?: boolean;
+  [internalGroqTypeReferenceTo]?: "assist.instruction.context";
+};
+
 export type SanityAssistInstructionContext = {
   _type: "sanity.assist.instruction.context";
-  reference?: {
-    _ref: string;
-    _type: "reference";
-    _weak?: boolean;
-    [internalGroqTypeReferenceTo]?: "assist.instruction.context";
-  };
+  reference?: AssistInstructionContextReference;
 };
 
 export type AssistInstructionContext = {
@@ -469,18 +466,23 @@ export type SanityAssistInstructionUserInput = {
 };
 
 export type SanityAssistInstructionPrompt = Array<{
-  children?: Array<{
-    marks?: Array<string>;
-    text?: string;
-    _type: "span";
-    _key: string;
-  } | {
-    _key: string;
-  } & SanityAssistInstructionFieldRef | {
-    _key: string;
-  } & SanityAssistInstructionContext | {
-    _key: string;
-  } & SanityAssistInstructionUserInput>;
+  children?: Array<
+    | {
+        marks?: Array<string>;
+        text?: string;
+        _type: "span";
+        _key: string;
+      }
+    | ({
+        _key: string;
+      } & SanityAssistInstructionFieldRef)
+    | ({
+        _key: string;
+      } & SanityAssistInstructionContext)
+    | ({
+        _key: string;
+      } & SanityAssistInstructionUserInput)
+  >;
   style?: "normal";
   listItem?: never;
   markDefs?: null;
@@ -501,19 +503,24 @@ export type SanityAssistInstruction = {
   title?: string;
   userId?: string;
   createdById?: string;
-  output?: Array<{
-    _key: string;
-  } & SanityAssistOutputField | {
-    _key: string;
-  } & SanityAssistOutputType>;
+  output?: Array<
+    | ({
+        _key: string;
+      } & SanityAssistOutputField)
+    | ({
+        _key: string;
+      } & SanityAssistOutputType)
+  >;
 };
 
 export type SanityAssistSchemaTypeField = {
   _type: "sanity.assist.schemaType.field";
   path?: string;
-  instructions?: Array<{
-    _key: string;
-  } & SanityAssistInstruction>;
+  instructions?: Array<
+    {
+      _key: string;
+    } & SanityAssistInstruction
+  >;
 };
 
 export type SanityImagePaletteSwatch = {
@@ -542,20 +549,15 @@ export type SanityImageDimensions = {
   aspectRatio?: number;
 };
 
-export type SanityImageHotspot = {
-  _type: "sanity.imageHotspot";
-  x?: number;
-  y?: number;
-  height?: number;
-  width?: number;
-};
-
-export type SanityImageCrop = {
-  _type: "sanity.imageCrop";
-  top?: number;
-  bottom?: number;
-  left?: number;
-  right?: number;
+export type SanityImageMetadata = {
+  _type: "sanity.imageMetadata";
+  location?: Geopoint;
+  dimensions?: SanityImageDimensions;
+  palette?: SanityImagePalette;
+  lqip?: string;
+  blurHash?: string;
+  hasAlpha?: boolean;
+  isOpaque?: boolean;
 };
 
 export type SanityFileAsset = {
@@ -578,6 +580,13 @@ export type SanityFileAsset = {
   path?: string;
   url?: string;
   source?: SanityAssetSourceData;
+};
+
+export type SanityAssetSourceData = {
+  _type: "sanity.assetSourceData";
+  name?: string;
+  id?: string;
+  url?: string;
 };
 
 export type SanityImageAsset = {
@@ -603,17 +612,6 @@ export type SanityImageAsset = {
   source?: SanityAssetSourceData;
 };
 
-export type SanityImageMetadata = {
-  _type: "sanity.imageMetadata";
-  location?: Geopoint;
-  dimensions?: SanityImageDimensions;
-  palette?: SanityImagePalette;
-  lqip?: string;
-  blurHash?: string;
-  hasAlpha?: boolean;
-  isOpaque?: boolean;
-};
-
 export type Geopoint = {
   _type: "geopoint";
   lat?: number;
@@ -621,22 +619,47 @@ export type Geopoint = {
   alt?: number;
 };
 
-export type Slug = {
-  _type: "slug";
-  current?: string;
-  source?: string;
-};
+export type AllSanitySchemaTypes =
+  | SanityImageAssetReference
+  | Seo
+  | BlockContent
+  | Topic
+  | SanityImageCrop
+  | SanityImageHotspot
+  | Slug
+  | TagReference
+  | Tag
+  | CategoryReference
+  | AuthorReference
+  | Post
+  | Author
+  | Category
+  | Settings
+  | SanityAssistInstructionTask
+  | SanityAssistTaskStatus
+  | SanityAssistSchemaTypeAnnotations
+  | SanityAssistOutputType
+  | SanityAssistOutputField
+  | AssistInstructionContextReference
+  | SanityAssistInstructionContext
+  | AssistInstructionContext
+  | SanityAssistInstructionUserInput
+  | SanityAssistInstructionPrompt
+  | SanityAssistInstructionFieldRef
+  | SanityAssistInstruction
+  | SanityAssistSchemaTypeField
+  | SanityImagePaletteSwatch
+  | SanityImagePalette
+  | SanityImageDimensions
+  | SanityImageMetadata
+  | SanityFileAsset
+  | SanityAssetSourceData
+  | SanityImageAsset
+  | Geopoint;
 
-export type SanityAssetSourceData = {
-  _type: "sanity.assetSourceData";
-  name?: string;
-  id?: string;
-  url?: string;
-};
-
-export type AllSanitySchemaTypes = BlockContent | Topic | Tag | Post | Author | Category | Seo | Settings | SanityAssistInstructionTask | SanityAssistTaskStatus | SanityAssistSchemaTypeAnnotations | SanityAssistOutputType | SanityAssistOutputField | SanityAssistInstructionContext | AssistInstructionContext | SanityAssistInstructionUserInput | SanityAssistInstructionPrompt | SanityAssistInstructionFieldRef | SanityAssistInstruction | SanityAssistSchemaTypeField | SanityImagePaletteSwatch | SanityImagePalette | SanityImageDimensions | SanityImageHotspot | SanityImageCrop | SanityFileAsset | SanityImageAsset | SanityImageMetadata | Geopoint | Slug | SanityAssetSourceData;
 export declare const internalGroqTypeReferenceTo: unique symbol;
-// Source: ./sanity/lib/queries.ts
+
+// Source: sanity/lib/queries.ts
 // Variable: settingsQuery
 // Query: *[_type == "settings"][0]
 export type SettingsQueryResult = {
@@ -683,12 +706,7 @@ export type SettingsQueryResult = {
     _key: string;
   }>;
   ogImage?: {
-    asset?: {
-      _ref: string;
-      _type: "reference";
-      _weak?: boolean;
-      [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
-    };
+    asset?: SanityImageAssetReference;
     media?: unknown;
     hotspot?: SanityImageHotspot;
     crop?: SanityImageCrop;
@@ -697,6 +715,8 @@ export type SettingsQueryResult = {
     _type: "image";
   };
 } | null;
+
+// Source: sanity/lib/queries.ts
 // Variable: heroQuery
 // Query: *[_type == "post" && defined(slug.current)] | order(date desc, _updatedAt desc) [0] {      _id,  _type,  "status": select(_originalId in path("drafts.**") => "draft", "published"),  "title": coalesce(title, "Untitled"),  "slug": slug.current,  excerpt,  // New cover (external or asset)  cover{    source,    externalUrl,    image,    alt,    epigraph,    creditProvider,    creditAuthor,    creditSourceUrl,    creditLicense  },  "date": coalesce(date, _updatedAt),  publishedAt,  updatedAt,  priority,  featured,  labels,  justIn,  justInRank,  justInUntil,  breakingNews,  developingStory,  mainHeadline,  mainHeadlineRank,  mainHeadlineUntil,  frontline,  frontRank,  frontUntil,  rightHeadline,  rightHeadlineRank,  rightHeadlineUntil,  "author": select(    defined(author->name) => {      "name": coalesce(author->name, "Anonymous"),      "picture": author->picture    }  ),  "category": select(    defined(category->name) && defined(category->slug.current) => {      "title": category->name,      "slug": category->slug.current    }  ),  // Support both tag.title and category.name during transition  "tags": tags[]->{    "title": coalesce(title, name),    "slug": slug.current  },  bodyTextOne,    "bodyBlocks": bodyBlocks[]{    bodyText,    bodyImage{      source,      externalUrl,      image,      alt,      epigraph,      creditProvider,      creditAuthor,      creditSourceUrl,      creditLicense    }  }  }
 export type HeroQueryResult = {
@@ -710,12 +730,7 @@ export type HeroQueryResult = {
     source: "asset" | "external" | null;
     externalUrl: string | null;
     image: {
-      asset?: {
-        _ref: string;
-        _type: "reference";
-        _weak?: boolean;
-        [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
-      };
+      asset?: SanityImageAssetReference;
       media?: unknown;
       hotspot?: SanityImageHotspot;
       crop?: SanityImageCrop;
@@ -752,12 +767,7 @@ export type HeroQueryResult = {
   author: {
     name: string | "Anonymous";
     picture: {
-      asset?: {
-        _ref: string;
-        _type: "reference";
-        _weak?: boolean;
-        [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
-      };
+      asset?: SanityImageAssetReference;
       media?: unknown;
       hotspot?: SanityImageHotspot;
       crop?: SanityImageCrop;
@@ -814,12 +824,7 @@ export type HeroQueryResult = {
       source: "asset" | "external" | null;
       externalUrl: string | null;
       image: {
-        asset?: {
-          _ref: string;
-          _type: "reference";
-          _weak?: boolean;
-          [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
-        };
+        asset?: SanityImageAssetReference;
         media?: unknown;
         hotspot?: SanityImageHotspot;
         crop?: SanityImageCrop;
@@ -835,6 +840,8 @@ export type HeroQueryResult = {
     } | null;
   }> | null;
 } | null;
+
+// Source: sanity/lib/queries.ts
 // Variable: moreStoriesQuery
 // Query: *[_type == "post" && _id != $skip && defined(slug.current)] | order(date desc, _updatedAt desc) [0...$limit] {      _id,  _type,  "status": select(_originalId in path("drafts.**") => "draft", "published"),  "title": coalesce(title, "Untitled"),  "slug": slug.current,  excerpt,  // New cover (external or asset)  cover{    source,    externalUrl,    image,    alt,    epigraph,    creditProvider,    creditAuthor,    creditSourceUrl,    creditLicense  },  "date": coalesce(date, _updatedAt),  publishedAt,  updatedAt,  priority,  featured,  labels,  justIn,  justInRank,  justInUntil,  breakingNews,  developingStory,  mainHeadline,  mainHeadlineRank,  mainHeadlineUntil,  frontline,  frontRank,  frontUntil,  rightHeadline,  rightHeadlineRank,  rightHeadlineUntil,  "author": select(    defined(author->name) => {      "name": coalesce(author->name, "Anonymous"),      "picture": author->picture    }  ),  "category": select(    defined(category->name) && defined(category->slug.current) => {      "title": category->name,      "slug": category->slug.current    }  ),  // Support both tag.title and category.name during transition  "tags": tags[]->{    "title": coalesce(title, name),    "slug": slug.current  },  bodyTextOne,    "bodyBlocks": bodyBlocks[]{    bodyText,    bodyImage{      source,      externalUrl,      image,      alt,      epigraph,      creditProvider,      creditAuthor,      creditSourceUrl,      creditLicense    }  }  }
 export type MoreStoriesQueryResult = Array<{
@@ -848,12 +855,7 @@ export type MoreStoriesQueryResult = Array<{
     source: "asset" | "external" | null;
     externalUrl: string | null;
     image: {
-      asset?: {
-        _ref: string;
-        _type: "reference";
-        _weak?: boolean;
-        [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
-      };
+      asset?: SanityImageAssetReference;
       media?: unknown;
       hotspot?: SanityImageHotspot;
       crop?: SanityImageCrop;
@@ -890,12 +892,7 @@ export type MoreStoriesQueryResult = Array<{
   author: {
     name: string | "Anonymous";
     picture: {
-      asset?: {
-        _ref: string;
-        _type: "reference";
-        _weak?: boolean;
-        [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
-      };
+      asset?: SanityImageAssetReference;
       media?: unknown;
       hotspot?: SanityImageHotspot;
       crop?: SanityImageCrop;
@@ -952,12 +949,7 @@ export type MoreStoriesQueryResult = Array<{
       source: "asset" | "external" | null;
       externalUrl: string | null;
       image: {
-        asset?: {
-          _ref: string;
-          _type: "reference";
-          _weak?: boolean;
-          [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
-        };
+        asset?: SanityImageAssetReference;
         media?: unknown;
         hotspot?: SanityImageHotspot;
         crop?: SanityImageCrop;
@@ -973,6 +965,8 @@ export type MoreStoriesQueryResult = Array<{
     } | null;
   }> | null;
 }>;
+
+// Source: sanity/lib/queries.ts
 // Variable: postQuery
 // Query: *[_type == "post" && slug.current == $slug] [0] {      _id,  _type,  "status": select(_originalId in path("drafts.**") => "draft", "published"),  "title": coalesce(title, "Untitled"),  "slug": slug.current,  excerpt,  // New cover (external or asset)  cover{    source,    externalUrl,    image,    alt,    epigraph,    creditProvider,    creditAuthor,    creditSourceUrl,    creditLicense  },  "date": coalesce(date, _updatedAt),  publishedAt,  updatedAt,  priority,  featured,  labels,  justIn,  justInRank,  justInUntil,  breakingNews,  developingStory,  mainHeadline,  mainHeadlineRank,  mainHeadlineUntil,  frontline,  frontRank,  frontUntil,  rightHeadline,  rightHeadlineRank,  rightHeadlineUntil,  "author": select(    defined(author->name) => {      "name": coalesce(author->name, "Anonymous"),      "picture": author->picture    }  ),  "category": select(    defined(category->name) && defined(category->slug.current) => {      "title": category->name,      "slug": category->slug.current    }  ),  // Support both tag.title and category.name during transition  "tags": tags[]->{    "title": coalesce(title, name),    "slug": slug.current  },  bodyTextOne,    "bodyBlocks": bodyBlocks[]{    bodyText,    bodyImage{      source,      externalUrl,      image,      alt,      epigraph,      creditProvider,      creditAuthor,      creditSourceUrl,      creditLicense    }  }  }
 export type PostQueryResult = {
@@ -986,12 +980,7 @@ export type PostQueryResult = {
     source: "asset" | "external" | null;
     externalUrl: string | null;
     image: {
-      asset?: {
-        _ref: string;
-        _type: "reference";
-        _weak?: boolean;
-        [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
-      };
+      asset?: SanityImageAssetReference;
       media?: unknown;
       hotspot?: SanityImageHotspot;
       crop?: SanityImageCrop;
@@ -1028,12 +1017,7 @@ export type PostQueryResult = {
   author: {
     name: string | "Anonymous";
     picture: {
-      asset?: {
-        _ref: string;
-        _type: "reference";
-        _weak?: boolean;
-        [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
-      };
+      asset?: SanityImageAssetReference;
       media?: unknown;
       hotspot?: SanityImageHotspot;
       crop?: SanityImageCrop;
@@ -1090,12 +1074,7 @@ export type PostQueryResult = {
       source: "asset" | "external" | null;
       externalUrl: string | null;
       image: {
-        asset?: {
-          _ref: string;
-          _type: "reference";
-          _weak?: boolean;
-          [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
-        };
+        asset?: SanityImageAssetReference;
         media?: unknown;
         hotspot?: SanityImageHotspot;
         crop?: SanityImageCrop;
@@ -1111,6 +1090,8 @@ export type PostQueryResult = {
     } | null;
   }> | null;
 } | null;
+
+// Source: sanity/lib/queries.ts
 // Variable: indexQuery
 // Query: *[_type == "post"] | order(date desc, _updatedAt desc) {      _id,  _type,  "status": select(_originalId in path("drafts.**") => "draft", "published"),  "title": coalesce(title, "Untitled"),  "slug": slug.current,  excerpt,  // New cover (external or asset)  cover{    source,    externalUrl,    image,    alt,    epigraph,    creditProvider,    creditAuthor,    creditSourceUrl,    creditLicense  },  "date": coalesce(date, _updatedAt),  publishedAt,  updatedAt,  priority,  featured,  labels,  justIn,  justInRank,  justInUntil,  breakingNews,  developingStory,  mainHeadline,  mainHeadlineRank,  mainHeadlineUntil,  frontline,  frontRank,  frontUntil,  rightHeadline,  rightHeadlineRank,  rightHeadlineUntil,  "author": select(    defined(author->name) => {      "name": coalesce(author->name, "Anonymous"),      "picture": author->picture    }  ),  "category": select(    defined(category->name) && defined(category->slug.current) => {      "title": category->name,      "slug": category->slug.current    }  ),  // Support both tag.title and category.name during transition  "tags": tags[]->{    "title": coalesce(title, name),    "slug": slug.current  },  bodyTextOne,    "bodyBlocks": bodyBlocks[]{    bodyText,    bodyImage{      source,      externalUrl,      image,      alt,      epigraph,      creditProvider,      creditAuthor,      creditSourceUrl,      creditLicense    }  }  }
 export type IndexQueryResult = Array<{
@@ -1124,12 +1105,7 @@ export type IndexQueryResult = Array<{
     source: "asset" | "external" | null;
     externalUrl: string | null;
     image: {
-      asset?: {
-        _ref: string;
-        _type: "reference";
-        _weak?: boolean;
-        [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
-      };
+      asset?: SanityImageAssetReference;
       media?: unknown;
       hotspot?: SanityImageHotspot;
       crop?: SanityImageCrop;
@@ -1166,12 +1142,7 @@ export type IndexQueryResult = Array<{
   author: {
     name: string | "Anonymous";
     picture: {
-      asset?: {
-        _ref: string;
-        _type: "reference";
-        _weak?: boolean;
-        [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
-      };
+      asset?: SanityImageAssetReference;
       media?: unknown;
       hotspot?: SanityImageHotspot;
       crop?: SanityImageCrop;
@@ -1228,12 +1199,7 @@ export type IndexQueryResult = Array<{
       source: "asset" | "external" | null;
       externalUrl: string | null;
       image: {
-        asset?: {
-          _ref: string;
-          _type: "reference";
-          _weak?: boolean;
-          [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
-        };
+        asset?: SanityImageAssetReference;
         media?: unknown;
         hotspot?: SanityImageHotspot;
         crop?: SanityImageCrop;
@@ -1249,6 +1215,8 @@ export type IndexQueryResult = Array<{
     } | null;
   }> | null;
 }>;
+
+// Source: sanity/lib/queries.ts
 // Variable: postQueryWithRelated
 // Query: {  "post": *[_type == "post" && slug.current == $slug] | order(_updatedAt desc) [0] {      _id,  _type,  "status": select(_originalId in path("drafts.**") => "draft", "published"),  "title": coalesce(title, "Untitled"),  "slug": slug.current,  excerpt,  // New cover (external or asset)  cover{    source,    externalUrl,    image,    alt,    epigraph,    creditProvider,    creditAuthor,    creditSourceUrl,    creditLicense  },  "date": coalesce(date, _updatedAt),  publishedAt,  updatedAt,  priority,  featured,  labels,  justIn,  justInRank,  justInUntil,  breakingNews,  developingStory,  mainHeadline,  mainHeadlineRank,  mainHeadlineUntil,  frontline,  frontRank,  frontUntil,  rightHeadline,  rightHeadlineRank,  rightHeadlineUntil,  "author": select(    defined(author->name) => {      "name": coalesce(author->name, "Anonymous"),      "picture": author->picture    }  ),  "category": select(    defined(category->name) && defined(category->slug.current) => {      "title": category->name,      "slug": category->slug.current    }  ),  // Support both tag.title and category.name during transition  "tags": tags[]->{    "title": coalesce(title, name),    "slug": slug.current  },  bodyTextOne,    "bodyBlocks": bodyBlocks[]{    bodyText,    bodyImage{      source,      externalUrl,      image,      alt,      epigraph,      creditProvider,      creditAuthor,      creditSourceUrl,      creditLicense    }  }  },  "latestNews": *[_type == "post" && slug.current != $slug] | order(date desc, _updatedAt desc) [0...6] {      _id,  _type,  "status": select(_originalId in path("drafts.**") => "draft", "published"),  "title": coalesce(title, "Untitled"),  "slug": slug.current,  excerpt,  // New cover (external or asset)  cover{    source,    externalUrl,    image,    alt,    epigraph,    creditProvider,    creditAuthor,    creditSourceUrl,    creditLicense  },  "date": coalesce(date, _updatedAt),  publishedAt,  updatedAt,  priority,  featured,  labels,  justIn,  justInRank,  justInUntil,  breakingNews,  developingStory,  mainHeadline,  mainHeadlineRank,  mainHeadlineUntil,  frontline,  frontRank,  frontUntil,  rightHeadline,  rightHeadlineRank,  rightHeadlineUntil,  "author": select(    defined(author->name) => {      "name": coalesce(author->name, "Anonymous"),      "picture": author->picture    }  ),  "category": select(    defined(category->name) && defined(category->slug.current) => {      "title": category->name,      "slug": category->slug.current    }  ),  // Support both tag.title and category.name during transition  "tags": tags[]->{    "title": coalesce(title, name),    "slug": slug.current  },  bodyTextOne,    "bodyBlocks": bodyBlocks[]{    bodyText,    bodyImage{      source,      externalUrl,      image,      alt,      epigraph,      creditProvider,      creditAuthor,      creditSourceUrl,      creditLicense    }  }  },  "morePosts": *[_type == "post" && slug.current != $slug] | order(date desc, _updatedAt desc) [4...8] {      _id,  _type,  "status": select(_originalId in path("drafts.**") => "draft", "published"),  "title": coalesce(title, "Untitled"),  "slug": slug.current,  excerpt,  // New cover (external or asset)  cover{    source,    externalUrl,    image,    alt,    epigraph,    creditProvider,    creditAuthor,    creditSourceUrl,    creditLicense  },  "date": coalesce(date, _updatedAt),  publishedAt,  updatedAt,  priority,  featured,  labels,  justIn,  justInRank,  justInUntil,  breakingNews,  developingStory,  mainHeadline,  mainHeadlineRank,  mainHeadlineUntil,  frontline,  frontRank,  frontUntil,  rightHeadline,  rightHeadlineRank,  rightHeadlineUntil,  "author": select(    defined(author->name) => {      "name": coalesce(author->name, "Anonymous"),      "picture": author->picture    }  ),  "category": select(    defined(category->name) && defined(category->slug.current) => {      "title": category->name,      "slug": category->slug.current    }  ),  // Support both tag.title and category.name during transition  "tags": tags[]->{    "title": coalesce(title, name),    "slug": slug.current  },  bodyTextOne,    "bodyBlocks": bodyBlocks[]{    bodyText,    bodyImage{      source,      externalUrl,      image,      alt,      epigraph,      creditProvider,      creditAuthor,      creditSourceUrl,      creditLicense    }  }  },  "nextArticles": *[_type == "post" && slug.current != $slug] | order(date desc, _updatedAt desc) [8...18] {      _id,  _type,  "status": select(_originalId in path("drafts.**") => "draft", "published"),  "title": coalesce(title, "Untitled"),  "slug": slug.current,  excerpt,  // New cover (external or asset)  cover{    source,    externalUrl,    image,    alt,    epigraph,    creditProvider,    creditAuthor,    creditSourceUrl,    creditLicense  },  "date": coalesce(date, _updatedAt),  publishedAt,  updatedAt,  priority,  featured,  labels,  justIn,  justInRank,  justInUntil,  breakingNews,  developingStory,  mainHeadline,  mainHeadlineRank,  mainHeadlineUntil,  frontline,  frontRank,  frontUntil,  rightHeadline,  rightHeadlineRank,  rightHeadlineUntil,  "author": select(    defined(author->name) => {      "name": coalesce(author->name, "Anonymous"),      "picture": author->picture    }  ),  "category": select(    defined(category->name) && defined(category->slug.current) => {      "title": category->name,      "slug": category->slug.current    }  ),  // Support both tag.title and category.name during transition  "tags": tags[]->{    "title": coalesce(title, name),    "slug": slug.current  },  bodyTextOne,    "bodyBlocks": bodyBlocks[]{    bodyText,    bodyImage{      source,      externalUrl,      image,      alt,      epigraph,      creditProvider,      creditAuthor,      creditSourceUrl,      creditLicense    }  }  }}
 export type PostQueryWithRelatedResult = {
@@ -1263,12 +1231,7 @@ export type PostQueryWithRelatedResult = {
       source: "asset" | "external" | null;
       externalUrl: string | null;
       image: {
-        asset?: {
-          _ref: string;
-          _type: "reference";
-          _weak?: boolean;
-          [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
-        };
+        asset?: SanityImageAssetReference;
         media?: unknown;
         hotspot?: SanityImageHotspot;
         crop?: SanityImageCrop;
@@ -1305,12 +1268,7 @@ export type PostQueryWithRelatedResult = {
     author: {
       name: string | "Anonymous";
       picture: {
-        asset?: {
-          _ref: string;
-          _type: "reference";
-          _weak?: boolean;
-          [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
-        };
+        asset?: SanityImageAssetReference;
         media?: unknown;
         hotspot?: SanityImageHotspot;
         crop?: SanityImageCrop;
@@ -1352,7 +1310,15 @@ export type PostQueryWithRelatedResult = {
           _type: "span";
           _key: string;
         }>;
-        style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
+        style?:
+          | "blockquote"
+          | "h1"
+          | "h2"
+          | "h3"
+          | "h4"
+          | "h5"
+          | "h6"
+          | "normal";
         listItem?: "bullet" | "number";
         markDefs?: Array<{
           href?: string;
@@ -1367,12 +1333,7 @@ export type PostQueryWithRelatedResult = {
         source: "asset" | "external" | null;
         externalUrl: string | null;
         image: {
-          asset?: {
-            _ref: string;
-            _type: "reference";
-            _weak?: boolean;
-            [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
-          };
+          asset?: SanityImageAssetReference;
           media?: unknown;
           hotspot?: SanityImageHotspot;
           crop?: SanityImageCrop;
@@ -1399,12 +1360,7 @@ export type PostQueryWithRelatedResult = {
       source: "asset" | "external" | null;
       externalUrl: string | null;
       image: {
-        asset?: {
-          _ref: string;
-          _type: "reference";
-          _weak?: boolean;
-          [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
-        };
+        asset?: SanityImageAssetReference;
         media?: unknown;
         hotspot?: SanityImageHotspot;
         crop?: SanityImageCrop;
@@ -1441,12 +1397,7 @@ export type PostQueryWithRelatedResult = {
     author: {
       name: string | "Anonymous";
       picture: {
-        asset?: {
-          _ref: string;
-          _type: "reference";
-          _weak?: boolean;
-          [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
-        };
+        asset?: SanityImageAssetReference;
         media?: unknown;
         hotspot?: SanityImageHotspot;
         crop?: SanityImageCrop;
@@ -1488,7 +1439,15 @@ export type PostQueryWithRelatedResult = {
           _type: "span";
           _key: string;
         }>;
-        style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
+        style?:
+          | "blockquote"
+          | "h1"
+          | "h2"
+          | "h3"
+          | "h4"
+          | "h5"
+          | "h6"
+          | "normal";
         listItem?: "bullet" | "number";
         markDefs?: Array<{
           href?: string;
@@ -1503,12 +1462,7 @@ export type PostQueryWithRelatedResult = {
         source: "asset" | "external" | null;
         externalUrl: string | null;
         image: {
-          asset?: {
-            _ref: string;
-            _type: "reference";
-            _weak?: boolean;
-            [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
-          };
+          asset?: SanityImageAssetReference;
           media?: unknown;
           hotspot?: SanityImageHotspot;
           crop?: SanityImageCrop;
@@ -1535,12 +1489,7 @@ export type PostQueryWithRelatedResult = {
       source: "asset" | "external" | null;
       externalUrl: string | null;
       image: {
-        asset?: {
-          _ref: string;
-          _type: "reference";
-          _weak?: boolean;
-          [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
-        };
+        asset?: SanityImageAssetReference;
         media?: unknown;
         hotspot?: SanityImageHotspot;
         crop?: SanityImageCrop;
@@ -1577,12 +1526,7 @@ export type PostQueryWithRelatedResult = {
     author: {
       name: string | "Anonymous";
       picture: {
-        asset?: {
-          _ref: string;
-          _type: "reference";
-          _weak?: boolean;
-          [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
-        };
+        asset?: SanityImageAssetReference;
         media?: unknown;
         hotspot?: SanityImageHotspot;
         crop?: SanityImageCrop;
@@ -1624,7 +1568,15 @@ export type PostQueryWithRelatedResult = {
           _type: "span";
           _key: string;
         }>;
-        style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
+        style?:
+          | "blockquote"
+          | "h1"
+          | "h2"
+          | "h3"
+          | "h4"
+          | "h5"
+          | "h6"
+          | "normal";
         listItem?: "bullet" | "number";
         markDefs?: Array<{
           href?: string;
@@ -1639,12 +1591,7 @@ export type PostQueryWithRelatedResult = {
         source: "asset" | "external" | null;
         externalUrl: string | null;
         image: {
-          asset?: {
-            _ref: string;
-            _type: "reference";
-            _weak?: boolean;
-            [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
-          };
+          asset?: SanityImageAssetReference;
           media?: unknown;
           hotspot?: SanityImageHotspot;
           crop?: SanityImageCrop;
@@ -1671,12 +1618,7 @@ export type PostQueryWithRelatedResult = {
       source: "asset" | "external" | null;
       externalUrl: string | null;
       image: {
-        asset?: {
-          _ref: string;
-          _type: "reference";
-          _weak?: boolean;
-          [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
-        };
+        asset?: SanityImageAssetReference;
         media?: unknown;
         hotspot?: SanityImageHotspot;
         crop?: SanityImageCrop;
@@ -1713,12 +1655,7 @@ export type PostQueryWithRelatedResult = {
     author: {
       name: string | "Anonymous";
       picture: {
-        asset?: {
-          _ref: string;
-          _type: "reference";
-          _weak?: boolean;
-          [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
-        };
+        asset?: SanityImageAssetReference;
         media?: unknown;
         hotspot?: SanityImageHotspot;
         crop?: SanityImageCrop;
@@ -1760,7 +1697,15 @@ export type PostQueryWithRelatedResult = {
           _type: "span";
           _key: string;
         }>;
-        style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
+        style?:
+          | "blockquote"
+          | "h1"
+          | "h2"
+          | "h3"
+          | "h4"
+          | "h5"
+          | "h6"
+          | "normal";
         listItem?: "bullet" | "number";
         markDefs?: Array<{
           href?: string;
@@ -1775,12 +1720,7 @@ export type PostQueryWithRelatedResult = {
         source: "asset" | "external" | null;
         externalUrl: string | null;
         image: {
-          asset?: {
-            _ref: string;
-            _type: "reference";
-            _weak?: boolean;
-            [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
-          };
+          asset?: SanityImageAssetReference;
           media?: unknown;
           hotspot?: SanityImageHotspot;
           crop?: SanityImageCrop;
@@ -1797,6 +1737,8 @@ export type PostQueryWithRelatedResult = {
     }> | null;
   }>;
 };
+
+// Source: sanity/lib/queries.ts
 // Variable: postQueryWithCategoryRelated
 // Query: {  "post": *[_type == "post" && slug.current == $slug] | order(_updatedAt desc) [0] {      _id,  _type,  "status": select(_originalId in path("drafts.**") => "draft", "published"),  "title": coalesce(title, "Untitled"),  "slug": slug.current,  excerpt,  // New cover (external or asset)  cover{    source,    externalUrl,    image,    alt,    epigraph,    creditProvider,    creditAuthor,    creditSourceUrl,    creditLicense  },  "date": coalesce(date, _updatedAt),  publishedAt,  updatedAt,  priority,  featured,  labels,  justIn,  justInRank,  justInUntil,  breakingNews,  developingStory,  mainHeadline,  mainHeadlineRank,  mainHeadlineUntil,  frontline,  frontRank,  frontUntil,  rightHeadline,  rightHeadlineRank,  rightHeadlineUntil,  "author": select(    defined(author->name) => {      "name": coalesce(author->name, "Anonymous"),      "picture": author->picture    }  ),  "category": select(    defined(category->name) && defined(category->slug.current) => {      "title": category->name,      "slug": category->slug.current    }  ),  // Support both tag.title and category.name during transition  "tags": tags[]->{    "title": coalesce(title, name),    "slug": slug.current  },  bodyTextOne,    "bodyBlocks": bodyBlocks[]{    bodyText,    bodyImage{      source,      externalUrl,      image,      alt,      epigraph,      creditProvider,      creditAuthor,      creditSourceUrl,      creditLicense    }  }  },  "latestNews": *[_type == "post" && slug.current != $slug] | order(date desc, _updatedAt desc) [0...6] {      _id,  _type,  "status": select(_originalId in path("drafts.**") => "draft", "published"),  "title": coalesce(title, "Untitled"),  "slug": slug.current,  excerpt,  // New cover (external or asset)  cover{    source,    externalUrl,    image,    alt,    epigraph,    creditProvider,    creditAuthor,    creditSourceUrl,    creditLicense  },  "date": coalesce(date, _updatedAt),  publishedAt,  updatedAt,  priority,  featured,  labels,  justIn,  justInRank,  justInUntil,  breakingNews,  developingStory,  mainHeadline,  mainHeadlineRank,  mainHeadlineUntil,  frontline,  frontRank,  frontUntil,  rightHeadline,  rightHeadlineRank,  rightHeadlineUntil,  "author": select(    defined(author->name) => {      "name": coalesce(author->name, "Anonymous"),      "picture": author->picture    }  ),  "category": select(    defined(category->name) && defined(category->slug.current) => {      "title": category->name,      "slug": category->slug.current    }  ),  // Support both tag.title and category.name during transition  "tags": tags[]->{    "title": coalesce(title, name),    "slug": slug.current  },  bodyTextOne,    "bodyBlocks": bodyBlocks[]{    bodyText,    bodyImage{      source,      externalUrl,      image,      alt,      epigraph,      creditProvider,      creditAuthor,      creditSourceUrl,      creditLicense    }  }  },  "morePosts": *[_type == "post" && slug.current != $slug] | order(date desc, _updatedAt desc) [4...8] {      _id,  _type,  "status": select(_originalId in path("drafts.**") => "draft", "published"),  "title": coalesce(title, "Untitled"),  "slug": slug.current,  excerpt,  // New cover (external or asset)  cover{    source,    externalUrl,    image,    alt,    epigraph,    creditProvider,    creditAuthor,    creditSourceUrl,    creditLicense  },  "date": coalesce(date, _updatedAt),  publishedAt,  updatedAt,  priority,  featured,  labels,  justIn,  justInRank,  justInUntil,  breakingNews,  developingStory,  mainHeadline,  mainHeadlineRank,  mainHeadlineUntil,  frontline,  frontRank,  frontUntil,  rightHeadline,  rightHeadlineRank,  rightHeadlineUntil,  "author": select(    defined(author->name) => {      "name": coalesce(author->name, "Anonymous"),      "picture": author->picture    }  ),  "category": select(    defined(category->name) && defined(category->slug.current) => {      "title": category->name,      "slug": category->slug.current    }  ),  // Support both tag.title and category.name during transition  "tags": tags[]->{    "title": coalesce(title, name),    "slug": slug.current  },  bodyTextOne,    "bodyBlocks": bodyBlocks[]{    bodyText,    bodyImage{      source,      externalUrl,      image,      alt,      epigraph,      creditProvider,      creditAuthor,      creditSourceUrl,      creditLicense    }  }  },  "newsForYou": *[_type == "post" && slug.current != $slug] | order(date desc, _updatedAt desc) [0...4] {      _id,  _type,  "status": select(_originalId in path("drafts.**") => "draft", "published"),  "title": coalesce(title, "Untitled"),  "slug": slug.current,  excerpt,  // New cover (external or asset)  cover{    source,    externalUrl,    image,    alt,    epigraph,    creditProvider,    creditAuthor,    creditSourceUrl,    creditLicense  },  "date": coalesce(date, _updatedAt),  publishedAt,  updatedAt,  priority,  featured,  labels,  justIn,  justInRank,  justInUntil,  breakingNews,  developingStory,  mainHeadline,  mainHeadlineRank,  mainHeadlineUntil,  frontline,  frontRank,  frontUntil,  rightHeadline,  rightHeadlineRank,  rightHeadlineUntil,  "author": select(    defined(author->name) => {      "name": coalesce(author->name, "Anonymous"),      "picture": author->picture    }  ),  "category": select(    defined(category->name) && defined(category->slug.current) => {      "title": category->name,      "slug": category->slug.current    }  ),  // Support both tag.title and category.name during transition  "tags": tags[]->{    "title": coalesce(title, name),    "slug": slug.current  },  bodyTextOne,    "bodyBlocks": bodyBlocks[]{    bodyText,    bodyImage{      source,      externalUrl,      image,      alt,      epigraph,      creditProvider,      creditAuthor,      creditSourceUrl,      creditLicense    }  }  },  "categoryArticles": *[_type == "post" && slug.current != $slug && category->slug.current == $categorySlug] | order(date desc, _updatedAt desc) [0...6] {      _id,  _type,  "status": select(_originalId in path("drafts.**") => "draft", "published"),  "title": coalesce(title, "Untitled"),  "slug": slug.current,  excerpt,  // New cover (external or asset)  cover{    source,    externalUrl,    image,    alt,    epigraph,    creditProvider,    creditAuthor,    creditSourceUrl,    creditLicense  },  "date": coalesce(date, _updatedAt),  publishedAt,  updatedAt,  priority,  featured,  labels,  justIn,  justInRank,  justInUntil,  breakingNews,  developingStory,  mainHeadline,  mainHeadlineRank,  mainHeadlineUntil,  frontline,  frontRank,  frontUntil,  rightHeadline,  rightHeadlineRank,  rightHeadlineUntil,  "author": select(    defined(author->name) => {      "name": coalesce(author->name, "Anonymous"),      "picture": author->picture    }  ),  "category": select(    defined(category->name) && defined(category->slug.current) => {      "title": category->name,      "slug": category->slug.current    }  ),  // Support both tag.title and category.name during transition  "tags": tags[]->{    "title": coalesce(title, name),    "slug": slug.current  },  bodyTextOne,    "bodyBlocks": bodyBlocks[]{    bodyText,    bodyImage{      source,      externalUrl,      image,      alt,      epigraph,      creditProvider,      creditAuthor,      creditSourceUrl,      creditLicense    }  }  }}
 export type PostQueryWithCategoryRelatedResult = {
@@ -1811,12 +1753,7 @@ export type PostQueryWithCategoryRelatedResult = {
       source: "asset" | "external" | null;
       externalUrl: string | null;
       image: {
-        asset?: {
-          _ref: string;
-          _type: "reference";
-          _weak?: boolean;
-          [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
-        };
+        asset?: SanityImageAssetReference;
         media?: unknown;
         hotspot?: SanityImageHotspot;
         crop?: SanityImageCrop;
@@ -1853,12 +1790,7 @@ export type PostQueryWithCategoryRelatedResult = {
     author: {
       name: string | "Anonymous";
       picture: {
-        asset?: {
-          _ref: string;
-          _type: "reference";
-          _weak?: boolean;
-          [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
-        };
+        asset?: SanityImageAssetReference;
         media?: unknown;
         hotspot?: SanityImageHotspot;
         crop?: SanityImageCrop;
@@ -1900,7 +1832,15 @@ export type PostQueryWithCategoryRelatedResult = {
           _type: "span";
           _key: string;
         }>;
-        style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
+        style?:
+          | "blockquote"
+          | "h1"
+          | "h2"
+          | "h3"
+          | "h4"
+          | "h5"
+          | "h6"
+          | "normal";
         listItem?: "bullet" | "number";
         markDefs?: Array<{
           href?: string;
@@ -1915,12 +1855,7 @@ export type PostQueryWithCategoryRelatedResult = {
         source: "asset" | "external" | null;
         externalUrl: string | null;
         image: {
-          asset?: {
-            _ref: string;
-            _type: "reference";
-            _weak?: boolean;
-            [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
-          };
+          asset?: SanityImageAssetReference;
           media?: unknown;
           hotspot?: SanityImageHotspot;
           crop?: SanityImageCrop;
@@ -1947,12 +1882,7 @@ export type PostQueryWithCategoryRelatedResult = {
       source: "asset" | "external" | null;
       externalUrl: string | null;
       image: {
-        asset?: {
-          _ref: string;
-          _type: "reference";
-          _weak?: boolean;
-          [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
-        };
+        asset?: SanityImageAssetReference;
         media?: unknown;
         hotspot?: SanityImageHotspot;
         crop?: SanityImageCrop;
@@ -1989,12 +1919,7 @@ export type PostQueryWithCategoryRelatedResult = {
     author: {
       name: string | "Anonymous";
       picture: {
-        asset?: {
-          _ref: string;
-          _type: "reference";
-          _weak?: boolean;
-          [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
-        };
+        asset?: SanityImageAssetReference;
         media?: unknown;
         hotspot?: SanityImageHotspot;
         crop?: SanityImageCrop;
@@ -2036,7 +1961,15 @@ export type PostQueryWithCategoryRelatedResult = {
           _type: "span";
           _key: string;
         }>;
-        style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
+        style?:
+          | "blockquote"
+          | "h1"
+          | "h2"
+          | "h3"
+          | "h4"
+          | "h5"
+          | "h6"
+          | "normal";
         listItem?: "bullet" | "number";
         markDefs?: Array<{
           href?: string;
@@ -2051,12 +1984,7 @@ export type PostQueryWithCategoryRelatedResult = {
         source: "asset" | "external" | null;
         externalUrl: string | null;
         image: {
-          asset?: {
-            _ref: string;
-            _type: "reference";
-            _weak?: boolean;
-            [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
-          };
+          asset?: SanityImageAssetReference;
           media?: unknown;
           hotspot?: SanityImageHotspot;
           crop?: SanityImageCrop;
@@ -2083,12 +2011,7 @@ export type PostQueryWithCategoryRelatedResult = {
       source: "asset" | "external" | null;
       externalUrl: string | null;
       image: {
-        asset?: {
-          _ref: string;
-          _type: "reference";
-          _weak?: boolean;
-          [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
-        };
+        asset?: SanityImageAssetReference;
         media?: unknown;
         hotspot?: SanityImageHotspot;
         crop?: SanityImageCrop;
@@ -2125,12 +2048,7 @@ export type PostQueryWithCategoryRelatedResult = {
     author: {
       name: string | "Anonymous";
       picture: {
-        asset?: {
-          _ref: string;
-          _type: "reference";
-          _weak?: boolean;
-          [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
-        };
+        asset?: SanityImageAssetReference;
         media?: unknown;
         hotspot?: SanityImageHotspot;
         crop?: SanityImageCrop;
@@ -2172,7 +2090,15 @@ export type PostQueryWithCategoryRelatedResult = {
           _type: "span";
           _key: string;
         }>;
-        style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
+        style?:
+          | "blockquote"
+          | "h1"
+          | "h2"
+          | "h3"
+          | "h4"
+          | "h5"
+          | "h6"
+          | "normal";
         listItem?: "bullet" | "number";
         markDefs?: Array<{
           href?: string;
@@ -2187,12 +2113,7 @@ export type PostQueryWithCategoryRelatedResult = {
         source: "asset" | "external" | null;
         externalUrl: string | null;
         image: {
-          asset?: {
-            _ref: string;
-            _type: "reference";
-            _weak?: boolean;
-            [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
-          };
+          asset?: SanityImageAssetReference;
           media?: unknown;
           hotspot?: SanityImageHotspot;
           crop?: SanityImageCrop;
@@ -2219,12 +2140,7 @@ export type PostQueryWithCategoryRelatedResult = {
       source: "asset" | "external" | null;
       externalUrl: string | null;
       image: {
-        asset?: {
-          _ref: string;
-          _type: "reference";
-          _weak?: boolean;
-          [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
-        };
+        asset?: SanityImageAssetReference;
         media?: unknown;
         hotspot?: SanityImageHotspot;
         crop?: SanityImageCrop;
@@ -2261,12 +2177,7 @@ export type PostQueryWithCategoryRelatedResult = {
     author: {
       name: string | "Anonymous";
       picture: {
-        asset?: {
-          _ref: string;
-          _type: "reference";
-          _weak?: boolean;
-          [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
-        };
+        asset?: SanityImageAssetReference;
         media?: unknown;
         hotspot?: SanityImageHotspot;
         crop?: SanityImageCrop;
@@ -2308,7 +2219,15 @@ export type PostQueryWithCategoryRelatedResult = {
           _type: "span";
           _key: string;
         }>;
-        style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
+        style?:
+          | "blockquote"
+          | "h1"
+          | "h2"
+          | "h3"
+          | "h4"
+          | "h5"
+          | "h6"
+          | "normal";
         listItem?: "bullet" | "number";
         markDefs?: Array<{
           href?: string;
@@ -2323,12 +2242,7 @@ export type PostQueryWithCategoryRelatedResult = {
         source: "asset" | "external" | null;
         externalUrl: string | null;
         image: {
-          asset?: {
-            _ref: string;
-            _type: "reference";
-            _weak?: boolean;
-            [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
-          };
+          asset?: SanityImageAssetReference;
           media?: unknown;
           hotspot?: SanityImageHotspot;
           crop?: SanityImageCrop;
@@ -2355,12 +2269,7 @@ export type PostQueryWithCategoryRelatedResult = {
       source: "asset" | "external" | null;
       externalUrl: string | null;
       image: {
-        asset?: {
-          _ref: string;
-          _type: "reference";
-          _weak?: boolean;
-          [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
-        };
+        asset?: SanityImageAssetReference;
         media?: unknown;
         hotspot?: SanityImageHotspot;
         crop?: SanityImageCrop;
@@ -2397,12 +2306,7 @@ export type PostQueryWithCategoryRelatedResult = {
     author: {
       name: string | "Anonymous";
       picture: {
-        asset?: {
-          _ref: string;
-          _type: "reference";
-          _weak?: boolean;
-          [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
-        };
+        asset?: SanityImageAssetReference;
         media?: unknown;
         hotspot?: SanityImageHotspot;
         crop?: SanityImageCrop;
@@ -2444,7 +2348,15 @@ export type PostQueryWithCategoryRelatedResult = {
           _type: "span";
           _key: string;
         }>;
-        style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
+        style?:
+          | "blockquote"
+          | "h1"
+          | "h2"
+          | "h3"
+          | "h4"
+          | "h5"
+          | "h6"
+          | "normal";
         listItem?: "bullet" | "number";
         markDefs?: Array<{
           href?: string;
@@ -2459,12 +2371,7 @@ export type PostQueryWithCategoryRelatedResult = {
         source: "asset" | "external" | null;
         externalUrl: string | null;
         image: {
-          asset?: {
-            _ref: string;
-            _type: "reference";
-            _weak?: boolean;
-            [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
-          };
+          asset?: SanityImageAssetReference;
           media?: unknown;
           hotspot?: SanityImageHotspot;
           crop?: SanityImageCrop;
@@ -2481,9 +2388,13 @@ export type PostQueryWithCategoryRelatedResult = {
     }> | null;
   }>;
 };
+
+// Source: sanity/lib/queries.ts
 // Variable: postSlugsQuery
 // Query: *[_type == "post" && defined(slug.current)][].slug.current
 export type PostSlugsQueryResult = Array<string | null>;
+
+// Source: sanity/lib/queries.ts
 // Variable: postBySlugQuery
 // Query: *[_type == "post" && slug.current == $slug][0] {      _id,  _type,  "status": select(_originalId in path("drafts.**") => "draft", "published"),  "title": coalesce(title, "Untitled"),  "slug": slug.current,  excerpt,  // New cover (external or asset)  cover{    source,    externalUrl,    image,    alt,    epigraph,    creditProvider,    creditAuthor,    creditSourceUrl,    creditLicense  },  "date": coalesce(date, _updatedAt),  publishedAt,  updatedAt,  priority,  featured,  labels,  justIn,  justInRank,  justInUntil,  breakingNews,  developingStory,  mainHeadline,  mainHeadlineRank,  mainHeadlineUntil,  frontline,  frontRank,  frontUntil,  rightHeadline,  rightHeadlineRank,  rightHeadlineUntil,  "author": select(    defined(author->name) => {      "name": coalesce(author->name, "Anonymous"),      "picture": author->picture    }  ),  "category": select(    defined(category->name) && defined(category->slug.current) => {      "title": category->name,      "slug": category->slug.current    }  ),  // Support both tag.title and category.name during transition  "tags": tags[]->{    "title": coalesce(title, name),    "slug": slug.current  },  bodyTextOne,    "bodyBlocks": bodyBlocks[]{    bodyText,    bodyImage{      source,      externalUrl,      image,      alt,      epigraph,      creditProvider,      creditAuthor,      creditSourceUrl,      creditLicense    }  }  }
 export type PostBySlugQueryResult = {
@@ -2497,12 +2408,7 @@ export type PostBySlugQueryResult = {
     source: "asset" | "external" | null;
     externalUrl: string | null;
     image: {
-      asset?: {
-        _ref: string;
-        _type: "reference";
-        _weak?: boolean;
-        [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
-      };
+      asset?: SanityImageAssetReference;
       media?: unknown;
       hotspot?: SanityImageHotspot;
       crop?: SanityImageCrop;
@@ -2539,12 +2445,7 @@ export type PostBySlugQueryResult = {
   author: {
     name: string | "Anonymous";
     picture: {
-      asset?: {
-        _ref: string;
-        _type: "reference";
-        _weak?: boolean;
-        [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
-      };
+      asset?: SanityImageAssetReference;
       media?: unknown;
       hotspot?: SanityImageHotspot;
       crop?: SanityImageCrop;
@@ -2601,12 +2502,7 @@ export type PostBySlugQueryResult = {
       source: "asset" | "external" | null;
       externalUrl: string | null;
       image: {
-        asset?: {
-          _ref: string;
-          _type: "reference";
-          _weak?: boolean;
-          [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
-        };
+        asset?: SanityImageAssetReference;
         media?: unknown;
         hotspot?: SanityImageHotspot;
         crop?: SanityImageCrop;
@@ -2622,6 +2518,8 @@ export type PostBySlugQueryResult = {
     } | null;
   }> | null;
 } | null;
+
+// Source: sanity/lib/queries.ts
 // Variable: postsByCategoryQuery
 // Query: *[_type == "post" && category->slug.current == $categorySlug] | order(date desc, _updatedAt desc) {      _id,  _type,  "status": select(_originalId in path("drafts.**") => "draft", "published"),  "title": coalesce(title, "Untitled"),  "slug": slug.current,  excerpt,  // New cover (external or asset)  cover{    source,    externalUrl,    image,    alt,    epigraph,    creditProvider,    creditAuthor,    creditSourceUrl,    creditLicense  },  "date": coalesce(date, _updatedAt),  publishedAt,  updatedAt,  priority,  featured,  labels,  justIn,  justInRank,  justInUntil,  breakingNews,  developingStory,  mainHeadline,  mainHeadlineRank,  mainHeadlineUntil,  frontline,  frontRank,  frontUntil,  rightHeadline,  rightHeadlineRank,  rightHeadlineUntil,  "author": select(    defined(author->name) => {      "name": coalesce(author->name, "Anonymous"),      "picture": author->picture    }  ),  "category": select(    defined(category->name) && defined(category->slug.current) => {      "title": category->name,      "slug": category->slug.current    }  ),  // Support both tag.title and category.name during transition  "tags": tags[]->{    "title": coalesce(title, name),    "slug": slug.current  },  bodyTextOne,    "bodyBlocks": bodyBlocks[]{    bodyText,    bodyImage{      source,      externalUrl,      image,      alt,      epigraph,      creditProvider,      creditAuthor,      creditSourceUrl,      creditLicense    }  }  }
 export type PostsByCategoryQueryResult = Array<{
@@ -2635,12 +2533,7 @@ export type PostsByCategoryQueryResult = Array<{
     source: "asset" | "external" | null;
     externalUrl: string | null;
     image: {
-      asset?: {
-        _ref: string;
-        _type: "reference";
-        _weak?: boolean;
-        [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
-      };
+      asset?: SanityImageAssetReference;
       media?: unknown;
       hotspot?: SanityImageHotspot;
       crop?: SanityImageCrop;
@@ -2677,12 +2570,7 @@ export type PostsByCategoryQueryResult = Array<{
   author: {
     name: string | "Anonymous";
     picture: {
-      asset?: {
-        _ref: string;
-        _type: "reference";
-        _weak?: boolean;
-        [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
-      };
+      asset?: SanityImageAssetReference;
       media?: unknown;
       hotspot?: SanityImageHotspot;
       crop?: SanityImageCrop;
@@ -2739,12 +2627,7 @@ export type PostsByCategoryQueryResult = Array<{
       source: "asset" | "external" | null;
       externalUrl: string | null;
       image: {
-        asset?: {
-          _ref: string;
-          _type: "reference";
-          _weak?: boolean;
-          [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
-        };
+        asset?: SanityImageAssetReference;
         media?: unknown;
         hotspot?: SanityImageHotspot;
         crop?: SanityImageCrop;
@@ -2760,6 +2643,8 @@ export type PostsByCategoryQueryResult = Array<{
     } | null;
   }> | null;
 }>;
+
+// Source: sanity/lib/queries.ts
 // Variable: categorySlugsQuery
 // Query: *[_type == "category" && defined(slug.current)]{ "slug": slug.current, name, views }
 export type CategorySlugsQueryResult = Array<{
@@ -2767,6 +2652,8 @@ export type CategorySlugsQueryResult = Array<{
   name: string | null;
   views: number | null;
 }>;
+
+// Source: sanity/lib/queries.ts
 // Variable: allCategoriesQuery
 // Query: *[_type == "category" && defined(slug.current)] | order(name asc) {    "slug": slug.current,    name,    views  }
 export type AllCategoriesQueryResult = Array<{
@@ -2774,6 +2661,8 @@ export type AllCategoriesQueryResult = Array<{
   name: string | null;
   views: number | null;
 }>;
+
+// Source: sanity/lib/queries.ts
 // Variable: categoriesByViewsQuery
 // Query: *[_type == "category" && defined(slug.current)] | order(coalesce(order, 999) asc, name asc) {    "slug": slug.current,    name,    views,    order  }
 export type CategoriesByViewsQueryResult = Array<{
@@ -2782,6 +2671,8 @@ export type CategoriesByViewsQueryResult = Array<{
   views: number | null;
   order: number | null;
 }>;
+
+// Source: sanity/lib/queries.ts
 // Variable: topTagsByViewsQuery
 // Query: *[_type == "tag" && defined(slug.current)] | order(coalesce(views, 0) desc, title asc) [0...5] {    "slug": slug.current,    title,    views  }
 export type TopTagsByViewsQueryResult = Array<{
@@ -2789,6 +2680,8 @@ export type TopTagsByViewsQueryResult = Array<{
   title: string | null;
   views: number | null;
 }>;
+
+// Source: sanity/lib/queries.ts
 // Variable: showsTagsByViewsQuery
 // Query: *[_type == "tag" && defined(slug.current)] | order(coalesce(views, 0) desc, title asc) [5...11] {    "slug": slug.current,    title,    views  }
 export type ShowsTagsByViewsQueryResult = Array<{
@@ -2796,12 +2689,16 @@ export type ShowsTagsByViewsQueryResult = Array<{
   title: string | null;
   views: number | null;
 }>;
+
+// Source: sanity/lib/queries.ts
 // Variable: tagSlugsQuery
 // Query: *[_type == "tag" && defined(slug.current)]{ "slug": slug.current, title }
 export type TagSlugsQueryResult = Array<{
   slug: string | null;
   title: string | null;
 }>;
+
+// Source: sanity/lib/queries.ts
 // Variable: tagBySlugQuery
 // Query: *[_type == "tag" && slug.current == $slug][0] {    _id,    title,    "slug": slug.current,    description,    emoji,    color,    featured,    deprecated,    views,    "redirectTo": redirectTo->{      title,      "slug": slug.current    },    aliases,    order  }
 export type TagBySlugQueryResult = {
@@ -2821,6 +2718,8 @@ export type TagBySlugQueryResult = {
   aliases: Array<string> | null;
   order: number | null;
 } | null;
+
+// Source: sanity/lib/queries.ts
 // Variable: postsByTagQuery
 // Query: *[_type == "post" && $tagSlug in tags[]->slug.current] | order(date desc, _updatedAt desc) {      _id,  _type,  "status": select(_originalId in path("drafts.**") => "draft", "published"),  "title": coalesce(title, "Untitled"),  "slug": slug.current,  excerpt,  // New cover (external or asset)  cover{    source,    externalUrl,    image,    alt,    epigraph,    creditProvider,    creditAuthor,    creditSourceUrl,    creditLicense  },  "date": coalesce(date, _updatedAt),  publishedAt,  updatedAt,  priority,  featured,  labels,  justIn,  justInRank,  justInUntil,  breakingNews,  developingStory,  mainHeadline,  mainHeadlineRank,  mainHeadlineUntil,  frontline,  frontRank,  frontUntil,  rightHeadline,  rightHeadlineRank,  rightHeadlineUntil,  "author": select(    defined(author->name) => {      "name": coalesce(author->name, "Anonymous"),      "picture": author->picture    }  ),  "category": select(    defined(category->name) && defined(category->slug.current) => {      "title": category->name,      "slug": category->slug.current    }  ),  // Support both tag.title and category.name during transition  "tags": tags[]->{    "title": coalesce(title, name),    "slug": slug.current  },  bodyTextOne,    "bodyBlocks": bodyBlocks[]{    bodyText,    bodyImage{      source,      externalUrl,      image,      alt,      epigraph,      creditProvider,      creditAuthor,      creditSourceUrl,      creditLicense    }  }  }
 export type PostsByTagQueryResult = Array<{
@@ -2834,12 +2733,7 @@ export type PostsByTagQueryResult = Array<{
     source: "asset" | "external" | null;
     externalUrl: string | null;
     image: {
-      asset?: {
-        _ref: string;
-        _type: "reference";
-        _weak?: boolean;
-        [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
-      };
+      asset?: SanityImageAssetReference;
       media?: unknown;
       hotspot?: SanityImageHotspot;
       crop?: SanityImageCrop;
@@ -2876,12 +2770,7 @@ export type PostsByTagQueryResult = Array<{
   author: {
     name: string | "Anonymous";
     picture: {
-      asset?: {
-        _ref: string;
-        _type: "reference";
-        _weak?: boolean;
-        [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
-      };
+      asset?: SanityImageAssetReference;
       media?: unknown;
       hotspot?: SanityImageHotspot;
       crop?: SanityImageCrop;
@@ -2938,12 +2827,7 @@ export type PostsByTagQueryResult = Array<{
       source: "asset" | "external" | null;
       externalUrl: string | null;
       image: {
-        asset?: {
-          _ref: string;
-          _type: "reference";
-          _weak?: boolean;
-          [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
-        };
+        asset?: SanityImageAssetReference;
         media?: unknown;
         hotspot?: SanityImageHotspot;
         crop?: SanityImageCrop;
@@ -2959,17 +2843,14 @@ export type PostsByTagQueryResult = Array<{
     } | null;
   }> | null;
 }>;
+
+// Source: sanity/lib/queries.ts
 // Variable: authorQuery
 // Query: *[_type == "author" && slug.current == $slug][0] {    name,    picture,    "posts": *[_type == "post" && author->slug.current == $slug] | order(date desc, _updatedAt desc) {        _id,  _type,  "status": select(_originalId in path("drafts.**") => "draft", "published"),  "title": coalesce(title, "Untitled"),  "slug": slug.current,  excerpt,  // New cover (external or asset)  cover{    source,    externalUrl,    image,    alt,    epigraph,    creditProvider,    creditAuthor,    creditSourceUrl,    creditLicense  },  "date": coalesce(date, _updatedAt),  publishedAt,  updatedAt,  priority,  featured,  labels,  justIn,  justInRank,  justInUntil,  breakingNews,  developingStory,  mainHeadline,  mainHeadlineRank,  mainHeadlineUntil,  frontline,  frontRank,  frontUntil,  rightHeadline,  rightHeadlineRank,  rightHeadlineUntil,  "author": select(    defined(author->name) => {      "name": coalesce(author->name, "Anonymous"),      "picture": author->picture    }  ),  "category": select(    defined(category->name) && defined(category->slug.current) => {      "title": category->name,      "slug": category->slug.current    }  ),  // Support both tag.title and category.name during transition  "tags": tags[]->{    "title": coalesce(title, name),    "slug": slug.current  },  bodyTextOne,    "bodyBlocks": bodyBlocks[]{    bodyText,    bodyImage{      source,      externalUrl,      image,      alt,      epigraph,      creditProvider,      creditAuthor,      creditSourceUrl,      creditLicense    }  }    }  }
 export type AuthorQueryResult = {
   name: string | null;
   picture: {
-    asset?: {
-      _ref: string;
-      _type: "reference";
-      _weak?: boolean;
-      [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
-    };
+    asset?: SanityImageAssetReference;
     media?: unknown;
     hotspot?: SanityImageHotspot;
     crop?: SanityImageCrop;
@@ -2987,12 +2868,7 @@ export type AuthorQueryResult = {
       source: "asset" | "external" | null;
       externalUrl: string | null;
       image: {
-        asset?: {
-          _ref: string;
-          _type: "reference";
-          _weak?: boolean;
-          [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
-        };
+        asset?: SanityImageAssetReference;
         media?: unknown;
         hotspot?: SanityImageHotspot;
         crop?: SanityImageCrop;
@@ -3029,12 +2905,7 @@ export type AuthorQueryResult = {
     author: {
       name: string | "Anonymous";
       picture: {
-        asset?: {
-          _ref: string;
-          _type: "reference";
-          _weak?: boolean;
-          [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
-        };
+        asset?: SanityImageAssetReference;
         media?: unknown;
         hotspot?: SanityImageHotspot;
         crop?: SanityImageCrop;
@@ -3076,7 +2947,15 @@ export type AuthorQueryResult = {
           _type: "span";
           _key: string;
         }>;
-        style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
+        style?:
+          | "blockquote"
+          | "h1"
+          | "h2"
+          | "h3"
+          | "h4"
+          | "h5"
+          | "h6"
+          | "normal";
         listItem?: "bullet" | "number";
         markDefs?: Array<{
           href?: string;
@@ -3091,12 +2970,7 @@ export type AuthorQueryResult = {
         source: "asset" | "external" | null;
         externalUrl: string | null;
         image: {
-          asset?: {
-            _ref: string;
-            _type: "reference";
-            _weak?: boolean;
-            [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
-          };
+          asset?: SanityImageAssetReference;
           media?: unknown;
           hotspot?: SanityImageHotspot;
           crop?: SanityImageCrop;
@@ -3113,12 +2987,18 @@ export type AuthorQueryResult = {
     }> | null;
   }>;
 } | null;
+
+// Source: sanity/lib/queries.ts
 // Variable: authorSlugsQuery
 // Query: *[_type == "author" && defined(slug.current)][].slug.current
 export type AuthorSlugsQueryResult = Array<string | null>;
+
+// Source: sanity/lib/queries.ts
 // Variable: commentsQuery
 // Query: *[_type == "comment" && post->slug.current == $postSlug && approved == true] | order(_createdAt desc) {    name, email, comment, _createdAt  }
 export type CommentsQueryResult = Array<never>;
+
+// Source: sanity/lib/queries.ts
 // Variable: fourthSectionQuery
 // Query: *[_type == "post" && category->slug.current == $categorySlug] | order(date desc, _updatedAt desc) [0...4] {      _id,  _type,  "status": select(_originalId in path("drafts.**") => "draft", "published"),  "title": coalesce(title, "Untitled"),  "slug": slug.current,  excerpt,  // New cover (external or asset)  cover{    source,    externalUrl,    image,    alt,    epigraph,    creditProvider,    creditAuthor,    creditSourceUrl,    creditLicense  },  "date": coalesce(date, _updatedAt),  publishedAt,  updatedAt,  priority,  featured,  labels,  justIn,  justInRank,  justInUntil,  breakingNews,  developingStory,  mainHeadline,  mainHeadlineRank,  mainHeadlineUntil,  frontline,  frontRank,  frontUntil,  rightHeadline,  rightHeadlineRank,  rightHeadlineUntil,  "author": select(    defined(author->name) => {      "name": coalesce(author->name, "Anonymous"),      "picture": author->picture    }  ),  "category": select(    defined(category->name) && defined(category->slug.current) => {      "title": category->name,      "slug": category->slug.current    }  ),  // Support both tag.title and category.name during transition  "tags": tags[]->{    "title": coalesce(title, name),    "slug": slug.current  },  bodyTextOne,    "bodyBlocks": bodyBlocks[]{    bodyText,    bodyImage{      source,      externalUrl,      image,      alt,      epigraph,      creditProvider,      creditAuthor,      creditSourceUrl,      creditLicense    }  }  }
 export type FourthSectionQueryResult = Array<{
@@ -3132,12 +3012,7 @@ export type FourthSectionQueryResult = Array<{
     source: "asset" | "external" | null;
     externalUrl: string | null;
     image: {
-      asset?: {
-        _ref: string;
-        _type: "reference";
-        _weak?: boolean;
-        [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
-      };
+      asset?: SanityImageAssetReference;
       media?: unknown;
       hotspot?: SanityImageHotspot;
       crop?: SanityImageCrop;
@@ -3174,12 +3049,7 @@ export type FourthSectionQueryResult = Array<{
   author: {
     name: string | "Anonymous";
     picture: {
-      asset?: {
-        _ref: string;
-        _type: "reference";
-        _weak?: boolean;
-        [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
-      };
+      asset?: SanityImageAssetReference;
       media?: unknown;
       hotspot?: SanityImageHotspot;
       crop?: SanityImageCrop;
@@ -3236,12 +3106,7 @@ export type FourthSectionQueryResult = Array<{
       source: "asset" | "external" | null;
       externalUrl: string | null;
       image: {
-        asset?: {
-          _ref: string;
-          _type: "reference";
-          _weak?: boolean;
-          [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
-        };
+        asset?: SanityImageAssetReference;
         media?: unknown;
         hotspot?: SanityImageHotspot;
         crop?: SanityImageCrop;
@@ -3257,6 +3122,8 @@ export type FourthSectionQueryResult = Array<{
     } | null;
   }> | null;
 }>;
+
+// Source: sanity/lib/queries.ts
 // Variable: mostViewedQuery
 // Query: *[_type == "post" && category->slug.current == $categorySlug] | order(coalesce(views7d, 0) desc, publishedAt desc) [0...5] {      _id,  _type,  "status": select(_originalId in path("drafts.**") => "draft", "published"),  "title": coalesce(title, "Untitled"),  "slug": slug.current,  excerpt,  // New cover (external or asset)  cover{    source,    externalUrl,    image,    alt,    epigraph,    creditProvider,    creditAuthor,    creditSourceUrl,    creditLicense  },  "date": coalesce(date, _updatedAt),  publishedAt,  updatedAt,  priority,  featured,  labels,  justIn,  justInRank,  justInUntil,  breakingNews,  developingStory,  mainHeadline,  mainHeadlineRank,  mainHeadlineUntil,  frontline,  frontRank,  frontUntil,  rightHeadline,  rightHeadlineRank,  rightHeadlineUntil,  "author": select(    defined(author->name) => {      "name": coalesce(author->name, "Anonymous"),      "picture": author->picture    }  ),  "category": select(    defined(category->name) && defined(category->slug.current) => {      "title": category->name,      "slug": category->slug.current    }  ),  // Support both tag.title and category.name during transition  "tags": tags[]->{    "title": coalesce(title, name),    "slug": slug.current  },  bodyTextOne,    "bodyBlocks": bodyBlocks[]{    bodyText,    bodyImage{      source,      externalUrl,      image,      alt,      epigraph,      creditProvider,      creditAuthor,      creditSourceUrl,      creditLicense    }  }  }
 export type MostViewedQueryResult = Array<{
@@ -3270,12 +3137,7 @@ export type MostViewedQueryResult = Array<{
     source: "asset" | "external" | null;
     externalUrl: string | null;
     image: {
-      asset?: {
-        _ref: string;
-        _type: "reference";
-        _weak?: boolean;
-        [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
-      };
+      asset?: SanityImageAssetReference;
       media?: unknown;
       hotspot?: SanityImageHotspot;
       crop?: SanityImageCrop;
@@ -3312,12 +3174,7 @@ export type MostViewedQueryResult = Array<{
   author: {
     name: string | "Anonymous";
     picture: {
-      asset?: {
-        _ref: string;
-        _type: "reference";
-        _weak?: boolean;
-        [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
-      };
+      asset?: SanityImageAssetReference;
       media?: unknown;
       hotspot?: SanityImageHotspot;
       crop?: SanityImageCrop;
@@ -3374,12 +3231,7 @@ export type MostViewedQueryResult = Array<{
       source: "asset" | "external" | null;
       externalUrl: string | null;
       image: {
-        asset?: {
-          _ref: string;
-          _type: "reference";
-          _weak?: boolean;
-          [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
-        };
+        asset?: SanityImageAssetReference;
         media?: unknown;
         hotspot?: SanityImageHotspot;
         crop?: SanityImageCrop;
@@ -3395,6 +3247,8 @@ export type MostViewedQueryResult = Array<{
     } | null;
   }> | null;
 }>;
+
+// Source: sanity/lib/queries.ts
 // Variable: thirdLatestArticleQuery
 // Query: *[_type == "post" && category->slug.current == $categorySlug] | order(date desc, _updatedAt desc) [2...3] {      _id,  _type,  "status": select(_originalId in path("drafts.**") => "draft", "published"),  "title": coalesce(title, "Untitled"),  "slug": slug.current,  excerpt,  // New cover (external or asset)  cover{    source,    externalUrl,    image,    alt,    epigraph,    creditProvider,    creditAuthor,    creditSourceUrl,    creditLicense  },  "date": coalesce(date, _updatedAt),  publishedAt,  updatedAt,  priority,  featured,  labels,  justIn,  justInRank,  justInUntil,  breakingNews,  developingStory,  mainHeadline,  mainHeadlineRank,  mainHeadlineUntil,  frontline,  frontRank,  frontUntil,  rightHeadline,  rightHeadlineRank,  rightHeadlineUntil,  "author": select(    defined(author->name) => {      "name": coalesce(author->name, "Anonymous"),      "picture": author->picture    }  ),  "category": select(    defined(category->name) && defined(category->slug.current) => {      "title": category->name,      "slug": category->slug.current    }  ),  // Support both tag.title and category.name during transition  "tags": tags[]->{    "title": coalesce(title, name),    "slug": slug.current  },  bodyTextOne,    "bodyBlocks": bodyBlocks[]{    bodyText,    bodyImage{      source,      externalUrl,      image,      alt,      epigraph,      creditProvider,      creditAuthor,      creditSourceUrl,      creditLicense    }  }  }
 export type ThirdLatestArticleQueryResult = Array<{
@@ -3408,12 +3262,7 @@ export type ThirdLatestArticleQueryResult = Array<{
     source: "asset" | "external" | null;
     externalUrl: string | null;
     image: {
-      asset?: {
-        _ref: string;
-        _type: "reference";
-        _weak?: boolean;
-        [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
-      };
+      asset?: SanityImageAssetReference;
       media?: unknown;
       hotspot?: SanityImageHotspot;
       crop?: SanityImageCrop;
@@ -3450,12 +3299,7 @@ export type ThirdLatestArticleQueryResult = Array<{
   author: {
     name: string | "Anonymous";
     picture: {
-      asset?: {
-        _ref: string;
-        _type: "reference";
-        _weak?: boolean;
-        [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
-      };
+      asset?: SanityImageAssetReference;
       media?: unknown;
       hotspot?: SanityImageHotspot;
       crop?: SanityImageCrop;
@@ -3512,12 +3356,7 @@ export type ThirdLatestArticleQueryResult = Array<{
       source: "asset" | "external" | null;
       externalUrl: string | null;
       image: {
-        asset?: {
-          _ref: string;
-          _type: "reference";
-          _weak?: boolean;
-          [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
-        };
+        asset?: SanityImageAssetReference;
         media?: unknown;
         hotspot?: SanityImageHotspot;
         crop?: SanityImageCrop;
@@ -3533,6 +3372,8 @@ export type ThirdLatestArticleQueryResult = Array<{
     } | null;
   }> | null;
 }>;
+
+// Source: sanity/lib/queries.ts
 // Variable: thirdSectionQuery
 // Query: *[_type == "post" && category->slug.current == $categorySlug] | order(date desc, _updatedAt desc) [0...4] {      _id,  _type,  "status": select(_originalId in path("drafts.**") => "draft", "published"),  "title": coalesce(title, "Untitled"),  "slug": slug.current,  excerpt,  // New cover (external or asset)  cover{    source,    externalUrl,    image,    alt,    epigraph,    creditProvider,    creditAuthor,    creditSourceUrl,    creditLicense  },  "date": coalesce(date, _updatedAt),  publishedAt,  updatedAt,  priority,  featured,  labels,  justIn,  justInRank,  justInUntil,  breakingNews,  developingStory,  mainHeadline,  mainHeadlineRank,  mainHeadlineUntil,  frontline,  frontRank,  frontUntil,  rightHeadline,  rightHeadlineRank,  rightHeadlineUntil,  "author": select(    defined(author->name) => {      "name": coalesce(author->name, "Anonymous"),      "picture": author->picture    }  ),  "category": select(    defined(category->name) && defined(category->slug.current) => {      "title": category->name,      "slug": category->slug.current    }  ),  // Support both tag.title and category.name during transition  "tags": tags[]->{    "title": coalesce(title, name),    "slug": slug.current  },  bodyTextOne,    "bodyBlocks": bodyBlocks[]{    bodyText,    bodyImage{      source,      externalUrl,      image,      alt,      epigraph,      creditProvider,      creditAuthor,      creditSourceUrl,      creditLicense    }  }  }
 export type ThirdSectionQueryResult = Array<{
@@ -3546,12 +3387,7 @@ export type ThirdSectionQueryResult = Array<{
     source: "asset" | "external" | null;
     externalUrl: string | null;
     image: {
-      asset?: {
-        _ref: string;
-        _type: "reference";
-        _weak?: boolean;
-        [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
-      };
+      asset?: SanityImageAssetReference;
       media?: unknown;
       hotspot?: SanityImageHotspot;
       crop?: SanityImageCrop;
@@ -3588,12 +3424,7 @@ export type ThirdSectionQueryResult = Array<{
   author: {
     name: string | "Anonymous";
     picture: {
-      asset?: {
-        _ref: string;
-        _type: "reference";
-        _weak?: boolean;
-        [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
-      };
+      asset?: SanityImageAssetReference;
       media?: unknown;
       hotspot?: SanityImageHotspot;
       crop?: SanityImageCrop;
@@ -3650,12 +3481,7 @@ export type ThirdSectionQueryResult = Array<{
       source: "asset" | "external" | null;
       externalUrl: string | null;
       image: {
-        asset?: {
-          _ref: string;
-          _type: "reference";
-          _weak?: boolean;
-          [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
-        };
+        asset?: SanityImageAssetReference;
         media?: unknown;
         hotspot?: SanityImageHotspot;
         crop?: SanityImageCrop;
@@ -3671,6 +3497,8 @@ export type ThirdSectionQueryResult = Array<{
     } | null;
   }> | null;
 }>;
+
+// Source: sanity/lib/queries.ts
 // Variable: latestNineByCategoryQuery
 // Query: *[_type == "post" && category->slug.current == $categorySlug]  | order(date desc, _updatedAt desc) [0...9] {      _id,  _type,  "status": select(_originalId in path("drafts.**") => "draft", "published"),  "title": coalesce(title, "Untitled"),  "slug": slug.current,  excerpt,  // New cover (external or asset)  cover{    source,    externalUrl,    image,    alt,    epigraph,    creditProvider,    creditAuthor,    creditSourceUrl,    creditLicense  },  "date": coalesce(date, _updatedAt),  publishedAt,  updatedAt,  priority,  featured,  labels,  justIn,  justInRank,  justInUntil,  breakingNews,  developingStory,  mainHeadline,  mainHeadlineRank,  mainHeadlineUntil,  frontline,  frontRank,  frontUntil,  rightHeadline,  rightHeadlineRank,  rightHeadlineUntil,  "author": select(    defined(author->name) => {      "name": coalesce(author->name, "Anonymous"),      "picture": author->picture    }  ),  "category": select(    defined(category->name) && defined(category->slug.current) => {      "title": category->name,      "slug": category->slug.current    }  ),  // Support both tag.title and category.name during transition  "tags": tags[]->{    "title": coalesce(title, name),    "slug": slug.current  },  bodyTextOne,    "bodyBlocks": bodyBlocks[]{    bodyText,    bodyImage{      source,      externalUrl,      image,      alt,      epigraph,      creditProvider,      creditAuthor,      creditSourceUrl,      creditLicense    }  }  }
 export type LatestNineByCategoryQueryResult = Array<{
@@ -3684,12 +3512,7 @@ export type LatestNineByCategoryQueryResult = Array<{
     source: "asset" | "external" | null;
     externalUrl: string | null;
     image: {
-      asset?: {
-        _ref: string;
-        _type: "reference";
-        _weak?: boolean;
-        [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
-      };
+      asset?: SanityImageAssetReference;
       media?: unknown;
       hotspot?: SanityImageHotspot;
       crop?: SanityImageCrop;
@@ -3726,12 +3549,7 @@ export type LatestNineByCategoryQueryResult = Array<{
   author: {
     name: string | "Anonymous";
     picture: {
-      asset?: {
-        _ref: string;
-        _type: "reference";
-        _weak?: boolean;
-        [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
-      };
+      asset?: SanityImageAssetReference;
       media?: unknown;
       hotspot?: SanityImageHotspot;
       crop?: SanityImageCrop;
@@ -3788,12 +3606,7 @@ export type LatestNineByCategoryQueryResult = Array<{
       source: "asset" | "external" | null;
       externalUrl: string | null;
       image: {
-        asset?: {
-          _ref: string;
-          _type: "reference";
-          _weak?: boolean;
-          [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
-        };
+        asset?: SanityImageAssetReference;
         media?: unknown;
         hotspot?: SanityImageHotspot;
         crop?: SanityImageCrop;
@@ -3809,6 +3622,8 @@ export type LatestNineByCategoryQueryResult = Array<{
     } | null;
   }> | null;
 }>;
+
+// Source: sanity/lib/queries.ts
 // Variable: mostReadQuery
 // Query: *[_type == "post"] | order(date desc, _updatedAt desc) [0...5] {      _id,  _type,  "status": select(_originalId in path("drafts.**") => "draft", "published"),  "title": coalesce(title, "Untitled"),  "slug": slug.current,  excerpt,  // New cover (external or asset)  cover{    source,    externalUrl,    image,    alt,    epigraph,    creditProvider,    creditAuthor,    creditSourceUrl,    creditLicense  },  "date": coalesce(date, _updatedAt),  publishedAt,  updatedAt,  priority,  featured,  labels,  justIn,  justInRank,  justInUntil,  breakingNews,  developingStory,  mainHeadline,  mainHeadlineRank,  mainHeadlineUntil,  frontline,  frontRank,  frontUntil,  rightHeadline,  rightHeadlineRank,  rightHeadlineUntil,  "author": select(    defined(author->name) => {      "name": coalesce(author->name, "Anonymous"),      "picture": author->picture    }  ),  "category": select(    defined(category->name) && defined(category->slug.current) => {      "title": category->name,      "slug": category->slug.current    }  ),  // Support both tag.title and category.name during transition  "tags": tags[]->{    "title": coalesce(title, name),    "slug": slug.current  },  bodyTextOne,    "bodyBlocks": bodyBlocks[]{    bodyText,    bodyImage{      source,      externalUrl,      image,      alt,      epigraph,      creditProvider,      creditAuthor,      creditSourceUrl,      creditLicense    }  }  }
 export type MostReadQueryResult = Array<{
@@ -3822,12 +3637,7 @@ export type MostReadQueryResult = Array<{
     source: "asset" | "external" | null;
     externalUrl: string | null;
     image: {
-      asset?: {
-        _ref: string;
-        _type: "reference";
-        _weak?: boolean;
-        [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
-      };
+      asset?: SanityImageAssetReference;
       media?: unknown;
       hotspot?: SanityImageHotspot;
       crop?: SanityImageCrop;
@@ -3864,12 +3674,7 @@ export type MostReadQueryResult = Array<{
   author: {
     name: string | "Anonymous";
     picture: {
-      asset?: {
-        _ref: string;
-        _type: "reference";
-        _weak?: boolean;
-        [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
-      };
+      asset?: SanityImageAssetReference;
       media?: unknown;
       hotspot?: SanityImageHotspot;
       crop?: SanityImageCrop;
@@ -3926,12 +3731,7 @@ export type MostReadQueryResult = Array<{
       source: "asset" | "external" | null;
       externalUrl: string | null;
       image: {
-        asset?: {
-          _ref: string;
-          _type: "reference";
-          _weak?: boolean;
-          [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
-        };
+        asset?: SanityImageAssetReference;
         media?: unknown;
         hotspot?: SanityImageHotspot;
         crop?: SanityImageCrop;
@@ -3947,6 +3747,8 @@ export type MostReadQueryResult = Array<{
     } | null;
   }> | null;
 }>;
+
+// Source: sanity/lib/queries.ts
 // Variable: sixthSectionQuery
 // Query: *[_type == "post" && category->slug.current == $categorySlug] | order(date desc, _updatedAt desc) [0...20] {      _id,  _type,  "status": select(_originalId in path("drafts.**") => "draft", "published"),  "title": coalesce(title, "Untitled"),  "slug": slug.current,  excerpt,  // New cover (external or asset)  cover{    source,    externalUrl,    image,    alt,    epigraph,    creditProvider,    creditAuthor,    creditSourceUrl,    creditLicense  },  "date": coalesce(date, _updatedAt),  publishedAt,  updatedAt,  priority,  featured,  labels,  justIn,  justInRank,  justInUntil,  breakingNews,  developingStory,  mainHeadline,  mainHeadlineRank,  mainHeadlineUntil,  frontline,  frontRank,  frontUntil,  rightHeadline,  rightHeadlineRank,  rightHeadlineUntil,  "author": select(    defined(author->name) => {      "name": coalesce(author->name, "Anonymous"),      "picture": author->picture    }  ),  "category": select(    defined(category->name) && defined(category->slug.current) => {      "title": category->name,      "slug": category->slug.current    }  ),  // Support both tag.title and category.name during transition  "tags": tags[]->{    "title": coalesce(title, name),    "slug": slug.current  },  bodyTextOne,    "bodyBlocks": bodyBlocks[]{    bodyText,    bodyImage{      source,      externalUrl,      image,      alt,      epigraph,      creditProvider,      creditAuthor,      creditSourceUrl,      creditLicense    }  }  }
 export type SixthSectionQueryResult = Array<{
@@ -3960,12 +3762,7 @@ export type SixthSectionQueryResult = Array<{
     source: "asset" | "external" | null;
     externalUrl: string | null;
     image: {
-      asset?: {
-        _ref: string;
-        _type: "reference";
-        _weak?: boolean;
-        [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
-      };
+      asset?: SanityImageAssetReference;
       media?: unknown;
       hotspot?: SanityImageHotspot;
       crop?: SanityImageCrop;
@@ -4002,12 +3799,7 @@ export type SixthSectionQueryResult = Array<{
   author: {
     name: string | "Anonymous";
     picture: {
-      asset?: {
-        _ref: string;
-        _type: "reference";
-        _weak?: boolean;
-        [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
-      };
+      asset?: SanityImageAssetReference;
       media?: unknown;
       hotspot?: SanityImageHotspot;
       crop?: SanityImageCrop;
@@ -4064,12 +3856,7 @@ export type SixthSectionQueryResult = Array<{
       source: "asset" | "external" | null;
       externalUrl: string | null;
       image: {
-        asset?: {
-          _ref: string;
-          _type: "reference";
-          _weak?: boolean;
-          [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
-        };
+        asset?: SanityImageAssetReference;
         media?: unknown;
         hotspot?: SanityImageHotspot;
         crop?: SanityImageCrop;
@@ -4085,18 +3872,24 @@ export type SixthSectionQueryResult = Array<{
     } | null;
   }> | null;
 }>;
+
+// Source: sanity/lib/queries.ts
 // Variable: newsTickerQuery
 // Query: *[_type == "post" && defined(slug.current) && defined(tickerTitle)] | order(date desc, _updatedAt desc) [0...5] {    tickerTitle,    "slug": slug.current  }
 export type NewsTickerQueryResult = Array<{
   tickerTitle: string | null;
   slug: string | null;
 }>;
+
+// Source: sanity/lib/queries.ts
 // Variable: categoryTickerQuery
 // Query: *[_type == "post" && category->slug.current == $categorySlug && defined(slug.current) && defined(tickerTitle)] | order(date desc, _updatedAt desc) [5...10] {    tickerTitle,    "slug": slug.current  }
 export type CategoryTickerQueryResult = Array<{
   tickerTitle: string | null;
   slug: string | null;
 }>;
+
+// Source: sanity/lib/queries.ts
 // Variable: searchAllQuery
 // Query: {  "posts": *[_type == "post" && status == "published" && defined(publishedAt) && publishedAt <= now() && (  title match $term ||  excerpt match $term ||  epigraph match $term ||  pt::text(bodyRich) match $term ||  pt::text(bodyTextOne) match $term ||  // Search in bodyBlocks text content  count(bodyBlocks[pt::text(bodyText) match $term]) > 0 ||  category->name match $term ||  coalesce(tags[]->title, tags[]->name) match $term ||   // <— supports both  // Check tag aliases on referenced tag documents (prefix tokenized)  count(tags[]->aliases[@ match $term]) > 0 ||  author->name match $term)] | order(publishedAt desc) [0...$postLimit] {      _id,  _type,  "status": select(_originalId in path("drafts.**") => "draft", "published"),  "title": coalesce(title, "Untitled"),  "slug": slug.current,  excerpt,  // New cover (external or asset)  cover{    source,    externalUrl,    image,    alt,    epigraph,    creditProvider,    creditAuthor,    creditSourceUrl,    creditLicense  },  "date": coalesce(date, _updatedAt),  publishedAt,  updatedAt,  priority,  featured,  labels,  justIn,  justInRank,  justInUntil,  breakingNews,  developingStory,  mainHeadline,  mainHeadlineRank,  mainHeadlineUntil,  frontline,  frontRank,  frontUntil,  rightHeadline,  rightHeadlineRank,  rightHeadlineUntil,  "author": select(    defined(author->name) => {      "name": coalesce(author->name, "Anonymous"),      "picture": author->picture    }  ),  "category": select(    defined(category->name) && defined(category->slug.current) => {      "title": category->name,      "slug": category->slug.current    }  ),  // Support both tag.title and category.name during transition  "tags": tags[]->{    "title": coalesce(title, name),    "slug": slug.current  },  bodyTextOne,    "bodyBlocks": bodyBlocks[]{    bodyText,    bodyImage{      source,      externalUrl,      image,      alt,      epigraph,      creditProvider,      creditAuthor,      creditSourceUrl,      creditLicense    }  }  },  "tags": *[_type == "tag" && (    title match $term ||    description match $term ||    $term in aliases  )] | order(order asc, title asc) [0...$tagLimit] {    _id,    title,    "slug": slug.current,    description,    emoji,    color,    featured,    views  },  "topics": *[_type == "topic" && (    title match $term ||    description match $term  )] | order(title asc) [0...$topicLimit] {    _id,    title,    "slug": slug.current,    kind,    description,    image  }}
 export type SearchAllQueryResult = {
@@ -4111,12 +3904,7 @@ export type SearchAllQueryResult = {
       source: "asset" | "external" | null;
       externalUrl: string | null;
       image: {
-        asset?: {
-          _ref: string;
-          _type: "reference";
-          _weak?: boolean;
-          [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
-        };
+        asset?: SanityImageAssetReference;
         media?: unknown;
         hotspot?: SanityImageHotspot;
         crop?: SanityImageCrop;
@@ -4153,12 +3941,7 @@ export type SearchAllQueryResult = {
     author: {
       name: string | "Anonymous";
       picture: {
-        asset?: {
-          _ref: string;
-          _type: "reference";
-          _weak?: boolean;
-          [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
-        };
+        asset?: SanityImageAssetReference;
         media?: unknown;
         hotspot?: SanityImageHotspot;
         crop?: SanityImageCrop;
@@ -4200,7 +3983,15 @@ export type SearchAllQueryResult = {
           _type: "span";
           _key: string;
         }>;
-        style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
+        style?:
+          | "blockquote"
+          | "h1"
+          | "h2"
+          | "h3"
+          | "h4"
+          | "h5"
+          | "h6"
+          | "normal";
         listItem?: "bullet" | "number";
         markDefs?: Array<{
           href?: string;
@@ -4215,12 +4006,7 @@ export type SearchAllQueryResult = {
         source: "asset" | "external" | null;
         externalUrl: string | null;
         image: {
-          asset?: {
-            _ref: string;
-            _type: "reference";
-            _weak?: boolean;
-            [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
-          };
+          asset?: SanityImageAssetReference;
           media?: unknown;
           hotspot?: SanityImageHotspot;
           crop?: SanityImageCrop;
@@ -4253,12 +4039,7 @@ export type SearchAllQueryResult = {
     kind: "event" | "organization" | "person" | "place" | "team" | null;
     description: string | null;
     image: {
-      asset?: {
-        _ref: string;
-        _type: "reference";
-        _weak?: boolean;
-        [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
-      };
+      asset?: SanityImageAssetReference;
       media?: unknown;
       hotspot?: SanityImageHotspot;
       crop?: SanityImageCrop;
@@ -4267,6 +4048,8 @@ export type SearchAllQueryResult = {
     } | null;
   }>;
 };
+
+// Source: sanity/lib/queries.ts
 // Variable: eighthSectionQuery
 // Query: *[_type == "category" && slug.current in $categorySlugs] {    "slug": slug.current,    "name": name,    "posts": *[_type == "post" && category->slug.current == slug.current] | order(date desc, _updatedAt desc) [0...3] {        _id,  _type,  "status": select(_originalId in path("drafts.**") => "draft", "published"),  "title": coalesce(title, "Untitled"),  "slug": slug.current,  excerpt,  // New cover (external or asset)  cover{    source,    externalUrl,    image,    alt,    epigraph,    creditProvider,    creditAuthor,    creditSourceUrl,    creditLicense  },  "date": coalesce(date, _updatedAt),  publishedAt,  updatedAt,  priority,  featured,  labels,  justIn,  justInRank,  justInUntil,  breakingNews,  developingStory,  mainHeadline,  mainHeadlineRank,  mainHeadlineUntil,  frontline,  frontRank,  frontUntil,  rightHeadline,  rightHeadlineRank,  rightHeadlineUntil,  "author": select(    defined(author->name) => {      "name": coalesce(author->name, "Anonymous"),      "picture": author->picture    }  ),  "category": select(    defined(category->name) && defined(category->slug.current) => {      "title": category->name,      "slug": category->slug.current    }  ),  // Support both tag.title and category.name during transition  "tags": tags[]->{    "title": coalesce(title, name),    "slug": slug.current  },  bodyTextOne,    "bodyBlocks": bodyBlocks[]{    bodyText,    bodyImage{      source,      externalUrl,      image,      alt,      epigraph,      creditProvider,      creditAuthor,      creditSourceUrl,      creditLicense    }  }    }  }
 export type EighthSectionQueryResult = Array<{
@@ -4283,12 +4066,7 @@ export type EighthSectionQueryResult = Array<{
       source: "asset" | "external" | null;
       externalUrl: string | null;
       image: {
-        asset?: {
-          _ref: string;
-          _type: "reference";
-          _weak?: boolean;
-          [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
-        };
+        asset?: SanityImageAssetReference;
         media?: unknown;
         hotspot?: SanityImageHotspot;
         crop?: SanityImageCrop;
@@ -4325,12 +4103,7 @@ export type EighthSectionQueryResult = Array<{
     author: {
       name: string | "Anonymous";
       picture: {
-        asset?: {
-          _ref: string;
-          _type: "reference";
-          _weak?: boolean;
-          [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
-        };
+        asset?: SanityImageAssetReference;
         media?: unknown;
         hotspot?: SanityImageHotspot;
         crop?: SanityImageCrop;
@@ -4372,7 +4145,15 @@ export type EighthSectionQueryResult = Array<{
           _type: "span";
           _key: string;
         }>;
-        style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
+        style?:
+          | "blockquote"
+          | "h1"
+          | "h2"
+          | "h3"
+          | "h4"
+          | "h5"
+          | "h6"
+          | "normal";
         listItem?: "bullet" | "number";
         markDefs?: Array<{
           href?: string;
@@ -4387,12 +4168,7 @@ export type EighthSectionQueryResult = Array<{
         source: "asset" | "external" | null;
         externalUrl: string | null;
         image: {
-          asset?: {
-            _ref: string;
-            _type: "reference";
-            _weak?: boolean;
-            [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
-          };
+          asset?: SanityImageAssetReference;
           media?: unknown;
           hotspot?: SanityImageHotspot;
           crop?: SanityImageCrop;
@@ -4409,6 +4185,8 @@ export type EighthSectionQueryResult = Array<{
     }> | null;
   }>;
 }>;
+
+// Source: sanity/lib/queries.ts
 // Variable: secondSectionQuery
 // Query: *[_type == "category" && slug.current in $categorySlugs] {    "slug": slug.current,    "name": name,    "thirdMostViewed": *[_type == "post" && category->slug.current == slug.current] | order(coalesce(views7d, 0) desc, publishedAt desc) [0...5] {      _id, title, "slug": slug.current, excerpt,       cover{        source,        externalUrl,        image,        alt      },      "date": coalesce(date, _updatedAt), publishedAt,      "author": select(        defined(author->name) => {          "name": coalesce(author->name, "Anonymous"),          "picture": author->picture        }      ),      "category": select(        defined(category->name) && defined(category->slug.current) => {          "title": category->name,          "slug": category->slug.current        }      ),      views7d    },    "thirdLatest": *[_type == "post" && category->slug.current == slug.current] | order(publishedAt desc, _updatedAt desc) [0...5] {      _id, title, "slug": slug.current, excerpt,       cover{        source,        externalUrl,        image,        alt      },      "date": coalesce(date, _updatedAt), publishedAt,      "author": select(        defined(author->name) => {          "name": coalesce(author->name, "Anonymous"),          "picture": author->picture        }      ),      "category": select(        defined(category->name) && defined(category->slug.current) => {          "title": category->name,          "slug": category->slug.current        }      ),      views7d    }  }
 export type SecondSectionQueryResult = Array<{
@@ -4423,12 +4201,7 @@ export type SecondSectionQueryResult = Array<{
       source: "asset" | "external" | null;
       externalUrl: string | null;
       image: {
-        asset?: {
-          _ref: string;
-          _type: "reference";
-          _weak?: boolean;
-          [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
-        };
+        asset?: SanityImageAssetReference;
         media?: unknown;
         hotspot?: SanityImageHotspot;
         crop?: SanityImageCrop;
@@ -4442,12 +4215,7 @@ export type SecondSectionQueryResult = Array<{
     author: {
       name: string | "Anonymous";
       picture: {
-        asset?: {
-          _ref: string;
-          _type: "reference";
-          _weak?: boolean;
-          [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
-        };
+        asset?: SanityImageAssetReference;
         media?: unknown;
         hotspot?: SanityImageHotspot;
         crop?: SanityImageCrop;
@@ -4470,12 +4238,7 @@ export type SecondSectionQueryResult = Array<{
       source: "asset" | "external" | null;
       externalUrl: string | null;
       image: {
-        asset?: {
-          _ref: string;
-          _type: "reference";
-          _weak?: boolean;
-          [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
-        };
+        asset?: SanityImageAssetReference;
         media?: unknown;
         hotspot?: SanityImageHotspot;
         crop?: SanityImageCrop;
@@ -4489,12 +4252,7 @@ export type SecondSectionQueryResult = Array<{
     author: {
       name: string | "Anonymous";
       picture: {
-        asset?: {
-          _ref: string;
-          _type: "reference";
-          _weak?: boolean;
-          [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
-        };
+        asset?: SanityImageAssetReference;
         media?: unknown;
         hotspot?: SanityImageHotspot;
         crop?: SanityImageCrop;
@@ -4514,37 +4272,39 @@ export type SecondSectionQueryResult = Array<{
 import "@sanity/client";
 declare module "@sanity/client" {
   interface SanityQueries {
-    "*[_type == \"settings\"][0]": SettingsQueryResult;
-    "\n  *[_type == \"post\" && defined(slug.current)] | order(date desc, _updatedAt desc) [0] {\n    \n  _id,\n  _type,\n  \"status\": select(_originalId in path(\"drafts.**\") => \"draft\", \"published\"),\n  \"title\": coalesce(title, \"Untitled\"),\n  \"slug\": slug.current,\n  excerpt,\n  // New cover (external or asset)\n  cover{\n    source,\n    externalUrl,\n    image,\n    alt,\n    epigraph,\n    creditProvider,\n    creditAuthor,\n    creditSourceUrl,\n    creditLicense\n  },\n  \"date\": coalesce(date, _updatedAt),\n  publishedAt,\n  updatedAt,\n  priority,\n  featured,\n  labels,\n  justIn,\n  justInRank,\n  justInUntil,\n  breakingNews,\n  developingStory,\n  mainHeadline,\n  mainHeadlineRank,\n  mainHeadlineUntil,\n  frontline,\n  frontRank,\n  frontUntil,\n  rightHeadline,\n  rightHeadlineRank,\n  rightHeadlineUntil,\n\n  \"author\": select(\n    defined(author->name) => {\n      \"name\": coalesce(author->name, \"Anonymous\"),\n      \"picture\": author->picture\n    }\n  ),\n\n  \"category\": select(\n    defined(category->name) && defined(category->slug.current) => {\n      \"title\": category->name,\n      \"slug\": category->slug.current\n    }\n  ),\n\n  // Support both tag.title and category.name during transition\n  \"tags\": tags[]->{\n    \"title\": coalesce(title, name),\n    \"slug\": slug.current\n  },\n\n  bodyTextOne,\n  \n  \"bodyBlocks\": bodyBlocks[]{\n    bodyText,\n    bodyImage{\n      source,\n      externalUrl,\n      image,\n      alt,\n      epigraph,\n      creditProvider,\n      creditAuthor,\n      creditSourceUrl,\n      creditLicense\n    }\n  }\n\n  }\n": HeroQueryResult;
-    "\n  *[_type == \"post\" && _id != $skip && defined(slug.current)] | order(date desc, _updatedAt desc) [0...$limit] {\n    \n  _id,\n  _type,\n  \"status\": select(_originalId in path(\"drafts.**\") => \"draft\", \"published\"),\n  \"title\": coalesce(title, \"Untitled\"),\n  \"slug\": slug.current,\n  excerpt,\n  // New cover (external or asset)\n  cover{\n    source,\n    externalUrl,\n    image,\n    alt,\n    epigraph,\n    creditProvider,\n    creditAuthor,\n    creditSourceUrl,\n    creditLicense\n  },\n  \"date\": coalesce(date, _updatedAt),\n  publishedAt,\n  updatedAt,\n  priority,\n  featured,\n  labels,\n  justIn,\n  justInRank,\n  justInUntil,\n  breakingNews,\n  developingStory,\n  mainHeadline,\n  mainHeadlineRank,\n  mainHeadlineUntil,\n  frontline,\n  frontRank,\n  frontUntil,\n  rightHeadline,\n  rightHeadlineRank,\n  rightHeadlineUntil,\n\n  \"author\": select(\n    defined(author->name) => {\n      \"name\": coalesce(author->name, \"Anonymous\"),\n      \"picture\": author->picture\n    }\n  ),\n\n  \"category\": select(\n    defined(category->name) && defined(category->slug.current) => {\n      \"title\": category->name,\n      \"slug\": category->slug.current\n    }\n  ),\n\n  // Support both tag.title and category.name during transition\n  \"tags\": tags[]->{\n    \"title\": coalesce(title, name),\n    \"slug\": slug.current\n  },\n\n  bodyTextOne,\n  \n  \"bodyBlocks\": bodyBlocks[]{\n    bodyText,\n    bodyImage{\n      source,\n      externalUrl,\n      image,\n      alt,\n      epigraph,\n      creditProvider,\n      creditAuthor,\n      creditSourceUrl,\n      creditLicense\n    }\n  }\n\n  }\n": MoreStoriesQueryResult;
-    "\n  *[_type == \"post\" && slug.current == $slug] [0] {\n    \n  _id,\n  _type,\n  \"status\": select(_originalId in path(\"drafts.**\") => \"draft\", \"published\"),\n  \"title\": coalesce(title, \"Untitled\"),\n  \"slug\": slug.current,\n  excerpt,\n  // New cover (external or asset)\n  cover{\n    source,\n    externalUrl,\n    image,\n    alt,\n    epigraph,\n    creditProvider,\n    creditAuthor,\n    creditSourceUrl,\n    creditLicense\n  },\n  \"date\": coalesce(date, _updatedAt),\n  publishedAt,\n  updatedAt,\n  priority,\n  featured,\n  labels,\n  justIn,\n  justInRank,\n  justInUntil,\n  breakingNews,\n  developingStory,\n  mainHeadline,\n  mainHeadlineRank,\n  mainHeadlineUntil,\n  frontline,\n  frontRank,\n  frontUntil,\n  rightHeadline,\n  rightHeadlineRank,\n  rightHeadlineUntil,\n\n  \"author\": select(\n    defined(author->name) => {\n      \"name\": coalesce(author->name, \"Anonymous\"),\n      \"picture\": author->picture\n    }\n  ),\n\n  \"category\": select(\n    defined(category->name) && defined(category->slug.current) => {\n      \"title\": category->name,\n      \"slug\": category->slug.current\n    }\n  ),\n\n  // Support both tag.title and category.name during transition\n  \"tags\": tags[]->{\n    \"title\": coalesce(title, name),\n    \"slug\": slug.current\n  },\n\n  bodyTextOne,\n  \n  \"bodyBlocks\": bodyBlocks[]{\n    bodyText,\n    bodyImage{\n      source,\n      externalUrl,\n      image,\n      alt,\n      epigraph,\n      creditProvider,\n      creditAuthor,\n      creditSourceUrl,\n      creditLicense\n    }\n  }\n\n  }\n": PostQueryResult;
-    "\n  *[_type == \"post\"] | order(date desc, _updatedAt desc) {\n    \n  _id,\n  _type,\n  \"status\": select(_originalId in path(\"drafts.**\") => \"draft\", \"published\"),\n  \"title\": coalesce(title, \"Untitled\"),\n  \"slug\": slug.current,\n  excerpt,\n  // New cover (external or asset)\n  cover{\n    source,\n    externalUrl,\n    image,\n    alt,\n    epigraph,\n    creditProvider,\n    creditAuthor,\n    creditSourceUrl,\n    creditLicense\n  },\n  \"date\": coalesce(date, _updatedAt),\n  publishedAt,\n  updatedAt,\n  priority,\n  featured,\n  labels,\n  justIn,\n  justInRank,\n  justInUntil,\n  breakingNews,\n  developingStory,\n  mainHeadline,\n  mainHeadlineRank,\n  mainHeadlineUntil,\n  frontline,\n  frontRank,\n  frontUntil,\n  rightHeadline,\n  rightHeadlineRank,\n  rightHeadlineUntil,\n\n  \"author\": select(\n    defined(author->name) => {\n      \"name\": coalesce(author->name, \"Anonymous\"),\n      \"picture\": author->picture\n    }\n  ),\n\n  \"category\": select(\n    defined(category->name) && defined(category->slug.current) => {\n      \"title\": category->name,\n      \"slug\": category->slug.current\n    }\n  ),\n\n  // Support both tag.title and category.name during transition\n  \"tags\": tags[]->{\n    \"title\": coalesce(title, name),\n    \"slug\": slug.current\n  },\n\n  bodyTextOne,\n  \n  \"bodyBlocks\": bodyBlocks[]{\n    bodyText,\n    bodyImage{\n      source,\n      externalUrl,\n      image,\n      alt,\n      epigraph,\n      creditProvider,\n      creditAuthor,\n      creditSourceUrl,\n      creditLicense\n    }\n  }\n\n  }\n": IndexQueryResult;
-    "\n{\n  \"post\": *[_type == \"post\" && slug.current == $slug] | order(_updatedAt desc) [0] {\n    \n  _id,\n  _type,\n  \"status\": select(_originalId in path(\"drafts.**\") => \"draft\", \"published\"),\n  \"title\": coalesce(title, \"Untitled\"),\n  \"slug\": slug.current,\n  excerpt,\n  // New cover (external or asset)\n  cover{\n    source,\n    externalUrl,\n    image,\n    alt,\n    epigraph,\n    creditProvider,\n    creditAuthor,\n    creditSourceUrl,\n    creditLicense\n  },\n  \"date\": coalesce(date, _updatedAt),\n  publishedAt,\n  updatedAt,\n  priority,\n  featured,\n  labels,\n  justIn,\n  justInRank,\n  justInUntil,\n  breakingNews,\n  developingStory,\n  mainHeadline,\n  mainHeadlineRank,\n  mainHeadlineUntil,\n  frontline,\n  frontRank,\n  frontUntil,\n  rightHeadline,\n  rightHeadlineRank,\n  rightHeadlineUntil,\n\n  \"author\": select(\n    defined(author->name) => {\n      \"name\": coalesce(author->name, \"Anonymous\"),\n      \"picture\": author->picture\n    }\n  ),\n\n  \"category\": select(\n    defined(category->name) && defined(category->slug.current) => {\n      \"title\": category->name,\n      \"slug\": category->slug.current\n    }\n  ),\n\n  // Support both tag.title and category.name during transition\n  \"tags\": tags[]->{\n    \"title\": coalesce(title, name),\n    \"slug\": slug.current\n  },\n\n  bodyTextOne,\n  \n  \"bodyBlocks\": bodyBlocks[]{\n    bodyText,\n    bodyImage{\n      source,\n      externalUrl,\n      image,\n      alt,\n      epigraph,\n      creditProvider,\n      creditAuthor,\n      creditSourceUrl,\n      creditLicense\n    }\n  }\n\n  },\n  \"latestNews\": *[_type == \"post\" && slug.current != $slug] | order(date desc, _updatedAt desc) [0...6] {\n    \n  _id,\n  _type,\n  \"status\": select(_originalId in path(\"drafts.**\") => \"draft\", \"published\"),\n  \"title\": coalesce(title, \"Untitled\"),\n  \"slug\": slug.current,\n  excerpt,\n  // New cover (external or asset)\n  cover{\n    source,\n    externalUrl,\n    image,\n    alt,\n    epigraph,\n    creditProvider,\n    creditAuthor,\n    creditSourceUrl,\n    creditLicense\n  },\n  \"date\": coalesce(date, _updatedAt),\n  publishedAt,\n  updatedAt,\n  priority,\n  featured,\n  labels,\n  justIn,\n  justInRank,\n  justInUntil,\n  breakingNews,\n  developingStory,\n  mainHeadline,\n  mainHeadlineRank,\n  mainHeadlineUntil,\n  frontline,\n  frontRank,\n  frontUntil,\n  rightHeadline,\n  rightHeadlineRank,\n  rightHeadlineUntil,\n\n  \"author\": select(\n    defined(author->name) => {\n      \"name\": coalesce(author->name, \"Anonymous\"),\n      \"picture\": author->picture\n    }\n  ),\n\n  \"category\": select(\n    defined(category->name) && defined(category->slug.current) => {\n      \"title\": category->name,\n      \"slug\": category->slug.current\n    }\n  ),\n\n  // Support both tag.title and category.name during transition\n  \"tags\": tags[]->{\n    \"title\": coalesce(title, name),\n    \"slug\": slug.current\n  },\n\n  bodyTextOne,\n  \n  \"bodyBlocks\": bodyBlocks[]{\n    bodyText,\n    bodyImage{\n      source,\n      externalUrl,\n      image,\n      alt,\n      epigraph,\n      creditProvider,\n      creditAuthor,\n      creditSourceUrl,\n      creditLicense\n    }\n  }\n\n  },\n  \"morePosts\": *[_type == \"post\" && slug.current != $slug] | order(date desc, _updatedAt desc) [4...8] {\n    \n  _id,\n  _type,\n  \"status\": select(_originalId in path(\"drafts.**\") => \"draft\", \"published\"),\n  \"title\": coalesce(title, \"Untitled\"),\n  \"slug\": slug.current,\n  excerpt,\n  // New cover (external or asset)\n  cover{\n    source,\n    externalUrl,\n    image,\n    alt,\n    epigraph,\n    creditProvider,\n    creditAuthor,\n    creditSourceUrl,\n    creditLicense\n  },\n  \"date\": coalesce(date, _updatedAt),\n  publishedAt,\n  updatedAt,\n  priority,\n  featured,\n  labels,\n  justIn,\n  justInRank,\n  justInUntil,\n  breakingNews,\n  developingStory,\n  mainHeadline,\n  mainHeadlineRank,\n  mainHeadlineUntil,\n  frontline,\n  frontRank,\n  frontUntil,\n  rightHeadline,\n  rightHeadlineRank,\n  rightHeadlineUntil,\n\n  \"author\": select(\n    defined(author->name) => {\n      \"name\": coalesce(author->name, \"Anonymous\"),\n      \"picture\": author->picture\n    }\n  ),\n\n  \"category\": select(\n    defined(category->name) && defined(category->slug.current) => {\n      \"title\": category->name,\n      \"slug\": category->slug.current\n    }\n  ),\n\n  // Support both tag.title and category.name during transition\n  \"tags\": tags[]->{\n    \"title\": coalesce(title, name),\n    \"slug\": slug.current\n  },\n\n  bodyTextOne,\n  \n  \"bodyBlocks\": bodyBlocks[]{\n    bodyText,\n    bodyImage{\n      source,\n      externalUrl,\n      image,\n      alt,\n      epigraph,\n      creditProvider,\n      creditAuthor,\n      creditSourceUrl,\n      creditLicense\n    }\n  }\n\n  },\n  \"nextArticles\": *[_type == \"post\" && slug.current != $slug] | order(date desc, _updatedAt desc) [8...18] {\n    \n  _id,\n  _type,\n  \"status\": select(_originalId in path(\"drafts.**\") => \"draft\", \"published\"),\n  \"title\": coalesce(title, \"Untitled\"),\n  \"slug\": slug.current,\n  excerpt,\n  // New cover (external or asset)\n  cover{\n    source,\n    externalUrl,\n    image,\n    alt,\n    epigraph,\n    creditProvider,\n    creditAuthor,\n    creditSourceUrl,\n    creditLicense\n  },\n  \"date\": coalesce(date, _updatedAt),\n  publishedAt,\n  updatedAt,\n  priority,\n  featured,\n  labels,\n  justIn,\n  justInRank,\n  justInUntil,\n  breakingNews,\n  developingStory,\n  mainHeadline,\n  mainHeadlineRank,\n  mainHeadlineUntil,\n  frontline,\n  frontRank,\n  frontUntil,\n  rightHeadline,\n  rightHeadlineRank,\n  rightHeadlineUntil,\n\n  \"author\": select(\n    defined(author->name) => {\n      \"name\": coalesce(author->name, \"Anonymous\"),\n      \"picture\": author->picture\n    }\n  ),\n\n  \"category\": select(\n    defined(category->name) && defined(category->slug.current) => {\n      \"title\": category->name,\n      \"slug\": category->slug.current\n    }\n  ),\n\n  // Support both tag.title and category.name during transition\n  \"tags\": tags[]->{\n    \"title\": coalesce(title, name),\n    \"slug\": slug.current\n  },\n\n  bodyTextOne,\n  \n  \"bodyBlocks\": bodyBlocks[]{\n    bodyText,\n    bodyImage{\n      source,\n      externalUrl,\n      image,\n      alt,\n      epigraph,\n      creditProvider,\n      creditAuthor,\n      creditSourceUrl,\n      creditLicense\n    }\n  }\n\n  }\n}\n": PostQueryWithRelatedResult;
-    "\n{\n  \"post\": *[_type == \"post\" && slug.current == $slug] | order(_updatedAt desc) [0] {\n    \n  _id,\n  _type,\n  \"status\": select(_originalId in path(\"drafts.**\") => \"draft\", \"published\"),\n  \"title\": coalesce(title, \"Untitled\"),\n  \"slug\": slug.current,\n  excerpt,\n  // New cover (external or asset)\n  cover{\n    source,\n    externalUrl,\n    image,\n    alt,\n    epigraph,\n    creditProvider,\n    creditAuthor,\n    creditSourceUrl,\n    creditLicense\n  },\n  \"date\": coalesce(date, _updatedAt),\n  publishedAt,\n  updatedAt,\n  priority,\n  featured,\n  labels,\n  justIn,\n  justInRank,\n  justInUntil,\n  breakingNews,\n  developingStory,\n  mainHeadline,\n  mainHeadlineRank,\n  mainHeadlineUntil,\n  frontline,\n  frontRank,\n  frontUntil,\n  rightHeadline,\n  rightHeadlineRank,\n  rightHeadlineUntil,\n\n  \"author\": select(\n    defined(author->name) => {\n      \"name\": coalesce(author->name, \"Anonymous\"),\n      \"picture\": author->picture\n    }\n  ),\n\n  \"category\": select(\n    defined(category->name) && defined(category->slug.current) => {\n      \"title\": category->name,\n      \"slug\": category->slug.current\n    }\n  ),\n\n  // Support both tag.title and category.name during transition\n  \"tags\": tags[]->{\n    \"title\": coalesce(title, name),\n    \"slug\": slug.current\n  },\n\n  bodyTextOne,\n  \n  \"bodyBlocks\": bodyBlocks[]{\n    bodyText,\n    bodyImage{\n      source,\n      externalUrl,\n      image,\n      alt,\n      epigraph,\n      creditProvider,\n      creditAuthor,\n      creditSourceUrl,\n      creditLicense\n    }\n  }\n\n  },\n  \"latestNews\": *[_type == \"post\" && slug.current != $slug] | order(date desc, _updatedAt desc) [0...6] {\n    \n  _id,\n  _type,\n  \"status\": select(_originalId in path(\"drafts.**\") => \"draft\", \"published\"),\n  \"title\": coalesce(title, \"Untitled\"),\n  \"slug\": slug.current,\n  excerpt,\n  // New cover (external or asset)\n  cover{\n    source,\n    externalUrl,\n    image,\n    alt,\n    epigraph,\n    creditProvider,\n    creditAuthor,\n    creditSourceUrl,\n    creditLicense\n  },\n  \"date\": coalesce(date, _updatedAt),\n  publishedAt,\n  updatedAt,\n  priority,\n  featured,\n  labels,\n  justIn,\n  justInRank,\n  justInUntil,\n  breakingNews,\n  developingStory,\n  mainHeadline,\n  mainHeadlineRank,\n  mainHeadlineUntil,\n  frontline,\n  frontRank,\n  frontUntil,\n  rightHeadline,\n  rightHeadlineRank,\n  rightHeadlineUntil,\n\n  \"author\": select(\n    defined(author->name) => {\n      \"name\": coalesce(author->name, \"Anonymous\"),\n      \"picture\": author->picture\n    }\n  ),\n\n  \"category\": select(\n    defined(category->name) && defined(category->slug.current) => {\n      \"title\": category->name,\n      \"slug\": category->slug.current\n    }\n  ),\n\n  // Support both tag.title and category.name during transition\n  \"tags\": tags[]->{\n    \"title\": coalesce(title, name),\n    \"slug\": slug.current\n  },\n\n  bodyTextOne,\n  \n  \"bodyBlocks\": bodyBlocks[]{\n    bodyText,\n    bodyImage{\n      source,\n      externalUrl,\n      image,\n      alt,\n      epigraph,\n      creditProvider,\n      creditAuthor,\n      creditSourceUrl,\n      creditLicense\n    }\n  }\n\n  },\n  \"morePosts\": *[_type == \"post\" && slug.current != $slug] | order(date desc, _updatedAt desc) [4...8] {\n    \n  _id,\n  _type,\n  \"status\": select(_originalId in path(\"drafts.**\") => \"draft\", \"published\"),\n  \"title\": coalesce(title, \"Untitled\"),\n  \"slug\": slug.current,\n  excerpt,\n  // New cover (external or asset)\n  cover{\n    source,\n    externalUrl,\n    image,\n    alt,\n    epigraph,\n    creditProvider,\n    creditAuthor,\n    creditSourceUrl,\n    creditLicense\n  },\n  \"date\": coalesce(date, _updatedAt),\n  publishedAt,\n  updatedAt,\n  priority,\n  featured,\n  labels,\n  justIn,\n  justInRank,\n  justInUntil,\n  breakingNews,\n  developingStory,\n  mainHeadline,\n  mainHeadlineRank,\n  mainHeadlineUntil,\n  frontline,\n  frontRank,\n  frontUntil,\n  rightHeadline,\n  rightHeadlineRank,\n  rightHeadlineUntil,\n\n  \"author\": select(\n    defined(author->name) => {\n      \"name\": coalesce(author->name, \"Anonymous\"),\n      \"picture\": author->picture\n    }\n  ),\n\n  \"category\": select(\n    defined(category->name) && defined(category->slug.current) => {\n      \"title\": category->name,\n      \"slug\": category->slug.current\n    }\n  ),\n\n  // Support both tag.title and category.name during transition\n  \"tags\": tags[]->{\n    \"title\": coalesce(title, name),\n    \"slug\": slug.current\n  },\n\n  bodyTextOne,\n  \n  \"bodyBlocks\": bodyBlocks[]{\n    bodyText,\n    bodyImage{\n      source,\n      externalUrl,\n      image,\n      alt,\n      epigraph,\n      creditProvider,\n      creditAuthor,\n      creditSourceUrl,\n      creditLicense\n    }\n  }\n\n  },\n  \"newsForYou\": *[_type == \"post\" && slug.current != $slug] | order(date desc, _updatedAt desc) [0...4] {\n    \n  _id,\n  _type,\n  \"status\": select(_originalId in path(\"drafts.**\") => \"draft\", \"published\"),\n  \"title\": coalesce(title, \"Untitled\"),\n  \"slug\": slug.current,\n  excerpt,\n  // New cover (external or asset)\n  cover{\n    source,\n    externalUrl,\n    image,\n    alt,\n    epigraph,\n    creditProvider,\n    creditAuthor,\n    creditSourceUrl,\n    creditLicense\n  },\n  \"date\": coalesce(date, _updatedAt),\n  publishedAt,\n  updatedAt,\n  priority,\n  featured,\n  labels,\n  justIn,\n  justInRank,\n  justInUntil,\n  breakingNews,\n  developingStory,\n  mainHeadline,\n  mainHeadlineRank,\n  mainHeadlineUntil,\n  frontline,\n  frontRank,\n  frontUntil,\n  rightHeadline,\n  rightHeadlineRank,\n  rightHeadlineUntil,\n\n  \"author\": select(\n    defined(author->name) => {\n      \"name\": coalesce(author->name, \"Anonymous\"),\n      \"picture\": author->picture\n    }\n  ),\n\n  \"category\": select(\n    defined(category->name) && defined(category->slug.current) => {\n      \"title\": category->name,\n      \"slug\": category->slug.current\n    }\n  ),\n\n  // Support both tag.title and category.name during transition\n  \"tags\": tags[]->{\n    \"title\": coalesce(title, name),\n    \"slug\": slug.current\n  },\n\n  bodyTextOne,\n  \n  \"bodyBlocks\": bodyBlocks[]{\n    bodyText,\n    bodyImage{\n      source,\n      externalUrl,\n      image,\n      alt,\n      epigraph,\n      creditProvider,\n      creditAuthor,\n      creditSourceUrl,\n      creditLicense\n    }\n  }\n\n  },\n  \"categoryArticles\": *[_type == \"post\" && slug.current != $slug && category->slug.current == $categorySlug] | order(date desc, _updatedAt desc) [0...6] {\n    \n  _id,\n  _type,\n  \"status\": select(_originalId in path(\"drafts.**\") => \"draft\", \"published\"),\n  \"title\": coalesce(title, \"Untitled\"),\n  \"slug\": slug.current,\n  excerpt,\n  // New cover (external or asset)\n  cover{\n    source,\n    externalUrl,\n    image,\n    alt,\n    epigraph,\n    creditProvider,\n    creditAuthor,\n    creditSourceUrl,\n    creditLicense\n  },\n  \"date\": coalesce(date, _updatedAt),\n  publishedAt,\n  updatedAt,\n  priority,\n  featured,\n  labels,\n  justIn,\n  justInRank,\n  justInUntil,\n  breakingNews,\n  developingStory,\n  mainHeadline,\n  mainHeadlineRank,\n  mainHeadlineUntil,\n  frontline,\n  frontRank,\n  frontUntil,\n  rightHeadline,\n  rightHeadlineRank,\n  rightHeadlineUntil,\n\n  \"author\": select(\n    defined(author->name) => {\n      \"name\": coalesce(author->name, \"Anonymous\"),\n      \"picture\": author->picture\n    }\n  ),\n\n  \"category\": select(\n    defined(category->name) && defined(category->slug.current) => {\n      \"title\": category->name,\n      \"slug\": category->slug.current\n    }\n  ),\n\n  // Support both tag.title and category.name during transition\n  \"tags\": tags[]->{\n    \"title\": coalesce(title, name),\n    \"slug\": slug.current\n  },\n\n  bodyTextOne,\n  \n  \"bodyBlocks\": bodyBlocks[]{\n    bodyText,\n    bodyImage{\n      source,\n      externalUrl,\n      image,\n      alt,\n      epigraph,\n      creditProvider,\n      creditAuthor,\n      creditSourceUrl,\n      creditLicense\n    }\n  }\n\n  }\n}\n": PostQueryWithCategoryRelatedResult;
-    "\n  *[_type == \"post\" && defined(slug.current)][].slug.current\n": PostSlugsQueryResult;
-    "\n  *[_type == \"post\" && slug.current == $slug][0] {\n    \n  _id,\n  _type,\n  \"status\": select(_originalId in path(\"drafts.**\") => \"draft\", \"published\"),\n  \"title\": coalesce(title, \"Untitled\"),\n  \"slug\": slug.current,\n  excerpt,\n  // New cover (external or asset)\n  cover{\n    source,\n    externalUrl,\n    image,\n    alt,\n    epigraph,\n    creditProvider,\n    creditAuthor,\n    creditSourceUrl,\n    creditLicense\n  },\n  \"date\": coalesce(date, _updatedAt),\n  publishedAt,\n  updatedAt,\n  priority,\n  featured,\n  labels,\n  justIn,\n  justInRank,\n  justInUntil,\n  breakingNews,\n  developingStory,\n  mainHeadline,\n  mainHeadlineRank,\n  mainHeadlineUntil,\n  frontline,\n  frontRank,\n  frontUntil,\n  rightHeadline,\n  rightHeadlineRank,\n  rightHeadlineUntil,\n\n  \"author\": select(\n    defined(author->name) => {\n      \"name\": coalesce(author->name, \"Anonymous\"),\n      \"picture\": author->picture\n    }\n  ),\n\n  \"category\": select(\n    defined(category->name) && defined(category->slug.current) => {\n      \"title\": category->name,\n      \"slug\": category->slug.current\n    }\n  ),\n\n  // Support both tag.title and category.name during transition\n  \"tags\": tags[]->{\n    \"title\": coalesce(title, name),\n    \"slug\": slug.current\n  },\n\n  bodyTextOne,\n  \n  \"bodyBlocks\": bodyBlocks[]{\n    bodyText,\n    bodyImage{\n      source,\n      externalUrl,\n      image,\n      alt,\n      epigraph,\n      creditProvider,\n      creditAuthor,\n      creditSourceUrl,\n      creditLicense\n    }\n  }\n\n  }\n": PostBySlugQueryResult;
-    "\n  *[_type == \"post\" && category->slug.current == $categorySlug] | order(date desc, _updatedAt desc) {\n    \n  _id,\n  _type,\n  \"status\": select(_originalId in path(\"drafts.**\") => \"draft\", \"published\"),\n  \"title\": coalesce(title, \"Untitled\"),\n  \"slug\": slug.current,\n  excerpt,\n  // New cover (external or asset)\n  cover{\n    source,\n    externalUrl,\n    image,\n    alt,\n    epigraph,\n    creditProvider,\n    creditAuthor,\n    creditSourceUrl,\n    creditLicense\n  },\n  \"date\": coalesce(date, _updatedAt),\n  publishedAt,\n  updatedAt,\n  priority,\n  featured,\n  labels,\n  justIn,\n  justInRank,\n  justInUntil,\n  breakingNews,\n  developingStory,\n  mainHeadline,\n  mainHeadlineRank,\n  mainHeadlineUntil,\n  frontline,\n  frontRank,\n  frontUntil,\n  rightHeadline,\n  rightHeadlineRank,\n  rightHeadlineUntil,\n\n  \"author\": select(\n    defined(author->name) => {\n      \"name\": coalesce(author->name, \"Anonymous\"),\n      \"picture\": author->picture\n    }\n  ),\n\n  \"category\": select(\n    defined(category->name) && defined(category->slug.current) => {\n      \"title\": category->name,\n      \"slug\": category->slug.current\n    }\n  ),\n\n  // Support both tag.title and category.name during transition\n  \"tags\": tags[]->{\n    \"title\": coalesce(title, name),\n    \"slug\": slug.current\n  },\n\n  bodyTextOne,\n  \n  \"bodyBlocks\": bodyBlocks[]{\n    bodyText,\n    bodyImage{\n      source,\n      externalUrl,\n      image,\n      alt,\n      epigraph,\n      creditProvider,\n      creditAuthor,\n      creditSourceUrl,\n      creditLicense\n    }\n  }\n\n  }\n": PostsByCategoryQueryResult;
-    "\n  *[_type == \"category\" && defined(slug.current)]{ \"slug\": slug.current, name, views }\n": CategorySlugsQueryResult;
-    "\n  *[_type == \"category\" && defined(slug.current)] | order(name asc) {\n    \"slug\": slug.current,\n    name,\n    views\n  }\n": AllCategoriesQueryResult;
-    "\n  *[_type == \"category\" && defined(slug.current)] | order(coalesce(order, 999) asc, name asc) {\n    \"slug\": slug.current,\n    name,\n    views,\n    order\n  }\n": CategoriesByViewsQueryResult;
-    "\n  *[_type == \"tag\" && defined(slug.current)] | order(coalesce(views, 0) desc, title asc) [0...5] {\n    \"slug\": slug.current,\n    title,\n    views\n  }\n": TopTagsByViewsQueryResult;
-    "\n  *[_type == \"tag\" && defined(slug.current)] | order(coalesce(views, 0) desc, title asc) [5...11] {\n    \"slug\": slug.current,\n    title,\n    views\n  }\n": ShowsTagsByViewsQueryResult;
-    "\n  *[_type == \"tag\" && defined(slug.current)]{ \"slug\": slug.current, title }\n": TagSlugsQueryResult;
-    "\n  *[_type == \"tag\" && slug.current == $slug][0] {\n    _id,\n    title,\n    \"slug\": slug.current,\n    description,\n    emoji,\n    color,\n    featured,\n    deprecated,\n    views,\n    \"redirectTo\": redirectTo->{\n      title,\n      \"slug\": slug.current\n    },\n    aliases,\n    order\n  }\n": TagBySlugQueryResult;
-    "\n  *[_type == \"post\" && $tagSlug in tags[]->slug.current] | order(date desc, _updatedAt desc) {\n    \n  _id,\n  _type,\n  \"status\": select(_originalId in path(\"drafts.**\") => \"draft\", \"published\"),\n  \"title\": coalesce(title, \"Untitled\"),\n  \"slug\": slug.current,\n  excerpt,\n  // New cover (external or asset)\n  cover{\n    source,\n    externalUrl,\n    image,\n    alt,\n    epigraph,\n    creditProvider,\n    creditAuthor,\n    creditSourceUrl,\n    creditLicense\n  },\n  \"date\": coalesce(date, _updatedAt),\n  publishedAt,\n  updatedAt,\n  priority,\n  featured,\n  labels,\n  justIn,\n  justInRank,\n  justInUntil,\n  breakingNews,\n  developingStory,\n  mainHeadline,\n  mainHeadlineRank,\n  mainHeadlineUntil,\n  frontline,\n  frontRank,\n  frontUntil,\n  rightHeadline,\n  rightHeadlineRank,\n  rightHeadlineUntil,\n\n  \"author\": select(\n    defined(author->name) => {\n      \"name\": coalesce(author->name, \"Anonymous\"),\n      \"picture\": author->picture\n    }\n  ),\n\n  \"category\": select(\n    defined(category->name) && defined(category->slug.current) => {\n      \"title\": category->name,\n      \"slug\": category->slug.current\n    }\n  ),\n\n  // Support both tag.title and category.name during transition\n  \"tags\": tags[]->{\n    \"title\": coalesce(title, name),\n    \"slug\": slug.current\n  },\n\n  bodyTextOne,\n  \n  \"bodyBlocks\": bodyBlocks[]{\n    bodyText,\n    bodyImage{\n      source,\n      externalUrl,\n      image,\n      alt,\n      epigraph,\n      creditProvider,\n      creditAuthor,\n      creditSourceUrl,\n      creditLicense\n    }\n  }\n\n  }\n": PostsByTagQueryResult;
-    "\n  *[_type == \"author\" && slug.current == $slug][0] {\n    name,\n    picture,\n    \"posts\": *[_type == \"post\" && author->slug.current == $slug] | order(date desc, _updatedAt desc) {\n      \n  _id,\n  _type,\n  \"status\": select(_originalId in path(\"drafts.**\") => \"draft\", \"published\"),\n  \"title\": coalesce(title, \"Untitled\"),\n  \"slug\": slug.current,\n  excerpt,\n  // New cover (external or asset)\n  cover{\n    source,\n    externalUrl,\n    image,\n    alt,\n    epigraph,\n    creditProvider,\n    creditAuthor,\n    creditSourceUrl,\n    creditLicense\n  },\n  \"date\": coalesce(date, _updatedAt),\n  publishedAt,\n  updatedAt,\n  priority,\n  featured,\n  labels,\n  justIn,\n  justInRank,\n  justInUntil,\n  breakingNews,\n  developingStory,\n  mainHeadline,\n  mainHeadlineRank,\n  mainHeadlineUntil,\n  frontline,\n  frontRank,\n  frontUntil,\n  rightHeadline,\n  rightHeadlineRank,\n  rightHeadlineUntil,\n\n  \"author\": select(\n    defined(author->name) => {\n      \"name\": coalesce(author->name, \"Anonymous\"),\n      \"picture\": author->picture\n    }\n  ),\n\n  \"category\": select(\n    defined(category->name) && defined(category->slug.current) => {\n      \"title\": category->name,\n      \"slug\": category->slug.current\n    }\n  ),\n\n  // Support both tag.title and category.name during transition\n  \"tags\": tags[]->{\n    \"title\": coalesce(title, name),\n    \"slug\": slug.current\n  },\n\n  bodyTextOne,\n  \n  \"bodyBlocks\": bodyBlocks[]{\n    bodyText,\n    bodyImage{\n      source,\n      externalUrl,\n      image,\n      alt,\n      epigraph,\n      creditProvider,\n      creditAuthor,\n      creditSourceUrl,\n      creditLicense\n    }\n  }\n\n    }\n  }\n": AuthorQueryResult;
-    "\n  *[_type == \"author\" && defined(slug.current)][].slug.current\n": AuthorSlugsQueryResult;
-    "\n  *[_type == \"comment\" && post->slug.current == $postSlug && approved == true] | order(_createdAt desc) {\n    name, email, comment, _createdAt\n  }\n": CommentsQueryResult;
-    "\n  *[_type == \"post\" && category->slug.current == $categorySlug] | order(date desc, _updatedAt desc) [0...4] {\n    \n  _id,\n  _type,\n  \"status\": select(_originalId in path(\"drafts.**\") => \"draft\", \"published\"),\n  \"title\": coalesce(title, \"Untitled\"),\n  \"slug\": slug.current,\n  excerpt,\n  // New cover (external or asset)\n  cover{\n    source,\n    externalUrl,\n    image,\n    alt,\n    epigraph,\n    creditProvider,\n    creditAuthor,\n    creditSourceUrl,\n    creditLicense\n  },\n  \"date\": coalesce(date, _updatedAt),\n  publishedAt,\n  updatedAt,\n  priority,\n  featured,\n  labels,\n  justIn,\n  justInRank,\n  justInUntil,\n  breakingNews,\n  developingStory,\n  mainHeadline,\n  mainHeadlineRank,\n  mainHeadlineUntil,\n  frontline,\n  frontRank,\n  frontUntil,\n  rightHeadline,\n  rightHeadlineRank,\n  rightHeadlineUntil,\n\n  \"author\": select(\n    defined(author->name) => {\n      \"name\": coalesce(author->name, \"Anonymous\"),\n      \"picture\": author->picture\n    }\n  ),\n\n  \"category\": select(\n    defined(category->name) && defined(category->slug.current) => {\n      \"title\": category->name,\n      \"slug\": category->slug.current\n    }\n  ),\n\n  // Support both tag.title and category.name during transition\n  \"tags\": tags[]->{\n    \"title\": coalesce(title, name),\n    \"slug\": slug.current\n  },\n\n  bodyTextOne,\n  \n  \"bodyBlocks\": bodyBlocks[]{\n    bodyText,\n    bodyImage{\n      source,\n      externalUrl,\n      image,\n      alt,\n      epigraph,\n      creditProvider,\n      creditAuthor,\n      creditSourceUrl,\n      creditLicense\n    }\n  }\n\n  }\n": FourthSectionQueryResult | ThirdSectionQueryResult;
-    "\n  *[_type == \"post\" && category->slug.current == $categorySlug] | order(coalesce(views7d, 0) desc, publishedAt desc) [0...5] {\n    \n  _id,\n  _type,\n  \"status\": select(_originalId in path(\"drafts.**\") => \"draft\", \"published\"),\n  \"title\": coalesce(title, \"Untitled\"),\n  \"slug\": slug.current,\n  excerpt,\n  // New cover (external or asset)\n  cover{\n    source,\n    externalUrl,\n    image,\n    alt,\n    epigraph,\n    creditProvider,\n    creditAuthor,\n    creditSourceUrl,\n    creditLicense\n  },\n  \"date\": coalesce(date, _updatedAt),\n  publishedAt,\n  updatedAt,\n  priority,\n  featured,\n  labels,\n  justIn,\n  justInRank,\n  justInUntil,\n  breakingNews,\n  developingStory,\n  mainHeadline,\n  mainHeadlineRank,\n  mainHeadlineUntil,\n  frontline,\n  frontRank,\n  frontUntil,\n  rightHeadline,\n  rightHeadlineRank,\n  rightHeadlineUntil,\n\n  \"author\": select(\n    defined(author->name) => {\n      \"name\": coalesce(author->name, \"Anonymous\"),\n      \"picture\": author->picture\n    }\n  ),\n\n  \"category\": select(\n    defined(category->name) && defined(category->slug.current) => {\n      \"title\": category->name,\n      \"slug\": category->slug.current\n    }\n  ),\n\n  // Support both tag.title and category.name during transition\n  \"tags\": tags[]->{\n    \"title\": coalesce(title, name),\n    \"slug\": slug.current\n  },\n\n  bodyTextOne,\n  \n  \"bodyBlocks\": bodyBlocks[]{\n    bodyText,\n    bodyImage{\n      source,\n      externalUrl,\n      image,\n      alt,\n      epigraph,\n      creditProvider,\n      creditAuthor,\n      creditSourceUrl,\n      creditLicense\n    }\n  }\n\n  }\n": MostViewedQueryResult;
-    "\n  *[_type == \"post\" && category->slug.current == $categorySlug] | order(date desc, _updatedAt desc) [2...3] {\n    \n  _id,\n  _type,\n  \"status\": select(_originalId in path(\"drafts.**\") => \"draft\", \"published\"),\n  \"title\": coalesce(title, \"Untitled\"),\n  \"slug\": slug.current,\n  excerpt,\n  // New cover (external or asset)\n  cover{\n    source,\n    externalUrl,\n    image,\n    alt,\n    epigraph,\n    creditProvider,\n    creditAuthor,\n    creditSourceUrl,\n    creditLicense\n  },\n  \"date\": coalesce(date, _updatedAt),\n  publishedAt,\n  updatedAt,\n  priority,\n  featured,\n  labels,\n  justIn,\n  justInRank,\n  justInUntil,\n  breakingNews,\n  developingStory,\n  mainHeadline,\n  mainHeadlineRank,\n  mainHeadlineUntil,\n  frontline,\n  frontRank,\n  frontUntil,\n  rightHeadline,\n  rightHeadlineRank,\n  rightHeadlineUntil,\n\n  \"author\": select(\n    defined(author->name) => {\n      \"name\": coalesce(author->name, \"Anonymous\"),\n      \"picture\": author->picture\n    }\n  ),\n\n  \"category\": select(\n    defined(category->name) && defined(category->slug.current) => {\n      \"title\": category->name,\n      \"slug\": category->slug.current\n    }\n  ),\n\n  // Support both tag.title and category.name during transition\n  \"tags\": tags[]->{\n    \"title\": coalesce(title, name),\n    \"slug\": slug.current\n  },\n\n  bodyTextOne,\n  \n  \"bodyBlocks\": bodyBlocks[]{\n    bodyText,\n    bodyImage{\n      source,\n      externalUrl,\n      image,\n      alt,\n      epigraph,\n      creditProvider,\n      creditAuthor,\n      creditSourceUrl,\n      creditLicense\n    }\n  }\n\n  }\n": ThirdLatestArticleQueryResult;
-    "\n  *[_type == \"post\" && category->slug.current == $categorySlug]\n  | order(date desc, _updatedAt desc) [0...9] {\n    \n  _id,\n  _type,\n  \"status\": select(_originalId in path(\"drafts.**\") => \"draft\", \"published\"),\n  \"title\": coalesce(title, \"Untitled\"),\n  \"slug\": slug.current,\n  excerpt,\n  // New cover (external or asset)\n  cover{\n    source,\n    externalUrl,\n    image,\n    alt,\n    epigraph,\n    creditProvider,\n    creditAuthor,\n    creditSourceUrl,\n    creditLicense\n  },\n  \"date\": coalesce(date, _updatedAt),\n  publishedAt,\n  updatedAt,\n  priority,\n  featured,\n  labels,\n  justIn,\n  justInRank,\n  justInUntil,\n  breakingNews,\n  developingStory,\n  mainHeadline,\n  mainHeadlineRank,\n  mainHeadlineUntil,\n  frontline,\n  frontRank,\n  frontUntil,\n  rightHeadline,\n  rightHeadlineRank,\n  rightHeadlineUntil,\n\n  \"author\": select(\n    defined(author->name) => {\n      \"name\": coalesce(author->name, \"Anonymous\"),\n      \"picture\": author->picture\n    }\n  ),\n\n  \"category\": select(\n    defined(category->name) && defined(category->slug.current) => {\n      \"title\": category->name,\n      \"slug\": category->slug.current\n    }\n  ),\n\n  // Support both tag.title and category.name during transition\n  \"tags\": tags[]->{\n    \"title\": coalesce(title, name),\n    \"slug\": slug.current\n  },\n\n  bodyTextOne,\n  \n  \"bodyBlocks\": bodyBlocks[]{\n    bodyText,\n    bodyImage{\n      source,\n      externalUrl,\n      image,\n      alt,\n      epigraph,\n      creditProvider,\n      creditAuthor,\n      creditSourceUrl,\n      creditLicense\n    }\n  }\n\n  }\n": LatestNineByCategoryQueryResult;
-    "\n  *[_type == \"post\"] | order(date desc, _updatedAt desc) [0...5] {\n    \n  _id,\n  _type,\n  \"status\": select(_originalId in path(\"drafts.**\") => \"draft\", \"published\"),\n  \"title\": coalesce(title, \"Untitled\"),\n  \"slug\": slug.current,\n  excerpt,\n  // New cover (external or asset)\n  cover{\n    source,\n    externalUrl,\n    image,\n    alt,\n    epigraph,\n    creditProvider,\n    creditAuthor,\n    creditSourceUrl,\n    creditLicense\n  },\n  \"date\": coalesce(date, _updatedAt),\n  publishedAt,\n  updatedAt,\n  priority,\n  featured,\n  labels,\n  justIn,\n  justInRank,\n  justInUntil,\n  breakingNews,\n  developingStory,\n  mainHeadline,\n  mainHeadlineRank,\n  mainHeadlineUntil,\n  frontline,\n  frontRank,\n  frontUntil,\n  rightHeadline,\n  rightHeadlineRank,\n  rightHeadlineUntil,\n\n  \"author\": select(\n    defined(author->name) => {\n      \"name\": coalesce(author->name, \"Anonymous\"),\n      \"picture\": author->picture\n    }\n  ),\n\n  \"category\": select(\n    defined(category->name) && defined(category->slug.current) => {\n      \"title\": category->name,\n      \"slug\": category->slug.current\n    }\n  ),\n\n  // Support both tag.title and category.name during transition\n  \"tags\": tags[]->{\n    \"title\": coalesce(title, name),\n    \"slug\": slug.current\n  },\n\n  bodyTextOne,\n  \n  \"bodyBlocks\": bodyBlocks[]{\n    bodyText,\n    bodyImage{\n      source,\n      externalUrl,\n      image,\n      alt,\n      epigraph,\n      creditProvider,\n      creditAuthor,\n      creditSourceUrl,\n      creditLicense\n    }\n  }\n\n  }\n": MostReadQueryResult;
-    "\n  *[_type == \"post\" && category->slug.current == $categorySlug] | order(date desc, _updatedAt desc) [0...20] {\n    \n  _id,\n  _type,\n  \"status\": select(_originalId in path(\"drafts.**\") => \"draft\", \"published\"),\n  \"title\": coalesce(title, \"Untitled\"),\n  \"slug\": slug.current,\n  excerpt,\n  // New cover (external or asset)\n  cover{\n    source,\n    externalUrl,\n    image,\n    alt,\n    epigraph,\n    creditProvider,\n    creditAuthor,\n    creditSourceUrl,\n    creditLicense\n  },\n  \"date\": coalesce(date, _updatedAt),\n  publishedAt,\n  updatedAt,\n  priority,\n  featured,\n  labels,\n  justIn,\n  justInRank,\n  justInUntil,\n  breakingNews,\n  developingStory,\n  mainHeadline,\n  mainHeadlineRank,\n  mainHeadlineUntil,\n  frontline,\n  frontRank,\n  frontUntil,\n  rightHeadline,\n  rightHeadlineRank,\n  rightHeadlineUntil,\n\n  \"author\": select(\n    defined(author->name) => {\n      \"name\": coalesce(author->name, \"Anonymous\"),\n      \"picture\": author->picture\n    }\n  ),\n\n  \"category\": select(\n    defined(category->name) && defined(category->slug.current) => {\n      \"title\": category->name,\n      \"slug\": category->slug.current\n    }\n  ),\n\n  // Support both tag.title and category.name during transition\n  \"tags\": tags[]->{\n    \"title\": coalesce(title, name),\n    \"slug\": slug.current\n  },\n\n  bodyTextOne,\n  \n  \"bodyBlocks\": bodyBlocks[]{\n    bodyText,\n    bodyImage{\n      source,\n      externalUrl,\n      image,\n      alt,\n      epigraph,\n      creditProvider,\n      creditAuthor,\n      creditSourceUrl,\n      creditLicense\n    }\n  }\n\n  }\n": SixthSectionQueryResult;
-    "\n  *[_type == \"post\" && defined(slug.current) && defined(tickerTitle)] | order(date desc, _updatedAt desc) [0...5] {\n    tickerTitle,\n    \"slug\": slug.current\n  }\n": NewsTickerQueryResult;
-    "\n  *[_type == \"post\" && category->slug.current == $categorySlug && defined(slug.current) && defined(tickerTitle)] | order(date desc, _updatedAt desc) [5...10] {\n    tickerTitle,\n    \"slug\": slug.current\n  }\n": CategoryTickerQueryResult;
-    "\n{\n  \"posts\": *[_type == \"post\" && status == \"published\" && defined(publishedAt) && publishedAt <= now() && (\n  title match $term ||\n  excerpt match $term ||\n  epigraph match $term ||\n  pt::text(bodyRich) match $term ||\n  pt::text(bodyTextOne) match $term ||\n  // Search in bodyBlocks text content\n  count(bodyBlocks[pt::text(bodyText) match $term]) > 0 ||\n  category->name match $term ||\n  coalesce(tags[]->title, tags[]->name) match $term ||   // <\u2014 supports both\n  // Check tag aliases on referenced tag documents (prefix tokenized)\n  count(tags[]->aliases[@ match $term]) > 0 ||\n  author->name match $term\n)] | order(publishedAt desc) [0...$postLimit] {\n    \n  _id,\n  _type,\n  \"status\": select(_originalId in path(\"drafts.**\") => \"draft\", \"published\"),\n  \"title\": coalesce(title, \"Untitled\"),\n  \"slug\": slug.current,\n  excerpt,\n  // New cover (external or asset)\n  cover{\n    source,\n    externalUrl,\n    image,\n    alt,\n    epigraph,\n    creditProvider,\n    creditAuthor,\n    creditSourceUrl,\n    creditLicense\n  },\n  \"date\": coalesce(date, _updatedAt),\n  publishedAt,\n  updatedAt,\n  priority,\n  featured,\n  labels,\n  justIn,\n  justInRank,\n  justInUntil,\n  breakingNews,\n  developingStory,\n  mainHeadline,\n  mainHeadlineRank,\n  mainHeadlineUntil,\n  frontline,\n  frontRank,\n  frontUntil,\n  rightHeadline,\n  rightHeadlineRank,\n  rightHeadlineUntil,\n\n  \"author\": select(\n    defined(author->name) => {\n      \"name\": coalesce(author->name, \"Anonymous\"),\n      \"picture\": author->picture\n    }\n  ),\n\n  \"category\": select(\n    defined(category->name) && defined(category->slug.current) => {\n      \"title\": category->name,\n      \"slug\": category->slug.current\n    }\n  ),\n\n  // Support both tag.title and category.name during transition\n  \"tags\": tags[]->{\n    \"title\": coalesce(title, name),\n    \"slug\": slug.current\n  },\n\n  bodyTextOne,\n  \n  \"bodyBlocks\": bodyBlocks[]{\n    bodyText,\n    bodyImage{\n      source,\n      externalUrl,\n      image,\n      alt,\n      epigraph,\n      creditProvider,\n      creditAuthor,\n      creditSourceUrl,\n      creditLicense\n    }\n  }\n\n  },\n  \"tags\": *[_type == \"tag\" && (\n    title match $term ||\n    description match $term ||\n    $term in aliases\n  )] | order(order asc, title asc) [0...$tagLimit] {\n    _id,\n    title,\n    \"slug\": slug.current,\n    description,\n    emoji,\n    color,\n    featured,\n    views\n  },\n  \"topics\": *[_type == \"topic\" && (\n    title match $term ||\n    description match $term\n  )] | order(title asc) [0...$topicLimit] {\n    _id,\n    title,\n    \"slug\": slug.current,\n    kind,\n    description,\n    image\n  }\n}\n": SearchAllQueryResult;
-    "\n  *[_type == \"category\" && slug.current in $categorySlugs] {\n    \"slug\": slug.current,\n    \"name\": name,\n    \"posts\": *[_type == \"post\" && category->slug.current == slug.current] | order(date desc, _updatedAt desc) [0...3] {\n      \n  _id,\n  _type,\n  \"status\": select(_originalId in path(\"drafts.**\") => \"draft\", \"published\"),\n  \"title\": coalesce(title, \"Untitled\"),\n  \"slug\": slug.current,\n  excerpt,\n  // New cover (external or asset)\n  cover{\n    source,\n    externalUrl,\n    image,\n    alt,\n    epigraph,\n    creditProvider,\n    creditAuthor,\n    creditSourceUrl,\n    creditLicense\n  },\n  \"date\": coalesce(date, _updatedAt),\n  publishedAt,\n  updatedAt,\n  priority,\n  featured,\n  labels,\n  justIn,\n  justInRank,\n  justInUntil,\n  breakingNews,\n  developingStory,\n  mainHeadline,\n  mainHeadlineRank,\n  mainHeadlineUntil,\n  frontline,\n  frontRank,\n  frontUntil,\n  rightHeadline,\n  rightHeadlineRank,\n  rightHeadlineUntil,\n\n  \"author\": select(\n    defined(author->name) => {\n      \"name\": coalesce(author->name, \"Anonymous\"),\n      \"picture\": author->picture\n    }\n  ),\n\n  \"category\": select(\n    defined(category->name) && defined(category->slug.current) => {\n      \"title\": category->name,\n      \"slug\": category->slug.current\n    }\n  ),\n\n  // Support both tag.title and category.name during transition\n  \"tags\": tags[]->{\n    \"title\": coalesce(title, name),\n    \"slug\": slug.current\n  },\n\n  bodyTextOne,\n  \n  \"bodyBlocks\": bodyBlocks[]{\n    bodyText,\n    bodyImage{\n      source,\n      externalUrl,\n      image,\n      alt,\n      epigraph,\n      creditProvider,\n      creditAuthor,\n      creditSourceUrl,\n      creditLicense\n    }\n  }\n\n    }\n  }\n": EighthSectionQueryResult;
-    "\n  *[_type == \"category\" && slug.current in $categorySlugs] {\n    \"slug\": slug.current,\n    \"name\": name,\n    \"thirdMostViewed\": *[_type == \"post\" && category->slug.current == slug.current] | order(coalesce(views7d, 0) desc, publishedAt desc) [0...5] {\n      _id, title, \"slug\": slug.current, excerpt, \n      cover{\n        source,\n        externalUrl,\n        image,\n        alt\n      },\n      \"date\": coalesce(date, _updatedAt), publishedAt,\n      \"author\": select(\n        defined(author->name) => {\n          \"name\": coalesce(author->name, \"Anonymous\"),\n          \"picture\": author->picture\n        }\n      ),\n      \"category\": select(\n        defined(category->name) && defined(category->slug.current) => {\n          \"title\": category->name,\n          \"slug\": category->slug.current\n        }\n      ),\n      views7d\n    },\n    \"thirdLatest\": *[_type == \"post\" && category->slug.current == slug.current] | order(publishedAt desc, _updatedAt desc) [0...5] {\n      _id, title, \"slug\": slug.current, excerpt, \n      cover{\n        source,\n        externalUrl,\n        image,\n        alt\n      },\n      \"date\": coalesce(date, _updatedAt), publishedAt,\n      \"author\": select(\n        defined(author->name) => {\n          \"name\": coalesce(author->name, \"Anonymous\"),\n          \"picture\": author->picture\n        }\n      ),\n      \"category\": select(\n        defined(category->name) && defined(category->slug.current) => {\n          \"title\": category->name,\n          \"slug\": category->slug.current\n        }\n      ),\n      views7d\n    }\n  }\n": SecondSectionQueryResult;
+    '*[_type == "settings"][0]': SettingsQueryResult;
+    '\n  *[_type == "post" && defined(slug.current)] | order(date desc, _updatedAt desc) [0] {\n    \n  _id,\n  _type,\n  "status": select(_originalId in path("drafts.**") => "draft", "published"),\n  "title": coalesce(title, "Untitled"),\n  "slug": slug.current,\n  excerpt,\n  // New cover (external or asset)\n  cover{\n    source,\n    externalUrl,\n    image,\n    alt,\n    epigraph,\n    creditProvider,\n    creditAuthor,\n    creditSourceUrl,\n    creditLicense\n  },\n  "date": coalesce(date, _updatedAt),\n  publishedAt,\n  updatedAt,\n  priority,\n  featured,\n  labels,\n  justIn,\n  justInRank,\n  justInUntil,\n  breakingNews,\n  developingStory,\n  mainHeadline,\n  mainHeadlineRank,\n  mainHeadlineUntil,\n  frontline,\n  frontRank,\n  frontUntil,\n  rightHeadline,\n  rightHeadlineRank,\n  rightHeadlineUntil,\n\n  "author": select(\n    defined(author->name) => {\n      "name": coalesce(author->name, "Anonymous"),\n      "picture": author->picture\n    }\n  ),\n\n  "category": select(\n    defined(category->name) && defined(category->slug.current) => {\n      "title": category->name,\n      "slug": category->slug.current\n    }\n  ),\n\n  // Support both tag.title and category.name during transition\n  "tags": tags[]->{\n    "title": coalesce(title, name),\n    "slug": slug.current\n  },\n\n  bodyTextOne,\n  \n  "bodyBlocks": bodyBlocks[]{\n    bodyText,\n    bodyImage{\n      source,\n      externalUrl,\n      image,\n      alt,\n      epigraph,\n      creditProvider,\n      creditAuthor,\n      creditSourceUrl,\n      creditLicense\n    }\n  }\n\n  }\n': HeroQueryResult;
+    '\n  *[_type == "post" && _id != $skip && defined(slug.current)] | order(date desc, _updatedAt desc) [0...$limit] {\n    \n  _id,\n  _type,\n  "status": select(_originalId in path("drafts.**") => "draft", "published"),\n  "title": coalesce(title, "Untitled"),\n  "slug": slug.current,\n  excerpt,\n  // New cover (external or asset)\n  cover{\n    source,\n    externalUrl,\n    image,\n    alt,\n    epigraph,\n    creditProvider,\n    creditAuthor,\n    creditSourceUrl,\n    creditLicense\n  },\n  "date": coalesce(date, _updatedAt),\n  publishedAt,\n  updatedAt,\n  priority,\n  featured,\n  labels,\n  justIn,\n  justInRank,\n  justInUntil,\n  breakingNews,\n  developingStory,\n  mainHeadline,\n  mainHeadlineRank,\n  mainHeadlineUntil,\n  frontline,\n  frontRank,\n  frontUntil,\n  rightHeadline,\n  rightHeadlineRank,\n  rightHeadlineUntil,\n\n  "author": select(\n    defined(author->name) => {\n      "name": coalesce(author->name, "Anonymous"),\n      "picture": author->picture\n    }\n  ),\n\n  "category": select(\n    defined(category->name) && defined(category->slug.current) => {\n      "title": category->name,\n      "slug": category->slug.current\n    }\n  ),\n\n  // Support both tag.title and category.name during transition\n  "tags": tags[]->{\n    "title": coalesce(title, name),\n    "slug": slug.current\n  },\n\n  bodyTextOne,\n  \n  "bodyBlocks": bodyBlocks[]{\n    bodyText,\n    bodyImage{\n      source,\n      externalUrl,\n      image,\n      alt,\n      epigraph,\n      creditProvider,\n      creditAuthor,\n      creditSourceUrl,\n      creditLicense\n    }\n  }\n\n  }\n': MoreStoriesQueryResult;
+    '\n  *[_type == "post" && slug.current == $slug] [0] {\n    \n  _id,\n  _type,\n  "status": select(_originalId in path("drafts.**") => "draft", "published"),\n  "title": coalesce(title, "Untitled"),\n  "slug": slug.current,\n  excerpt,\n  // New cover (external or asset)\n  cover{\n    source,\n    externalUrl,\n    image,\n    alt,\n    epigraph,\n    creditProvider,\n    creditAuthor,\n    creditSourceUrl,\n    creditLicense\n  },\n  "date": coalesce(date, _updatedAt),\n  publishedAt,\n  updatedAt,\n  priority,\n  featured,\n  labels,\n  justIn,\n  justInRank,\n  justInUntil,\n  breakingNews,\n  developingStory,\n  mainHeadline,\n  mainHeadlineRank,\n  mainHeadlineUntil,\n  frontline,\n  frontRank,\n  frontUntil,\n  rightHeadline,\n  rightHeadlineRank,\n  rightHeadlineUntil,\n\n  "author": select(\n    defined(author->name) => {\n      "name": coalesce(author->name, "Anonymous"),\n      "picture": author->picture\n    }\n  ),\n\n  "category": select(\n    defined(category->name) && defined(category->slug.current) => {\n      "title": category->name,\n      "slug": category->slug.current\n    }\n  ),\n\n  // Support both tag.title and category.name during transition\n  "tags": tags[]->{\n    "title": coalesce(title, name),\n    "slug": slug.current\n  },\n\n  bodyTextOne,\n  \n  "bodyBlocks": bodyBlocks[]{\n    bodyText,\n    bodyImage{\n      source,\n      externalUrl,\n      image,\n      alt,\n      epigraph,\n      creditProvider,\n      creditAuthor,\n      creditSourceUrl,\n      creditLicense\n    }\n  }\n\n  }\n': PostQueryResult;
+    '\n  *[_type == "post"] | order(date desc, _updatedAt desc) {\n    \n  _id,\n  _type,\n  "status": select(_originalId in path("drafts.**") => "draft", "published"),\n  "title": coalesce(title, "Untitled"),\n  "slug": slug.current,\n  excerpt,\n  // New cover (external or asset)\n  cover{\n    source,\n    externalUrl,\n    image,\n    alt,\n    epigraph,\n    creditProvider,\n    creditAuthor,\n    creditSourceUrl,\n    creditLicense\n  },\n  "date": coalesce(date, _updatedAt),\n  publishedAt,\n  updatedAt,\n  priority,\n  featured,\n  labels,\n  justIn,\n  justInRank,\n  justInUntil,\n  breakingNews,\n  developingStory,\n  mainHeadline,\n  mainHeadlineRank,\n  mainHeadlineUntil,\n  frontline,\n  frontRank,\n  frontUntil,\n  rightHeadline,\n  rightHeadlineRank,\n  rightHeadlineUntil,\n\n  "author": select(\n    defined(author->name) => {\n      "name": coalesce(author->name, "Anonymous"),\n      "picture": author->picture\n    }\n  ),\n\n  "category": select(\n    defined(category->name) && defined(category->slug.current) => {\n      "title": category->name,\n      "slug": category->slug.current\n    }\n  ),\n\n  // Support both tag.title and category.name during transition\n  "tags": tags[]->{\n    "title": coalesce(title, name),\n    "slug": slug.current\n  },\n\n  bodyTextOne,\n  \n  "bodyBlocks": bodyBlocks[]{\n    bodyText,\n    bodyImage{\n      source,\n      externalUrl,\n      image,\n      alt,\n      epigraph,\n      creditProvider,\n      creditAuthor,\n      creditSourceUrl,\n      creditLicense\n    }\n  }\n\n  }\n': IndexQueryResult;
+    '\n{\n  "post": *[_type == "post" && slug.current == $slug] | order(_updatedAt desc) [0] {\n    \n  _id,\n  _type,\n  "status": select(_originalId in path("drafts.**") => "draft", "published"),\n  "title": coalesce(title, "Untitled"),\n  "slug": slug.current,\n  excerpt,\n  // New cover (external or asset)\n  cover{\n    source,\n    externalUrl,\n    image,\n    alt,\n    epigraph,\n    creditProvider,\n    creditAuthor,\n    creditSourceUrl,\n    creditLicense\n  },\n  "date": coalesce(date, _updatedAt),\n  publishedAt,\n  updatedAt,\n  priority,\n  featured,\n  labels,\n  justIn,\n  justInRank,\n  justInUntil,\n  breakingNews,\n  developingStory,\n  mainHeadline,\n  mainHeadlineRank,\n  mainHeadlineUntil,\n  frontline,\n  frontRank,\n  frontUntil,\n  rightHeadline,\n  rightHeadlineRank,\n  rightHeadlineUntil,\n\n  "author": select(\n    defined(author->name) => {\n      "name": coalesce(author->name, "Anonymous"),\n      "picture": author->picture\n    }\n  ),\n\n  "category": select(\n    defined(category->name) && defined(category->slug.current) => {\n      "title": category->name,\n      "slug": category->slug.current\n    }\n  ),\n\n  // Support both tag.title and category.name during transition\n  "tags": tags[]->{\n    "title": coalesce(title, name),\n    "slug": slug.current\n  },\n\n  bodyTextOne,\n  \n  "bodyBlocks": bodyBlocks[]{\n    bodyText,\n    bodyImage{\n      source,\n      externalUrl,\n      image,\n      alt,\n      epigraph,\n      creditProvider,\n      creditAuthor,\n      creditSourceUrl,\n      creditLicense\n    }\n  }\n\n  },\n  "latestNews": *[_type == "post" && slug.current != $slug] | order(date desc, _updatedAt desc) [0...6] {\n    \n  _id,\n  _type,\n  "status": select(_originalId in path("drafts.**") => "draft", "published"),\n  "title": coalesce(title, "Untitled"),\n  "slug": slug.current,\n  excerpt,\n  // New cover (external or asset)\n  cover{\n    source,\n    externalUrl,\n    image,\n    alt,\n    epigraph,\n    creditProvider,\n    creditAuthor,\n    creditSourceUrl,\n    creditLicense\n  },\n  "date": coalesce(date, _updatedAt),\n  publishedAt,\n  updatedAt,\n  priority,\n  featured,\n  labels,\n  justIn,\n  justInRank,\n  justInUntil,\n  breakingNews,\n  developingStory,\n  mainHeadline,\n  mainHeadlineRank,\n  mainHeadlineUntil,\n  frontline,\n  frontRank,\n  frontUntil,\n  rightHeadline,\n  rightHeadlineRank,\n  rightHeadlineUntil,\n\n  "author": select(\n    defined(author->name) => {\n      "name": coalesce(author->name, "Anonymous"),\n      "picture": author->picture\n    }\n  ),\n\n  "category": select(\n    defined(category->name) && defined(category->slug.current) => {\n      "title": category->name,\n      "slug": category->slug.current\n    }\n  ),\n\n  // Support both tag.title and category.name during transition\n  "tags": tags[]->{\n    "title": coalesce(title, name),\n    "slug": slug.current\n  },\n\n  bodyTextOne,\n  \n  "bodyBlocks": bodyBlocks[]{\n    bodyText,\n    bodyImage{\n      source,\n      externalUrl,\n      image,\n      alt,\n      epigraph,\n      creditProvider,\n      creditAuthor,\n      creditSourceUrl,\n      creditLicense\n    }\n  }\n\n  },\n  "morePosts": *[_type == "post" && slug.current != $slug] | order(date desc, _updatedAt desc) [4...8] {\n    \n  _id,\n  _type,\n  "status": select(_originalId in path("drafts.**") => "draft", "published"),\n  "title": coalesce(title, "Untitled"),\n  "slug": slug.current,\n  excerpt,\n  // New cover (external or asset)\n  cover{\n    source,\n    externalUrl,\n    image,\n    alt,\n    epigraph,\n    creditProvider,\n    creditAuthor,\n    creditSourceUrl,\n    creditLicense\n  },\n  "date": coalesce(date, _updatedAt),\n  publishedAt,\n  updatedAt,\n  priority,\n  featured,\n  labels,\n  justIn,\n  justInRank,\n  justInUntil,\n  breakingNews,\n  developingStory,\n  mainHeadline,\n  mainHeadlineRank,\n  mainHeadlineUntil,\n  frontline,\n  frontRank,\n  frontUntil,\n  rightHeadline,\n  rightHeadlineRank,\n  rightHeadlineUntil,\n\n  "author": select(\n    defined(author->name) => {\n      "name": coalesce(author->name, "Anonymous"),\n      "picture": author->picture\n    }\n  ),\n\n  "category": select(\n    defined(category->name) && defined(category->slug.current) => {\n      "title": category->name,\n      "slug": category->slug.current\n    }\n  ),\n\n  // Support both tag.title and category.name during transition\n  "tags": tags[]->{\n    "title": coalesce(title, name),\n    "slug": slug.current\n  },\n\n  bodyTextOne,\n  \n  "bodyBlocks": bodyBlocks[]{\n    bodyText,\n    bodyImage{\n      source,\n      externalUrl,\n      image,\n      alt,\n      epigraph,\n      creditProvider,\n      creditAuthor,\n      creditSourceUrl,\n      creditLicense\n    }\n  }\n\n  },\n  "nextArticles": *[_type == "post" && slug.current != $slug] | order(date desc, _updatedAt desc) [8...18] {\n    \n  _id,\n  _type,\n  "status": select(_originalId in path("drafts.**") => "draft", "published"),\n  "title": coalesce(title, "Untitled"),\n  "slug": slug.current,\n  excerpt,\n  // New cover (external or asset)\n  cover{\n    source,\n    externalUrl,\n    image,\n    alt,\n    epigraph,\n    creditProvider,\n    creditAuthor,\n    creditSourceUrl,\n    creditLicense\n  },\n  "date": coalesce(date, _updatedAt),\n  publishedAt,\n  updatedAt,\n  priority,\n  featured,\n  labels,\n  justIn,\n  justInRank,\n  justInUntil,\n  breakingNews,\n  developingStory,\n  mainHeadline,\n  mainHeadlineRank,\n  mainHeadlineUntil,\n  frontline,\n  frontRank,\n  frontUntil,\n  rightHeadline,\n  rightHeadlineRank,\n  rightHeadlineUntil,\n\n  "author": select(\n    defined(author->name) => {\n      "name": coalesce(author->name, "Anonymous"),\n      "picture": author->picture\n    }\n  ),\n\n  "category": select(\n    defined(category->name) && defined(category->slug.current) => {\n      "title": category->name,\n      "slug": category->slug.current\n    }\n  ),\n\n  // Support both tag.title and category.name during transition\n  "tags": tags[]->{\n    "title": coalesce(title, name),\n    "slug": slug.current\n  },\n\n  bodyTextOne,\n  \n  "bodyBlocks": bodyBlocks[]{\n    bodyText,\n    bodyImage{\n      source,\n      externalUrl,\n      image,\n      alt,\n      epigraph,\n      creditProvider,\n      creditAuthor,\n      creditSourceUrl,\n      creditLicense\n    }\n  }\n\n  }\n}\n': PostQueryWithRelatedResult;
+    '\n{\n  "post": *[_type == "post" && slug.current == $slug] | order(_updatedAt desc) [0] {\n    \n  _id,\n  _type,\n  "status": select(_originalId in path("drafts.**") => "draft", "published"),\n  "title": coalesce(title, "Untitled"),\n  "slug": slug.current,\n  excerpt,\n  // New cover (external or asset)\n  cover{\n    source,\n    externalUrl,\n    image,\n    alt,\n    epigraph,\n    creditProvider,\n    creditAuthor,\n    creditSourceUrl,\n    creditLicense\n  },\n  "date": coalesce(date, _updatedAt),\n  publishedAt,\n  updatedAt,\n  priority,\n  featured,\n  labels,\n  justIn,\n  justInRank,\n  justInUntil,\n  breakingNews,\n  developingStory,\n  mainHeadline,\n  mainHeadlineRank,\n  mainHeadlineUntil,\n  frontline,\n  frontRank,\n  frontUntil,\n  rightHeadline,\n  rightHeadlineRank,\n  rightHeadlineUntil,\n\n  "author": select(\n    defined(author->name) => {\n      "name": coalesce(author->name, "Anonymous"),\n      "picture": author->picture\n    }\n  ),\n\n  "category": select(\n    defined(category->name) && defined(category->slug.current) => {\n      "title": category->name,\n      "slug": category->slug.current\n    }\n  ),\n\n  // Support both tag.title and category.name during transition\n  "tags": tags[]->{\n    "title": coalesce(title, name),\n    "slug": slug.current\n  },\n\n  bodyTextOne,\n  \n  "bodyBlocks": bodyBlocks[]{\n    bodyText,\n    bodyImage{\n      source,\n      externalUrl,\n      image,\n      alt,\n      epigraph,\n      creditProvider,\n      creditAuthor,\n      creditSourceUrl,\n      creditLicense\n    }\n  }\n\n  },\n  "latestNews": *[_type == "post" && slug.current != $slug] | order(date desc, _updatedAt desc) [0...6] {\n    \n  _id,\n  _type,\n  "status": select(_originalId in path("drafts.**") => "draft", "published"),\n  "title": coalesce(title, "Untitled"),\n  "slug": slug.current,\n  excerpt,\n  // New cover (external or asset)\n  cover{\n    source,\n    externalUrl,\n    image,\n    alt,\n    epigraph,\n    creditProvider,\n    creditAuthor,\n    creditSourceUrl,\n    creditLicense\n  },\n  "date": coalesce(date, _updatedAt),\n  publishedAt,\n  updatedAt,\n  priority,\n  featured,\n  labels,\n  justIn,\n  justInRank,\n  justInUntil,\n  breakingNews,\n  developingStory,\n  mainHeadline,\n  mainHeadlineRank,\n  mainHeadlineUntil,\n  frontline,\n  frontRank,\n  frontUntil,\n  rightHeadline,\n  rightHeadlineRank,\n  rightHeadlineUntil,\n\n  "author": select(\n    defined(author->name) => {\n      "name": coalesce(author->name, "Anonymous"),\n      "picture": author->picture\n    }\n  ),\n\n  "category": select(\n    defined(category->name) && defined(category->slug.current) => {\n      "title": category->name,\n      "slug": category->slug.current\n    }\n  ),\n\n  // Support both tag.title and category.name during transition\n  "tags": tags[]->{\n    "title": coalesce(title, name),\n    "slug": slug.current\n  },\n\n  bodyTextOne,\n  \n  "bodyBlocks": bodyBlocks[]{\n    bodyText,\n    bodyImage{\n      source,\n      externalUrl,\n      image,\n      alt,\n      epigraph,\n      creditProvider,\n      creditAuthor,\n      creditSourceUrl,\n      creditLicense\n    }\n  }\n\n  },\n  "morePosts": *[_type == "post" && slug.current != $slug] | order(date desc, _updatedAt desc) [4...8] {\n    \n  _id,\n  _type,\n  "status": select(_originalId in path("drafts.**") => "draft", "published"),\n  "title": coalesce(title, "Untitled"),\n  "slug": slug.current,\n  excerpt,\n  // New cover (external or asset)\n  cover{\n    source,\n    externalUrl,\n    image,\n    alt,\n    epigraph,\n    creditProvider,\n    creditAuthor,\n    creditSourceUrl,\n    creditLicense\n  },\n  "date": coalesce(date, _updatedAt),\n  publishedAt,\n  updatedAt,\n  priority,\n  featured,\n  labels,\n  justIn,\n  justInRank,\n  justInUntil,\n  breakingNews,\n  developingStory,\n  mainHeadline,\n  mainHeadlineRank,\n  mainHeadlineUntil,\n  frontline,\n  frontRank,\n  frontUntil,\n  rightHeadline,\n  rightHeadlineRank,\n  rightHeadlineUntil,\n\n  "author": select(\n    defined(author->name) => {\n      "name": coalesce(author->name, "Anonymous"),\n      "picture": author->picture\n    }\n  ),\n\n  "category": select(\n    defined(category->name) && defined(category->slug.current) => {\n      "title": category->name,\n      "slug": category->slug.current\n    }\n  ),\n\n  // Support both tag.title and category.name during transition\n  "tags": tags[]->{\n    "title": coalesce(title, name),\n    "slug": slug.current\n  },\n\n  bodyTextOne,\n  \n  "bodyBlocks": bodyBlocks[]{\n    bodyText,\n    bodyImage{\n      source,\n      externalUrl,\n      image,\n      alt,\n      epigraph,\n      creditProvider,\n      creditAuthor,\n      creditSourceUrl,\n      creditLicense\n    }\n  }\n\n  },\n  "newsForYou": *[_type == "post" && slug.current != $slug] | order(date desc, _updatedAt desc) [0...4] {\n    \n  _id,\n  _type,\n  "status": select(_originalId in path("drafts.**") => "draft", "published"),\n  "title": coalesce(title, "Untitled"),\n  "slug": slug.current,\n  excerpt,\n  // New cover (external or asset)\n  cover{\n    source,\n    externalUrl,\n    image,\n    alt,\n    epigraph,\n    creditProvider,\n    creditAuthor,\n    creditSourceUrl,\n    creditLicense\n  },\n  "date": coalesce(date, _updatedAt),\n  publishedAt,\n  updatedAt,\n  priority,\n  featured,\n  labels,\n  justIn,\n  justInRank,\n  justInUntil,\n  breakingNews,\n  developingStory,\n  mainHeadline,\n  mainHeadlineRank,\n  mainHeadlineUntil,\n  frontline,\n  frontRank,\n  frontUntil,\n  rightHeadline,\n  rightHeadlineRank,\n  rightHeadlineUntil,\n\n  "author": select(\n    defined(author->name) => {\n      "name": coalesce(author->name, "Anonymous"),\n      "picture": author->picture\n    }\n  ),\n\n  "category": select(\n    defined(category->name) && defined(category->slug.current) => {\n      "title": category->name,\n      "slug": category->slug.current\n    }\n  ),\n\n  // Support both tag.title and category.name during transition\n  "tags": tags[]->{\n    "title": coalesce(title, name),\n    "slug": slug.current\n  },\n\n  bodyTextOne,\n  \n  "bodyBlocks": bodyBlocks[]{\n    bodyText,\n    bodyImage{\n      source,\n      externalUrl,\n      image,\n      alt,\n      epigraph,\n      creditProvider,\n      creditAuthor,\n      creditSourceUrl,\n      creditLicense\n    }\n  }\n\n  },\n  "categoryArticles": *[_type == "post" && slug.current != $slug && category->slug.current == $categorySlug] | order(date desc, _updatedAt desc) [0...6] {\n    \n  _id,\n  _type,\n  "status": select(_originalId in path("drafts.**") => "draft", "published"),\n  "title": coalesce(title, "Untitled"),\n  "slug": slug.current,\n  excerpt,\n  // New cover (external or asset)\n  cover{\n    source,\n    externalUrl,\n    image,\n    alt,\n    epigraph,\n    creditProvider,\n    creditAuthor,\n    creditSourceUrl,\n    creditLicense\n  },\n  "date": coalesce(date, _updatedAt),\n  publishedAt,\n  updatedAt,\n  priority,\n  featured,\n  labels,\n  justIn,\n  justInRank,\n  justInUntil,\n  breakingNews,\n  developingStory,\n  mainHeadline,\n  mainHeadlineRank,\n  mainHeadlineUntil,\n  frontline,\n  frontRank,\n  frontUntil,\n  rightHeadline,\n  rightHeadlineRank,\n  rightHeadlineUntil,\n\n  "author": select(\n    defined(author->name) => {\n      "name": coalesce(author->name, "Anonymous"),\n      "picture": author->picture\n    }\n  ),\n\n  "category": select(\n    defined(category->name) && defined(category->slug.current) => {\n      "title": category->name,\n      "slug": category->slug.current\n    }\n  ),\n\n  // Support both tag.title and category.name during transition\n  "tags": tags[]->{\n    "title": coalesce(title, name),\n    "slug": slug.current\n  },\n\n  bodyTextOne,\n  \n  "bodyBlocks": bodyBlocks[]{\n    bodyText,\n    bodyImage{\n      source,\n      externalUrl,\n      image,\n      alt,\n      epigraph,\n      creditProvider,\n      creditAuthor,\n      creditSourceUrl,\n      creditLicense\n    }\n  }\n\n  }\n}\n': PostQueryWithCategoryRelatedResult;
+    '\n  *[_type == "post" && defined(slug.current)][].slug.current\n': PostSlugsQueryResult;
+    '\n  *[_type == "post" && slug.current == $slug][0] {\n    \n  _id,\n  _type,\n  "status": select(_originalId in path("drafts.**") => "draft", "published"),\n  "title": coalesce(title, "Untitled"),\n  "slug": slug.current,\n  excerpt,\n  // New cover (external or asset)\n  cover{\n    source,\n    externalUrl,\n    image,\n    alt,\n    epigraph,\n    creditProvider,\n    creditAuthor,\n    creditSourceUrl,\n    creditLicense\n  },\n  "date": coalesce(date, _updatedAt),\n  publishedAt,\n  updatedAt,\n  priority,\n  featured,\n  labels,\n  justIn,\n  justInRank,\n  justInUntil,\n  breakingNews,\n  developingStory,\n  mainHeadline,\n  mainHeadlineRank,\n  mainHeadlineUntil,\n  frontline,\n  frontRank,\n  frontUntil,\n  rightHeadline,\n  rightHeadlineRank,\n  rightHeadlineUntil,\n\n  "author": select(\n    defined(author->name) => {\n      "name": coalesce(author->name, "Anonymous"),\n      "picture": author->picture\n    }\n  ),\n\n  "category": select(\n    defined(category->name) && defined(category->slug.current) => {\n      "title": category->name,\n      "slug": category->slug.current\n    }\n  ),\n\n  // Support both tag.title and category.name during transition\n  "tags": tags[]->{\n    "title": coalesce(title, name),\n    "slug": slug.current\n  },\n\n  bodyTextOne,\n  \n  "bodyBlocks": bodyBlocks[]{\n    bodyText,\n    bodyImage{\n      source,\n      externalUrl,\n      image,\n      alt,\n      epigraph,\n      creditProvider,\n      creditAuthor,\n      creditSourceUrl,\n      creditLicense\n    }\n  }\n\n  }\n': PostBySlugQueryResult;
+    '\n  *[_type == "post" && category->slug.current == $categorySlug] | order(date desc, _updatedAt desc) {\n    \n  _id,\n  _type,\n  "status": select(_originalId in path("drafts.**") => "draft", "published"),\n  "title": coalesce(title, "Untitled"),\n  "slug": slug.current,\n  excerpt,\n  // New cover (external or asset)\n  cover{\n    source,\n    externalUrl,\n    image,\n    alt,\n    epigraph,\n    creditProvider,\n    creditAuthor,\n    creditSourceUrl,\n    creditLicense\n  },\n  "date": coalesce(date, _updatedAt),\n  publishedAt,\n  updatedAt,\n  priority,\n  featured,\n  labels,\n  justIn,\n  justInRank,\n  justInUntil,\n  breakingNews,\n  developingStory,\n  mainHeadline,\n  mainHeadlineRank,\n  mainHeadlineUntil,\n  frontline,\n  frontRank,\n  frontUntil,\n  rightHeadline,\n  rightHeadlineRank,\n  rightHeadlineUntil,\n\n  "author": select(\n    defined(author->name) => {\n      "name": coalesce(author->name, "Anonymous"),\n      "picture": author->picture\n    }\n  ),\n\n  "category": select(\n    defined(category->name) && defined(category->slug.current) => {\n      "title": category->name,\n      "slug": category->slug.current\n    }\n  ),\n\n  // Support both tag.title and category.name during transition\n  "tags": tags[]->{\n    "title": coalesce(title, name),\n    "slug": slug.current\n  },\n\n  bodyTextOne,\n  \n  "bodyBlocks": bodyBlocks[]{\n    bodyText,\n    bodyImage{\n      source,\n      externalUrl,\n      image,\n      alt,\n      epigraph,\n      creditProvider,\n      creditAuthor,\n      creditSourceUrl,\n      creditLicense\n    }\n  }\n\n  }\n': PostsByCategoryQueryResult;
+    '\n  *[_type == "category" && defined(slug.current)]{ "slug": slug.current, name, views }\n': CategorySlugsQueryResult;
+    '\n  *[_type == "category" && defined(slug.current)] | order(name asc) {\n    "slug": slug.current,\n    name,\n    views\n  }\n': AllCategoriesQueryResult;
+    '\n  *[_type == "category" && defined(slug.current)] | order(coalesce(order, 999) asc, name asc) {\n    "slug": slug.current,\n    name,\n    views,\n    order\n  }\n': CategoriesByViewsQueryResult;
+    '\n  *[_type == "tag" && defined(slug.current)] | order(coalesce(views, 0) desc, title asc) [0...5] {\n    "slug": slug.current,\n    title,\n    views\n  }\n': TopTagsByViewsQueryResult;
+    '\n  *[_type == "tag" && defined(slug.current)] | order(coalesce(views, 0) desc, title asc) [5...11] {\n    "slug": slug.current,\n    title,\n    views\n  }\n': ShowsTagsByViewsQueryResult;
+    '\n  *[_type == "tag" && defined(slug.current)]{ "slug": slug.current, title }\n': TagSlugsQueryResult;
+    '\n  *[_type == "tag" && slug.current == $slug][0] {\n    _id,\n    title,\n    "slug": slug.current,\n    description,\n    emoji,\n    color,\n    featured,\n    deprecated,\n    views,\n    "redirectTo": redirectTo->{\n      title,\n      "slug": slug.current\n    },\n    aliases,\n    order\n  }\n': TagBySlugQueryResult;
+    '\n  *[_type == "post" && $tagSlug in tags[]->slug.current] | order(date desc, _updatedAt desc) {\n    \n  _id,\n  _type,\n  "status": select(_originalId in path("drafts.**") => "draft", "published"),\n  "title": coalesce(title, "Untitled"),\n  "slug": slug.current,\n  excerpt,\n  // New cover (external or asset)\n  cover{\n    source,\n    externalUrl,\n    image,\n    alt,\n    epigraph,\n    creditProvider,\n    creditAuthor,\n    creditSourceUrl,\n    creditLicense\n  },\n  "date": coalesce(date, _updatedAt),\n  publishedAt,\n  updatedAt,\n  priority,\n  featured,\n  labels,\n  justIn,\n  justInRank,\n  justInUntil,\n  breakingNews,\n  developingStory,\n  mainHeadline,\n  mainHeadlineRank,\n  mainHeadlineUntil,\n  frontline,\n  frontRank,\n  frontUntil,\n  rightHeadline,\n  rightHeadlineRank,\n  rightHeadlineUntil,\n\n  "author": select(\n    defined(author->name) => {\n      "name": coalesce(author->name, "Anonymous"),\n      "picture": author->picture\n    }\n  ),\n\n  "category": select(\n    defined(category->name) && defined(category->slug.current) => {\n      "title": category->name,\n      "slug": category->slug.current\n    }\n  ),\n\n  // Support both tag.title and category.name during transition\n  "tags": tags[]->{\n    "title": coalesce(title, name),\n    "slug": slug.current\n  },\n\n  bodyTextOne,\n  \n  "bodyBlocks": bodyBlocks[]{\n    bodyText,\n    bodyImage{\n      source,\n      externalUrl,\n      image,\n      alt,\n      epigraph,\n      creditProvider,\n      creditAuthor,\n      creditSourceUrl,\n      creditLicense\n    }\n  }\n\n  }\n': PostsByTagQueryResult;
+    '\n  *[_type == "author" && slug.current == $slug][0] {\n    name,\n    picture,\n    "posts": *[_type == "post" && author->slug.current == $slug] | order(date desc, _updatedAt desc) {\n      \n  _id,\n  _type,\n  "status": select(_originalId in path("drafts.**") => "draft", "published"),\n  "title": coalesce(title, "Untitled"),\n  "slug": slug.current,\n  excerpt,\n  // New cover (external or asset)\n  cover{\n    source,\n    externalUrl,\n    image,\n    alt,\n    epigraph,\n    creditProvider,\n    creditAuthor,\n    creditSourceUrl,\n    creditLicense\n  },\n  "date": coalesce(date, _updatedAt),\n  publishedAt,\n  updatedAt,\n  priority,\n  featured,\n  labels,\n  justIn,\n  justInRank,\n  justInUntil,\n  breakingNews,\n  developingStory,\n  mainHeadline,\n  mainHeadlineRank,\n  mainHeadlineUntil,\n  frontline,\n  frontRank,\n  frontUntil,\n  rightHeadline,\n  rightHeadlineRank,\n  rightHeadlineUntil,\n\n  "author": select(\n    defined(author->name) => {\n      "name": coalesce(author->name, "Anonymous"),\n      "picture": author->picture\n    }\n  ),\n\n  "category": select(\n    defined(category->name) && defined(category->slug.current) => {\n      "title": category->name,\n      "slug": category->slug.current\n    }\n  ),\n\n  // Support both tag.title and category.name during transition\n  "tags": tags[]->{\n    "title": coalesce(title, name),\n    "slug": slug.current\n  },\n\n  bodyTextOne,\n  \n  "bodyBlocks": bodyBlocks[]{\n    bodyText,\n    bodyImage{\n      source,\n      externalUrl,\n      image,\n      alt,\n      epigraph,\n      creditProvider,\n      creditAuthor,\n      creditSourceUrl,\n      creditLicense\n    }\n  }\n\n    }\n  }\n': AuthorQueryResult;
+    '\n  *[_type == "author" && defined(slug.current)][].slug.current\n': AuthorSlugsQueryResult;
+    '\n  *[_type == "comment" && post->slug.current == $postSlug && approved == true] | order(_createdAt desc) {\n    name, email, comment, _createdAt\n  }\n': CommentsQueryResult;
+    '\n  *[_type == "post" && category->slug.current == $categorySlug] | order(date desc, _updatedAt desc) [0...4] {\n    \n  _id,\n  _type,\n  "status": select(_originalId in path("drafts.**") => "draft", "published"),\n  "title": coalesce(title, "Untitled"),\n  "slug": slug.current,\n  excerpt,\n  // New cover (external or asset)\n  cover{\n    source,\n    externalUrl,\n    image,\n    alt,\n    epigraph,\n    creditProvider,\n    creditAuthor,\n    creditSourceUrl,\n    creditLicense\n  },\n  "date": coalesce(date, _updatedAt),\n  publishedAt,\n  updatedAt,\n  priority,\n  featured,\n  labels,\n  justIn,\n  justInRank,\n  justInUntil,\n  breakingNews,\n  developingStory,\n  mainHeadline,\n  mainHeadlineRank,\n  mainHeadlineUntil,\n  frontline,\n  frontRank,\n  frontUntil,\n  rightHeadline,\n  rightHeadlineRank,\n  rightHeadlineUntil,\n\n  "author": select(\n    defined(author->name) => {\n      "name": coalesce(author->name, "Anonymous"),\n      "picture": author->picture\n    }\n  ),\n\n  "category": select(\n    defined(category->name) && defined(category->slug.current) => {\n      "title": category->name,\n      "slug": category->slug.current\n    }\n  ),\n\n  // Support both tag.title and category.name during transition\n  "tags": tags[]->{\n    "title": coalesce(title, name),\n    "slug": slug.current\n  },\n\n  bodyTextOne,\n  \n  "bodyBlocks": bodyBlocks[]{\n    bodyText,\n    bodyImage{\n      source,\n      externalUrl,\n      image,\n      alt,\n      epigraph,\n      creditProvider,\n      creditAuthor,\n      creditSourceUrl,\n      creditLicense\n    }\n  }\n\n  }\n':
+      | FourthSectionQueryResult
+      | ThirdSectionQueryResult;
+    '\n  *[_type == "post" && category->slug.current == $categorySlug] | order(coalesce(views7d, 0) desc, publishedAt desc) [0...5] {\n    \n  _id,\n  _type,\n  "status": select(_originalId in path("drafts.**") => "draft", "published"),\n  "title": coalesce(title, "Untitled"),\n  "slug": slug.current,\n  excerpt,\n  // New cover (external or asset)\n  cover{\n    source,\n    externalUrl,\n    image,\n    alt,\n    epigraph,\n    creditProvider,\n    creditAuthor,\n    creditSourceUrl,\n    creditLicense\n  },\n  "date": coalesce(date, _updatedAt),\n  publishedAt,\n  updatedAt,\n  priority,\n  featured,\n  labels,\n  justIn,\n  justInRank,\n  justInUntil,\n  breakingNews,\n  developingStory,\n  mainHeadline,\n  mainHeadlineRank,\n  mainHeadlineUntil,\n  frontline,\n  frontRank,\n  frontUntil,\n  rightHeadline,\n  rightHeadlineRank,\n  rightHeadlineUntil,\n\n  "author": select(\n    defined(author->name) => {\n      "name": coalesce(author->name, "Anonymous"),\n      "picture": author->picture\n    }\n  ),\n\n  "category": select(\n    defined(category->name) && defined(category->slug.current) => {\n      "title": category->name,\n      "slug": category->slug.current\n    }\n  ),\n\n  // Support both tag.title and category.name during transition\n  "tags": tags[]->{\n    "title": coalesce(title, name),\n    "slug": slug.current\n  },\n\n  bodyTextOne,\n  \n  "bodyBlocks": bodyBlocks[]{\n    bodyText,\n    bodyImage{\n      source,\n      externalUrl,\n      image,\n      alt,\n      epigraph,\n      creditProvider,\n      creditAuthor,\n      creditSourceUrl,\n      creditLicense\n    }\n  }\n\n  }\n': MostViewedQueryResult;
+    '\n  *[_type == "post" && category->slug.current == $categorySlug] | order(date desc, _updatedAt desc) [2...3] {\n    \n  _id,\n  _type,\n  "status": select(_originalId in path("drafts.**") => "draft", "published"),\n  "title": coalesce(title, "Untitled"),\n  "slug": slug.current,\n  excerpt,\n  // New cover (external or asset)\n  cover{\n    source,\n    externalUrl,\n    image,\n    alt,\n    epigraph,\n    creditProvider,\n    creditAuthor,\n    creditSourceUrl,\n    creditLicense\n  },\n  "date": coalesce(date, _updatedAt),\n  publishedAt,\n  updatedAt,\n  priority,\n  featured,\n  labels,\n  justIn,\n  justInRank,\n  justInUntil,\n  breakingNews,\n  developingStory,\n  mainHeadline,\n  mainHeadlineRank,\n  mainHeadlineUntil,\n  frontline,\n  frontRank,\n  frontUntil,\n  rightHeadline,\n  rightHeadlineRank,\n  rightHeadlineUntil,\n\n  "author": select(\n    defined(author->name) => {\n      "name": coalesce(author->name, "Anonymous"),\n      "picture": author->picture\n    }\n  ),\n\n  "category": select(\n    defined(category->name) && defined(category->slug.current) => {\n      "title": category->name,\n      "slug": category->slug.current\n    }\n  ),\n\n  // Support both tag.title and category.name during transition\n  "tags": tags[]->{\n    "title": coalesce(title, name),\n    "slug": slug.current\n  },\n\n  bodyTextOne,\n  \n  "bodyBlocks": bodyBlocks[]{\n    bodyText,\n    bodyImage{\n      source,\n      externalUrl,\n      image,\n      alt,\n      epigraph,\n      creditProvider,\n      creditAuthor,\n      creditSourceUrl,\n      creditLicense\n    }\n  }\n\n  }\n': ThirdLatestArticleQueryResult;
+    '\n  *[_type == "post" && category->slug.current == $categorySlug]\n  | order(date desc, _updatedAt desc) [0...9] {\n    \n  _id,\n  _type,\n  "status": select(_originalId in path("drafts.**") => "draft", "published"),\n  "title": coalesce(title, "Untitled"),\n  "slug": slug.current,\n  excerpt,\n  // New cover (external or asset)\n  cover{\n    source,\n    externalUrl,\n    image,\n    alt,\n    epigraph,\n    creditProvider,\n    creditAuthor,\n    creditSourceUrl,\n    creditLicense\n  },\n  "date": coalesce(date, _updatedAt),\n  publishedAt,\n  updatedAt,\n  priority,\n  featured,\n  labels,\n  justIn,\n  justInRank,\n  justInUntil,\n  breakingNews,\n  developingStory,\n  mainHeadline,\n  mainHeadlineRank,\n  mainHeadlineUntil,\n  frontline,\n  frontRank,\n  frontUntil,\n  rightHeadline,\n  rightHeadlineRank,\n  rightHeadlineUntil,\n\n  "author": select(\n    defined(author->name) => {\n      "name": coalesce(author->name, "Anonymous"),\n      "picture": author->picture\n    }\n  ),\n\n  "category": select(\n    defined(category->name) && defined(category->slug.current) => {\n      "title": category->name,\n      "slug": category->slug.current\n    }\n  ),\n\n  // Support both tag.title and category.name during transition\n  "tags": tags[]->{\n    "title": coalesce(title, name),\n    "slug": slug.current\n  },\n\n  bodyTextOne,\n  \n  "bodyBlocks": bodyBlocks[]{\n    bodyText,\n    bodyImage{\n      source,\n      externalUrl,\n      image,\n      alt,\n      epigraph,\n      creditProvider,\n      creditAuthor,\n      creditSourceUrl,\n      creditLicense\n    }\n  }\n\n  }\n': LatestNineByCategoryQueryResult;
+    '\n  *[_type == "post"] | order(date desc, _updatedAt desc) [0...5] {\n    \n  _id,\n  _type,\n  "status": select(_originalId in path("drafts.**") => "draft", "published"),\n  "title": coalesce(title, "Untitled"),\n  "slug": slug.current,\n  excerpt,\n  // New cover (external or asset)\n  cover{\n    source,\n    externalUrl,\n    image,\n    alt,\n    epigraph,\n    creditProvider,\n    creditAuthor,\n    creditSourceUrl,\n    creditLicense\n  },\n  "date": coalesce(date, _updatedAt),\n  publishedAt,\n  updatedAt,\n  priority,\n  featured,\n  labels,\n  justIn,\n  justInRank,\n  justInUntil,\n  breakingNews,\n  developingStory,\n  mainHeadline,\n  mainHeadlineRank,\n  mainHeadlineUntil,\n  frontline,\n  frontRank,\n  frontUntil,\n  rightHeadline,\n  rightHeadlineRank,\n  rightHeadlineUntil,\n\n  "author": select(\n    defined(author->name) => {\n      "name": coalesce(author->name, "Anonymous"),\n      "picture": author->picture\n    }\n  ),\n\n  "category": select(\n    defined(category->name) && defined(category->slug.current) => {\n      "title": category->name,\n      "slug": category->slug.current\n    }\n  ),\n\n  // Support both tag.title and category.name during transition\n  "tags": tags[]->{\n    "title": coalesce(title, name),\n    "slug": slug.current\n  },\n\n  bodyTextOne,\n  \n  "bodyBlocks": bodyBlocks[]{\n    bodyText,\n    bodyImage{\n      source,\n      externalUrl,\n      image,\n      alt,\n      epigraph,\n      creditProvider,\n      creditAuthor,\n      creditSourceUrl,\n      creditLicense\n    }\n  }\n\n  }\n': MostReadQueryResult;
+    '\n  *[_type == "post" && category->slug.current == $categorySlug] | order(date desc, _updatedAt desc) [0...20] {\n    \n  _id,\n  _type,\n  "status": select(_originalId in path("drafts.**") => "draft", "published"),\n  "title": coalesce(title, "Untitled"),\n  "slug": slug.current,\n  excerpt,\n  // New cover (external or asset)\n  cover{\n    source,\n    externalUrl,\n    image,\n    alt,\n    epigraph,\n    creditProvider,\n    creditAuthor,\n    creditSourceUrl,\n    creditLicense\n  },\n  "date": coalesce(date, _updatedAt),\n  publishedAt,\n  updatedAt,\n  priority,\n  featured,\n  labels,\n  justIn,\n  justInRank,\n  justInUntil,\n  breakingNews,\n  developingStory,\n  mainHeadline,\n  mainHeadlineRank,\n  mainHeadlineUntil,\n  frontline,\n  frontRank,\n  frontUntil,\n  rightHeadline,\n  rightHeadlineRank,\n  rightHeadlineUntil,\n\n  "author": select(\n    defined(author->name) => {\n      "name": coalesce(author->name, "Anonymous"),\n      "picture": author->picture\n    }\n  ),\n\n  "category": select(\n    defined(category->name) && defined(category->slug.current) => {\n      "title": category->name,\n      "slug": category->slug.current\n    }\n  ),\n\n  // Support both tag.title and category.name during transition\n  "tags": tags[]->{\n    "title": coalesce(title, name),\n    "slug": slug.current\n  },\n\n  bodyTextOne,\n  \n  "bodyBlocks": bodyBlocks[]{\n    bodyText,\n    bodyImage{\n      source,\n      externalUrl,\n      image,\n      alt,\n      epigraph,\n      creditProvider,\n      creditAuthor,\n      creditSourceUrl,\n      creditLicense\n    }\n  }\n\n  }\n': SixthSectionQueryResult;
+    '\n  *[_type == "post" && defined(slug.current) && defined(tickerTitle)] | order(date desc, _updatedAt desc) [0...5] {\n    tickerTitle,\n    "slug": slug.current\n  }\n': NewsTickerQueryResult;
+    '\n  *[_type == "post" && category->slug.current == $categorySlug && defined(slug.current) && defined(tickerTitle)] | order(date desc, _updatedAt desc) [5...10] {\n    tickerTitle,\n    "slug": slug.current\n  }\n': CategoryTickerQueryResult;
+    '\n{\n  "posts": *[_type == "post" && status == "published" && defined(publishedAt) && publishedAt <= now() && (\n  title match $term ||\n  excerpt match $term ||\n  epigraph match $term ||\n  pt::text(bodyRich) match $term ||\n  pt::text(bodyTextOne) match $term ||\n  // Search in bodyBlocks text content\n  count(bodyBlocks[pt::text(bodyText) match $term]) > 0 ||\n  category->name match $term ||\n  coalesce(tags[]->title, tags[]->name) match $term ||   // <\u2014 supports both\n  // Check tag aliases on referenced tag documents (prefix tokenized)\n  count(tags[]->aliases[@ match $term]) > 0 ||\n  author->name match $term\n)] | order(publishedAt desc) [0...$postLimit] {\n    \n  _id,\n  _type,\n  "status": select(_originalId in path("drafts.**") => "draft", "published"),\n  "title": coalesce(title, "Untitled"),\n  "slug": slug.current,\n  excerpt,\n  // New cover (external or asset)\n  cover{\n    source,\n    externalUrl,\n    image,\n    alt,\n    epigraph,\n    creditProvider,\n    creditAuthor,\n    creditSourceUrl,\n    creditLicense\n  },\n  "date": coalesce(date, _updatedAt),\n  publishedAt,\n  updatedAt,\n  priority,\n  featured,\n  labels,\n  justIn,\n  justInRank,\n  justInUntil,\n  breakingNews,\n  developingStory,\n  mainHeadline,\n  mainHeadlineRank,\n  mainHeadlineUntil,\n  frontline,\n  frontRank,\n  frontUntil,\n  rightHeadline,\n  rightHeadlineRank,\n  rightHeadlineUntil,\n\n  "author": select(\n    defined(author->name) => {\n      "name": coalesce(author->name, "Anonymous"),\n      "picture": author->picture\n    }\n  ),\n\n  "category": select(\n    defined(category->name) && defined(category->slug.current) => {\n      "title": category->name,\n      "slug": category->slug.current\n    }\n  ),\n\n  // Support both tag.title and category.name during transition\n  "tags": tags[]->{\n    "title": coalesce(title, name),\n    "slug": slug.current\n  },\n\n  bodyTextOne,\n  \n  "bodyBlocks": bodyBlocks[]{\n    bodyText,\n    bodyImage{\n      source,\n      externalUrl,\n      image,\n      alt,\n      epigraph,\n      creditProvider,\n      creditAuthor,\n      creditSourceUrl,\n      creditLicense\n    }\n  }\n\n  },\n  "tags": *[_type == "tag" && (\n    title match $term ||\n    description match $term ||\n    $term in aliases\n  )] | order(order asc, title asc) [0...$tagLimit] {\n    _id,\n    title,\n    "slug": slug.current,\n    description,\n    emoji,\n    color,\n    featured,\n    views\n  },\n  "topics": *[_type == "topic" && (\n    title match $term ||\n    description match $term\n  )] | order(title asc) [0...$topicLimit] {\n    _id,\n    title,\n    "slug": slug.current,\n    kind,\n    description,\n    image\n  }\n}\n': SearchAllQueryResult;
+    '\n  *[_type == "category" && slug.current in $categorySlugs] {\n    "slug": slug.current,\n    "name": name,\n    "posts": *[_type == "post" && category->slug.current == slug.current] | order(date desc, _updatedAt desc) [0...3] {\n      \n  _id,\n  _type,\n  "status": select(_originalId in path("drafts.**") => "draft", "published"),\n  "title": coalesce(title, "Untitled"),\n  "slug": slug.current,\n  excerpt,\n  // New cover (external or asset)\n  cover{\n    source,\n    externalUrl,\n    image,\n    alt,\n    epigraph,\n    creditProvider,\n    creditAuthor,\n    creditSourceUrl,\n    creditLicense\n  },\n  "date": coalesce(date, _updatedAt),\n  publishedAt,\n  updatedAt,\n  priority,\n  featured,\n  labels,\n  justIn,\n  justInRank,\n  justInUntil,\n  breakingNews,\n  developingStory,\n  mainHeadline,\n  mainHeadlineRank,\n  mainHeadlineUntil,\n  frontline,\n  frontRank,\n  frontUntil,\n  rightHeadline,\n  rightHeadlineRank,\n  rightHeadlineUntil,\n\n  "author": select(\n    defined(author->name) => {\n      "name": coalesce(author->name, "Anonymous"),\n      "picture": author->picture\n    }\n  ),\n\n  "category": select(\n    defined(category->name) && defined(category->slug.current) => {\n      "title": category->name,\n      "slug": category->slug.current\n    }\n  ),\n\n  // Support both tag.title and category.name during transition\n  "tags": tags[]->{\n    "title": coalesce(title, name),\n    "slug": slug.current\n  },\n\n  bodyTextOne,\n  \n  "bodyBlocks": bodyBlocks[]{\n    bodyText,\n    bodyImage{\n      source,\n      externalUrl,\n      image,\n      alt,\n      epigraph,\n      creditProvider,\n      creditAuthor,\n      creditSourceUrl,\n      creditLicense\n    }\n  }\n\n    }\n  }\n': EighthSectionQueryResult;
+    '\n  *[_type == "category" && slug.current in $categorySlugs] {\n    "slug": slug.current,\n    "name": name,\n    "thirdMostViewed": *[_type == "post" && category->slug.current == slug.current] | order(coalesce(views7d, 0) desc, publishedAt desc) [0...5] {\n      _id, title, "slug": slug.current, excerpt, \n      cover{\n        source,\n        externalUrl,\n        image,\n        alt\n      },\n      "date": coalesce(date, _updatedAt), publishedAt,\n      "author": select(\n        defined(author->name) => {\n          "name": coalesce(author->name, "Anonymous"),\n          "picture": author->picture\n        }\n      ),\n      "category": select(\n        defined(category->name) && defined(category->slug.current) => {\n          "title": category->name,\n          "slug": category->slug.current\n        }\n      ),\n      views7d\n    },\n    "thirdLatest": *[_type == "post" && category->slug.current == slug.current] | order(publishedAt desc, _updatedAt desc) [0...5] {\n      _id, title, "slug": slug.current, excerpt, \n      cover{\n        source,\n        externalUrl,\n        image,\n        alt\n      },\n      "date": coalesce(date, _updatedAt), publishedAt,\n      "author": select(\n        defined(author->name) => {\n          "name": coalesce(author->name, "Anonymous"),\n          "picture": author->picture\n        }\n      ),\n      "category": select(\n        defined(category->name) && defined(category->slug.current) => {\n          "title": category->name,\n          "slug": category->slug.current\n        }\n      ),\n      views7d\n    }\n  }\n': SecondSectionQueryResult;
   }
 }
