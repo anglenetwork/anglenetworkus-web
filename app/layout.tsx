@@ -3,16 +3,13 @@ import "./globals.css";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import type { Metadata } from "next";
 import { Suspense } from "react";
-import {
-  VisualEditing,
-  toPlainText,
-  type PortableTextBlock,
-} from "next-sanity";
+import { toPlainText, type PortableTextBlock } from "next-sanity";
 import { draftMode } from "next/headers";
 import { Inter, DM_Sans, Spectral } from "next/font/google";
 
 import { AlertBanner, ContentLayoutWrapper } from "./components/layout";
 import { SessionProviderWrapper } from "./components/SessionProviderWrapper";
+import { VisualEditingProvider } from "./components/VisualEditingProvider";
 
 import * as demo from "@/sanity/lib/demo";
 import { sanityFetch } from "@/sanity/lib/fetch";
@@ -109,7 +106,9 @@ export default async function RootLayout({
               <main className="">{children}</main>
             </ContentLayoutWrapper>
           </section>
-          {isDraftMode && <VisualEditing />}
+
+          {isDraftMode && <VisualEditingProvider />}
+
           {(process.env.NEXT_PUBLIC_VERCEL_ENV || process.env.VERCEL) && (
             <SpeedInsights />
           )}
