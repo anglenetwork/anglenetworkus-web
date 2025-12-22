@@ -1,9 +1,8 @@
 import { redirect } from "next/navigation";
 import { getServerSession } from "next-auth";
-import { NextStudio } from "next-sanity/studio";
 
 import { authOptions } from "@/app/lib/auth";
-import config from "@/sanity.config";
+import StudioClient from "./StudioClient";
 
 // Must be dynamic to check session on each request
 export const dynamic = "force-dynamic";
@@ -16,6 +15,7 @@ export default async function StudioPage() {
     redirect("/login");
   }
 
-  // If signIn callback passed, this email is already validated against author docs
-  return <NextStudio config={config} />;
+  // Render NextStudio on client side only to avoid hydration mismatches
+  // with styled-components class names
+  return <StudioClient />;
 }

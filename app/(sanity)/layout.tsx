@@ -1,13 +1,6 @@
 import "../globals.css";
 
-import { Inter } from "next/font/google";
 import { SpeedInsights } from "@vercel/speed-insights/next";
-
-const inter = Inter({
-  variable: "--font-secondary",
-  subsets: ["latin"],
-  display: "swap",
-});
 
 export { metadata, viewport } from "next-sanity/studio";
 
@@ -18,11 +11,11 @@ export default function SanityStudioLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={inter.variable}>
+    <html lang="en" suppressHydrationWarning>
       <head>
         <title>Sanity Studio</title>
       </head>
-      <body className="min-h-screen">
+      <body className="min-h-screen" suppressHydrationWarning>
         {children}
         {(process.env.NEXT_PUBLIC_VERCEL_ENV || process.env.VERCEL) && <SpeedInsights />}
       </body>
