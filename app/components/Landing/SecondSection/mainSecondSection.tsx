@@ -77,6 +77,12 @@ export default function MainSecondSection({
               category.thirdArticle.title ||
               "Article image"
             : "Article image",
+          imageUnoptimized: category.thirdArticle.cover
+            ? getCoverImage(
+                category.thirdArticle.cover,
+                category.thirdArticle.title || "Article image"
+              )?.unoptimized || false
+            : false,
           imageSource:
             formatImageCredit(category.thirdArticle.cover) || undefined,
           isDecorative: !category.thirdArticle.cover,
@@ -170,6 +176,7 @@ export default function MainSecondSection({
                   author={story.author}
                   image={story.image}
                   imageAlt={story.imageAlt}
+                  imageUnoptimized={story.imageUnoptimized}
                   imageSource={story.imageSource}
                   isDecorative={story.isDecorative}
                   slug={story.slug}

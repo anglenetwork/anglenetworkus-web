@@ -1,6 +1,6 @@
-import Image from "next/image";
 import Link from "next/link";
 import type { Article } from "./types";
+import { ImageRenderer } from "../ui/image-renderer";
 
 interface FeatureHeroProps {
   article: Article;
@@ -18,17 +18,17 @@ export function FeatureHero({ article, variant = "light" }: FeatureHeroProps) {
         aria-label={`Read article: ${article.title}`}
       >
         <div className="aspect-[16/9] bg-muted overflow-hidden mb-4 relative rounded-lg">
-          <Image
+          <ImageRenderer
             src={
               article.imageUrl ||
               "/placeholder.svg?height=400&width=700&query=featured news story"
             }
             alt=""
+            width={1200}
+            height={675}
             fill
             sizes="(max-width: 1024px) 60vw, 100vw"
             unoptimized={article.imageUnoptimized}
-            placeholder={article.imageBlurDataURL ? "blur" : "empty"}
-            blurDataURL={article.imageBlurDataURL}
             className="object-cover"
             priority
           />

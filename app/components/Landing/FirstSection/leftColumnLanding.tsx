@@ -1,8 +1,8 @@
 import Link from "next/link";
-import Image from "next/image";
 import { getCoverImage } from "@/sanity/lib/utils";
 import { BreakingNewsLabel } from "../../ui/breaking-news-label";
 import { SectionHeader } from "../../ui/section-header";
+import { ImageRenderer } from "../../ui/image-renderer";
 
 interface Post {
   _id: string;
@@ -44,9 +44,11 @@ export function LeftColumnLanding({ latestNews }: LeftColumnLandingProps) {
                 <div className="block mb-3">
                   <Link href={`/post/${post.slug}`}>
                     <div className="relative w-full h-56 md:h-60 overflow-hidden rounded-sm">
-                      <Image
+                      <ImageRenderer
                         src={coverData.src}
                         alt={coverData.alt}
+                        width={600}
+                        height={240}
                         fill
                         unoptimized={coverData.unoptimized}
                         quality={60}

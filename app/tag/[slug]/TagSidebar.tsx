@@ -1,6 +1,6 @@
 import Link from "next/link";
-import Image from "next/image";
 import { getCoverImage } from "@/sanity/lib/utils";
+import { ImageRenderer } from "@/app/components/ui/image-renderer";
 
 interface Post {
   _id: string;
@@ -63,9 +63,11 @@ export default function TagSidebar({ popularReads, tag }: TagSidebarProps) {
                       const coverData = getCoverImage(post.cover, post.title || "Post image");
                       if (coverData?.src) {
                         return (
-                          <Image
+                          <ImageRenderer
                             src={coverData.src}
                             alt={coverData.alt}
+                            width={64}
+                            height={64}
                             fill
                             unoptimized={coverData.unoptimized}
                             className="object-cover group-hover:scale-105 transition-transform duration-200"

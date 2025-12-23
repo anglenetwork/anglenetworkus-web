@@ -1,5 +1,5 @@
-import Image from "next/image";
 import { Card } from "@/components/ui/card";
+import { ImageRenderer } from "../../ui/image-renderer";
 
 interface ArticleCardProps {
   category: string;
@@ -8,6 +8,7 @@ interface ArticleCardProps {
   author: string;
   image?: string;
   imageAlt?: string;
+  imageUnoptimized?: boolean;
   isDecorative?: boolean;
 }
 
@@ -28,13 +29,13 @@ export default function ArticleCard({
             <div className="w-20 h-10 bg-red-600 transform -skew-x-12"></div>
           </div>
         ) : (
-          <Image
+          <ImageRenderer
             src={image || "/placeholder.svg"}
             alt={imageAlt || "Article image"}
             width={400}
             height={240}
+            unoptimized={imageUnoptimized}
             className="w-full h-60 object-cover object-center rounded-sm"
-            style={{ width: "100%", height: "240px" }}
           />
         )}
       </div>

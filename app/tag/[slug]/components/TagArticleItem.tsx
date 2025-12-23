@@ -1,5 +1,5 @@
-import Image from "next/image";
 import Link from "next/link";
+import { ImageRenderer } from "@/app/components/ui/image-renderer";
 
 interface TagArticleItemProps {
   image: string;
@@ -18,9 +18,11 @@ export function TagArticleItem({
     <article className="flex gap-6 py-4 first:pt-0">
       <div className="relative h-28 w-40 flex-shrink-0 overflow-hidden rounded-lg">
         <Link href={`/post/${slug}`} className="block h-full">
-          <Image
+          <ImageRenderer
             src={image || "/placeholder.svg"}
             alt={title}
+            width={160}
+            height={112}
             fill
             unoptimized={imageUnoptimized}
             quality={60}

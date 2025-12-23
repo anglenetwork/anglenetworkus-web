@@ -1,6 +1,6 @@
-import Image from "next/image";
 import Link from "next/link";
 import type { Article } from "./types";
+import { ImageRenderer } from "../ui/image-renderer";
 
 interface FeatureSideItemProps {
   article: Article;
@@ -21,17 +21,17 @@ export function FeatureSideItem({ article, variant = "light" }: FeatureSideItemP
         {/* Mobile row style */}
         <div className="md:hidden flex gap-4">
           <div className="flex-shrink-0 w-24 h-16 bg-muted overflow-hidden relative rounded-lg">
-            <Image
+            <ImageRenderer
               src={
                 article.imageUrl ||
                 "/placeholder.svg?height=200&width=300&query=news article"
               }
               alt=""
+              width={96}
+              height={64}
               fill
               sizes="96px"
               unoptimized={article.imageUnoptimized}
-              placeholder={article.imageBlurDataURL ? "blur" : "empty"}
-              blurDataURL={article.imageBlurDataURL}
               className="object-cover"
             />
           </div>
@@ -45,17 +45,17 @@ export function FeatureSideItem({ article, variant = "light" }: FeatureSideItemP
         {/* Desktop card style */}
         <div className="hidden md:block">
           <div className="aspect-[4/3] bg-muted overflow-hidden mb-3 relative rounded-lg">
-            <Image
+            <ImageRenderer
               src={
                 article.imageUrl ||
                 "/placeholder.svg?height=200&width=300&query=news article"
               }
               alt=""
+              width={400}
+              height={300}
               fill
               sizes="(min-width: 1024px) 20vw, 50vw"
               unoptimized={article.imageUnoptimized}
-              placeholder={article.imageBlurDataURL ? "blur" : "empty"}
-              blurDataURL={article.imageBlurDataURL}
               className="object-cover"
             />
           </div>

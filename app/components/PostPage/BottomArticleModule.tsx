@@ -1,8 +1,8 @@
 import Link from "next/link";
-import Image from "next/image";
 import { format, parseISO } from "date-fns";
 import { getCoverImage } from "@/sanity/lib/utils";
 import { SectionHeader } from "@/app/components/ui/section-header";
+import { ImageRenderer } from "../ui/image-renderer";
 
 interface Post {
   _id: string;
@@ -58,9 +58,11 @@ export default function BottomArticleModule({
                     );
                     if (coverData?.src) {
                       return (
-                        <Image
+                        <ImageRenderer
                           src={coverData.src}
                           alt={coverData.alt}
+                          width={1200}
+                          height={750}
                           fill
                           quality={50}
                           sizes="(max-width: 1024px) 100vw, 60vw"

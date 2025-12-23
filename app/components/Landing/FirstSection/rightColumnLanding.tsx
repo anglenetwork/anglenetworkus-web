@@ -1,7 +1,7 @@
 import Link from "next/link";
-import Image from "next/image";
 import { getCoverImage } from "@/sanity/lib/utils";
 import { SectionHeader } from "../../ui/section-header";
+import { ImageRenderer } from "../../ui/image-renderer";
 
 interface Post {
   _id: string;
@@ -39,7 +39,7 @@ export function RightColumnLanding({
             return (
               <div className="mb-4">
                 <Link href={`/post/${post.slug}`}>
-                  <Image
+                  <ImageRenderer
                     src={coverData.src}
                     alt={coverData.alt}
                     width={600}
@@ -76,7 +76,7 @@ export function RightColumnLanding({
             return (
               <div className="mb-6">
                 <Link href={`/post/${mostRead[0].slug}`}>
-                  <Image
+                  <ImageRenderer
                     src={coverData.src}
                     alt={coverData.alt}
                     width={600}

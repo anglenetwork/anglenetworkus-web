@@ -1,7 +1,7 @@
-import Image from "next/image";
 import Link from "next/link";
 import { getCoverImage } from "@/sanity/lib/utils";
 import { SectionHeader } from "../../ui/section-header";
+import { ImageRenderer } from "../../ui/image-renderer";
 
 interface Article {
   title: string;
@@ -57,9 +57,11 @@ export default function HighlightedStories({
             {leftCoverData?.src && (
               <Link href={`/post/${leftArticle.slug}`}>
                 <div className="relative w-full h-80 rounded-lg overflow-hidden">
-                  <Image
+                  <ImageRenderer
                     src={leftCoverData.src}
                     alt={leftCoverData.alt}
+                    width={800}
+                    height={320}
                     fill
                     unoptimized={leftCoverData.unoptimized}
                     sizes="(max-width: 1024px) 100vw, 50vw"
@@ -108,9 +110,11 @@ export default function HighlightedStories({
             {rightCoverData?.src && (
               <Link href={`/post/${rightArticle.slug}`}>
                 <div className="relative w-full h-80 rounded-lg overflow-hidden">
-                  <Image
+                  <ImageRenderer
                     src={rightCoverData.src}
                     alt={rightCoverData.alt}
+                    width={800}
+                    height={320}
                     fill
                     unoptimized={rightCoverData.unoptimized}
                     sizes="(max-width: 1024px) 100vw, 50vw"

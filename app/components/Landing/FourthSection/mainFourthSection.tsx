@@ -1,8 +1,8 @@
 import { ArrowRight } from "lucide-react";
 import Link from "next/link";
-import Image from "next/image";
 import { getCoverImage, formatImageCredit } from "@/sanity/lib/utils";
 import { SectionHeader } from "../../ui/section-header";
+import { ImageRenderer } from "../../ui/image-renderer";
 
 interface Post {
   _id: string;
@@ -92,7 +92,7 @@ export default function MainFourthSection({
                             aria-label={`Read article: ${mainPost?.title || "Featured article"}`}
                           >
                             <div className="overflow-hidden rounded-sm bg-black">
-                              <Image
+                              <ImageRenderer
                                 src={coverData.src}
                                 alt={coverData.alt}
                                 width={800}

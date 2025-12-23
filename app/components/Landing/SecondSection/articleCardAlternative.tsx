@@ -1,7 +1,7 @@
-import Image from "next/image";
 import Link from "next/link";
 import { Play } from "lucide-react";
 import { SectionHeader } from "../../ui/section-header";
+import { ImageRenderer } from "../../ui/image-renderer";
 
 interface ArticleCardAlternativeProps {
   category: string;
@@ -10,6 +10,7 @@ interface ArticleCardAlternativeProps {
   author?: string;
   image?: string;
   imageAlt?: string;
+  imageUnoptimized?: boolean;
   imageSource?: string;
   isDecorative?: boolean;
   slug?: string;
@@ -24,6 +25,7 @@ export default function ArticleCardAlternative({
   author,
   image,
   imageAlt,
+  imageUnoptimized,
   imageSource,
   isDecorative = false,
   slug = "#",
@@ -35,10 +37,13 @@ export default function ArticleCardAlternative({
       <Link href={`/post/${slug}`} className="block">
         <div className="relative w-full h-[400px] bg-black rounded-lg overflow-hidden cursor-pointer hover:opacity-90 transition-opacity duration-200">
           <div className="absolute inset-0">
-            <Image
+            <ImageRenderer
               src={image || "/placeholder.svg"}
               alt={imageAlt || title}
+              width={300}
+              height={400}
               fill
+              unoptimized={imageUnoptimized}
               sizes="(max-width: 768px) 100vw, 300px"
               className="object-cover rounded-sm"
             />
