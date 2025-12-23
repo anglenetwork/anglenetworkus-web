@@ -82,7 +82,7 @@ export default function HighlightedStories({
                 <div key={article.slug || idx}>
                   <Link
                     href={`/post/${article.slug}`}
-                    className="text-neutral-900 leading-snug font-sans text-lg sm:text-base font-normal tracking-wide block pb-6"
+                    className="text-neutral-900 leading-snug font-sans text-lg sm:text-base font-normal tracking-tight block pb-6"
                   >
                     {article.title}
                   </Link>
@@ -133,7 +133,7 @@ export default function HighlightedStories({
                 <div key={article.slug || idx}>
                   <Link
                     href={`/post/${article.slug}`}
-                    className="text-neutral-900 leading-snug font-sans text-lg sm:text-base font-normal tracking-wide block pb-6"
+                    className="text-neutral-900 leading-snug font-sans text-lg sm:text-base font-normal tracking-tight block pb-6"
                   >
                     {article.title}
                   </Link>

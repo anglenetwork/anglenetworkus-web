@@ -131,7 +131,7 @@ export default async function TagPage({
   return (
     <main className="min-h-screen bg-background p-4 md:p-8">
       <TagViewTracker tagSlug={slug} />
-      <div className="mx-auto flex max-w-7xl flex-col gap-8 lg:flex-row">
+      <div className="mx-auto lg:mx-32  flex flex-col gap-8 lg:flex-row">
         {/* Left Column - 60% */}
         <div className="w-full lg:w-[60%]">
           <SectionHeader
@@ -211,9 +211,7 @@ export default async function TagPage({
                     readTime={`${post.readTime || 3} MIN READ`}
                     slug={post.slug || "#"}
                   />
-                  {index < 3 && (
-                    <div className="border-b border-dotted border-border" />
-                  )}
+                  {index < 3 && <div className="border-b border-border" />}
                 </div>
               );
             })}

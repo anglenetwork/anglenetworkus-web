@@ -25,7 +25,7 @@ interface LeftColumnLandingProps {
 
 export function LeftColumnLanding({ latestNews }: LeftColumnLandingProps) {
   return (
-    <div className="lg:border-r border-neutral-300 lg:sticky lg:top-20 lg:h-auto lg:overflow-hidden text-left px-0 md:px-4">
+    <div className=" lg:sticky lg:top-20 lg:h-auto lg:overflow-hidden text-left px-0 md:px-4">
       <SectionHeader title="Just in" variant="light" />
 
       <div className="space-y-6">
@@ -71,7 +71,7 @@ export function LeftColumnLanding({ latestNews }: LeftColumnLandingProps) {
                   className={
                     isFirstArticle
                       ? "text-xl font-sans font-semibold text-neutral-900 leading-snug tracking-tight"
-                      : "text-lg font-sans font-normal text-neutral-900 leading-snug tracking-normal"
+                      : "text-base font-sans font-normal text-neutral-900 leading-normal tracking-normal"
                   }
                 >
                   {post.title}

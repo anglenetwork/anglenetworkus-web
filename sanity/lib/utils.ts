@@ -44,6 +44,8 @@ export function resolveHref(
 
 /**
  * Check if an external URL is from a whitelisted domain that can be optimized
+ * Note: Wikimedia Commons is excluded due to rate limiting (429 errors)
+ * Their images are already optimized and served via CDN, so no need to optimize again
  */
 export function isWhitelistedDomain(url: string): boolean {
   try {
@@ -51,7 +53,8 @@ export function isWhitelistedDomain(url: string): boolean {
     const whitelistedDomains = [
       'images.unsplash.com',
       'cdn.sanity.io',
-      'upload.wikimedia.org',
+      // 'upload.wikimedia.org' - Removed due to rate limiting (429 errors)
+      // Wikimedia images are already optimized, serve directly
     ];
     return whitelistedDomains.some(domain => urlObj.hostname === domain);
   } catch {
@@ -88,10 +91,28 @@ export function getCoverImage(
 
   // 1) External URL takes priority if source is external OR if externalUrl exists (fallback for missing source)
   if (hasExternalUrl && (cover.source === "external" || !cover.source)) {
+    let externalUrl = cover.externalUrl!.trim();
+    
+    // Ensure URL has protocol (fixes //cdn.sanity.io/... issues)
+    if (externalUrl.startsWith("//")) {
+      externalUrl = `https:${externalUrl}`;
+    } else if (!externalUrl.match(/^https?:\/\//)) {
+      // If no protocol at all, assume https
+      externalUrl = `https://${externalUrl}`;
+    }
+    
+    // Validate URL format
+    try {
+      new URL(externalUrl);
+    } catch {
+      // Invalid URL format, return null
+      return null;
+    }
+    
     // Allow optimization for whitelisted domains to enable proper caching
-    const canOptimize = isWhitelistedDomain(cover.externalUrl!);
+    const canOptimize = isWhitelistedDomain(externalUrl);
     return {
-      src: cover.externalUrl!,
+      src: externalUrl,
       alt: cover.alt || fallbackAlt,
       unoptimized: !canOptimize, // Only unoptimize if domain is not whitelisted
     };
@@ -101,11 +122,21 @@ export function getCoverImage(
   if (hasImageAsset && (cover.source === "asset" || !cover.source || !hasExternalUrl)) {
     const imageUrl = urlForImage(cover.image);
     if (imageUrl) {
-      return {
-        src: imageUrl.quality(60).url(),
-        alt: cover.alt || (cover.image as any)?.alt || fallbackAlt,
-        unoptimized: false,
-      };
+      try {
+        const url = imageUrl.quality(60).url();
+        // Validate the URL is not empty and looks like a valid Sanity CDN URL
+        if (url && url.length > 0 && (url.includes('cdn.sanity.io') || url.startsWith('/'))) {
+          return {
+            src: url,
+            alt: cover.alt || (cover.image as any)?.alt || fallbackAlt,
+            unoptimized: false,
+          };
+        }
+      } catch (error) {
+        // If URL building fails, return null
+        console.warn('Failed to build Sanity image URL:', error);
+        return null;
+      }
     }
   }
 

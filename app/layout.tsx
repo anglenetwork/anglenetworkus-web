@@ -5,7 +5,7 @@ import type { Metadata } from "next";
 import { Suspense } from "react";
 import { toPlainText, type PortableTextBlock } from "next-sanity";
 import { draftMode } from "next/headers";
-import { Inter, DM_Sans, Spectral } from "next/font/google";
+import { Inter, DM_Sans, Spectral, IBM_Plex_Sans } from "next/font/google";
 
 import { AlertBanner, ContentLayoutWrapper } from "./components/layout";
 import { SessionProviderWrapper } from "./components/SessionProviderWrapper";
@@ -31,7 +31,7 @@ const interTight = Inter({
 const dmSans = DM_Sans({
   subsets: ["latin"],
   weight: ["300", "400", "500", "600", "700", "800", "900"], // Only weights actually used
-  variable: "--font-sans",
+  variable: "--font-sans-dmsans",
   display: "swap",
   preload: false, // Defer to reduce render blocking - main font but loads with swap
   adjustFontFallback: true,
@@ -43,6 +43,16 @@ const spectral = Spectral({
   variable: "--font-serif",
   display: "swap",
   preload: false, // Less critical, can load later
+  adjustFontFallback: true,
+});
+
+// Test fonts - available on Google Fonts
+const ibmPlexSans = IBM_Plex_Sans({
+  subsets: ["latin"],
+  weight: ["300", "400", "500", "600", "700"],
+  variable: "--font-sans",
+  display: "swap",
+  preload: false,
   adjustFontFallback: true,
 });
 
@@ -93,6 +103,7 @@ export default async function RootLayout({
         ${interTight.variable}
         ${dmSans.variable}
         ${spectral.variable}
+        ${ibmPlexSans.variable}
       `}
       >
         <SessionProviderWrapper>

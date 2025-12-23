@@ -8,7 +8,6 @@ import { DesktopHeader } from "./desktop-header";
 import { HeaderProps } from "./types";
 
 export function HeaderClient({ categories, tags, showsTags }: HeaderProps) {
-  const [isScrolled, setIsScrolled] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [headerOffset, setHeaderOffset] = useState(0);
   const headerRef = useRef<HTMLElement | null>(null);
@@ -45,8 +44,6 @@ export function HeaderClient({ categories, tags, showsTags }: HeaderProps) {
 
   useEffect(() => {
     const onScroll = () => {
-      const y = window.scrollY;
-      setIsScrolled(y > 20);
       measureHeaderHeight();
     };
     window.addEventListener("scroll", onScroll, { passive: true });
@@ -65,9 +62,7 @@ export function HeaderClient({ categories, tags, showsTags }: HeaderProps) {
     <>
       <header
         ref={headerRef}
-        className={`sticky top-0 bg-white z-50 transition-all duration-500 ease-out border-b border-neutral-200 ${
-          isScrolled ? "shadow-sm border-b border-neutral-200" : ""
-        }`}
+        className="sticky top-0 bg-white z-50 transition-all duration-500 ease-out border-b border-neutral-200 shadow-sm"
       >
         <div className="container mx-auto">
           <MobileHeader
@@ -76,7 +71,6 @@ export function HeaderClient({ categories, tags, showsTags }: HeaderProps) {
           />
           <DesktopHeader
             isMenuOpen={isMenuOpen}
-            isScrolled={isScrolled}
             categories={categories}
             onMenuToggle={handleMenuToggle}
             onCategoryClick={handleCategoryClick}

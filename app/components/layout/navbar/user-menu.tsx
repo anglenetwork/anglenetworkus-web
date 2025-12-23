@@ -11,7 +11,6 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 
 interface UserMenuProps {
-  isScrolled?: boolean;
   variant?: "mobile" | "desktop";
 }
 
@@ -30,7 +29,6 @@ function getUserInitials(session: {
 }
 
 export function UserMenu({
-  isScrolled = false,
   variant = "desktop",
 }: UserMenuProps) {
   const { data: session, status } = useSession();
@@ -44,11 +42,11 @@ export function UserMenu({
 
   const buttonSize = isMobile
     ? "h-10 w-10"
-    : `transition-all duration-500 ease-out ${isScrolled ? "lg:h-8 lg:w-8" : "lg:h-10 lg:w-10"} h-10 w-10`;
+    : "transition-all duration-500 ease-out lg:h-8 lg:w-8 h-10 w-10";
 
   const avatarSize = isMobile
     ? "h-8 w-8"
-    : `transition-all duration-500 ease-out ${isScrolled ? "lg:h-7 lg:w-7" : "lg:h-9 lg:w-9"} h-8 w-8`;
+    : "transition-all duration-500 ease-out lg:h-7 lg:w-7 h-8 w-8";
 
   return (
     <DropdownMenu>
