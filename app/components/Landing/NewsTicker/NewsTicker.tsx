@@ -14,7 +14,7 @@ export function NewsTicker({ posts }: NewsTickerProps) {
   // Filter out posts without tickerTitle
   const newsItems = posts
     .filter((post) => post.tickerTitle && post.slug)
-    .slice(0, 5);
+    .slice(0, 6);
 
   if (newsItems.length === 0) {
     return null;
@@ -31,7 +31,7 @@ export function NewsTicker({ posts }: NewsTickerProps) {
             <div key={item.slug || index} className="flex items-center">
               <Link
                 href={`/post/${item.slug}`}
-                className="whitespace-nowrap px-4 text-base font-light tracking-normal font-sans hover:underline"
+                className="whitespace-nowrap px-4 text-base font-normal tracking-normal font-sans hover:opacity-60"
               >
                 {item.tickerTitle}
               </Link>

@@ -1,8 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import {
-  urlForImage,
-  isWhitelistedDomain,
+  getCoverImage,
   formatImageCredit,
 } from "@/sanity/lib/utils";
 import { SectionHeader } from "../../ui/section-header";
@@ -47,41 +46,27 @@ export function CenterColumnLanding({
     unoptimized: boolean;
     credit?: string | null;
   } => {
-    // 1) External URL
-    if (post.cover?.source === "external" && post.cover?.externalUrl) {
-      // Allow optimization for whitelisted domains to enable proper caching
-      const canOptimize = isWhitelistedDomain(post.cover.externalUrl);
-      return {
-        src: post.cover.externalUrl,
-        alt: post.cover.alt || post.title,
-        unoptimized: !canOptimize, // Only unoptimize if domain is not whitelisted
-        credit: formatImageCredit(post.cover),
-      };
+    const coverData = getCoverImage(post.cover, post.title);
+    if (!coverData) {
+      return { src: null, alt: post.title, unoptimized: false };
     }
-    // 2) New asset image
-    if (post.cover?.source === "asset" && post.cover?.image) {
-      const b = urlForImage(post.cover.image);
-      if (b) {
-        return {
-          src: b.url(),
-          alt: post.cover.alt || post.cover.image?.alt || post.title,
-          unoptimized: false,
-          credit: formatImageCredit(post.cover),
-        };
-      }
-    }
-    return { src: null, alt: post.title, unoptimized: false };
+    return {
+      src: coverData.src,
+      alt: coverData.alt,
+      unoptimized: coverData.unoptimized,
+      credit: post.cover ? formatImageCredit(post.cover) : null,
+    };
   };
 
   return (
-    <div className="lg:border-r border-gray-300 lg:px-8">
+    <div className="lg:px-8">
       {/* <SectionHeader title="Top News" variant="light" /> */}
 
       {/* Main Story */}
       {mainStory.map((post, index) => (
         <article key={post._id} className="mb-8">
           <Link href={`/post/${post.slug}`} className="hover:text-red-600">
-            <h1 className="text-3xl md:text-3xl lg:text-4xl font-extrabold text-gray-900 !leading-tight tracking-tighter mb-4 font-sans text-start md:text-center">
+            <h1 className="text-3xl md:text-3xl lg:text-4xl font-bold text-gray-900 !leading-tight tracking-tight mb-4 font-sans text-start md:text-center">
               {post.title}
             </h1>
           </Link>
@@ -129,7 +114,7 @@ export function CenterColumnLanding({
                   href={`/post/${post.slug}`}
                   className="hover:text-red-600 block"
                 >
-                  <h2 className="text-lg font-light leading-tight">
+                  <h2 className="text-base font-sans font-normal leading-tight">
                     {post.title}
                   </h2>
                 </Link>
@@ -216,7 +201,7 @@ export function CenterColumnLanding({
                   href={`/post/${post.slug}`}
                   className="hover:text-red-600"
                 >
-                  <h3 className="text-base font-sans font-normal text-neutral-900 tracking-wide leading-normal mb-2">
+                  <h3 className="text-base font-sans font-normal text-neutral-900 tracking-normal leading-normal mb-2">
                     {post.title}
                   </h3>
                 </Link>

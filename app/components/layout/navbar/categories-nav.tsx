@@ -5,13 +5,11 @@ import { Category } from "./types";
 
 interface CategoriesNavProps {
   categories: Category[];
-  isScrolled: boolean;
   onCategoryClick: () => void;
 }
 
 export function CategoriesNav({
   categories,
-  isScrolled,
   onCategoryClick,
 }: CategoriesNavProps) {
   return (
@@ -21,7 +19,7 @@ export function CategoriesNav({
           key={category.slug}
           href={`/category/${category.slug}`}
           onClick={onCategoryClick}
-          className="font-semibold tracking-tight text-neutral-900 capitalize transition-all duration-500 ease-out whitespace-nowrap font-sans text-base"
+          className="font-medium tracking-normal text-neutral-900 capitalize transition-all duration-500 ease-out whitespace-nowrap font-sans text-base"
         >
           {category.name}
         </Link>

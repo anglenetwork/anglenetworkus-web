@@ -407,7 +407,7 @@ export const sixthSectionQuery = defineQuery(`
 `);
 
 export const newsTickerQuery = defineQuery(`
-  *[_type == "post" && defined(slug.current) && defined(tickerTitle)] | order(date desc, _updatedAt desc) [0...5] {
+  *[_type == "post" && defined(slug.current) && defined(tickerTitle)] | order(date desc, _updatedAt desc) [0...6] {
     tickerTitle,
     "slug": slug.current
   }

@@ -58,14 +58,11 @@ export function RightColumnLanding({
               {post.title}
             </h3>
           </Link>
-          {index < sideStories.length - 1 && (
-            <div className="border-b border-gray-300 mt-4"></div>
-          )}
         </article>
       ))}
 
       {/* MOST READ section */}
-      <div className="border-t border-neutral-300 pt-8">
+      <div className="pt-8">
         <SectionHeader title="The Rundown" variant="light" />
 
         <div className="space-y-6">
@@ -99,7 +96,7 @@ export function RightColumnLanding({
             {mostRead.map((post, index) => (
               <article
                 key={post._id}
-                className={`flex items-start justify-center lg:justify-start space-x-3 ${index < mostRead.length - 1 ? "border-b border-gray-200" : ""} pb-4`}
+                className="flex items-start justify-center lg:justify-start space-x-3 pb-2"
               >
                 <span className="text-lg font-bold text-blue-600 flex-shrink-0 font-sans">
                   {index + 1}
@@ -108,7 +105,7 @@ export function RightColumnLanding({
                   href={`/post/${post.slug}`}
                   className="hover:text-red-600"
                 >
-                  <h3 className="text-neutral-900 leading-snug font-sans text-lg sm:text-base font-normal tracking-wide">
+                  <h3 className="text-neutral-900 leading-tight font-sans text-lg sm:text-base font-normal tracking-normal">
                     {post.title}
                   </h3>
                 </Link>

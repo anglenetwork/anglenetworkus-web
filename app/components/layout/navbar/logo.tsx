@@ -2,11 +2,10 @@ import Link from "next/link";
 import Image from "next/image";
 
 interface LogoProps {
-  isScrolled?: boolean;
   variant?: "mobile" | "desktop";
 }
 
-export function Logo({ isScrolled = false, variant = "mobile" }: LogoProps) {
+export function Logo({ variant = "mobile" }: LogoProps) {
   if (variant === "mobile") {
     return (
       <Link href="/" className="flex items-center gap-2">
@@ -28,23 +27,15 @@ export function Logo({ isScrolled = false, variant = "mobile" }: LogoProps) {
 
   return (
     <Link href="/" className="flex items-center gap-2">
-      <div
-        className={`flex items-center gap-2 transition-all duration-500 ease-out ${
-          isScrolled ? "lg:gap-1.5" : ""
-        }`}
-      >
+      <div className="flex items-center gap-1.5 transition-all duration-500 ease-out">
         <Image
           src="/black-logo.svg"
           alt="The Angle Logo"
-          width={isScrolled ? 24 : 48}
-          height={isScrolled ? 24 : 48}
+          width={24}
+          height={24}
           className="flex-shrink-0 transition-all duration-500 ease-out"
         />
-        <h1
-          className={`font-bold text-neutral-900 tracking-tight transition-all duration-500 ease-out font-sans ${
-            isScrolled ? "lg:text-xl" : "lg:text-xl"
-          } text-4xl`}
-        >
+        <h1 className="font-bold text-neutral-900 tracking-tight transition-all duration-500 ease-out font-sans lg:text-xl text-4xl">
           The Angle
         </h1>
       </div>

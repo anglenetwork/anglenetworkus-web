@@ -73,12 +73,12 @@ export default async function Page() {
 
   // 8) Fetch posts for highlighted stories section
   // Left column: US category (1 featured + 6 small)
-  const usPosts = await sanityFetchStatic({
+  const leftColumnHighlightedPosts = await sanityFetchStatic({
     query: latestNineByCategoryQuery,
     params: { categorySlug: "us" },
   });
   // Right column: Politics category (1 featured + 6 small)
-  const politicsPostsHighlighted = await sanityFetchStatic({
+  const rightColumnHighlightedPosts = await sanityFetchStatic({
     query: latestNineByCategoryQuery,
     params: { categorySlug: "politics" },
   });
@@ -91,18 +91,18 @@ export default async function Page() {
           posts={posts as any}
           mostReadPosts={mostReadPosts as any}
         />
-        {usPosts &&
-          usPosts.length > 0 &&
-          politicsPostsHighlighted &&
-          politicsPostsHighlighted.length > 0 && (
+        {leftColumnHighlightedPosts &&
+          leftColumnHighlightedPosts.length > 0 &&
+          rightColumnHighlightedPosts &&
+          rightColumnHighlightedPosts.length > 0 && (
             <HighlightedStories
-              leftArticle={usPosts[0] as any}
-              leftSmallArticles={(usPosts.slice(1, 7) as any[]).filter(
-                (p) => p.slug
-              )}
-              rightArticle={politicsPostsHighlighted[0] as any}
+              leftArticle={leftColumnHighlightedPosts[0] as any}
+              leftSmallArticles={(
+                leftColumnHighlightedPosts.slice(1, 7) as any[]
+              ).filter((p) => p.slug)}
+              rightArticle={rightColumnHighlightedPosts[0] as any}
               rightSmallArticles={(
-                politicsPostsHighlighted.slice(1, 7) as any[]
+                rightColumnHighlightedPosts.slice(1, 7) as any[]
               ).filter((p) => p.slug)}
             />
           )}
