@@ -1,8 +1,8 @@
-import Image from "next/image";
 import Link from "next/link";
 import { FourthSectionQueryResult } from "@/sanity.types";
 import { getCoverImage, formatImageCredit } from "@/sanity/lib/utils";
 import { SectionHeader } from "../../ui/section-header";
+import { ImageRenderer } from "../../ui/image-renderer";
 
 interface MainThirdSectionProps {
   posts: FourthSectionQueryResult;
@@ -16,7 +16,7 @@ export default function MainThirdSection({
   // Helper function to get image data from cover
   const getImageData = (cover: any, fallbackTitle: string = "Article") => {
     const coverData = getCoverImage(cover, fallbackTitle);
-    return coverData ? coverData.src : "/placeholder.svg";
+    return coverData;
   };
 
   // Get main article (first post)
@@ -50,27 +50,30 @@ export default function MainThirdSection({
                 >
                   <div className="mb-4">
                     <div className="relative aspect-[16/9] overflow-hidden rounded-sm">
-                      <Image
-                        src={getImageData(
-                          mainArticle.cover,
+                      {(() => {
+                        const coverData = getCoverImage(
+                          mainArticle.cover as {
+                            source?: "asset" | "external";
+                            externalUrl?: string | null;
+                            image?: any;
+                            alt?: string | null;
+                          } | null,
                           mainArticle.title || "Featured article"
-                        )}
-                        alt={mainArticle.title || "Featured article"}
-                        fill
-                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 58vw, 700px"
-                        unoptimized={
-                          getCoverImage(
-                            mainArticle.cover as {
-                              source?: "asset" | "external";
-                              externalUrl?: string | null;
-                              image?: any;
-                              alt?: string | null;
-                            } | null,
-                            mainArticle.title || "Featured article"
-                          )?.unoptimized || false
-                        }
-                        className="object-cover rounded-sm"
-                      />
+                        );
+                        if (!coverData) return null;
+                        return (
+                          <ImageRenderer
+                            src={coverData.src}
+                            alt={coverData.alt}
+                            width={1200}
+                            height={675}
+                            fill
+                            unoptimized={coverData.unoptimized}
+                            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 58vw, 700px"
+                            className="object-cover rounded-sm"
+                          />
+                        );
+                      })()}
                     </div>
                     {/* {formatImageCredit(mainArticle.cover) && (
                       <p className="text-[10px] text-gray-500 font-secondary text-right">
@@ -92,27 +95,25 @@ export default function MainThirdSection({
                   >
                     <div>
                       <div className="relative aspect-[16/9] sm:aspect-[4/3] overflow-hidden rounded-sm">
-                        <Image
-                          src={getImageData(
+                        {(() => {
+                          const coverData = getImageData(
                             secondaryArticles[0].cover,
                             secondaryArticles[0].title || "Article image"
-                          )}
-                          alt={secondaryArticles[0].title || "Article image"}
-                          fill
-                          sizes="(max-width: 640px) 100vw, (max-width: 1200px) 50vw, 350px"
-                          unoptimized={
-                            getCoverImage(
-                              secondaryArticles[0].cover as {
-                                source?: "asset" | "external";
-                                externalUrl?: string | null;
-                                image?: any;
-                                alt?: string | null;
-                              } | null,
-                              secondaryArticles[0].title || "Article image"
-                            )?.unoptimized || false
-                          }
-                          className="object-cover rounded-sm"
-                        />
+                          );
+                          if (!coverData) return null;
+                          return (
+                            <ImageRenderer
+                              src={coverData.src}
+                              alt={coverData.alt}
+                              width={700}
+                              height={525}
+                              fill
+                              unoptimized={coverData.unoptimized}
+                              sizes="(max-width: 640px) 100vw, (max-width: 1200px) 50vw, 350px"
+                              className="object-cover rounded-sm"
+                            />
+                          );
+                        })()}
                       </div>
                       {/* {formatImageCredit(secondaryArticles[0].cover) && (
                         <p className="text-[10px] text-gray-500 font-secondary text-right">
@@ -135,27 +136,25 @@ export default function MainThirdSection({
                   >
                     <div>
                       <div className="relative aspect-[16/9] sm:aspect-[4/3] overflow-hidden rounded-sm">
-                        <Image
-                          src={getImageData(
+                        {(() => {
+                          const coverData = getImageData(
                             secondaryArticles[1].cover,
                             secondaryArticles[1].title || "Article image"
-                          )}
-                          alt={secondaryArticles[1].title || "Article image"}
-                          fill
-                          sizes="(max-width: 640px) 100vw, (max-width: 1200px) 50vw, 350px"
-                          unoptimized={
-                            getCoverImage(
-                              secondaryArticles[1].cover as {
-                                source?: "asset" | "external";
-                                externalUrl?: string | null;
-                                image?: any;
-                                alt?: string | null;
-                              } | null,
-                              secondaryArticles[1].title || "Article image"
-                            )?.unoptimized || false
-                          }
-                          className="object-cover rounded-sm"
-                        />
+                          );
+                          if (!coverData) return null;
+                          return (
+                            <ImageRenderer
+                              src={coverData.src}
+                              alt={coverData.alt}
+                              width={700}
+                              height={525}
+                              fill
+                              unoptimized={coverData.unoptimized}
+                              sizes="(max-width: 640px) 100vw, (max-width: 1200px) 50vw, 350px"
+                              className="object-cover rounded-sm"
+                            />
+                          );
+                        })()}
                       </div>
                       {/* {formatImageCredit(secondaryArticles[1].cover) && (
                         <p className="text-[10px] text-gray-500 font-secondary text-right">
@@ -188,29 +187,25 @@ export default function MainThirdSection({
                     >
                       <div>
                         <div className="relative aspect-[16/9] lg:aspect-[3/4] overflow-hidden rounded-sm">
-                          <Image
-                            src={getImageData(
+                          {(() => {
+                            const coverData = getImageData(
                               rightColumnArticles[0].cover,
                               rightColumnArticles[0].title || "Article image"
-                            )}
-                            alt={
-                              rightColumnArticles[0].title || "Article image"
-                            }
-                            fill
-                            sizes="(max-width: 640px) 100vw, (max-width: 1200px) 42vw, 250px"
-                            unoptimized={
-                              getCoverImage(
-                                rightColumnArticles[0].cover as {
-                                  source?: "asset" | "external";
-                                  externalUrl?: string | null;
-                                  image?: any;
-                                  alt?: string | null;
-                                } | null,
-                                rightColumnArticles[0].title || "Article image"
-                              )?.unoptimized || false
-                            }
-                            className="object-cover rounded-sm"
-                          />
+                            );
+                            if (!coverData) return null;
+                            return (
+                              <ImageRenderer
+                                src={coverData.src}
+                                alt={coverData.alt}
+                                width={500}
+                                height={667}
+                                fill
+                                unoptimized={coverData.unoptimized}
+                                sizes="(max-width: 640px) 100vw, (max-width: 1200px) 42vw, 250px"
+                                className="object-cover rounded-sm"
+                              />
+                            );
+                          })()}
                         </div>
                         {/* {formatImageCredit(rightColumnArticles[0].cover) && (
                           <p className="text-[10px] text-gray-500 font-secondary text-right">
@@ -259,39 +254,26 @@ export default function MainThirdSection({
                     >
                       <div>
                         <div className="relative aspect-[16/9] lg:aspect-[3/4] overflow-hidden rounded-sm">
-                          <Image
-                            src={getImageData(
-                              rightColumnArticles[
-                                Math.ceil(rightColumnArticles.length / 2)
-                              ].cover,
-                              rightColumnArticles[
-                                Math.ceil(rightColumnArticles.length / 2)
-                              ].title || "Article image"
-                            )}
-                            alt={
-                              rightColumnArticles[
-                                Math.ceil(rightColumnArticles.length / 2)
-                              ].title || "Article image"
-                            }
-                            fill
-                            sizes="(max-width: 640px) 100vw, (max-width: 1200px) 42vw, 250px"
-                            unoptimized={
-                              getCoverImage(
-                                rightColumnArticles[
-                                  Math.ceil(rightColumnArticles.length / 2)
-                                ].cover as {
-                                  source?: "asset" | "external";
-                                  externalUrl?: string | null;
-                                  image?: any;
-                                  alt?: string | null;
-                                } | null,
-                                rightColumnArticles[
-                                  Math.ceil(rightColumnArticles.length / 2)
-                                ].title || "Article image"
-                              )?.unoptimized || false
-                            }
-                            className="object-cover rounded-sm"
-                          />
+                          {(() => {
+                            const midIndex = Math.ceil(rightColumnArticles.length / 2);
+                            const coverData = getImageData(
+                              rightColumnArticles[midIndex].cover,
+                              rightColumnArticles[midIndex].title || "Article image"
+                            );
+                            if (!coverData) return null;
+                            return (
+                              <ImageRenderer
+                                src={coverData.src}
+                                alt={coverData.alt}
+                                width={500}
+                                height={667}
+                                fill
+                                unoptimized={coverData.unoptimized}
+                                sizes="(max-width: 640px) 100vw, (max-width: 1200px) 42vw, 250px"
+                                className="object-cover rounded-sm"
+                              />
+                            );
+                          })()}
                         </div>
                         {/* {formatImageCredit(
                           rightColumnArticles[

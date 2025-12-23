@@ -1,6 +1,6 @@
 import Link from "next/link";
-import Image from "next/image";
 import type { Article } from "./types";
+import { ImageRenderer } from "../ui/image-renderer";
 
 interface MostReadItemProps {
   article: Article;
@@ -18,9 +18,11 @@ export function MostReadItem({
       {isFirst && article.imageUrl && (
         <Link href={`/post/${article.slug}`} className="block mb-4">
           <div className="relative w-full aspect-video overflow-hidden rounded-sm">
-            <Image
+            <ImageRenderer
               src={article.imageUrl}
               alt={article.title}
+              width={640}
+              height={360}
               fill
               unoptimized={article.imageUnoptimized}
               sizes="(max-width: 768px) 100vw, 384px"

@@ -1,5 +1,5 @@
-import Image from "next/image";
 import Link from "next/link";
+import { ImageRenderer } from "@/app/components/ui/image-renderer";
 
 interface TagFeaturedArticleProps {
   image: string;
@@ -21,9 +21,11 @@ export function TagFeaturedArticle({
       <Link href={`/post/${slug}`} className="block group">
         <div className="relative aspect-video w-full overflow-hidden rounded-xl">
           {image ? (
-            <Image
+            <ImageRenderer
               src={image}
               alt={imageAlt}
+              width={1200}
+              height={675}
               fill
               unoptimized={imageUnoptimized}
               quality={75}

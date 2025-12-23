@@ -1,7 +1,7 @@
 import Link from "next/link";
-import Image from "next/image";
 import { format, parseISO } from "date-fns";
 import { getCoverImage } from "@/sanity/lib/utils";
+import { ImageRenderer } from "../ui/image-renderer";
 
 interface Post {
   _id: string;
@@ -64,7 +64,7 @@ export default function PostSelectedNews({
                 <div className="flex-shrink-0">
                   {imgUrl ? (
                     <div className="relative w-24 h-[77px] overflow-hidden rounded-lg">
-                      <Image
+                      <ImageRenderer
                         src={imgUrl}
                         alt={coverData?.alt || post.title || "Article image"}
                         unoptimized={coverData?.unoptimized}
@@ -73,7 +73,6 @@ export default function PostSelectedNews({
                         height={77}
                         quality={60}
                         sizes="96px"
-                        loading="lazy"
                       />
                     </div>
                   ) : (

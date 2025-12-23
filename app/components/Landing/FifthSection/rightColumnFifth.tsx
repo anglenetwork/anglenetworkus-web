@@ -1,7 +1,7 @@
-import Image from "next/image";
 import Link from "next/link";
 import { Card } from "@/components/ui/card";
 import { SectionHeader } from "../../ui/section-header";
+import { ImageRenderer } from "../../ui/image-renderer";
 
 interface MostReadArticle {
   id: string;
@@ -39,7 +39,7 @@ export function RightColumnFifth({ mostReadArticles }: RightColumnThirdProps) {
                 {article.hasImage ? (
                   <>
                     <Link href={`/post/${article.slug}`}>
-                      <Image
+                      <ImageRenderer
                         src={article.image || "/placeholder.svg"}
                         alt={article.imageAlt || "Article image"}
                         width={64}

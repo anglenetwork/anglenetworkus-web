@@ -1,7 +1,7 @@
-import Image from "next/image";
 import Link from "next/link";
 import { getCoverImage } from "@/sanity/lib/utils";
 import CategorySidebar from "./CategorySidebar";
+import { ImageRenderer } from "../ui/image-renderer";
 
 interface Post {
   _id: string;
@@ -103,7 +103,7 @@ export default function CategoryContent({
                         mainArticle.title || "Article image"
                       );
                       return (
-                        <Image
+                        <ImageRenderer
                           src={imageData.src}
                           alt={imageData.alt}
                           width={800}
@@ -157,7 +157,7 @@ export default function CategoryContent({
                             article.title || "Article image"
                           );
                           return (
-                            <Image
+                            <ImageRenderer
                               src={imageData.src}
                               alt={imageData.alt}
                               width={400}
@@ -213,7 +213,7 @@ export default function CategoryContent({
                             article.title || "Article image"
                           );
                           return (
-                            <Image
+                            <ImageRenderer
                               src={imageData.src}
                               alt={imageData.alt}
                               width={300}

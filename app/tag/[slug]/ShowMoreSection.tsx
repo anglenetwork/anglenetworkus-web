@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import Image from "next/image";
+import { ImageRenderer } from "@/app/components/ui/image-renderer";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { SectionHeader } from "@/app/components/ui/section-header";
@@ -124,13 +124,15 @@ function FullWidthArticle({
           className="block h-full"
           aria-label={`Read article: ${title}`}
         >
-          <Image
+          <ImageRenderer
             src={image || "/placeholder.svg"}
             alt=""
+            width={192}
+            height={108}
             fill
             unoptimized={imageUnoptimized}
-            className="object-cover"
             sizes="(max-width: 1024px) 100vw, 192px"
+            className="object-cover"
           />
         </Link>
       </div>

@@ -109,6 +109,16 @@ export function getCoverImage(
       return null;
     }
     
+    // Check if it's Wikimedia Commons (always unoptimize to avoid rate limiting)
+    const isWikimedia = /(^|\.)upload\.wikimedia\.org$/.test(new URL(externalUrl).hostname);
+    if (isWikimedia) {
+      return {
+        src: externalUrl,
+        alt: cover.alt || fallbackAlt,
+        unoptimized: true, // Always unoptimize Wikimedia to avoid 429 rate limit errors
+      };
+    }
+    
     // Allow optimization for whitelisted domains to enable proper caching
     const canOptimize = isWhitelistedDomain(externalUrl);
     return {

@@ -6,8 +6,8 @@ import { Separator } from "@/app/components/ui/separator";
 import { SectionHeader } from "@/app/components/ui/section-header";
 import { Button } from "@/components/ui/button";
 import { Clock } from "lucide-react";
-import Image from "next/image";
 import Link from "next/link";
+import { ImageRenderer } from "../ui/image-renderer";
 
 interface Article {
   id: string;
@@ -45,14 +45,14 @@ function LatestArticleItem({ article }: { article: Article }) {
                   aria-label={`View image for article: ${article.title}`}
                 >
                   <div className="aspect-[4/3] bg-muted overflow-hidden relative rounded-lg">
-                    <Image
+                    <ImageRenderer
                       src={article.imageUrl || "/placeholder.svg"}
                       alt=""
+                      width={600}
+                      height={450}
                       fill
                       sizes="(min-width: 1024px) 33vw, 100vw"
                       unoptimized={article.imageUnoptimized}
-                      placeholder={article.imageBlurDataURL ? "blur" : "empty"}
-                      blurDataURL={article.imageBlurDataURL}
                       className="object-cover"
                     />
                   </div>

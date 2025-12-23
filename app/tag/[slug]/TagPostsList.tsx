@@ -1,8 +1,8 @@
 import Link from "next/link";
-import Image from "next/image";
 import { getCoverImage } from "@/sanity/lib/utils";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ImageRenderer } from "@/app/components/ui/image-renderer";
 
 interface Post {
   _id: string;
@@ -90,9 +90,11 @@ export default function TagPostsList({
                     );
                     if (coverData?.src) {
                       return (
-                        <Image
+                        <ImageRenderer
                           src={coverData.src}
                           alt={coverData.alt}
+                          width={600}
+                          height={400}
                           fill
                           unoptimized={coverData.unoptimized}
                           className="object-cover"

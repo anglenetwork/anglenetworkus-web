@@ -1,10 +1,7 @@
 import Link from "next/link";
-import Image from "next/image";
-import {
-  getCoverImage,
-  formatImageCredit,
-} from "@/sanity/lib/utils";
+import { getCoverImage, formatImageCredit } from "@/sanity/lib/utils";
 import { SectionHeader } from "../../ui/section-header";
+import { ImageRenderer } from "../../ui/image-renderer";
 
 interface Post {
   _id: string;
@@ -50,6 +47,7 @@ export function CenterColumnLanding({
     if (!coverData) {
       return { src: null, alt: post.title, unoptimized: false };
     }
+
     return {
       src: coverData.src,
       alt: coverData.alt,
@@ -77,7 +75,7 @@ export function CenterColumnLanding({
             return (
               <Link href={`/post/${post.slug}`}>
                 <div className="mb-8">
-                  <Image
+                  <ImageRenderer
                     src={src}
                     alt={alt}
                     width={1000}
@@ -139,7 +137,7 @@ export function CenterColumnLanding({
                 return (
                   <Link href={`/post/${post.slug}`}>
                     <div className="flex-shrink-0 mb-0 md:mb-2">
-                      <Image
+                      <ImageRenderer
                         src={src}
                         alt={alt}
                         width={600}
@@ -182,7 +180,7 @@ export function CenterColumnLanding({
                 return (
                   <Link href={`/post/${post.slug}`}>
                     <div className="flex-shrink-0 mb-0 md:mb-3">
-                      <Image
+                      <ImageRenderer
                         src={src}
                         alt={alt}
                         width={400}

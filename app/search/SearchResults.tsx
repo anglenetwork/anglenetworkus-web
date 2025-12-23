@@ -5,8 +5,8 @@ import { SearchBar } from "../components/ui/search-bar";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import Image from "next/image";
 import { getCoverImage, urlForImage } from "@/sanity/lib/utils";
+import { ImageRenderer } from "../components/ui/image-renderer";
 import { Button } from "../components/ui/button";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
@@ -335,9 +335,11 @@ export default function SearchResults() {
                                   );
                                   if (coverData?.src) {
                                     return (
-                                      <Image
+                                      <ImageRenderer
                                         src={coverData.src}
                                         alt={coverData.alt}
+                                        width={640}
+                                        height={480}
                                         fill
                                         unoptimized={coverData.unoptimized}
                                         className="object-cover"
@@ -350,15 +352,18 @@ export default function SearchResults() {
                                 ) {
                                   const imageUrl = urlForImage(result.image);
                                   if (imageUrl) {
+                                    const url = imageUrl
+                                      .width(360)
+                                      .height(240)
+                                      .fit("max")
+                                      .quality(85)
+                                      .url();
                                     return (
-                                      <Image
-                                        src={imageUrl
-                                          .width(360)
-                                          .height(240)
-                                          .fit("max")
-                                          .quality(85)
-                                          .url()}
+                                      <ImageRenderer
+                                        src={url}
                                         alt={result.image.alt || result.title}
+                                        width={360}
+                                        height={240}
                                         fill
                                         className="object-cover"
                                       />

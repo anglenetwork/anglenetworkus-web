@@ -1,11 +1,11 @@
 import { PortableText } from "@portabletext/react";
-import Image from "next/image";
 import {
   getCoverImage,
   urlForImage,
   formatImageCredit,
 } from "@/sanity/lib/utils";
 import SocialShareButtons from "./SocialShareButtons";
+import { ImageRenderer } from "../ui/image-renderer";
 
 interface BodyImage {
   source?: "asset" | "external";
@@ -53,10 +53,11 @@ const portableTextComponents = {
       const builder = urlForImage(value);
       if (!builder) return null;
 
+      const imageUrl = builder.width(1200).height(800).fit("max").quality(75).url();
       return (
         <figure className="my-8 text-left">
-          <Image
-            src={builder.width(1200).height(800).fit("max").quality(75).url()}
+          <ImageRenderer
+            src={imageUrl}
             alt={value.alt || ""}
             width={1200}
             height={800}
@@ -226,9 +227,11 @@ function renderBodyImage(
   return (
     <figure key={key} className="my-8 text-left">
       <div className="relative w-full aspect-[4/3] max-h-[600px] overflow-hidden rounded-lg shadow-lg">
-        <Image
+        <ImageRenderer
           src={imageData.src}
           alt={imageData.alt}
+          width={1200}
+          height={900}
           fill
           unoptimized={imageData.unoptimized}
           // Same logical width assumptions as the cover/body images
@@ -321,16 +324,18 @@ export default function PostBody({
         return (
           <figure className="mb-12 text-left">
             <div className="relative w-full h-96 md:h-[500px] overflow-hidden rounded-lg shadow-lg">
-              <Image
+              <ImageRenderer
                 src={coverData.src}
                 alt={coverData.alt}
-                className="object-cover object-center"
+                width={1200}
+                height={675}
+                fill
                 priority
                 fetchPriority="high"
-                fill
                 quality={75}
                 sizes="(max-width: 768px) 100vw, (max-width: 1280px) 66vw, 800px"
                 unoptimized={coverData.unoptimized}
+                className="object-cover object-center"
               />
             </div>
             {(cover?.epigraph || formatImageCredit(cover)) && (

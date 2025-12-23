@@ -1,7 +1,7 @@
-import Image from "next/image";
 import Link from "next/link";
 import { formatImageCredit } from "@/sanity/lib/utils";
 import { SectionHeader } from "../../ui/section-header";
+import { ImageRenderer } from "../../ui/image-renderer";
 
 interface CenterArticle {
   id: string;
@@ -44,7 +44,7 @@ export function CenterColumnFifth({
               <div className="mb-6">
                 <div className="mb-4">
                   <Link href={`/post/${article.slug}`}>
-                    <Image
+                    <ImageRenderer
                       src={article.image}
                       alt={article.imageAlt}
                       width={800}
@@ -80,7 +80,7 @@ export function CenterColumnFifth({
                   <div key={article.id} className="flex flex-col">
                     <div className="mb-3">
                       <Link href={`/post/${article.slug}`}>
-                        <Image
+                        <ImageRenderer
                           src={article.image}
                           alt={article.imageAlt}
                           width={240}

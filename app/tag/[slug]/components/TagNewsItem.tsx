@@ -1,5 +1,5 @@
-import Image from "next/image";
 import Link from "next/link";
+import { ImageRenderer } from "@/app/components/ui/image-renderer";
 
 interface TagNewsItemProps {
   image: string;
@@ -30,9 +30,11 @@ export function TagNewsItem({
       </div>
       <div className="relative h-20 w-32 flex-shrink-0 overflow-hidden rounded-lg">
         <Link href={`/post/${slug}`} className="block h-full">
-          <Image
+          <ImageRenderer
             src={image || "/placeholder.svg"}
             alt={title}
+            width={128}
+            height={80}
             fill
             unoptimized={imageUnoptimized}
             quality={60}
