@@ -3,6 +3,7 @@ import {
   NewsTicker,
   HighlightedStories,
 } from "./components/Landing/index";
+import { PartnerBanner } from "./components/ui/partner-banner";
 import dynamic from "next/dynamic";
 import { sanityFetchStatic } from "@/sanity/lib/fetch";
 import {
@@ -91,10 +92,8 @@ export default async function Page() {
           posts={posts as any}
           mostReadPosts={mostReadPosts as any}
         />
-        {leftColumnHighlightedPosts &&
-          leftColumnHighlightedPosts.length > 0 &&
-          rightColumnHighlightedPosts &&
-          rightColumnHighlightedPosts.length > 0 && (
+        {leftColumnHighlightedPosts?.length > 0 &&
+          rightColumnHighlightedPosts?.length > 0 && (
             <HighlightedStories
               leftArticle={leftColumnHighlightedPosts[0] as any}
               leftSmallArticles={(
@@ -106,28 +105,23 @@ export default async function Page() {
               ).filter((p) => p.slug)}
             />
           )}
-        <MainSecondSection categoriesData={secondSectionData as any} />
-        <MainThirdSection
-          posts={sixthSectionPosts as any}
-          categoryTitle="World"
-        />
+        <PartnerBanner />
         <MainFourthSection
           variant="dark"
           categoriesData={fourthSectionData as any}
         />
-        <MainFifthSection
+        <MainThirdSection
+          posts={sixthSectionPosts as any}
+          categoryTitle="World"
+        />
+        <MainSecondSection categoriesData={secondSectionData as any} />
+        <MainFourthSection
+          variant="light"
+          categoriesData={fourthSectionData as any}
+        />
+        {/* <MainFifthSection
           posts={fifthSectionPosts as any}
           categoryTitle="politics"
-        />
-        {/* <MainSixthSection /> */}
-        {/* <MainFourthSection
-          posts={mostReadPosts}
-          categoryTitle="politics"
-          categorySlug="politics"
-        /> */}
-        {/* <MainSeventhSection
-          posts={sixthSectionPosts}
-          categoryTitle="International"
         /> */}
       </div>
     </div>

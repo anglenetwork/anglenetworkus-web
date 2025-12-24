@@ -329,18 +329,18 @@ export function MainFirstSection({
     <main className="w-full px-4 md:px-0 pt-4">
       {/* Mobile order: Center, Left, Right */}
       {/* Desktop order: Left, Center, Right */}
-      <div className="grid grid-cols-1 lg:grid-cols-5 gap-0">
-        <div className="lg:col-span-1 lg:order-1 order-2">
+      <div className="grid grid-cols-1 lg:grid-cols-10 gap-0">
+        <div className="lg:col-span-2 lg:order-1 order-2">
           <LeftColumnLanding latestNews={latestNews} />
         </div>
-        <div className="lg:col-span-3 lg:order-2 order-1">
+        <div className="lg:col-span-6 lg:order-2 order-1">
           <CenterColumnLanding
             mainStory={mainStory}
             relatedCategoryPosts={relatedCategoryPosts}
             moreTopHeadlines={moreTopHeadlines}
           />
         </div>
-        <div className="lg:col-span-1 lg:order-3 order-3">
+        <div className="lg:col-span-2 lg:order-3 order-3">
           <RightColumnLanding sideStories={sideStories} mostRead={mostRead} />
         </div>
       </div>

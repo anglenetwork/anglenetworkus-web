@@ -97,9 +97,8 @@ export default defineType({
             return "Warning: Main Headline Until date is more than 3 days away. This may keep the article in the main headline section longer than intended. Recommended: 24-48 hours.";
           }
           
-          if (mainHeadlineUntilDate < now) {
-            return "Main Headline Until date is in the past. The article will be immediately removed from the main headline section.";
-          }
+          // Allow past dates - they just mean the post won't show in the main headline section
+          // This allows editing old posts without forcing them to become "new" again
           
           return true;
         }),
@@ -182,9 +181,8 @@ export default defineType({
             return "Warning: Front Until date is more than 3 days away. This may keep the article in the More Top Headlines section longer than intended. Recommended: 24-48 hours.";
           }
           
-          if (frontUntilDate < now) {
-            return "Front Until date is in the past. The article will be immediately removed from the More Top Headlines section.";
-          }
+          // Allow past dates - they just mean the post won't show in the front section
+          // This allows editing old posts without forcing them to become "new" again
           
           return true;
         }),
@@ -263,9 +261,8 @@ export default defineType({
             return "Warning: Right Headline Until date is more than 3 days away. This may keep the article in the right headline section longer than intended. Recommended: 24-48 hours.";
           }
           
-          if (rightHeadlineUntilDate < now) {
-            return "Right Headline Until date is in the past. The article will be immediately removed from the right headline section.";
-          }
+          // Allow past dates - they just mean the post won't show in the right headline section
+          // This allows editing old posts without forcing them to become "new" again
           
           return true;
         }),
@@ -344,9 +341,8 @@ export default defineType({
             return "Warning: Just In Until date is more than 3 days away. This may keep the article in the Just In section longer than intended. Recommended: 24-48 hours.";
           }
           
-          if (justInUntilDate < now) {
-            return "Just In Until date is in the past. The article will be immediately removed from the Just In section.";
-          }
+          // Allow past dates - they just mean the post won't show in the Just In section
+          // This allows editing old posts without forcing them to become "new" again
           
           return true;
         }),
@@ -435,7 +431,7 @@ export default defineType({
           title: "External image URL",
           type: "url",
           description:
-            "Paste a direct image URL (e.g., Wikimedia Commons). Must be a direct file URL (http/https).",
+            "Paste a direct image URL (http/https).",
           hidden: ({ parent }: { parent?: { source?: string } }) => parent?.source !== "external",
           validation: (rule: any) =>
             rule.custom((value: string | undefined, ctx: any) => {
@@ -474,7 +470,7 @@ export default defineType({
           title: "Alt text (cover)",
           type: "string",
           description:
-            "Describe the image for screen readers. Required if an external URL is used or an asset is present without nested alt.",
+            "Describe the image for screen readers.",
           validation: (rule: any) =>
             rule.custom((val: string | undefined, ctx: any) => {
               const parent = ctx.parent as any;
@@ -500,13 +496,13 @@ export default defineType({
           name: "creditAuthor",
           title: "Credit Author",
           type: "string",
-          description: "Optional. Photographer/creator name (e.g., Timothy Powaleny).",
+          description: "Optional. Photographer/creator name.",
         }),
         defineField({
           name: "creditSourceUrl",
           title: "Credit Source URL",
           type: "url",
-          description: "Optional. Link to the photo page (Commons file page / Pexels photo page).",
+          description: "Optional. Link to the photo page.",
         }),
         defineField({
           name: "creditLicense",
@@ -527,7 +523,7 @@ export default defineType({
           }
           return true;
         }),
-      description: "Upload image or paste external URL. Alt text required. Optional licensing fields for Wikimedia/CC attribution.",
+      description: "Upload image or paste external URL.",
     } as any),
     // Removed legacy top-level epigraph/imageSource (use cover.epigraph/imageSource)
     // Removed legacy top-level epigraph/imageSource (use cover.epigraph/imageSource)
@@ -710,7 +706,7 @@ export default defineType({
       ],
     } as any),
     defineField({ name: "date", title: "Date", type: "datetime", initialValue: () => new Date().toISOString() }),
-    defineField({ name: "status", title: "Status", type: "string", options: { list: ["draft", "scheduled", "published"] }, initialValue: "draft" }),
+    defineField({ name: "status", title: "Status", type: "string", options: { list: ["draft", "scheduled", "published"] }, initialValue: "published" }),
     defineField({ name: "publishedAt", title: "Published at", type: "datetime", description: 'Use for ordering/SEO. Keep "date" for legacy if needed.', initialValue: () => new Date().toISOString(), validation: (rule) => rule.custom((val, ctx) => (ctx.document as any)?.status === "published" && !val ? "publishedAt is required when status is published" : true) }),
     defineField({ name: "updatedAt", title: "Updated at", type: "datetime" }),
     defineField({ name: "author", title: "Author", type: "reference", to: [{ type: "author" }] } as any),

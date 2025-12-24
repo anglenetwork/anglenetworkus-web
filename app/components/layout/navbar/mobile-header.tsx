@@ -18,7 +18,6 @@ export function MobileHeader({
     <div className="flex items-center justify-between py-3 lg:hidden">
       <HamburgerButton
         isOpen={isMenuOpen}
-        isScrolled={false}
         onClick={onMenuToggle}
         variant="mobile"
       />

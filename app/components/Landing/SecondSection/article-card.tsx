@@ -19,6 +19,7 @@ export default function ArticleCard({
   author,
   image,
   imageAlt,
+  imageUnoptimized,
   isDecorative = false,
 }: ArticleCardProps) {
   return (
