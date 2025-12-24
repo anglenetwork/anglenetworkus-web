@@ -107,6 +107,7 @@ export default function MainSecondSection({
             author: "Sample Author",
             image: undefined,
             imageAlt: "Sample image",
+            imageUnoptimized: false,
             imageSource: undefined,
             isDecorative: true,
             slug: "#",

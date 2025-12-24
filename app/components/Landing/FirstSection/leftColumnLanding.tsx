@@ -56,18 +56,22 @@ export function LeftColumnLanding({ latestNews }: LeftColumnLandingProps) {
                         className="object-cover rounded-sm"
                         priority
                       />
+                      {isFirstArticle &&
+                        (post.breakingNews || post.developingStory) && (
+                          <div className="absolute bottom-3 left-3 z-10">
+                            <BreakingNewsLabel
+                              text={
+                                post.breakingNews
+                                  ? "Breaking"
+                                  : "Developing story"
+                              }
+                            />
+                          </div>
+                        )}
                     </div>
                   </Link>
                 </div>
               )}
-              {isFirstArticle &&
-                (post.breakingNews || post.developingStory) && (
-                  <div className="mb-3">
-                    <BreakingNewsLabel
-                      text={post.breakingNews ? "Breaking" : "Developing story"}
-                    />
-                  </div>
-                )}
               <Link href={`/post/${post.slug}`} className="hover:text-red-600">
                 <h3
                   className={

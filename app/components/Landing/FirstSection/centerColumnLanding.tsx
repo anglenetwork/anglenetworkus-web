@@ -57,7 +57,7 @@ export function CenterColumnLanding({
   };
 
   return (
-    <div className="lg:px-8">
+    <div className="lg:px-6">
       {/* <SectionHeader title="Top News" variant="light" /> */}
 
       {/* Main Story */}
@@ -85,7 +85,7 @@ export function CenterColumnLanding({
                     priority
                     fetchPriority="high"
                     sizes="(max-width: 640px) 100vw, (max-width: 1024px) 90vw, (max-width: 1280px) 70vw, 1000px"
-                    className="w-full h-80 md:h-[500px] object-cover rounded-sm"
+                    className="w-full h-80 md:h-[450px] object-cover rounded-sm"
                   />
                   {credit && (
                     <p className="text-[10px] text-gray-500 font-secondary text-right">
@@ -100,7 +100,7 @@ export function CenterColumnLanding({
       ))}
 
       {/* Related Category Posts */}
-      {relatedCategoryPosts.length > 0 && (
+      {/* {relatedCategoryPosts.length > 0 && (
         <div className="mb-8">
           <div className="space-y-0">
             {relatedCategoryPosts.map((post, index) => (
@@ -120,9 +120,7 @@ export function CenterColumnLanding({
             ))}
           </div>
         </div>
-      )}
-
-      <SectionHeader title="More Top Headlines" variant="light" />
+      )} */}
 
       {/* MORE TOP HEADLINES */}
       {/* Mobile spacing normalized; desktop untouched */}

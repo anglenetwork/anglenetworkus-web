@@ -29,7 +29,7 @@ export default function MainThirdSection({
   return (
     <div className="min-h-screen">
       {/* Main container with consistent padding */}
-      <div className="px-4">
+      <div className="px-4 md:px-0">
         <div className="grid grid-cols-12 gap-0">
           {/* Section Header */}
           <div className="col-span-12">
@@ -40,7 +40,7 @@ export default function MainThirdSection({
             />
           </div>
 
-          <div className="col-span-12 flex flex-col lg:grid lg:grid-cols-12 gap-3">
+          <div className="col-span-12 flex flex-col lg:grid lg:grid-cols-12 gap-8">
             {/* Left Column - Full width on mobile, 7 columns on desktop */}
             <div className="w-full lg:col-span-7 flex flex-col gap-3">
               {mainArticle && (
@@ -255,10 +255,13 @@ export default function MainThirdSection({
                       <div>
                         <div className="relative aspect-[16/9] lg:aspect-[3/4] overflow-hidden rounded-sm">
                           {(() => {
-                            const midIndex = Math.ceil(rightColumnArticles.length / 2);
+                            const midIndex = Math.ceil(
+                              rightColumnArticles.length / 2
+                            );
                             const coverData = getImageData(
                               rightColumnArticles[midIndex].cover,
-                              rightColumnArticles[midIndex].title || "Article image"
+                              rightColumnArticles[midIndex].title ||
+                                "Article image"
                             );
                             if (!coverData) return null;
                             return (

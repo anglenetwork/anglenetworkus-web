@@ -61,42 +61,17 @@ export function RightColumnLanding({
         </article>
       ))}
 
-      {/* MOST READ section */}
+      {/* What Matters section */}
       <div className="pt-8">
-        <SectionHeader title="The Rundown" variant="light" />
+        <SectionHeader title="What Matters" variant="light" />
 
         <div className="space-y-6">
-          {/* Featured image */}
-          {(() => {
-            const coverData = getCoverImage(
-              mostRead[0]?.cover,
-              mostRead[0]?.title || "Article"
-            );
-            if (!coverData) return null;
-            return (
-              <div className="mb-6">
-                <Link href={`/post/${mostRead[0].slug}`}>
-                  <ImageRenderer
-                    src={coverData.src}
-                    alt={coverData.alt}
-                    width={600}
-                    height={400}
-                    unoptimized={coverData.unoptimized}
-                    quality={60}
-                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 100vw, 384px"
-                    className="w-full h-48 object-cover rounded-sm"
-                  />
-                </Link>
-              </div>
-            );
-          })()}
-
           {/* Numbered list of most read articles */}
           <div className="space-y-4">
             {mostRead.map((post, index) => (
               <article
                 key={post._id}
-                className="flex items-start justify-center lg:justify-start space-x-3 pb-2"
+                className="flex items-start justify-start lg:justify-start space-x-3 pb-2"
               >
                 <span className="text-lg font-bold text-blue-600 flex-shrink-0 font-sans">
                   {index + 1}
