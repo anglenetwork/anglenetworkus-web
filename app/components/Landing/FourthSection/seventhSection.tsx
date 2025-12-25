@@ -36,15 +36,15 @@ interface CategoryData {
   posts: Post[];
 }
 
-interface FourthSectionProps {
+interface SeventhSectionProps {
   categoriesData: CategoryData[];
   variant?: "light" | "dark";
 }
 
-export default function FourthSection({
+export default function SeventhSection({
   categoriesData,
   variant = "light",
-}: FourthSectionProps) {
+}: SeventhSectionProps) {
   // Filter out categories without required data and limit to 3 posts per category
   const validCategories = categoriesData
     .filter(
@@ -169,3 +169,4 @@ export default function FourthSection({
     </main>
   );
 }
+

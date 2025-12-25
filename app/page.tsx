@@ -1,9 +1,9 @@
 import {
-  MainFirstSection,
+  FirstSection,
   NewsTicker,
-  HighlightedStories,
+  SecondSection,
 } from "./components/Landing/index";
-import { PartnerBanner } from "./components/ui/partner-banner";
+import { ThirdSection } from "./components/ui/thirdSection";
 import dynamic from "next/dynamic";
 import { sanityFetchStatic } from "@/sanity/lib/fetch";
 import {
@@ -16,18 +16,23 @@ import {
 import { getFourthSectionData, getSecondSectionData } from "./lib/homepage";
 
 // Dynamically import below-the-fold sections to reduce initial bundle size
-const MainSecondSection = dynamic(
-  () => import("./components/Landing/SecondSection/mainSecondSection"),
+const SixthSection = dynamic(
+  () => import("./components/Landing/SecondSection/sixthSection"),
   { ssr: true }
 );
 
-const MainThirdSection = dynamic(
-  () => import("./components/Landing/ThirdSection/mainThirdSection"),
+const FifthSection = dynamic(
+  () => import("./components/Landing/ThirdSection/fifthSection"),
   { ssr: true }
 );
 
-const MainFourthSection = dynamic(
-  () => import("./components/Landing/FourthSection/mainFourthSection"),
+const FourthSection = dynamic(
+  () => import("./components/Landing/FourthSection/fourthSection"),
+  { ssr: true }
+);
+
+const SeventhSection = dynamic(
+  () => import("./components/Landing/FourthSection/seventhSection"),
   { ssr: true }
 );
 
@@ -38,84 +43,75 @@ const MainFifthSection = dynamic(
 
 export default async function Page() {
   //LANDING PAGE DATA FETCHING
-  // 1) Fetch posts for the news content (hero/first section)
-  const posts = await sanityFetchStatic({ query: indexQuery });
+  // 1) Fetch posts for FirstSection (hero/main content)
+  const firstSectionPosts = await sanityFetchStatic({ query: indexQuery });
 
-  // 2) Fetch latest 9 for the fifth section (Politics category)
-  const fifthSectionPosts = await sanityFetchStatic({
-    query: latestNineByCategoryQuery,
-    params: { categorySlug: "politics" },
-  });
-
-  // 3) Fetch most read posts (sitewide metric)
+  // 2) Fetch most read posts (sitewide metric) for FirstSection
   const mostReadPosts = await sanityFetchStatic({
     query: mostViewedPostsQuery,
   });
 
-  // 4) Fetch posts for the third section (World category)
-  const sixthSectionPosts = await sanityFetchStatic({
-    query: sixthSectionQuery,
-    params: { categorySlug: "world" },
+  // 3) Fetch posts for SecondSection
+  // Left column: US category (1 featured + 6 small)
+  const secondSectionLeftPosts = await sanityFetchStatic({
+    query: latestNineByCategoryQuery,
+    params: { categorySlug: "us" },
+  });
+  // Right column: Politics category (1 featured + 6 small)
+  const secondSectionRightPosts = await sanityFetchStatic({
+    query: latestNineByCategoryQuery,
+    params: { categorySlug: "politics" },
   });
 
-  // 5) Build category tiles for the fourth section
+  // 4) Fetch latest 6 posts for news ticker
+  const newsTickerPosts = await sanityFetchStatic({
+    query: newsTickerQuery,
+  });
+
+  // 5) Build category tiles for FourthSection and SeventhSection
   const fourthSectionData = await getFourthSectionData(
     ["tech", "business", "entertainment", "lifestyle"],
     ["Tech", "Business", "Entertainment", "Lifestyle"]
   );
 
-  // 6) Build third-latest per category for the second section
-  const secondSectionData = await getSecondSectionData();
-
-  // 7) Fetch latest 6 posts for news ticker
-  const newsTickerPosts = await sanityFetchStatic({
-    query: newsTickerQuery,
+  // 6) Fetch posts for FifthSection (World category)
+  const fifthSectionPosts = await sanityFetchStatic({
+    query: sixthSectionQuery,
+    params: { categorySlug: "world" },
   });
 
-  // 8) Fetch posts for highlighted stories section
-  // Left column: US category (1 featured + 6 small)
-  const leftColumnHighlightedPosts = await sanityFetchStatic({
-    query: latestNineByCategoryQuery,
-    params: { categorySlug: "us" },
-  });
-  // Right column: Politics category (1 featured + 6 small)
-  const rightColumnHighlightedPosts = await sanityFetchStatic({
-    query: latestNineByCategoryQuery,
-    params: { categorySlug: "politics" },
-  });
+  // 7) Build third-latest per category for SixthSection
+  const sixthSectionData = await getSecondSectionData();
 
   return (
     <div className="mx-auto lg:mx-32">
       <NewsTicker posts={newsTickerPosts as any} />
       <div className="space-y-10 md:space-y-14">
-        <MainFirstSection
-          posts={posts as any}
+        <FirstSection
+          posts={firstSectionPosts as any}
           mostReadPosts={mostReadPosts as any}
         />
-        {leftColumnHighlightedPosts?.length > 0 &&
-          rightColumnHighlightedPosts?.length > 0 && (
-            <HighlightedStories
-              leftArticle={leftColumnHighlightedPosts[0] as any}
+        {secondSectionLeftPosts?.length > 0 &&
+          secondSectionRightPosts?.length > 0 && (
+            <SecondSection
+              leftArticle={secondSectionLeftPosts[0] as any}
               leftSmallArticles={(
-                leftColumnHighlightedPosts.slice(1, 7) as any[]
+                secondSectionLeftPosts.slice(1, 7) as any[]
               ).filter((p) => p.slug)}
-              rightArticle={rightColumnHighlightedPosts[0] as any}
+              rightArticle={secondSectionRightPosts[0] as any}
               rightSmallArticles={(
-                rightColumnHighlightedPosts.slice(1, 7) as any[]
+                secondSectionRightPosts.slice(1, 7) as any[]
               ).filter((p) => p.slug)}
             />
           )}
-        <PartnerBanner />
-        <MainFourthSection
+        <ThirdSection />
+        <FourthSection
           variant="dark"
           categoriesData={fourthSectionData as any}
         />
-        <MainThirdSection
-          posts={sixthSectionPosts as any}
-          categoryTitle="World"
-        />
-        <MainSecondSection categoriesData={secondSectionData as any} />
-        <MainFourthSection
+        <FifthSection posts={fifthSectionPosts as any} categoryTitle="World" />
+        <SixthSection categoriesData={sixthSectionData as any} />
+        <SeventhSection
           variant="light"
           categoriesData={fourthSectionData as any}
         />

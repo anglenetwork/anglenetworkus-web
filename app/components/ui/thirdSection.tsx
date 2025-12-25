@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-export function PartnerBanner() {
+export function ThirdSection() {
   const videoSrc =
     "https://videos.pexels.com/video-files/4622514/4622514-uhd_2560_1440_24fps.mp4";
 
@@ -43,3 +43,4 @@ export function PartnerBanner() {
     </div>
   );
 }
+

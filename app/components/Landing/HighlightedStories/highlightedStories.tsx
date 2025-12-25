@@ -18,19 +18,19 @@ interface Article {
   } | null;
 }
 
-interface HighlightedStoriesProps {
+interface SecondSectionProps {
   leftArticle: Article;
   leftSmallArticles: Article[];
   rightArticle: Article;
   rightSmallArticles: Article[];
 }
 
-export default function HighlightedStories({
+export default function SecondSection({
   leftArticle,
   leftSmallArticles,
   rightArticle,
   rightSmallArticles,
-}: HighlightedStoriesProps) {
+}: SecondSectionProps) {
   const leftCoverData = getCoverImage(
     leftArticle.cover,
     leftArticle.title || "Featured article"
