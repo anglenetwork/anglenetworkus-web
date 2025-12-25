@@ -1,11 +1,12 @@
-export { MainFirstSection } from './FirstSection/mainFirstSection';
+export { FirstSection } from './FirstSection/mainFirstSection';
 export { NewsTicker } from './NewsTicker/NewsTicker';
 export { CenterColumnFourthSection } from './FourthSectionComponents/CenterColumnFourthSection';
 export { default as ArticleCard } from './SecondSection/article-card';
-export { default as MainSecondSection } from './SecondSection/mainSecondSection';
-export { default as MainThirdSection } from './ThirdSection/mainThirdSection';
-export { default as MainFourthSection } from './FourthSection/mainFourthSection';
+export { default as SixthSection } from './SecondSection/sixthSection';
+export { default as FifthSection } from './ThirdSection/fifthSection';
+export { default as FourthSection } from './FourthSection/fourthSection';
+export { default as SeventhSection } from './FourthSection/seventhSection';
 export { default as MainFifthSection } from './FifthSection/mainFifthSection';
 export { default as MainSixthSection } from './SixthSection/MainSixthSection';
 export { default as MainSeventhSection } from './SeventhSectionComponents/mainSeventhSection';
-export { default as HighlightedStories } from './HighlightedStories/highlightedStories';
+export { default as SecondSection } from './HighlightedStories/highlightedStories';

@@ -94,15 +94,15 @@ interface PostForRightColumn {
   } | null;
 }
 
-interface MainFirstSectionProps {
+interface FirstSectionProps {
   posts: Post[];
   mostReadPosts: Post[];
 }
 
-export function MainFirstSection({
+export function FirstSection({
   posts,
   mostReadPosts,
-}: MainFirstSectionProps) {
+}: FirstSectionProps) {
   // Filter and type posts for LeftColumnLanding (needs slug, cover, breakingNews, developingStory for justIn articles)
   // Just In: articles with justIn === true, sorted by justInRank (higher first), filtered by justInUntil
   const now = new Date();
