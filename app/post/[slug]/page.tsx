@@ -246,6 +246,7 @@ export default async function PostPage({
                 date={post.date}
                 updatedAt={post.updatedAt || null}
                 slug={post.slug || undefined}
+                articleId={post._id}
               />
             </div>
             <div className="flex flex-col col-span-1 lg:col-span-4 gap-8">

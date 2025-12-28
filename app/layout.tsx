@@ -10,6 +10,7 @@ import { Inter, DM_Sans, Spectral, IBM_Plex_Sans } from "next/font/google";
 import { AlertBanner, ContentLayoutWrapper } from "./components/layout";
 import { SessionProviderWrapper } from "./components/SessionProviderWrapper";
 import { VisualEditingProvider } from "./components/VisualEditingProvider";
+import { SupabaseAuthProvider } from "@/app/providers/SupabaseAuthProvider";
 
 import * as demo from "@/sanity/lib/demo";
 import { sanityFetch } from "@/sanity/lib/fetch";
@@ -106,24 +107,26 @@ export default async function RootLayout({
         ${ibmPlexSans.variable}
       `}
       >
-        <SessionProviderWrapper>
-          <section className="min-h-screen">
-            {isDraftMode && (
-              <Suspense fallback={null}>
-                <AlertBanner />
-              </Suspense>
+        <SupabaseAuthProvider>
+          <SessionProviderWrapper>
+            <section className="min-h-screen">
+              {isDraftMode && (
+                <Suspense fallback={null}>
+                  <AlertBanner />
+                </Suspense>
+              )}
+              <ContentLayoutWrapper>
+                <main className="">{children}</main>
+              </ContentLayoutWrapper>
+            </section>
+
+            {isDraftMode && <VisualEditingProvider />}
+
+            {(process.env.NEXT_PUBLIC_VERCEL_ENV || process.env.VERCEL) && (
+              <SpeedInsights />
             )}
-            <ContentLayoutWrapper>
-              <main className="">{children}</main>
-            </ContentLayoutWrapper>
-          </section>
-
-          {isDraftMode && <VisualEditingProvider />}
-
-          {(process.env.NEXT_PUBLIC_VERCEL_ENV || process.env.VERCEL) && (
-            <SpeedInsights />
-          )}
-        </SessionProviderWrapper>
+          </SessionProviderWrapper>
+        </SupabaseAuthProvider>
       </body>
     </html>
   );

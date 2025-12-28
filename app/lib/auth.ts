@@ -23,7 +23,7 @@ export const authOptions: NextAuthOptions = {
     }),
   ],
   pages: {
-    signIn: "/login",
+    signIn: "/logineditor",
   },
   callbacks: {
     async signIn({ user }) {
