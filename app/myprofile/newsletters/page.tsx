@@ -1,60 +1,17 @@
-"use client";
-
+import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { NewsletterToggles } from "../components/NewsletterToggles";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { useEffect, useState } from "react";
-import { createClient } from "@/lib/supabase/client";
-import { Skeleton } from "@/components/ui/skeleton";
-import type { User } from "@supabase/supabase-js";
 
-export default function NewslettersPage() {
-  const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
-  const supabase = createClient();
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
-  useEffect(() => {
-    const loadUser = async () => {
-      const {
-        data: { session },
-      } = await supabase.auth.getSession();
+export default async function NewslettersPage() {
+  const supabase = await createSupabaseServerClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
 
-      if (session?.user) {
-        setUser(session.user);
-      }
-      setLoading(false);
-    };
-
-    loadUser();
-
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
-      if (session?.user) {
-        setUser(session.user);
-      } else {
-        setUser(null);
-      }
-    });
-
-    return () => subscription.unsubscribe();
-  }, [supabase.auth]);
-
-  if (loading) {
-    return (
-      <Card>
-        <CardHeader>
-          <Skeleton className="h-8 w-32" />
-        </CardHeader>
-        <CardContent>
-          <Skeleton className="h-64 w-full" />
-        </CardContent>
-      </Card>
-    );
-  }
-
-  if (!user) {
-    return null;
-  }
+  if (!user) return null;
 
   return (
     <Card>
@@ -69,4 +26,3 @@ export default function NewslettersPage() {
     </Card>
   );
 }
-
