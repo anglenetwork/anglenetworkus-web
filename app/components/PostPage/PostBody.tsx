@@ -5,6 +5,7 @@ import {
   formatImageCredit,
 } from "@/sanity/lib/utils";
 import SocialShareButtons from "./SocialShareButtons";
+import BookmarkButton from "./BookmarkButton";
 import { ImageRenderer } from "../ui/image-renderer";
 
 interface BodyImage {
@@ -43,6 +44,7 @@ interface PostBodyProps {
   date: string;
   updatedAt?: string | null;
   slug?: string;
+  articleId?: string;
 }
 
 /** Portable Text renderers (Spectral for body, DM Sans for headings) */
@@ -278,6 +280,7 @@ export default function PostBody({
   date,
   updatedAt,
   slug,
+  articleId,
 }: PostBodyProps) {
   return (
     <div className="antialiased text-left mb-8">
@@ -313,7 +316,16 @@ export default function PostBody({
           )}
         </div>
 
-        {slug && <SocialShareButtons title={title} url={`/post/${slug}`} />}
+        <div className="flex items-center gap-2">
+          {articleId && slug && (
+            <BookmarkButton
+              articleId={articleId}
+              articleSlug={slug}
+              articleTitle={title}
+            />
+          )}
+          {slug && <SocialShareButtons title={title} url={`/post/${slug}`} />}
+        </div>
       </div>
 
       {/* Cover image with epigraphs in secondary font */}

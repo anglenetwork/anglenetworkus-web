@@ -563,6 +563,27 @@ export const eighthSectionQuery = defineQuery(`
   }
 `);
 
+// Query for fetching posts by their IDs (for bookmarks)
+export const postsByIdsQuery = defineQuery(`
+  *[_type == "post" && _id in $ids] {
+    _id,
+    title,
+    "slug": slug.current,
+    "date": coalesce(date, _updatedAt),
+    cover{
+      source,
+      externalUrl,
+      image,
+      alt,
+      epigraph,
+      creditProvider,
+      creditAuthor,
+      creditSourceUrl,
+      creditLicense
+    }
+  }
+`);
+
 export const secondSectionQuery = defineQuery(`
   *[_type == "category" && slug.current in $categorySlugs] {
     "slug": slug.current,

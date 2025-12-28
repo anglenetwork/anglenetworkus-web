@@ -15,6 +15,7 @@ const config: Config = {
       },
       fontFamily: {
         sans: ["var(--font-sans)"],
+        dmsans: ["var(--font-sans-dmsans)"],
         secondary: ["var(--font-secondary)"],
         serif: ["var(--font-serif)"],
       },

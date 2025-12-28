@@ -12,7 +12,7 @@ export default async function StudioPage() {
 
   if (!session?.user?.email) {
     // Not logged in (NextAuth)
-    redirect("/login");
+    redirect("/logineditor");
   }
 
   // Render NextStudio on client side only to avoid hydration mismatches
