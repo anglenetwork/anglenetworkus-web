@@ -12,6 +12,7 @@ interface ProfileEditFormProps {
   initialFirstName?: string | null;
   initialLastName?: string | null;
   onUpdate?: () => void;
+  onCancel?: () => void;
 }
 
 export function ProfileEditForm({
@@ -19,6 +20,7 @@ export function ProfileEditForm({
   initialFirstName,
   initialLastName,
   onUpdate,
+  onCancel,
 }: ProfileEditFormProps) {
   const [firstName, setFirstName] = useState(initialFirstName ?? "");
   const [lastName, setLastName] = useState(initialLastName ?? "");
@@ -91,37 +93,41 @@ export function ProfileEditForm({
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div className="space-y-2">
-          <Label htmlFor="firstName" className="font-sans">
-            First Name
-          </Label>
-          <Input
-            id="firstName"
-            type="text"
-            placeholder="John"
-            value={firstName}
-            onChange={(e) => setFirstName(e.target.value)}
-            disabled={loading}
-            className="font-sans"
-          />
-        </div>
+    <form onSubmit={handleSubmit} className="space-y-8">
+      <div>
+        <Label
+          htmlFor="firstName"
+          className="text-sm font-semibold text-slate-900 mb-3 block font-sans"
+        >
+          First Name
+        </Label>
+        <Input
+          id="firstName"
+          type="text"
+          name="firstName"
+          value={firstName}
+          onChange={(e) => setFirstName(e.target.value)}
+          disabled={loading}
+          className="w-full max-w-xl font-sans"
+        />
+      </div>
 
-        <div className="space-y-2">
-          <Label htmlFor="lastName" className="font-sans">
-            Last Name
-          </Label>
-          <Input
-            id="lastName"
-            type="text"
-            placeholder="Doe"
-            value={lastName}
-            onChange={(e) => setLastName(e.target.value)}
-            disabled={loading}
-            className="font-sans"
-          />
-        </div>
+      <div>
+        <Label
+          htmlFor="lastName"
+          className="text-sm font-semibold text-slate-900 mb-3 block font-sans"
+        >
+          Last Name
+        </Label>
+        <Input
+          id="lastName"
+          type="text"
+          name="lastName"
+          value={lastName}
+          onChange={(e) => setLastName(e.target.value)}
+          disabled={loading}
+          className="w-full max-w-xl font-sans"
+        />
       </div>
 
       {message && (
@@ -134,9 +140,26 @@ export function ProfileEditForm({
         </div>
       )}
 
-      <Button type="submit" disabled={loading} className="font-sans">
-        {loading ? "Saving..." : "Save Changes"}
-      </Button>
+      <div className="flex gap-3 pt-4">
+        <Button
+          type="submit"
+          disabled={loading}
+          className="bg-slate-900 text-white hover:bg-slate-800 font-sans"
+        >
+          {loading ? "Saving..." : "Save Changes"}
+        </Button>
+        {onCancel && (
+          <Button
+            type="button"
+            onClick={onCancel}
+            variant="outline"
+            disabled={loading}
+            className="border-slate-900 text-slate-900 hover:bg-slate-50 bg-transparent font-sans"
+          >
+            Cancel
+          </Button>
+        )}
+      </div>
     </form>
   );
 }
