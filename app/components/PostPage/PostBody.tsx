@@ -321,7 +321,6 @@ export default function PostBody({
             <BookmarkButton
               articleId={articleId}
               articleSlug={slug}
-              articleTitle={title}
             />
           )}
           {slug && <SocialShareButtons title={title} url={`/post/${slug}`} />}

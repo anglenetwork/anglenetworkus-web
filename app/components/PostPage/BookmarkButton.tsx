@@ -9,7 +9,6 @@ import { Button } from "@/components/ui/button";
 interface BookmarkButtonProps {
   articleId: string;
   articleSlug: string;
-  articleTitle?: string;
 }
 
 function withTimeout<T>(

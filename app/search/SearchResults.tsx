@@ -204,7 +204,6 @@ export default function SearchResults() {
       }
 
       const data = await response.json();
-      console.log("Search results data:", data);
       setSearchResults(data.results);
     } catch (err) {
       console.error("Search error:", err);

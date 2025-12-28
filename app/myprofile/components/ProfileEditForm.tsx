@@ -64,8 +64,6 @@ export function ProfileEditForm({
         throw error;
       }
 
-      console.log("Profile updated successfully:", data);
-
       setMessage({
         type: "success",
         text: "Profile updated successfully!",
