@@ -4,8 +4,12 @@ import typography from "@tailwindcss/typography";
 const config: Config = {
   darkMode: ["class"],
   content: [
-    "./app/**/*.{ts,tsx}",
-    "./sanity/**/*.{ts,tsx}", // If Tailwind is NOT used in Studio, you can remove this line to slightly shrink CSS.
+    "./app/**/*.{js,ts,jsx,tsx,mdx}",
+  "./pages/**/*.{js,ts,jsx,tsx,mdx}",
+  "./components/**/*.{js,ts,jsx,tsx,mdx}",
+  "./src/**/*.{js,ts,jsx,tsx,mdx}",
+  "./lib/**/*.{js,ts,jsx,tsx,mdx}",
+  "./sanity/**/*.{js,ts,jsx,tsx,mdx}",
   ],
   theme: {
     extend: {

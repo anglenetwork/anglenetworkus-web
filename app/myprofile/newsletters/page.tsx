@@ -1,6 +1,5 @@
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { NewsletterToggles } from "../components/NewsletterToggles";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -14,15 +13,24 @@ export default async function NewslettersPage() {
   if (!user) return null;
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle className="font-sans text-2xl">
-          Newsletter Preferences
-        </CardTitle>
-      </CardHeader>
-      <CardContent>
-        <NewsletterToggles userId={user.id} />
-      </CardContent>
-    </Card>
+    <div>
+      <div className="mb-12">
+        <h1 className="text-3xl font-semibold text-slate-900 mb-2 font-sans">
+          Newsletters
+        </h1>
+        <p className="text-slate-600 font-sans">
+          Choose which newsletters you'd like to receive
+        </p>
+      </div>
+
+      <NewsletterToggles />
+
+      <div className="mt-12 p-4 rounded-lg border border-slate-200 bg-slate-50">
+        <p className="text-sm text-slate-700 font-sans">
+          You can manage your email preferences at any time. We'll only send you
+          the newsletters you've opted in to receive.
+        </p>
+      </div>
+    </div>
   );
 }

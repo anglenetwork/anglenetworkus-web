@@ -1,8 +1,10 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Separator } from "@/components/ui/separator";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { ProfileEditForm } from "../components/ProfileEditForm";
 
 interface Profile {
@@ -20,76 +22,113 @@ export default function ProfileDetailsClient({
   profile: Profile | null;
 }) {
   const router = useRouter();
+  const [isEditing, setIsEditing] = useState(false);
+  const [formData, setFormData] = useState({
+    firstName: profile?.first_name ?? "",
+    lastName: profile?.last_name ?? "",
+    email: email ?? "",
+  });
 
-  const getFullName = () => {
-    const firstName = profile?.first_name?.trim() || "";
-    const lastName = profile?.last_name?.trim() || "";
-    if (firstName && lastName) return `${firstName} ${lastName}`;
-    if (firstName) return firstName;
-    if (lastName) return lastName;
-    return null;
-  };
-
-  const getWelcomeMessage = () => {
-    const fullName = getFullName();
-    return fullName ? `Welcome, ${fullName}!` : "Welcome";
-  };
+  useEffect(() => {
+    setFormData({
+      firstName: profile?.first_name ?? "",
+      lastName: profile?.last_name ?? "",
+      email: email ?? "",
+    });
+  }, [profile, email]);
 
   const refreshProfile = async () => {
     // Re-runs the server component fetch
     router.refresh();
+    setIsEditing(false);
   };
 
-  return (
-    <Card>
-      <CardHeader>
-        <div className="space-y-2">
-          <p className="text-lg font-medium text-muted-foreground font-sans">
-            {getWelcomeMessage()}
-          </p>
-          <CardTitle className="font-sans text-2xl">Profile Details</CardTitle>
-        </div>
-      </CardHeader>
+  const handleCancel = () => {
+    setFormData({
+      firstName: profile?.first_name ?? "",
+      lastName: profile?.last_name ?? "",
+      email: email ?? "",
+    });
+    setIsEditing(false);
+  };
 
-      <CardContent className="space-y-6">
-        <div className="space-y-2">
+  if (!isEditing) {
+    return (
+      <div>
+        <div className="mb-12">
+          <h1 className="text-3xl font-semibold text-slate-900 mb-2 font-sans">Profile</h1>
+          <p className="text-slate-600 font-sans">Manage your personal information</p>
+        </div>
+
+        <div className="space-y-8">
           <div>
-            <p className="text-sm font-medium text-muted-foreground font-sans">
+            <label className="block text-sm font-semibold text-slate-900 mb-3 font-sans">
               First Name
-            </p>
-            <p className="font-sans">{profile?.first_name || "Not set"}</p>
+            </label>
+            <p className="text-slate-900 font-sans">{profile?.first_name || "Not set"}</p>
           </div>
 
           <div>
-            <p className="text-sm font-medium text-muted-foreground font-sans">
+            <label className="block text-sm font-semibold text-slate-900 mb-3 font-sans">
               Last Name
-            </p>
-            <p className="font-sans">{profile?.last_name || "Not set"}</p>
+            </label>
+            <p className="text-slate-900 font-sans">{profile?.last_name || "Not set"}</p>
           </div>
 
           <div>
-            <p className="text-sm font-medium text-muted-foreground font-sans">
-              Email
-            </p>
-            <p className="font-sans">{email ?? "Not available"}</p>
+            <label className="block text-sm font-semibold text-slate-900 mb-3 font-sans">
+              Email Address
+            </label>
+            <p className="text-slate-900 font-sans">{email ?? "Not available"}</p>
+          </div>
+
+          <div className="pt-4">
+            <Button
+              className="bg-slate-900 text-white hover:bg-slate-800 font-sans"
+              onClick={() => setIsEditing(true)}
+            >
+              Edit
+            </Button>
           </div>
         </div>
+      </div>
+    );
+  }
 
-        <Separator />
+  return (
+    <div>
+      <div className="mb-12">
+        <h1 className="text-3xl font-semibold text-slate-900 mb-2 font-sans">Profile</h1>
+        <p className="text-slate-600 font-sans">Manage your personal information</p>
+      </div>
 
-        <div className="space-y-4">
-          <div>
-            <h3 className="text-lg font-semibold font-sans mb-4">Edit Name</h3>
-            <ProfileEditForm
-              userId={userId}
-              initialFirstName={profile?.first_name}
-              initialLastName={profile?.last_name}
-              onUpdate={refreshProfile}
-            />
-          </div>
+      <div className="space-y-8">
+        <div>
+          <Label
+            htmlFor="email"
+            className="text-sm font-semibold text-slate-900 mb-3 block font-sans"
+          >
+            Email Address
+          </Label>
+          <Input
+            id="email"
+            type="email"
+            name="email"
+            value={formData.email}
+            className="w-full max-w-xl"
+            disabled
+          />
         </div>
-      </CardContent>
-    </Card>
+
+        <ProfileEditForm
+          userId={userId}
+          initialFirstName={formData.firstName}
+          initialLastName={formData.lastName}
+          onUpdate={refreshProfile}
+          onCancel={handleCancel}
+        />
+      </div>
+    </div>
   );
 }
 
