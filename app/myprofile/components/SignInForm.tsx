@@ -4,7 +4,6 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { createClient } from "@/lib/supabase/client";
 
 export function SignInForm() {
@@ -26,7 +25,7 @@ export function SignInForm() {
       const { error } = await supabase.auth.signInWithOtp({
         email,
         options: {
-          emailRedirectTo: `${window.location.origin}/myprofile`,
+          emailRedirectTo: `${window.location.origin}/auth/callback?next=/myprofile`,
         },
       });
 
@@ -49,23 +48,28 @@ export function SignInForm() {
   };
 
   return (
-    <form onSubmit={handleSignIn} className="space-y-4">
+    <form onSubmit={handleSignIn} className="space-y-6">
+      {/* Email Input */}
       <div className="space-y-2">
-        <Label htmlFor="email" className="font-sans">
+        <label
+          htmlFor="email"
+          className="text-sm font-medium text-foreground font-sans"
+        >
           Email
-        </Label>
+        </label>
         <Input
           id="email"
           type="email"
-          placeholder="you@example.com"
+          placeholder="Enter your email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           required
           disabled={loading}
-          className="font-sans"
+          className="w-full font-sans"
         />
       </div>
 
+      {/* Message Display */}
       {message && (
         <div
           className={`text-sm font-sans ${
@@ -76,10 +80,14 @@ export function SignInForm() {
         </div>
       )}
 
-      <Button type="submit" disabled={loading} className="font-sans">
-        {loading ? "Sending..." : "Sign in with Email"}
+      {/* Sign In Button */}
+      <Button
+        type="submit"
+        disabled={loading}
+        className="w-full bg-foreground text-background hover:bg-foreground/90 h-11 font-sans"
+      >
+        {loading ? "Sending..." : "Send magic link"}
       </Button>
     </form>
   );
 }
-

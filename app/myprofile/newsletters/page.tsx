@@ -23,7 +23,7 @@ export default async function NewslettersPage() {
         </p>
       </div>
 
-      <NewsletterToggles userId={user.id} />
+      <NewsletterToggles />
 
       <div className="mt-12 p-4 rounded-lg border border-slate-200 bg-slate-50">
         <p className="text-sm text-slate-700 font-sans">

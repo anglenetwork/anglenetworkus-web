@@ -2,17 +2,9 @@
 
 import { useEffect, useState, useMemo } from "react";
 import Link from "next/link";
-import Image from "next/image";
+import { ChevronDown, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Separator } from "@/components/ui/separator";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 
 interface Bookmark {
   id: number;
@@ -149,10 +141,37 @@ export function BookmarksList({}: BookmarksListProps) {
 
   if (loading) {
     return (
-      <div className="space-y-4">
-        {[1, 2, 3].map((i) => (
-          <Skeleton key={i} className="h-16 w-full" />
-        ))}
+      <div>
+        {/* Sort Dropdown Skeleton */}
+        <div className="mb-8 flex flex-col sm:flex-row sm:items-center gap-3">
+          <Skeleton className="h-5 w-16 bg-slate-200" />
+          <Skeleton className="h-10 w-full sm:w-48 bg-slate-200 rounded-lg" />
+        </div>
+
+        {/* Bookmarks List Skeleton */}
+        <div className="space-y-6">
+          {[1, 2, 3, 4, 5].map((i) => (
+            <article
+              key={i}
+              className="flex flex-col sm:flex-row gap-4 sm:gap-6 pb-6 border-b border-slate-200 last:border-b-0"
+            >
+              {/* Cover Image Skeleton */}
+              <div className="flex-shrink-0 w-full sm:w-48">
+                <Skeleton className="w-full h-40 sm:h-32 rounded-lg bg-slate-200" />
+              </div>
+
+              {/* Article Info Skeleton */}
+              <div className="flex-1 flex flex-col justify-between">
+                <div>
+                  <Skeleton className="h-6 w-full mb-2 bg-slate-200" />
+                  <Skeleton className="h-4 w-3/4 mb-1 bg-slate-200" />
+                  <Skeleton className="h-3 w-1/2 bg-slate-200" />
+                </div>
+                <Skeleton className="h-8 w-20 mt-3 sm:mt-0 bg-slate-200 rounded" />
+              </div>
+            </article>
+          ))}
+        </div>
       </div>
     );
   }
@@ -161,143 +180,132 @@ export function BookmarksList({}: BookmarksListProps) {
     setDisplayedCount((prev) => prev + 10);
   };
 
-  if (bookmarks.length === 0) {
-    return (
-      <p className="text-muted-foreground font-sans">
-        You haven't saved any bookmarks yet.
-      </p>
-    );
-  }
-
   const hasMore = displayedCount < sortedBookmarks.length;
 
   return (
-    <div className="space-y-4">
+    <div>
       {/* Sort Dropdown */}
-      <div className="flex items-center gap-2 mb-8 justify-end">
-        <label htmlFor="sort-select" className="text-sm font-medium font-sans">
+      <div className="mb-8 flex flex-col sm:flex-row sm:items-center gap-3">
+        <label
+          htmlFor="sort"
+          className="text-sm font-medium text-slate-700 whitespace-nowrap font-sans"
+        >
           Sort by:
         </label>
-
-        <Select
-          value={sortBy}
-          onValueChange={(
-            value: "saved-recently" | "latest-articles" | "oldest-articles"
-          ) => setSortBy(value)}
-        >
-          <SelectTrigger id="sort-select" className="w-auto font-sans">
-            <SelectValue placeholder="Sort by" />
-          </SelectTrigger>
-
-          <SelectContent
-            position="popper"
-            sideOffset={6}
-            className="z-50 w-[--radix-select-trigger-width] overflow-hidden rounded-md border bg-white text-black shadow-md
-              [&_[data-state=checked]_svg]:hidden"
+        <div className="relative w-full sm:w-auto">
+          <select
+            id="sort"
+            value={sortBy}
+            onChange={(e) =>
+              setSortBy(
+                e.target.value as
+                  | "saved-recently"
+                  | "latest-articles"
+                  | "oldest-articles"
+              )
+            }
+            className="appearance-none w-full sm:w-auto bg-white border border-slate-200 rounded-lg px-4 py-2 pr-8 text-sm font-medium text-slate-900 cursor-pointer hover:border-slate-300 transition-colors focus:outline-none focus:ring-2 focus:ring-slate-900 focus:ring-offset-2 font-sans"
           >
-            {/* ✅ Selected item is indicated by gray bg, and we override left padding
-                (shadcn SelectItem uses pl-8 for the check icon space). */}
-            <SelectItem
-              value="saved-recently"
-              className="font-sans pl-2 data-[state=checked]:bg-gray-100 data-[state=checked]:text-gray-900"
-            >
-              Saved Recently
-            </SelectItem>
-
-            <SelectItem
-              value="latest-articles"
-              className="font-sans pl-2 data-[state=checked]:bg-gray-100 data-[state=checked]:text-gray-900"
-            >
-              Latest Articles
-            </SelectItem>
-
-            <SelectItem
-              value="oldest-articles"
-              className="font-sans pl-2 data-[state=checked]:bg-gray-100 data-[state=checked]:text-gray-900"
-            >
-              Oldest Articles
-            </SelectItem>
-          </SelectContent>
-        </Select>
+            <option value="saved-recently">Saved Recently</option>
+            <option value="latest-articles">Latest Articles</option>
+            <option value="oldest-articles">Oldest Articles</option>
+          </select>
+          <ChevronDown className="absolute right-2.5 top-1/2 transform -translate-y-1/2 h-4 w-4 text-slate-600 pointer-events-none" />
+        </div>
       </div>
 
       {/* Bookmarks List */}
-      {displayedBookmarks.map((bookmark, index) => (
-        <div key={bookmark.id}>
-          <div className="flex items-start gap-4">
-            {/* Cover Image */}
-            {bookmark.article_cover && (
-              <Link
-                href={
-                  bookmark.article_slug ? `/post/${bookmark.article_slug}` : "#"
-                }
-                className="flex-shrink-0"
-              >
-                <div className="relative w-24 h-24 md:w-32 md:h-32 overflow-hidden rounded-lg">
-                  <Image
-                    src={bookmark.article_cover.src}
-                    alt={bookmark.article_cover.alt}
-                    fill
-                    className="object-cover"
-                    sizes="(max-width: 768px) 96px, 128px"
-                    unoptimized={
-                      bookmark.article_cover.src.includes("wikimedia") ||
-                      bookmark.article_cover.src.includes("//")
-                    }
-                  />
-                </div>
-              </Link>
-            )}
-
-            {/* Article Info */}
-            <div className="flex-1 min-w-0">
-              <Link
-                href={
-                  bookmark.article_slug ? `/post/${bookmark.article_slug}` : "#"
-                }
-                className="block hover:opacity-70 transition-opacity"
-              >
-                <h3 className="font-sans text-base font-medium mb-1 line-clamp-2">
-                  {bookmark.article_title || "Untitled Article"}
-                </h3>
-                {bookmark.article_date && (
-                  <p className="text-sm text-muted-foreground font-sans">
-                    {new Date(bookmark.article_date).toLocaleDateString(
-                      "en-US",
-                      {
-                        year: "numeric",
-                        month: "long",
-                        day: "numeric",
-                      }
-                    )}
-                  </p>
-                )}
-                <p className="text-xs text-muted-foreground font-sans mt-1">
-                  Bookmarked on{" "}
-                  {new Date(bookmark.created_at).toLocaleDateString()}
-                </p>
-              </Link>
-            </div>
-
-            {/* Remove Button */}
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => handleRemoveBookmark(bookmark.id)}
-              className="font-sans flex-shrink-0 text-white bg-red-500 hover:bg-red-600 hover:text-white"
+      <div className="space-y-6">
+        {displayedBookmarks.length > 0 ? (
+          displayedBookmarks.map((bookmark) => (
+            <article
+              key={bookmark.id}
+              className="flex flex-col sm:flex-row gap-4 sm:gap-6 pb-6 border-b border-slate-200 last:border-b-0"
             >
-              Remove
-            </Button>
+              {/* Cover Image */}
+              <div className="flex-shrink-0 w-full sm:w-48">
+                {bookmark.article_cover ? (
+                  <Link
+                    href={
+                      bookmark.article_slug
+                        ? `/post/${bookmark.article_slug}`
+                        : "#"
+                    }
+                  >
+                    <img
+                      src={bookmark.article_cover.src}
+                      alt={bookmark.article_cover.alt}
+                      className="w-full h-40 sm:h-32 object-cover rounded-lg bg-slate-100"
+                    />
+                  </Link>
+                ) : (
+                  <div className="w-full h-40 sm:h-32 rounded-lg bg-slate-100" />
+                )}
+              </div>
+
+              {/* Article Info */}
+              <div className="flex-1 flex flex-col justify-between">
+                <div>
+                  <Link
+                    href={
+                      bookmark.article_slug
+                        ? `/post/${bookmark.article_slug}`
+                        : "#"
+                    }
+                    className="block hover:opacity-70 transition-opacity"
+                  >
+                    <h3 className="text-base sm:text-lg font-semibold text-slate-900 line-clamp-2 mb-2 font-sans">
+                      {bookmark.article_title || "Untitled Article"}
+                    </h3>
+                    {bookmark.article_date && (
+                      <p className="text-xs sm:text-sm text-slate-500 font-sans mb-1">
+                        {new Date(bookmark.article_date).toLocaleDateString(
+                          "en-US",
+                          {
+                            year: "numeric",
+                            month: "long",
+                            day: "numeric",
+                          }
+                        )}
+                      </p>
+                    )}
+                    <p className="text-xs text-slate-500 font-sans">
+                      Bookmarked on{" "}
+                      {new Date(bookmark.created_at).toLocaleDateString(
+                        "en-US",
+                        {
+                          year: "numeric",
+                          month: "long",
+                          day: "numeric",
+                        }
+                      )}
+                    </p>
+                  </Link>
+                </div>
+                <button
+                  onClick={() => handleRemoveBookmark(bookmark.id)}
+                  className="flex items-center gap-2 text-red-600 hover:text-red-700 transition-colors w-fit text-xs sm:text-sm font-medium mt-3 sm:mt-0 font-sans"
+                >
+                  <Trash2 className="h-4 w-4" />
+                  Remove
+                </button>
+              </div>
+            </article>
+          ))
+        ) : (
+          <div className="text-center py-12">
+            <p className="text-slate-600 font-sans">
+              {bookmarks.length === 0
+                ? "You haven't saved any bookmarks yet."
+                : "No bookmarked articles yet"}
+            </p>
           </div>
-          {index < displayedBookmarks.length - 1 && (
-            <Separator className="mt-4" />
-          )}
-        </div>
-      ))}
+        )}
+      </div>
 
       {/* Load More Button */}
       {hasMore && (
-        <div className="flex justify-center pt-4">
+        <div className="flex justify-center pt-6">
           <Button
             onClick={handleLoadMore}
             variant="outline"

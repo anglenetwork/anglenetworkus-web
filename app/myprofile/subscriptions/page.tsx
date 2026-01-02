@@ -78,10 +78,10 @@ export default async function SubscriptionPage() {
             </div>
 
             <div className="flex gap-3">
-              <Button className="bg-emerald-600 text-white hover:bg-emerald-700 font-sans">
+              <Button className=" text-black  font-sans" variant="outline">
                 Manage
               </Button>
-              <Button className="bg-emerald-600 text-white hover:bg-emerald-700 font-sans">
+              <Button className=" font-sans" variant="secondary">
                 Cancel
               </Button>
             </div>

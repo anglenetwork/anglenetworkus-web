@@ -49,9 +49,7 @@ function getUserInitials(
   return user.email?.[0].toUpperCase() || "U";
 }
 
-export function UserMenu({
-  variant = "desktop",
-}: UserMenuProps) {
+export function UserMenu({ variant = "desktop" }: UserMenuProps) {
   const [user, setUser] = useState<User | null>(null);
   const [firstName, setFirstName] = useState<string | null>(null);
   const [lastName, setLastName] = useState<string | null>(null);
@@ -168,10 +166,7 @@ export function UserMenu({
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="bg-white">
         <DropdownMenuItem asChild>
-          <Link
-            href="/myprofile"
-            className="font-sans cursor-pointer w-full"
-          >
+          <Link href="/myprofile" className="font-sans cursor-pointer w-full">
             My Profile
           </Link>
         </DropdownMenuItem>

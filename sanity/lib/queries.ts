@@ -584,6 +584,26 @@ export const postsByIdsQuery = defineQuery(`
   }
 `);
 
+export const mainHeadlinesQuery = defineQuery(`
+  *[_type == "post" && mainHeadline == true && defined(slug.current)] 
+  | order(date desc, _updatedAt desc) [0...5] {
+    _id,
+    title,
+    "slug": slug.current,
+    cover{
+      source,
+      externalUrl,
+      image,
+      alt,
+      epigraph,
+      creditProvider,
+      creditAuthor,
+      creditSourceUrl,
+      creditLicense
+    }
+  }
+`);
+
 export const secondSectionQuery = defineQuery(`
   *[_type == "category" && slug.current in $categorySlugs] {
     "slug": slug.current,

@@ -10,7 +10,7 @@ const navigation = [
   { name: "Bookmarks", href: "/myprofile/bookmarks", icon: Bookmark },
   { name: "Subscriptions", href: "/myprofile/subscriptions", icon: CreditCard },
   {
-    name: "Newsletter Preferences",
+    name: "Newsletters",
     href: "/myprofile/newsletters",
     icon: Mail,
   },

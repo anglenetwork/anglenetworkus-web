@@ -1,120 +1,121 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useMemo } from "react";
 import { Mail } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
 import { Skeleton } from "@/components/ui/skeleton";
-import { createClient } from "@/lib/supabase/client";
 import { AVAILABLE_NEWSLETTERS } from "@/lib/constants/newsletters";
 
-interface NewsletterPreference {
+interface NewsletterPreferenceRow {
   newsletter_key: string;
   enabled: boolean;
 }
 
-interface NewsletterTogglesProps {
-  userId: string;
-}
-
-export function NewsletterToggles({ userId }: NewsletterTogglesProps) {
+export function NewsletterToggles() {
   const [preferences, setPreferences] = useState<Record<string, boolean>>({});
   const [loading, setLoading] = useState(true);
   const [updating, setUpdating] = useState<Record<string, boolean>>({});
 
+  const defaults = useMemo(() => {
+    const prefs: Record<string, boolean> = {};
+    for (const n of AVAILABLE_NEWSLETTERS) prefs[n.key] = false;
+    return prefs;
+  }, []);
+
   const fetchPreferences = useCallback(async () => {
-    if (!userId) return;
-    const supabase = createClient();
+    setLoading(true);
+
     try {
-      const { data, error } = await supabase
-        .from("newsletter_preferences")
-        .select("newsletter_key, enabled")
-        .eq("user_id", userId);
-
-      if (error) throw error;
-
-      // Initialize preferences object with defaults
-      const prefs: Record<string, boolean> = {};
-      AVAILABLE_NEWSLETTERS.forEach((newsletter) => {
-        prefs[newsletter.key] = false;
+      const res = await fetch("/api/newsletters/list", {
+        method: "GET",
+        cache: "no-store",
       });
 
-      // Update with fetched preferences
-      if (data) {
-        data.forEach((pref: NewsletterPreference) => {
-          prefs[pref.newsletter_key] = pref.enabled;
-        });
+      if (res.status === 401) {
+        setPreferences(defaults);
+        return;
+      }
+
+      const json = (await res.json().catch(() => ({}))) as any;
+
+      if (!res.ok) {
+        console.error("Error fetching newsletter preferences:", json?.error);
+        setPreferences(defaults);
+        return;
+      }
+
+      const prefs = { ...defaults };
+      const rows: NewsletterPreferenceRow[] = json?.preferences || [];
+
+      for (const row of rows) {
+        prefs[row.newsletter_key] = !!row.enabled;
       }
 
       setPreferences(prefs);
-    } catch (error) {
-      console.error("Error fetching newsletter preferences:", error);
+    } catch (err) {
+      console.error("Error fetching newsletter preferences:", err);
+      setPreferences(defaults);
     } finally {
       setLoading(false);
     }
-  }, [userId]);
+  }, [defaults]);
 
   useEffect(() => {
-    if (userId) {
-      fetchPreferences();
-    }
-  }, [userId, fetchPreferences]);
+    fetchPreferences();
+  }, [fetchPreferences]);
 
   const handleToggle = async (newsletterKey: string, enabled: boolean) => {
+    // If a previous request got stuck, this guarantees we can click again later.
     setUpdating((prev) => ({ ...prev, [newsletterKey]: true }));
 
-    // Optimistic update
-    setPreferences((prev) => ({
-      ...prev,
-      [newsletterKey]: enabled,
-    }));
+    // optimistic update
+    setPreferences((prev) => ({ ...prev, [newsletterKey]: enabled }));
+
+    // optional safety timeout so "in flight" never lasts forever
+    const controller = new AbortController();
+    const t = setTimeout(() => controller.abort(), 12000);
 
     try {
-      const supabase = createClient();
+      const res = await fetch("/api/newsletters/toggle", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        cache: "no-store",
+        signal: controller.signal,
+        body: JSON.stringify({ newsletterKey, enabled }),
+      });
 
-      // Check if preference exists
-      const { data: existing, error: checkError } = await supabase
-        .from("newsletter_preferences")
-        .select("id")
-        .eq("user_id", userId)
-        .eq("newsletter_key", newsletterKey)
-        .maybeSingle();
+      const json = (await res.json().catch(() => ({}))) as any;
 
-      if (checkError) throw checkError;
-
-      if (existing) {
-        // Update existing preference
-        const { error: updateError } = await supabase
-          .from("newsletter_preferences")
-          .update({
-            enabled,
-            updated_at: new Date().toISOString(),
-          })
-          .eq("id", existing.id);
-
-        if (updateError) throw updateError;
-      } else {
-        // Insert new preference
-        const { error: insertError } = await supabase
-          .from("newsletter_preferences")
-          .insert({
-            user_id: userId,
-            newsletter_key: newsletterKey,
-            enabled,
-            updated_at: new Date().toISOString(),
-          });
-
-        if (insertError) throw insertError;
+      if (res.status === 401) {
+        // revert if unauth
+        setPreferences((prev) => ({ ...prev, [newsletterKey]: !enabled }));
+        return;
       }
-    } catch (error) {
-      console.error("Error updating newsletter preference:", error);
-      // Revert on error
-      setPreferences((prev) => ({
-        ...prev,
-        [newsletterKey]: !enabled,
-      }));
+
+      if (!res.ok) {
+        console.error(
+          "Error updating preference:",
+          json?.error || res.statusText
+        );
+        setPreferences((prev) => ({ ...prev, [newsletterKey]: !enabled }));
+        return;
+      }
+    } catch (err) {
+      console.error("Error updating newsletter preference:", err);
+      setPreferences((prev) => ({ ...prev, [newsletterKey]: !enabled }));
     } finally {
+      clearTimeout(t);
       setUpdating((prev) => ({ ...prev, [newsletterKey]: false }));
     }
+  };
+
+  const getNewsletterDescription = (key: string) => {
+    const descriptions: Record<string, string> = {
+      daily_brief: "Latest news and updates delivered daily",
+      breaking_news: "Be the first to know about breaking news",
+      tech_weekly: "Weekly tech news and updates",
+    };
+    return descriptions[key] || "Newsletter updates";
   };
 
   if (loading) {
@@ -126,15 +127,6 @@ export function NewsletterToggles({ userId }: NewsletterTogglesProps) {
       </div>
     );
   }
-
-  const getNewsletterDescription = (key: string) => {
-    const descriptions: Record<string, string> = {
-      daily_brief: "Latest news and updates delivered daily",
-      breaking_news: "Be the first to know about breaking news",
-      tech_weekly: "Weekly tech news and updates",
-    };
-    return descriptions[key] || "Newsletter updates";
-  };
 
   return (
     <div className="space-y-4">
@@ -157,11 +149,11 @@ export function NewsletterToggles({ userId }: NewsletterTogglesProps) {
 
           <div className="ml-4 flex-shrink-0">
             <Switch
-              checked={preferences[newsletter.key] || false}
+              checked={!!preferences[newsletter.key]}
               onCheckedChange={(checked) =>
                 handleToggle(newsletter.key, checked)
               }
-              disabled={updating[newsletter.key]}
+              disabled={!!updating[newsletter.key]}
               aria-label={`Subscribe to ${newsletter.label}`}
             />
           </div>
