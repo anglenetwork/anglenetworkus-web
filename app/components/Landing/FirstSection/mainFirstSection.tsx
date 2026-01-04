@@ -99,14 +99,11 @@ interface FirstSectionProps {
   mostReadPosts: Post[];
 }
 
-export function FirstSection({
-  posts,
-  mostReadPosts,
-}: FirstSectionProps) {
+export function FirstSection({ posts, mostReadPosts }: FirstSectionProps) {
   // Filter and type posts for LeftColumnLanding (needs slug, cover, breakingNews, developingStory for justIn articles)
   // Just In: articles with justIn === true, sorted by justInRank (higher first), filtered by justInUntil
   const now = new Date();
-  const validPostsForLeft = posts
+  const validJustIn = posts
     .filter((post) => {
       if (!post.slug || post.justIn !== true) return false;
       // Filter out expired articles (justInUntil is in the past)
@@ -135,7 +132,7 @@ export function FirstSection({
       breakingNews: post.breakingNews,
       developingStory: post.developingStory,
     }));
-  const latestNews = validPostsForLeft.slice(0, 4);
+  const justInNews = validJustIn.slice(0, 5);
 
   // Filter and type posts for CenterColumnLanding
   // Main story: articles with mainHeadline === true, sorted by mainHeadlineRank (higher first), filtered by mainHeadlineUntil
@@ -331,7 +328,7 @@ export function FirstSection({
       {/* Desktop order: Left, Center, Right */}
       <div className="grid grid-cols-1 lg:grid-cols-10 gap-0">
         <div className="lg:col-span-2 lg:order-1 order-2">
-          <LeftColumnLanding latestNews={latestNews} />
+          <LeftColumnLanding justInNews={justInNews} />
         </div>
         <div className="lg:col-span-6 lg:order-2 order-1">
           <CenterColumnLanding

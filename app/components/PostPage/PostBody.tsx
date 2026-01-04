@@ -349,21 +349,19 @@ export default function PostBody({
                 className="object-cover object-center"
               />
             </div>
-            {(cover?.epigraph || formatImageCredit(cover)) && (
-              <figcaption className="mt-2 font-secondary text-sm tracking-tight leading-snug text-neutral-500 text-left">
-                {cover?.epigraph && (
-                  <span className="font-bold">{cover.epigraph}</span>
-                )}
-                {cover?.epigraph && formatImageCredit(cover) && (
+            <figcaption className="mt-2 font-secondary text-sm tracking-tight leading-snug text-neutral-500 text-left">
+              <span className="font-bold">
+                {cover?.epigraph || "Catch up on the latest headlines and developing news."}
+              </span>
+              {formatImageCredit(cover) && (
+                <>
                   <span className="text-neutral-500"> • </span>
-                )}
-                {formatImageCredit(cover) && (
                   <span className="text-neutral-500">
                     {formatImageCredit(cover)}
                   </span>
-                )}
-              </figcaption>
-            )}
+                </>
+              )}
+            </figcaption>
           </figure>
         );
       })()}
