@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import {
@@ -25,16 +25,12 @@ function getUserInitials(
 ) {
   if (!user) return "U";
 
-  // Use first and last name from profile if available
   if (firstName || lastName) {
     const first = firstName?.[0]?.toUpperCase() || "";
     const last = lastName?.[0]?.toUpperCase() || "";
-    if (first || last) {
-      return (first + last).slice(0, 2);
-    }
+    if (first || last) return (first + last).slice(0, 2);
   }
 
-  // Try to get name from user metadata
   const name = user.user_metadata?.name || user.user_metadata?.full_name;
   if (name) {
     return name
@@ -45,38 +41,41 @@ function getUserInitials(
       .slice(0, 2);
   }
 
-  // Fall back to email first letter
   return user.email?.[0].toUpperCase() || "U";
 }
 
 export function UserMenu({ variant = "desktop" }: UserMenuProps) {
+  const supabase = useMemo(() => createClient(), []);
   const [user, setUser] = useState<User | null>(null);
   const [firstName, setFirstName] = useState<string | null>(null);
   const [lastName, setLastName] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const [signingOut, setSigningOut] = useState(false);
   const router = useRouter();
-  const supabase = createClient();
 
   useEffect(() => {
-    // Get initial session and profile
+    let mounted = true;
+
     const loadUserData = async () => {
       const {
         data: { session },
       } = await supabase.auth.getSession();
+
+      if (!mounted) return;
+
       setUser(session?.user ?? null);
 
       if (session?.user) {
-        // Fetch profile data for name
         const { data: profile } = await supabase
           .from("profiles")
           .select("first_name, last_name")
           .eq("id", session.user.id)
-          .single();
+          .maybeSingle();
 
-        if (profile) {
-          setFirstName(profile.first_name);
-          setLastName(profile.last_name);
-        }
+        if (!mounted) return;
+
+        setFirstName(profile?.first_name ?? null);
+        setLastName(profile?.last_name ?? null);
       }
 
       setLoading(false);
@@ -84,39 +83,75 @@ export function UserMenu({ variant = "desktop" }: UserMenuProps) {
 
     loadUserData();
 
-    // Listen for auth changes
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange(async (_event, session) => {
       setUser(session?.user ?? null);
 
       if (session?.user) {
-        // Fetch profile data for name
         const { data: profile } = await supabase
           .from("profiles")
           .select("first_name, last_name")
           .eq("id", session.user.id)
-          .single();
+          .maybeSingle();
 
-        if (profile) {
-          setFirstName(profile.first_name);
-          setLastName(profile.last_name);
-        } else {
-          setFirstName(null);
-          setLastName(null);
-        }
+        setFirstName(profile?.first_name ?? null);
+        setLastName(profile?.last_name ?? null);
       } else {
         setFirstName(null);
         setLastName(null);
       }
     });
 
-    return () => subscription.unsubscribe();
-  }, [supabase.auth]);
+    return () => {
+      mounted = false;
+      subscription.unsubscribe();
+    };
+  }, [supabase]);
 
   const handleSignOut = async () => {
-    await supabase.auth.signOut();
-    router.refresh();
+    if (signingOut) return;
+    setSigningOut(true);
+
+    const controller = new AbortController();
+    const t = setTimeout(() => controller.abort(), 12000);
+
+    try {
+      // Server-side signout clears cookies reliably
+      const res = await fetch("/api/auth/signout", {
+        method: "POST",
+        cache: "no-store",
+        signal: controller.signal,
+      });
+
+      const json = (await res.json().catch(() => ({}))) as any;
+
+      if (!res.ok) {
+        console.error("Sign out failed:", json?.error || res.statusText);
+      }
+
+      // Update local UI immediately
+      setUser(null);
+      setFirstName(null);
+      setLastName(null);
+
+      // Refresh server components and optionally send to /signin
+      router.refresh();
+      router.push("/signin");
+    } catch (err) {
+      console.error("Error signing out:", err);
+      // As a fallback, try client signOut (won't hurt)
+      try {
+        await supabase.auth.signOut();
+        router.refresh();
+        router.push("/signin");
+      } catch (e) {
+        console.error("Fallback client signOut failed:", e);
+      }
+    } finally {
+      clearTimeout(t);
+      setSigningOut(false);
+    }
   };
 
   const userInitials = getUserInitials(user, firstName, lastName);
@@ -130,24 +165,19 @@ export function UserMenu({ variant = "desktop" }: UserMenuProps) {
     ? "h-8 w-8"
     : "transition-all duration-500 ease-out lg:h-7 lg:w-7 h-8 w-8";
 
-  // Show loading state (optional - can be removed if not needed)
-  if (loading) {
-    return null;
-  }
+  if (loading) return null;
 
-  // If user is not logged in, show a simple "Sign in" link
   if (!user) {
     return (
-      <Link
-        href="/signin"
-        className="font-sans text-sm font-medium text-neutral-700 hover:text-neutral-900 hover:opacity-80 transition-colors"
+      <Button
+        asChild
+        className="bg-slate-900 text-white hover:bg-slate-800 font-sans"
       >
-        Sign in
-      </Link>
+        <Link href="/signin">Sign in</Link>
+      </Button>
     );
   }
 
-  // If user is logged in, show avatar with dropdown menu
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -164,17 +194,20 @@ export function UserMenu({ variant = "desktop" }: UserMenuProps) {
           </Avatar>
         </Button>
       </DropdownMenuTrigger>
+
       <DropdownMenuContent align="end" className="bg-white">
         <DropdownMenuItem asChild>
           <Link href="/myprofile" className="font-sans cursor-pointer w-full">
             My Profile
           </Link>
         </DropdownMenuItem>
+
         <DropdownMenuItem
           className="font-sans cursor-pointer"
           onClick={handleSignOut}
+          disabled={signingOut}
         >
-          Sign out
+          {signingOut ? "Signing out..." : "Sign out"}
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

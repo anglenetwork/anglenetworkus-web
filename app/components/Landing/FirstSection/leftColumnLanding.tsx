@@ -20,16 +20,16 @@ interface Post {
 }
 
 interface LeftColumnLandingProps {
-  latestNews: Post[];
+  justInNews: Post[];
 }
 
-export function LeftColumnLanding({ latestNews }: LeftColumnLandingProps) {
+export function LeftColumnLanding({ justInNews }: LeftColumnLandingProps) {
   return (
     <div className=" lg:sticky lg:top-20 lg:h-auto lg:overflow-hidden text-left px-0 md:px-4">
       <SectionHeader title="Just in" variant="light" />
 
       <div className="space-y-6">
-        {latestNews.map((post, index) => {
+        {justInNews.map((post, index) => {
           const isFirstArticle = index === 0;
           const coverData = isFirstArticle
             ? getCoverImage(post.cover, post.title || "Article image")
@@ -38,7 +38,7 @@ export function LeftColumnLanding({ latestNews }: LeftColumnLandingProps) {
           return (
             <article
               key={post._id}
-              className={`${index < latestNews.length - 1 ? "border-b border-neutral-200" : ""} pb-4`}
+              className={`${index < justInNews.length - 1 ? "border-b border-neutral-200" : ""} pb-4`}
             >
               {isFirstArticle && coverData?.src && (
                 <div className="block mb-3">

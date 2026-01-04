@@ -470,19 +470,7 @@ export default defineType({
           title: "Alt text (cover)",
           type: "string",
           description:
-            "Describe the image for screen readers.",
-          validation: (rule: any) =>
-            rule.custom((val: string | undefined, ctx: any) => {
-              const parent = ctx.parent as any;
-              const usingExternal = parent?.source === "external" && parent?.externalUrl;
-              const usingAsset = parent?.source === "asset" && parent?.image?.asset?._ref;
-              if (usingExternal && !val) return "Alt text is required for external images";
-              const nestedAlt = parent?.image?.alt;
-              if (usingAsset && !nestedAlt && !val) {
-                return "Alt text is required (fill nested alt or this field)";
-              }
-              return true;
-            }),
+            "Describe the image for screen readers. Optional - will use default text if empty.",
         }),
         defineField({ name: "epigraph", title: "Epigraph", type: "string" }),
         // ✅ Minimal image attribution fields (Wikimedia Commons compliant)

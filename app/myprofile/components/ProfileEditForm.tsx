@@ -5,12 +5,12 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { createClient } from "@/lib/supabase/client";
 
 interface ProfileEditFormProps {
   userId: string;
   initialFirstName?: string | null;
   initialLastName?: string | null;
+  initialDateOfBirth?: string | null; // "YYYY-MM-DD"
   onUpdate?: () => void;
   onCancel?: () => void;
 }
@@ -19,51 +19,65 @@ export function ProfileEditForm({
   userId,
   initialFirstName,
   initialLastName,
+  initialDateOfBirth,
   onUpdate,
   onCancel,
 }: ProfileEditFormProps) {
   const [firstName, setFirstName] = useState(initialFirstName ?? "");
   const [lastName, setLastName] = useState(initialLastName ?? "");
+  const [dateOfBirth, setDateOfBirth] = useState(initialDateOfBirth ?? "");
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState<{
     type: "success" | "error";
     text: string;
   } | null>(null);
+
   const router = useRouter();
-  const supabase = createClient();
 
   useEffect(() => {
     setFirstName(initialFirstName ?? "");
     setLastName(initialLastName ?? "");
-  }, [initialFirstName, initialLastName]);
+    setDateOfBirth(initialDateOfBirth ?? "");
+  }, [initialFirstName, initialLastName, initialDateOfBirth]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setMessage(null);
 
-    try {
-      // Use upsert to create profile if it doesn't exist, or update if it does
-      const { data, error } = await supabase
-        .from("profiles")
-        .upsert(
-          {
-            id: userId,
-            first_name: firstName.trim() || null,
-            last_name: lastName.trim() || null,
-          },
-          {
-            onConflict: "id",
-          }
-        )
-        .select();
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 12000);
 
-      if (error) {
-        console.error("Error updating profile:", error);
-        console.error("User ID:", userId);
-        console.error("First Name:", firstName.trim() || null);
-        console.error("Last Name:", lastName.trim() || null);
-        throw error;
+    try {
+      const res = await fetch("/api/profile/update", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        cache: "no-store",
+        signal: controller.signal,
+        body: JSON.stringify({
+          // userId kept in component but NOT needed/sent; server uses auth user id.
+          firstName,
+          lastName,
+          dateOfBirth: dateOfBirth ? dateOfBirth : null,
+        }),
+      });
+
+      const json = (await res.json().catch(() => ({}))) as any;
+
+      if (res.status === 401) {
+        setMessage({
+          type: "error",
+          text: "You're not signed in anymore. Please sign in again.",
+        });
+        return;
+      }
+
+      if (!res.ok) {
+        setMessage({
+          type: "error",
+          text: json?.error || "Failed to update profile. Please try again.",
+        });
+        return;
       }
 
       setMessage({
@@ -73,21 +87,25 @@ export function ProfileEditForm({
 
       // Call onUpdate callback if provided, otherwise refresh
       if (onUpdate) {
-        setTimeout(() => {
-          onUpdate();
-        }, 500);
+        setTimeout(() => onUpdate(), 500);
       } else {
-        setTimeout(() => {
-          router.refresh();
-        }, 1000);
+        setTimeout(() => router.refresh(), 1000);
       }
     } catch (error: any) {
-      console.error("Exception in handleSubmit:", error);
+      const isAbort =
+        error?.name === "AbortError" ||
+        String(error?.message || "")
+          .toLowerCase()
+          .includes("aborted");
+
       setMessage({
         type: "error",
-        text: error.message || "Failed to update profile. Please try again.",
+        text: isAbort
+          ? "Request timed out. Please try again."
+          : error?.message || "Failed to update profile. Please try again.",
       });
     } finally {
+      clearTimeout(timeout);
       setLoading(false);
     }
   };
@@ -125,6 +143,24 @@ export function ProfileEditForm({
           name="lastName"
           value={lastName}
           onChange={(e) => setLastName(e.target.value)}
+          disabled={loading}
+          className="w-full max-w-xl font-sans"
+        />
+      </div>
+
+      <div>
+        <Label
+          htmlFor="dateOfBirth"
+          className="text-sm font-semibold text-slate-900 mb-3 block font-sans"
+        >
+          Date of Birth
+        </Label>
+        <Input
+          id="dateOfBirth"
+          type="date"
+          name="dateOfBirth"
+          value={dateOfBirth}
+          onChange={(e) => setDateOfBirth(e.target.value)}
           disabled={loading}
           className="w-full max-w-xl font-sans"
         />

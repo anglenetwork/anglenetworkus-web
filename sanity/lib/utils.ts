@@ -68,6 +68,8 @@ export function isWhitelistedDomain(url: string): boolean {
  * @param fallbackAlt - Fallback alt text if cover.alt is not available
  * @returns Object with src, alt, and unoptimized flag, or null if no image is available
  */
+const DEFAULT_ALT_TEXT = "Catch up on the latest headlines and developing news.";
+
 export function getCoverImage(
   cover: {
     source?: "asset" | "external";
@@ -111,10 +113,11 @@ export function getCoverImage(
     
     // Check if it's Wikimedia Commons (always unoptimize to avoid rate limiting)
     const isWikimedia = /(^|\.)upload\.wikimedia\.org$/.test(new URL(externalUrl).hostname);
+    const altText = cover.alt?.trim() || DEFAULT_ALT_TEXT;
     if (isWikimedia) {
       return {
         src: externalUrl,
-        alt: cover.alt || fallbackAlt,
+        alt: altText,
         unoptimized: true, // Always unoptimize Wikimedia to avoid 429 rate limit errors
       };
     }
@@ -123,7 +126,7 @@ export function getCoverImage(
     const canOptimize = isWhitelistedDomain(externalUrl);
     return {
       src: externalUrl,
-      alt: cover.alt || fallbackAlt,
+      alt: altText,
       unoptimized: !canOptimize, // Only unoptimize if domain is not whitelisted
     };
   }
@@ -136,9 +139,10 @@ export function getCoverImage(
         const url = imageUrl.quality(60).url();
         // Validate the URL is not empty and looks like a valid Sanity CDN URL
         if (url && url.length > 0 && (url.includes('cdn.sanity.io') || url.startsWith('/'))) {
+          const altText = cover.alt?.trim() || (cover.image as any)?.alt?.trim() || DEFAULT_ALT_TEXT;
           return {
             src: url,
-            alt: cover.alt || (cover.image as any)?.alt || fallbackAlt,
+            alt: altText,
             unoptimized: false,
           };
         }
@@ -155,8 +159,6 @@ export function getCoverImage(
 
 /**
  * Formats image credit/attribution using minimal structured fields
- * Format: "Photo by [Author] via [Provider] ([License])"
- * Example: "Photo by Timothy Powaleny via Wikimedia Commons (CC BY-SA 4.0)"
  */
 export function formatImageCredit(cover: {
   creditProvider?: string | null;

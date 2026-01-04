@@ -92,7 +92,7 @@ export function FullScreenMenu({
         style={{ paddingTop: `${headerOffset || 0}px` }}
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="container mx-auto md:py-6">
+        <div className="container mx-auto max-w-7xl md:py-6">
           {/* Shared wrapper: search + nav same horizontal padding */}
           <div
             className={`px-4 md:px-0 space-y-10 md:space-y-12 transition-all duration-700 ease-out ${
