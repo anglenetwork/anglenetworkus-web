@@ -79,6 +79,17 @@ const postFields = `
       creditSourceUrl,
       creditLicense
     }
+  },
+  "imageGallery": imageGallery[]{
+    source,
+    externalUrl,
+    image,
+    alt,
+    epigraph,
+    creditProvider,
+    creditAuthor,
+    creditSourceUrl,
+    creditLicense
   }
 `;
 

@@ -1,8 +1,19 @@
+"use client";
+
 import Link from "next/link";
+import { useState, useEffect } from "react";
 import { getCoverImage } from "@/sanity/lib/utils";
 import { BreakingNewsLabel } from "../../ui/breaking-news-label";
 import { SectionHeader } from "../../ui/section-header";
 import { ImageRenderer } from "../../ui/image-renderer";
+import { urlForImage } from "@/sanity/lib/utils";
+
+interface GalleryImage {
+  source?: "asset" | "external";
+  externalUrl?: string | null;
+  image?: any;
+  alt?: string | null;
+}
 
 interface Post {
   _id: string;
@@ -15,12 +26,166 @@ interface Post {
     alt?: string | null;
     imageSource?: string | null;
   } | null;
+  imageGallery?: GalleryImage[] | null;
   breakingNews?: boolean | null;
   developingStory?: boolean | null;
 }
 
+// Helper to get image data from gallery image (similar to getCoverImage)
+function getGalleryImageData(
+  galleryImage: GalleryImage
+): { src: string; alt: string; unoptimized: boolean } | null {
+  if (!galleryImage) return null;
+
+  const hasExternalUrl =
+    galleryImage.externalUrl && galleryImage.externalUrl.trim() !== "";
+  const hasImageAsset =
+    galleryImage.image && (galleryImage.image as any)?.asset?._ref;
+
+  if (!hasExternalUrl && !hasImageAsset) return null;
+
+  // External URL
+  if (
+    hasExternalUrl &&
+    (galleryImage.source === "external" || !galleryImage.source)
+  ) {
+    let externalUrl = galleryImage.externalUrl!.trim();
+    if (externalUrl.startsWith("//")) {
+      externalUrl = `https:${externalUrl}`;
+    } else if (!externalUrl.match(/^https?:\/\//)) {
+      externalUrl = `https://${externalUrl}`;
+    }
+
+    try {
+      new URL(externalUrl);
+      const isWikimedia = /(^|\.)upload\.wikimedia\.org$/.test(
+        new URL(externalUrl).hostname
+      );
+      return {
+        src: externalUrl,
+        alt: galleryImage.alt || "Gallery image",
+        unoptimized: isWikimedia,
+      };
+    } catch {
+      return null;
+    }
+  }
+
+  // Asset image
+  if (
+    hasImageAsset &&
+    (galleryImage.source === "asset" || !galleryImage.source || !hasExternalUrl)
+  ) {
+    const imageUrl = urlForImage(galleryImage.image);
+    if (imageUrl) {
+      try {
+        const url = imageUrl.quality(60).url();
+        if (url && url.length > 0) {
+          return {
+            src: url,
+            alt:
+              galleryImage.alt ||
+              (galleryImage.image as any)?.alt ||
+              "Gallery image",
+            unoptimized: false,
+          };
+        }
+      } catch {
+        return null;
+      }
+    }
+  }
+
+  return null;
+}
+
 interface LeftColumnLandingProps {
   justInNews: Post[];
+}
+
+// Carousel component for cover + gallery images
+function ImageCarousel({
+  coverImage,
+  galleryImages,
+  postSlug,
+  breakingNews,
+  developingStory,
+}: {
+  coverImage: { src: string; alt: string; unoptimized: boolean } | null;
+  galleryImages: Array<{ src: string; alt: string; unoptimized: boolean }>;
+  postSlug: string;
+  breakingNews?: boolean | null;
+  developingStory?: boolean | null;
+}) {
+  // Combine cover and gallery images (cover first)
+  const allImages = [...(coverImage ? [coverImage] : []), ...galleryImages];
+
+  const [currentIndex, setCurrentIndex] = useState(0);
+
+  useEffect(() => {
+    if (allImages.length <= 1) return;
+
+    const interval = setInterval(() => {
+      setCurrentIndex((prev) => (prev + 1) % allImages.length);
+    }, 5000); // Change every 5 seconds
+
+    return () => clearInterval(interval);
+  }, [allImages.length]);
+
+  if (allImages.length === 0) return null;
+
+  return (
+    <div className="block mb-3">
+      <Link href={`/post/${postSlug}`}>
+        <div className="relative w-full h-56 md:h-60 overflow-hidden rounded-sm">
+          {allImages.map((image, idx) => (
+            <ImageRenderer
+              key={idx}
+              src={image.src}
+              alt={image.alt}
+              width={600}
+              height={240}
+              fill
+              unoptimized={image.unoptimized}
+              quality={60}
+              sizes="(max-width: 640px) 100vw, (max-width: 1024px) 100vw, 300px"
+              className={`object-cover rounded-sm absolute inset-0 transition-opacity duration-500 ${
+                idx === currentIndex ? "opacity-100 z-10" : "opacity-0 z-0"
+              }`}
+              priority={idx === 0}
+            />
+          ))}
+          {(breakingNews || developingStory) && (
+            <div className="absolute bottom-3 left-3 z-20">
+              <BreakingNewsLabel
+                text={breakingNews ? "Breaking" : "Developing story"}
+              />
+            </div>
+          )}
+          {/* Carousel indicators */}
+          {allImages.length > 1 && (
+            <div className="absolute bottom-3 right-3 z-20 flex gap-1.5">
+              {allImages.map((_, idx) => (
+                <button
+                  key={idx}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    setCurrentIndex(idx);
+                  }}
+                  className={`h-1.5 rounded-full transition-all ${
+                    idx === currentIndex
+                      ? "w-6 bg-white"
+                      : "w-1.5 bg-white/50 hover:bg-white/75"
+                  }`}
+                  aria-label={`Go to image ${idx + 1}`}
+                />
+              ))}
+            </div>
+          )}
+        </div>
+      </Link>
+    </div>
+  );
 }
 
 export function LeftColumnLanding({ justInNews }: LeftColumnLandingProps) {
@@ -35,12 +200,46 @@ export function LeftColumnLanding({ justInNews }: LeftColumnLandingProps) {
             ? getCoverImage(post.cover, post.title || "Article image")
             : null;
 
+          // Get gallery images for first article
+          let galleryImagesData: Array<{
+            src: string;
+            alt: string;
+            unoptimized: boolean;
+          }> = [];
+          if (
+            isFirstArticle &&
+            post.imageGallery &&
+            Array.isArray(post.imageGallery)
+          ) {
+            galleryImagesData = post.imageGallery
+              .map((img) => getGalleryImageData(img))
+              .filter(
+                (
+                  img
+                ): img is { src: string; alt: string; unoptimized: boolean } =>
+                  img !== null
+              );
+          }
+
+          // Check if we should show carousel (cover + gallery images)
+          const hasGalleryImages = galleryImagesData.length > 0;
+          const shouldShowCarousel =
+            isFirstArticle && (coverData?.src || hasGalleryImages);
+
           return (
             <article
               key={post._id}
               className={`${index < justInNews.length - 1 ? "border-b border-neutral-200" : ""} pb-4`}
             >
-              {isFirstArticle && coverData?.src && (
+              {shouldShowCarousel ? (
+                <ImageCarousel
+                  coverImage={coverData}
+                  galleryImages={galleryImagesData}
+                  postSlug={post.slug}
+                  breakingNews={post.breakingNews}
+                  developingStory={post.developingStory}
+                />
+              ) : isFirstArticle && coverData?.src ? (
                 <div className="block mb-3">
                   <Link href={`/post/${post.slug}`}>
                     <div className="relative w-full h-56 md:h-60 overflow-hidden rounded-sm">
@@ -56,22 +255,21 @@ export function LeftColumnLanding({ justInNews }: LeftColumnLandingProps) {
                         className="object-cover rounded-sm"
                         priority
                       />
-                      {isFirstArticle &&
-                        (post.breakingNews || post.developingStory) && (
-                          <div className="absolute bottom-3 left-3 z-10">
-                            <BreakingNewsLabel
-                              text={
-                                post.breakingNews
-                                  ? "Breaking"
-                                  : "Developing story"
-                              }
-                            />
-                          </div>
-                        )}
+                      {(post.breakingNews || post.developingStory) && (
+                        <div className="absolute bottom-3 left-3 z-10">
+                          <BreakingNewsLabel
+                            text={
+                              post.breakingNews
+                                ? "Breaking"
+                                : "Developing story"
+                            }
+                          />
+                        </div>
+                      )}
                     </div>
                   </Link>
                 </div>
-              )}
+              ) : null}
               <Link href={`/post/${post.slug}`} className="hover:text-red-600">
                 <h3
                   className={

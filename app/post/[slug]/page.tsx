@@ -241,6 +241,19 @@ export default async function PostPage({
                     creditLicense?: string | null;
                   } | null
                 }
+                imageGallery={
+                  post.imageGallery as Array<{
+                    source?: "asset" | "external";
+                    externalUrl?: string | null;
+                    image?: any;
+                    alt?: string | null;
+                    epigraph?: string | null;
+                    creditProvider?: string | null;
+                    creditAuthor?: string | null;
+                    creditSourceUrl?: string | null;
+                    creditLicense?: string | null;
+                  }> | null | undefined
+                }
                 title={post.title || "Untitled"}
                 author={post.author}
                 date={post.date}

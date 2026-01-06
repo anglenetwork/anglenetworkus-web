@@ -1,6 +1,7 @@
 // /schemas/post.ts
 import { DocumentTextIcon } from "@sanity/icons";
 import { defineField, defineType } from "sanity";
+import { GalleryImageInput } from "../components/GalleryImageInput";
 
 export default defineType({
   name: "post",
@@ -470,7 +471,7 @@ export default defineType({
           title: "Alt text (cover)",
           type: "string",
           description:
-            "Describe the image for screen readers. Optional - will use default text if empty.",
+            "Optional. Describe the image for screen readers.",
         }),
         defineField({ name: "epigraph", title: "Epigraph", type: "string" }),
         // ✅ Minimal image attribution fields (Wikimedia Commons compliant)
@@ -512,6 +513,204 @@ export default defineType({
           return true;
         }),
       description: "Upload image or paste external URL.",
+    } as any),
+    defineField({
+      name: "imageGallery",
+      title: "Image Gallery",
+      type: "array",
+      description: "Add images to display as a cover-image carousel.",
+      options: {
+        modal: {
+          type: "dialog",
+          width: 800,
+        },
+      },
+      of: [
+        {
+          type: "object",
+          name: "galleryImage",
+          title: "Gallery Image",
+          options: {
+            modal: {
+              type: "dialog",
+              width: "large",
+            },
+          },
+          components: {
+            input: GalleryImageInput,
+          },
+          fields: [
+            defineField({
+              name: "source",
+              title: "Source",
+              type: "string",
+              options: {
+                list: [
+                  { title: "Upload / Asset", value: "asset" },
+                  { title: "External URL", value: "external" },
+                ],
+                layout: "radio",
+                direction: "horizontal",
+              },
+              initialValue: "asset",
+              validation: (rule: any) => rule.required(),
+            }),
+            defineField({
+              name: "externalUrl",
+              title: "External image URL",
+              type: "url",
+              description: "Paste a direct image URL (http/https).",
+              hidden: ({ parent }: { parent?: { source?: string } }) => parent?.source !== "external",
+              validation: (rule: any) =>
+                rule.custom((value: string | undefined, ctx: any) => {
+                  const parent = ctx.parent as any;
+                  if (parent?.source === "external") {
+                    if (!value) return "External image URL is required";
+                  }
+                  return true;
+                }),
+            }),
+            defineField({
+              name: "image",
+              title: "Image",
+              type: "image",
+              options: { hotspot: true, aiAssist: { imageDescriptionField: "alt" } },
+              fields: [
+                {
+                  name: "alt",
+                  type: "string",
+                  title: "Alternative text",
+                  description: "Important for SEO and accessibility.",
+                },
+              ],
+              hidden: ({ parent }: { parent?: { source?: string } }) => parent?.source !== "asset",
+              validation: (rule: any) =>
+                rule.custom((value: any, ctx: any) => {
+                  const parent = ctx.parent as any;
+                  if (parent?.source === "asset") {
+                    if (!value?.asset?._ref) return "Select or upload an image";
+                  }
+                  return true;
+                }),
+            } as any),
+            defineField({
+              name: "alt",
+              title: "Alt text",
+              type: "string",
+              description: "Describe the image for screen readers. Required for gallery images.",
+              validation: (rule: any) => rule.required(),
+            }),
+            defineField({
+              name: "epigraph",
+              title: "Epigraph",
+              type: "string",
+              validation: (rule: any) => rule.required(),
+            }),
+            defineField({
+              name: "creditProvider",
+              title: "Credit Provider",
+              type: "string",
+              description: 'Example: "Wikimedia Commons", "Pexels".',
+              validation: (rule: any) => rule.required(),
+            }),
+            defineField({
+              name: "creditAuthor",
+              title: "Credit Author",
+              type: "string",
+              description: "Photographer/creator name.",
+              validation: (rule: any) => rule.required(),
+            }),
+            defineField({
+              name: "creditSourceUrl",
+              title: "Credit Source URL",
+              type: "url",
+              description: "Link to the photo page.",
+              validation: (rule: any) => rule.required(),
+            }),
+            defineField({
+              name: "creditLicense",
+              title: "Credit License",
+              type: "string",
+              description: 'Example: "CC BY-SA 4.0", "CC BY 4.0", "Pexels", "Public Domain".',
+              validation: (rule: any) => rule.required(),
+            }),
+          ],
+          preview: {
+            select: {
+              media: "image",
+              externalUrl: "externalUrl",
+              epigraph: "epigraph",
+              alt: "alt",
+              source: "source",
+            },
+            prepare(selection: any, context: any) {
+              const { media, externalUrl, epigraph, alt, source } = selection;
+              
+              // Try to get index from path - path structure: ['imageGallery', index, fieldName]
+              // The second element should be the array index
+              let imageNumber: number | null = null;
+              const path = context?.path;
+              if (Array.isArray(path) && path.length >= 2) {
+                const potentialIndex = path[1];
+                if (typeof potentialIndex === "number") {
+                  imageNumber = potentialIndex + 1;
+                }
+              }
+              
+              // Fallback: try to get from document if path doesn't work
+              if (imageNumber === null && context?.document?.imageGallery) {
+                const gallery = context.document.imageGallery;
+                if (Array.isArray(gallery)) {
+                  // Try to find this item in the array
+                  const index = gallery.findIndex((item: any, idx: number) => {
+                    // Match by source and URL/asset
+                    if (source === "external" && item?.source === "external") {
+                      return item?.externalUrl === externalUrl;
+                    } else if (source === "asset" && item?.source === "asset") {
+                      return item?.image?.asset?._ref === media?.asset?._ref;
+                    }
+                    return false;
+                  });
+                  if (index !== -1) {
+                    imageNumber = index + 1;
+                  }
+                }
+              }
+              
+              // Create title with number if available
+              let title: string;
+              if (imageNumber !== null) {
+                title = `Image ${imageNumber}`;
+              } else {
+                // Fallback to epigraph or alt
+                title = epigraph || alt || "Gallery Image";
+              }
+              
+              // Build subtitle with epigraph if available and not used in title
+              const subtitleParts = [
+                source === "external" ? "External URL" : "Uploaded Asset",
+                imageNumber !== null && epigraph ? epigraph : null,
+              ].filter(Boolean);
+              
+              return {
+                title,
+                media,
+                subtitle: subtitleParts.length > 0 ? subtitleParts.join(" • ") : undefined,
+              };
+            },
+          },
+          validation: (rule: any) =>
+            rule.custom((galleryImage: any, ctx: any) => {
+              const usingExternal = galleryImage?.source === "external" && !!galleryImage?.externalUrl;
+              const galleryImageAsset = galleryImage?.image as any;
+              const usingAsset = galleryImage?.source === "asset" && galleryImageAsset?.asset?._ref;
+              if (!(usingExternal || usingAsset)) {
+                return "Provide an image (external URL or uploaded asset)";
+              }
+              return true;
+            }),
+        },
+      ],
     } as any),
     // Removed legacy top-level epigraph/imageSource (use cover.epigraph/imageSource)
     // Removed legacy top-level epigraph/imageSource (use cover.epigraph/imageSource)

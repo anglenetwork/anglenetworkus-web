@@ -1,3 +1,6 @@
+"use client";
+
+import { useState, useEffect } from "react";
 import { PortableText } from "@portabletext/react";
 import {
   getCoverImage,
@@ -25,6 +28,18 @@ interface BodyBlock {
   bodyImage?: BodyImage | null;
 }
 
+interface GalleryImage {
+  source?: "asset" | "external";
+  externalUrl?: string | null;
+  image?: any;
+  alt?: string | null;
+  epigraph?: string | null;
+  creditProvider?: string | null;
+  creditAuthor?: string | null;
+  creditSourceUrl?: string | null;
+  creditLicense?: string | null;
+}
+
 interface PostBodyProps {
   bodyTextOne: any;
   bodyBlocks?: Array<BodyBlock> | null;
@@ -39,6 +54,7 @@ interface PostBodyProps {
     creditSourceUrl?: string | null;
     creditLicense?: string | null;
   } | null;
+  imageGallery?: Array<GalleryImage> | null;
   title: string;
   author?: { name: string; picture?: any };
   date: string;
@@ -166,6 +182,80 @@ const portableTextComponents = {
 };
 
 /** Helpers */
+function buildGalleryImage(galleryImage: GalleryImage | null | undefined): {
+  src: string | null;
+  alt: string;
+  unoptimized: boolean;
+  epigraph?: string | null;
+  credit?: string | null;
+} | null {
+  if (!galleryImage) return null;
+
+  const hasExternalUrl =
+    galleryImage.externalUrl && galleryImage.externalUrl.trim() !== "";
+  const hasImageAsset =
+    galleryImage.image && (galleryImage.image as any)?.asset?._ref;
+
+  if (!hasExternalUrl && !hasImageAsset) {
+    return null;
+  }
+
+  // Prefer explicit external URL when present or source === "external"
+  if (
+    hasExternalUrl &&
+    (galleryImage.source === "external" || !galleryImage.source) &&
+    galleryImage.externalUrl
+  ) {
+    let externalUrl = galleryImage.externalUrl.trim();
+    if (externalUrl.startsWith("//")) {
+      externalUrl = `https:${externalUrl}`;
+    } else if (!externalUrl.match(/^https?:\/\//)) {
+      externalUrl = `https://${externalUrl}`;
+    }
+
+    try {
+      new URL(externalUrl);
+      const isWikimedia = /(^|\.)upload\.wikimedia\.org$/.test(new URL(externalUrl).hostname);
+      return {
+        src: externalUrl,
+        alt: galleryImage.alt || "Gallery image",
+        unoptimized: isWikimedia,
+        epigraph: galleryImage.epigraph,
+        credit: formatImageCredit(galleryImage),
+      };
+    } catch {
+      return null;
+    }
+  }
+
+  // Fallback to Sanity asset
+  if (
+    hasImageAsset &&
+    (galleryImage.source === "asset" || !galleryImage.source || !hasExternalUrl)
+  ) {
+    const imageUrl = urlForImage(galleryImage.image);
+    if (imageUrl) {
+      try {
+        const url = imageUrl.quality(75).url();
+        if (url && url.length > 0) {
+          return {
+            src: url,
+            alt: galleryImage.alt || (galleryImage.image as any)?.alt || "Gallery image",
+            unoptimized: false,
+            epigraph: galleryImage.epigraph,
+            credit: formatImageCredit(galleryImage),
+          };
+        }
+      } catch (error) {
+        console.warn('Failed to build Sanity image URL:', error);
+        return null;
+      }
+    }
+  }
+
+  return null;
+}
+
 function buildBodyImage(bodyImage: BodyImage | null | undefined): {
   src: string | null;
   alt: string;
@@ -271,10 +361,96 @@ function renderBodyText(content: any, key: string | number) {
   );
 }
 
+// Cover image carousel component
+function CoverImageCarousel({
+  coverImage,
+  galleryImages,
+}: {
+  coverImage: { src: string; alt: string; unoptimized: boolean; epigraph?: string | null; credit?: string | null } | null;
+  galleryImages: Array<{ src: string; alt: string; unoptimized: boolean; epigraph?: string | null; credit?: string | null }>;
+}) {
+  const allImages = [
+    ...(coverImage ? [coverImage] : []),
+    ...galleryImages,
+  ];
+
+  const [currentIndex, setCurrentIndex] = useState(0);
+
+  useEffect(() => {
+    if (allImages.length <= 1) return;
+
+    const interval = setInterval(() => {
+      setCurrentIndex((prev) => (prev + 1) % allImages.length);
+    }, 7000); // Change every 7 seconds
+
+    return () => clearInterval(interval);
+  }, [allImages.length]);
+
+  if (allImages.length === 0) return null;
+
+  const currentImage = allImages[currentIndex];
+
+  return (
+    <figure className="mb-12 text-left">
+      <div className="relative w-full h-96 md:h-[500px] overflow-hidden rounded-lg shadow-lg">
+        {allImages.map((image, idx) => (
+          <ImageRenderer
+            key={idx}
+            src={image.src}
+            alt={image.alt}
+            width={1200}
+            height={675}
+            fill
+            priority={idx === 0}
+            fetchPriority={idx === 0 ? "high" : undefined}
+            quality={75}
+            sizes="(max-width: 768px) 100vw, (max-width: 1280px) 66vw, 800px"
+            unoptimized={image.unoptimized}
+            className={`object-cover object-center absolute inset-0 transition-opacity duration-500 ${
+              idx === currentIndex ? "opacity-100 z-10" : "opacity-0 z-0"
+            }`}
+          />
+        ))}
+        {/* Carousel indicators */}
+        {allImages.length > 1 && (
+          <div className="absolute bottom-4 right-4 z-20 flex gap-1.5">
+            {allImages.map((_, idx) => (
+              <button
+                key={idx}
+                onClick={() => setCurrentIndex(idx)}
+                className={`h-1.5 rounded-full transition-all ${
+                  idx === currentIndex
+                    ? "w-6 bg-white"
+                    : "w-1.5 bg-white/50 hover:bg-white/75"
+                }`}
+                aria-label={`Go to image ${idx + 1}`}
+              />
+            ))}
+          </div>
+        )}
+      </div>
+      <figcaption className="mt-2 font-secondary text-sm tracking-tight leading-snug text-neutral-500 text-left">
+        <span className="font-bold">
+          {currentImage.epigraph || "Catch up on the latest headlines and developing news."}
+        </span>
+        {currentImage.credit && (
+          <>
+            <span className="text-neutral-500"> • </span>
+            <span className="text-neutral-500">
+              {currentImage.credit}
+            </span>
+          </>
+        )}
+      </figcaption>
+    </figure>
+  );
+}
+
 export default function PostBody({
   bodyTextOne,
   bodyBlocks,
   cover,
+  imageGallery,
   title,
   author,
   date,
@@ -327,17 +503,58 @@ export default function PostBody({
         </div>
       </div>
 
-      {/* Cover image with epigraphs in secondary font */}
+      {/* Cover image carousel with epigraphs and credits */}
       {(() => {
         const coverData = getCoverImage(cover, title);
-        if (!coverData?.src) return null;
+        
+        // Build cover image data with metadata
+        const coverImageData = coverData ? {
+          ...coverData,
+          epigraph: cover?.epigraph || null,
+          credit: formatImageCredit(cover),
+        } : null;
 
+        // Build gallery images data with metadata
+        const galleryImagesData: Array<{
+          src: string;
+          alt: string;
+          unoptimized: boolean;
+          epigraph?: string | null;
+          credit?: string | null;
+        }> = [];
+        
+        if (imageGallery && Array.isArray(imageGallery)) {
+          imageGallery.forEach((img) => {
+            const galleryData = buildGalleryImage(img);
+            if (galleryData) {
+              galleryImagesData.push(galleryData);
+            }
+          });
+        }
+
+        // Check if we should show carousel (cover + gallery images)
+        const hasGalleryImages = galleryImagesData.length > 0;
+        const shouldShowCarousel = coverImageData?.src || hasGalleryImages;
+
+        if (!shouldShowCarousel) return null;
+
+        // If we have gallery images, show carousel; otherwise show single cover
+        if (hasGalleryImages) {
+          return (
+            <CoverImageCarousel
+              coverImage={coverImageData}
+              galleryImages={galleryImagesData}
+            />
+          );
+        }
+
+        // Fallback to single cover image (no gallery)
         return (
           <figure className="mb-12 text-left">
             <div className="relative w-full h-96 md:h-[500px] overflow-hidden rounded-lg shadow-lg">
               <ImageRenderer
-                src={coverData.src}
-                alt={coverData.alt}
+                src={coverImageData.src}
+                alt={coverImageData.alt}
                 width={1200}
                 height={675}
                 fill
@@ -345,7 +562,7 @@ export default function PostBody({
                 fetchPriority="high"
                 quality={75}
                 sizes="(max-width: 768px) 100vw, (max-width: 1280px) 66vw, 800px"
-                unoptimized={coverData.unoptimized}
+                unoptimized={coverImageData.unoptimized}
                 className="object-cover object-center"
               />
             </div>
