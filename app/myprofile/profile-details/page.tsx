@@ -18,14 +18,14 @@ export default async function ProfileDetailsPage() {
 
   const { data: profileData } = await supabase
     .from("profiles")
-    .select("first_name, last_name, date_of_birth")
+    .select("first_name, last_name, date_of_birth, email, avatar_url")
     .eq("id", user.id)
     .maybeSingle();
 
   return (
     <ProfileDetailsClient
       userId={user.id}
-      email={user.email ?? null}
+      email={profileData?.email ?? user.email ?? null}
       profile={profileData ?? null}
     />
   );

@@ -9,7 +9,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { createClient } from "@/lib/supabase/client";
 import type { User } from "@supabase/supabase-js";
@@ -49,6 +49,7 @@ export function UserMenu({ variant = "desktop" }: UserMenuProps) {
   const [user, setUser] = useState<User | null>(null);
   const [firstName, setFirstName] = useState<string | null>(null);
   const [lastName, setLastName] = useState<string | null>(null);
+  const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [signingOut, setSigningOut] = useState(false);
   const router = useRouter();
@@ -68,7 +69,7 @@ export function UserMenu({ variant = "desktop" }: UserMenuProps) {
       if (session?.user) {
         const { data: profile } = await supabase
           .from("profiles")
-          .select("first_name, last_name")
+          .select("first_name, last_name, avatar_url")
           .eq("id", session.user.id)
           .maybeSingle();
 
@@ -76,6 +77,7 @@ export function UserMenu({ variant = "desktop" }: UserMenuProps) {
 
         setFirstName(profile?.first_name ?? null);
         setLastName(profile?.last_name ?? null);
+        setAvatarUrl(profile?.avatar_url ?? null);
       }
 
       setLoading(false);
@@ -91,15 +93,17 @@ export function UserMenu({ variant = "desktop" }: UserMenuProps) {
       if (session?.user) {
         const { data: profile } = await supabase
           .from("profiles")
-          .select("first_name, last_name")
+          .select("first_name, last_name, avatar_url")
           .eq("id", session.user.id)
           .maybeSingle();
 
         setFirstName(profile?.first_name ?? null);
         setLastName(profile?.last_name ?? null);
+        setAvatarUrl(profile?.avatar_url ?? null);
       } else {
         setFirstName(null);
         setLastName(null);
+        setAvatarUrl(null);
       }
     });
 
@@ -134,6 +138,7 @@ export function UserMenu({ variant = "desktop" }: UserMenuProps) {
       setUser(null);
       setFirstName(null);
       setLastName(null);
+      setAvatarUrl(null);
 
       // Refresh server components and optionally send to /signin
       router.refresh();
@@ -188,6 +193,9 @@ export function UserMenu({ variant = "desktop" }: UserMenuProps) {
           className={`rounded-full bg-white p-0 flex items-center justify-center hover:bg-gray-100 ${buttonSize}`}
         >
           <Avatar className={avatarSize}>
+            {avatarUrl && (
+              <AvatarImage src={avatarUrl} alt={user?.email || "User"} />
+            )}
             <AvatarFallback className="bg-white text-neutral-700 text-xs font-sans">
               {userInitials}
             </AvatarFallback>

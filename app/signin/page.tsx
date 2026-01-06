@@ -8,6 +8,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import Image from "next/image";
 import { Logo } from "@/app/components/layout/navbar/logo";
+import { Chrome } from "lucide-react";
+import { Separator } from "@/components/ui/separator";
 
 interface GalleryItem {
   id: string;
@@ -31,26 +33,35 @@ export default function SignInPage() {
   const [isSending, setIsSending] = useState(false);
   const [galleryItems, setGalleryItems] = useState<GalleryItem[]>([]);
   const [galleryLoading, setGalleryLoading] = useState(true);
+  const [isGoogleLoading, setIsGoogleLoading] = useState(false);
   const router = useRouter();
   const supabase = createClient();
 
   useEffect(() => {
     const checkUser = async () => {
-      const {
-        data: { session },
-      } = await supabase.auth.getSession();
+      try {
+        const res = await fetch("/api/auth/session", {
+          method: "GET",
+          cache: "no-store",
+        });
 
-      if (session?.user) {
-        // User is already logged in, redirect to profile
-        router.push("/myprofile");
-      } else {
+        const json = (await res.json().catch(() => ({}))) as any;
+
+        if (json?.authenticated && json?.user) {
+          // User is already logged in, redirect to profile
+          router.push("/myprofile");
+        } else {
+          setLoading(false);
+        }
+      } catch (error) {
+        console.error("Error checking session:", error);
         setLoading(false);
       }
     };
 
     checkUser();
 
-    // Listen for auth changes
+    // Listen for auth changes (still use client-side listener for real-time updates)
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, session) => {
@@ -148,6 +159,29 @@ export default function SignInPage() {
     }
   };
 
+  const handleGoogleSignIn = async () => {
+    setIsGoogleLoading(true);
+    try {
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: "google",
+        options: {
+          redirectTo: `${window.location.origin}/auth/callback?next=/myprofile`,
+        },
+      });
+
+      if (error) {
+        console.error("Error initiating Google OAuth:", error);
+        setEmailError(error.message);
+        setIsGoogleLoading(false);
+      }
+      // If successful, user will be redirected to Google, so we don't reset loading state
+    } catch (error) {
+      console.error("Unexpected error with Google OAuth:", error);
+      setEmailError("An unexpected error occurred. Please try again.");
+      setIsGoogleLoading(false);
+    }
+  };
+
   const currentItem =
     galleryItems.length > 0 ? galleryItems[currentIndex] : null;
 
@@ -176,43 +210,70 @@ export default function SignInPage() {
           </p>
 
           {!isSubmitted ? (
-            <form onSubmit={handleSubmit} className="space-y-6">
-              {/* Email Input */}
-              <div className="space-y-2">
-                <label
-                  htmlFor="email"
-                  className="text-sm font-medium text-foreground font-sans"
-                >
-                  Email
-                </label>
-                <Input
-                  id="email"
-                  type="email"
-                  placeholder="Enter your email"
-                  value={email}
-                  onChange={(e) => {
-                    setEmail(e.target.value);
-                    setEmailError("");
-                  }}
-                  className={`w-full font-sans ${
-                    emailError ? "border-red-500" : ""
-                  }`}
-                  disabled={isSending}
-                />
-                {emailError && (
-                  <p className="text-sm text-red-500 font-sans">{emailError}</p>
-                )}
+            <div className="space-y-6">
+              {/* Google OAuth Button */}
+              <Button
+                type="button"
+                variant="outline"
+                onClick={handleGoogleSignIn}
+                disabled={isGoogleLoading || isSending}
+                className="w-full h-11 font-sans border-2"
+              >
+                <Chrome className="mr-2 h-4 w-4" />
+                {isGoogleLoading ? "Connecting..." : "Continue with Google"}
+              </Button>
+
+              {/* Divider */}
+              <div className="relative">
+                <div className="absolute inset-0 flex items-center">
+                  <Separator className="w-full" />
+                </div>
+                <div className="relative flex justify-center text-xs uppercase">
+                  <span className="bg-background px-2 text-muted-foreground font-sans">
+                    Or
+                  </span>
+                </div>
               </div>
 
-              {/* Sign In Button */}
-              <Button
-                type="submit"
-                disabled={isSending}
-                className="w-full bg-foreground text-background hover:bg-foreground/90 h-11 font-sans"
-              >
-                {isSending ? "Sending..." : "Send sign-in link"}
-              </Button>
-            </form>
+              {/* Email Form */}
+              <form onSubmit={handleSubmit} className="space-y-6">
+                {/* Email Input */}
+                <div className="space-y-2">
+                  <label
+                    htmlFor="email"
+                    className="text-sm font-medium text-foreground font-sans"
+                  >
+                    Email
+                  </label>
+                  <Input
+                    id="email"
+                    type="email"
+                    placeholder="Enter your email"
+                    value={email}
+                    onChange={(e) => {
+                      setEmail(e.target.value);
+                      setEmailError("");
+                    }}
+                    className={`w-full font-sans ${
+                      emailError ? "border-red-500" : ""
+                    }`}
+                    disabled={isSending || isGoogleLoading}
+                  />
+                  {emailError && (
+                    <p className="text-sm text-red-500 font-sans">{emailError}</p>
+                  )}
+                </div>
+
+                {/* Sign In Button */}
+                <Button
+                  type="submit"
+                  disabled={isSending || isGoogleLoading}
+                  className="w-full bg-foreground text-background hover:bg-foreground/90 h-11 font-sans"
+                >
+                  {isSending ? "Sending..." : "Send sign-in link"}
+                </Button>
+              </form>
+            </div>
           ) : (
             <div className="space-y-4 animate-in fade-in duration-500">
               <div className="bg-green-50 border border-green-200 rounded-lg p-6">
