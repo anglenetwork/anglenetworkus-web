@@ -69,15 +69,21 @@ export default defineConfig({
               title: "title",
               slug: "slug.current",
             },
-            resolve: (doc) => ({
-              locations: [
-                {
-                  title: doc?.title || "Untitled",
-                  href: resolveHref("post", doc?.slug)!,
-                },
-                homeLocation,
-              ],
-            }),
+            resolve: (doc) => {
+              const postHref = resolveHref("post", doc?.slug);
+              return {
+                locations: [
+                  {
+                    title: doc?.title || "Untitled",
+                    href: postHref || "#",
+                  },
+                  {
+                    title: "Home",
+                    href: "/",
+                  },
+                ],
+              };
+            },
           }),
         },
       },

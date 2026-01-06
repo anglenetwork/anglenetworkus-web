@@ -17,6 +17,16 @@ interface Post {
     creditSourceUrl?: string | null;
     creditLicense?: string | null;
   } | null;
+  imageGallery?: Array<{
+    source?: "asset" | "external";
+    externalUrl?: string | null;
+    image?: any;
+    alt?: string | null;
+    creditProvider?: string | null;
+    creditAuthor?: string | null;
+    creditSourceUrl?: string | null;
+    creditLicense?: string | null;
+  }> | null;
   date: string;
   publishedAt?: string | null;
   author?: {
@@ -129,6 +139,7 @@ export function FirstSection({ posts, mostReadPosts }: FirstSectionProps) {
       title: post.title,
       slug: post.slug!,
       cover: post.cover,
+      imageGallery: post.imageGallery,
       breakingNews: post.breakingNews,
       developingStory: post.developingStory,
     }));
