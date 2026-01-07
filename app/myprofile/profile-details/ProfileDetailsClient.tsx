@@ -3,9 +3,6 @@
 import { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { ProfileEditForm } from "../components/ProfileEditForm";
 import { CompleteProfileModal } from "../components/CompleteProfileModal";
 
 interface Profile {
@@ -42,23 +39,8 @@ export default function ProfileDetailsClient({
 }) {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const [isEditing, setIsEditing] = useState(false);
-  const [showModal, setShowModal] = useState(false);
-  const [formData, setFormData] = useState({
-    firstName: profile?.first_name ?? "",
-    lastName: profile?.last_name ?? "",
-    dateOfBirth: profile?.date_of_birth ?? "",
-    email: email ?? "",
-  });
-
-  useEffect(() => {
-    setFormData({
-      firstName: profile?.first_name ?? "",
-      lastName: profile?.last_name ?? "",
-      dateOfBirth: profile?.date_of_birth ?? "",
-      email: email ?? "",
-    });
-  }, [profile, email]);
+  const [showRequiredModal, setShowRequiredModal] = useState(false); // For first login
+  const [showEditModal, setShowEditModal] = useState(false); // For edit button
 
   // Check for post_login=1 and show modal if profile is incomplete
   useEffect(() => {
@@ -67,12 +49,12 @@ export default function ProfileDetailsClient({
       !profile?.first_name || !profile?.last_name || !profile?.date_of_birth;
 
     if (postLogin === "1" && isProfileIncomplete) {
-      setShowModal(true);
+      setShowRequiredModal(true);
     }
   }, [searchParams, profile]);
 
-  const handleModalClose = async () => {
-    setShowModal(false);
+  const handleRequiredModalClose = async () => {
+    setShowRequiredModal(false);
     // Remove post_login=1 from URL
     const params = new URLSearchParams(searchParams.toString());
     params.delete("post_login");
@@ -81,39 +63,52 @@ export default function ProfileDetailsClient({
       ? `/myprofile/profile-details?${newSearch}`
       : `/myprofile/profile-details`;
     router.replace(newPath);
-    // Force server component re-fetch (page has force-dynamic, so this should work)
+    // Force server component re-fetch
     router.refresh();
   };
 
-  const refreshProfile = async () => {
-    setIsEditing(false);
-    // Force server component re-fetch (page has force-dynamic, so this should work)
+  const handleEditModalClose = () => {
+    setShowEditModal(false);
+    // Refresh to get updated data
     router.refresh();
   };
 
-  const handleCancel = () => {
-    setFormData({
-      firstName: profile?.first_name ?? "",
-      lastName: profile?.last_name ?? "",
-      dateOfBirth: profile?.date_of_birth ?? "",
-      email: email ?? "",
-    });
-    setIsEditing(false);
+  const handleEditModalCancel = () => {
+    setShowEditModal(false);
   };
 
   return (
     <>
+      {/* Required modal for first login */}
       <CompleteProfileModal
-        open={showModal}
-        onClose={handleModalClose}
+        open={showRequiredModal}
+        onClose={handleRequiredModalClose}
         initialFirstName={namePrefill?.firstName ?? null}
         initialLastName={namePrefill?.lastName ?? null}
         initialDateOfBirth={profile?.date_of_birth ?? null}
         userId={userId}
+        isRequired={true}
+        title="Complete your profile"
+        description="Please provide your first name, last name, and date of birth to continue. This information helps us personalize your experience."
+        submitLabel="Complete Profile"
       />
 
-      {!isEditing ? (
-        <div>
+      {/* Edit modal for regular editing */}
+      <CompleteProfileModal
+        open={showEditModal}
+        onClose={handleEditModalClose}
+        initialFirstName={profile?.first_name ?? null}
+        initialLastName={profile?.last_name ?? null}
+        initialDateOfBirth={profile?.date_of_birth ?? null}
+        userId={userId}
+        isRequired={false}
+        title="Edit Profile"
+        description="Update your personal information."
+        submitLabel="Save Changes"
+        onCancel={handleEditModalCancel}
+      />
+
+      <div>
         <div className="mb-12">
           <h1 className="text-3xl font-semibold text-slate-900 mb-2 font-sans">
             Profile
@@ -169,53 +164,13 @@ export default function ProfileDetailsClient({
           <div className="pt-4">
             <Button
               className="bg-slate-900 text-white hover:bg-slate-800 font-sans"
-              onClick={() => setIsEditing(true)}
+              onClick={() => setShowEditModal(true)}
             >
               Edit
             </Button>
           </div>
         </div>
       </div>
-      ) : (
-        <div>
-      <div className="mb-12">
-        <h1 className="text-3xl font-semibold text-slate-900 mb-2 font-sans">
-          Profile
-        </h1>
-        <p className="text-slate-600 font-sans">
-          Manage your personal information
-        </p>
-      </div>
-
-      <div className="space-y-8">
-        <div>
-          <Label
-            htmlFor="email"
-            className="text-sm font-semibold text-slate-900 mb-3 block font-sans"
-          >
-            Email Address
-          </Label>
-          <Input
-            id="email"
-            type="email"
-            name="email"
-            value={formData.email}
-            className="w-full max-w-xl font-sans"
-            disabled
-          />
-        </div>
-
-        <ProfileEditForm
-          userId={userId}
-          initialFirstName={formData.firstName}
-          initialLastName={formData.lastName}
-          initialDateOfBirth={formData.dateOfBirth || null}
-          onUpdate={refreshProfile}
-          onCancel={handleCancel}
-        />
-      </div>
-    </div>
-      )}
     </>
   );
 }
