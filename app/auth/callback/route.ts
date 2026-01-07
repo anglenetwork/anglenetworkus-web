@@ -61,7 +61,7 @@ export async function GET(request: Request) {
       return NextResponse.redirect(new URL(`/signin?error=${encodeURIComponent(error.message)}`, url));
     }
 
-    // Hydrate profile with Google OAuth data
+    // Ensure profile row exists for all authentication methods (OAuth and email magic link)
     try {
       const {
         data: { user },
@@ -69,52 +69,19 @@ export async function GET(request: Request) {
       } = await supabase.auth.getUser();
 
       if (userError || !user) {
-        console.error("Error getting user after OAuth:", userError);
-        // Continue to redirect even if profile hydration fails
+        console.error("Error getting user after authentication:", userError);
+        // Continue to redirect even if profile creation fails
       } else {
-        // Log user metadata for debugging
-        console.log("User metadata from Google:", JSON.stringify(user.user_metadata, null, 2));
-
-        // Extract Google OAuth metadata - check multiple possible field names
-        const fullName =
+        // Check if this is an OAuth provider (has provider metadata)
+        const isOAuth = user.app_metadata?.provider && user.app_metadata.provider !== "email";
+        const hasOAuthMetadata = 
           user.user_metadata?.full_name ||
           user.user_metadata?.name ||
           user.user_metadata?.display_name ||
-          user.user_metadata?.given_name && user.user_metadata?.family_name
-            ? `${user.user_metadata.given_name} ${user.user_metadata.family_name}`.trim()
-            : null;
+          user.user_metadata?.given_name ||
+          user.user_metadata?.family_name;
 
-        // Parse full_name into first_name and last_name
-        let firstName: string | null = null;
-        let lastName: string | null = null;
-        
-        if (fullName) {
-          const nameParts = fullName.trim().split(/\s+/).filter(Boolean);
-          if (nameParts.length > 0) {
-            firstName = nameParts[0];
-            if (nameParts.length > 1) {
-              lastName = nameParts.slice(1).join(" ");
-            }
-          }
-        } else {
-          // Fallback: try to get given_name and family_name directly
-          if (user.user_metadata?.given_name) {
-            firstName = user.user_metadata.given_name;
-          }
-          if (user.user_metadata?.family_name) {
-            lastName = user.user_metadata.family_name;
-          }
-        }
-
-        // Get avatar URL from metadata (Google provides 'avatar_url' or 'picture')
-        const avatarUrl =
-          user.user_metadata?.avatar_url ||
-          user.user_metadata?.picture ||
-          null;
-
-        // Build update object with Google OAuth data
-        // We always update these fields if we have them from Google (for first-time login or profile refresh)
-        // Note: avatar_url is not stored in profiles table, it's available from user_metadata
+        // Build profile update object
         const profileUpdate: {
           id: string;
           email?: string | null;
@@ -126,29 +93,68 @@ export async function GET(request: Request) {
           updated_at: new Date().toISOString(),
         };
 
-        // Set email if available from Google
+        // Set email if available
         if (user.email) {
           profileUpdate.email = user.email;
         }
 
-        // Set first_name if we parsed it from Google data
-        if (firstName) {
-          profileUpdate.first_name = firstName;
+        // For OAuth providers (like Google), extract and set name data from metadata
+        if (isOAuth && hasOAuthMetadata) {
+          // Log user metadata for debugging
+          console.log("User metadata from OAuth provider:", JSON.stringify(user.user_metadata, null, 2));
+
+          // Extract OAuth metadata - check multiple possible field names
+          const fullName =
+            user.user_metadata?.full_name ||
+            user.user_metadata?.name ||
+            user.user_metadata?.display_name ||
+            (user.user_metadata?.given_name && user.user_metadata?.family_name
+              ? `${user.user_metadata.given_name} ${user.user_metadata.family_name}`.trim()
+              : null);
+
+          // Parse full_name into first_name and last_name
+          let firstName: string | null = null;
+          let lastName: string | null = null;
+          
+          if (fullName) {
+            const nameParts = fullName.trim().split(/\s+/).filter(Boolean);
+            if (nameParts.length > 0) {
+              firstName = nameParts[0];
+              if (nameParts.length > 1) {
+                lastName = nameParts.slice(1).join(" ");
+              }
+            }
+          } else {
+            // Fallback: try to get given_name and family_name directly
+            if (user.user_metadata?.given_name) {
+              firstName = user.user_metadata.given_name;
+            }
+            if (user.user_metadata?.family_name) {
+              lastName = user.user_metadata.family_name;
+            }
+          }
+
+          // Set first_name if we parsed it from OAuth data
+          if (firstName) {
+            profileUpdate.first_name = firstName;
+          }
+
+          // Set last_name if we parsed it from OAuth data
+          if (lastName) {
+            profileUpdate.last_name = lastName;
+          }
+
+          // Note: avatar_url is available from user.user_metadata.avatar_url or user.user_metadata.picture
+          // It's not stored in the profiles table
         }
+        // For email magic link, profile will be created with just id and email
+        // User can fill in first_name, last_name, date_of_birth via the profile completion modal
 
-        // Set last_name if we parsed it from Google data
-        if (lastName) {
-          profileUpdate.last_name = lastName;
-        }
+        // Log what we're about to upsert
+        console.log("Upserting profile:", JSON.stringify(profileUpdate, null, 2));
 
-        // Note: avatar_url is available from user.user_metadata.avatar_url or user.user_metadata.picture
-        // It's not stored in the profiles table
-
-        // Log what we're about to update
-        console.log("Updating profile with Google OAuth data:", JSON.stringify(profileUpdate, null, 2));
-
-        // Upsert profile with Google data
-        // Note: This will create the profile if it doesn't exist, or update it if it does
+        // Upsert profile - this will create the profile if it doesn't exist, or update it if it does
+        // This ensures a profile row exists for all users (OAuth and email magic link)
         const { error: profileError, data: updatedProfile } = await supabase
           .from("profiles")
           .upsert(profileUpdate, { onConflict: "id" })
@@ -156,14 +162,14 @@ export async function GET(request: Request) {
 
         if (profileError) {
           console.error("Error upserting profile:", profileError);
-          // Don't block OAuth flow if profile upsert fails
+          // Don't block auth flow if profile upsert fails
         } else {
-          console.log("Profile updated successfully:", JSON.stringify(updatedProfile, null, 2));
+          console.log("Profile upserted successfully:", JSON.stringify(updatedProfile, null, 2));
         }
       }
     } catch (profileErr) {
-      console.error("Error hydrating profile:", profileErr);
-      // Continue to redirect even if profile hydration fails
+      console.error("Error ensuring profile exists:", profileErr);
+      // Continue to redirect even if profile creation fails
     }
   }
 
