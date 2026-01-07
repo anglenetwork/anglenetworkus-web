@@ -17,6 +17,12 @@ interface CompleteProfileModalProps {
   initialLastName?: string | null;
   initialDateOfBirth?: string | null;
   userId: string;
+  // New props to make modal flexible
+  isRequired?: boolean; // If true, modal cannot be closed (first login). If false, can be closed (editing)
+  title?: string; // Custom title
+  description?: string; // Custom description
+  submitLabel?: string; // Custom submit label
+  onCancel?: () => void; // Cancel handler for edit mode
 }
 
 export function CompleteProfileModal({
@@ -26,10 +32,15 @@ export function CompleteProfileModal({
   initialLastName,
   initialDateOfBirth,
   userId,
+  isRequired = false, // Default to false (editable/dismissible)
+  title = "Edit Profile",
+  description = "Update your personal information.",
+  submitLabel = "Save Changes",
+  onCancel,
 }: CompleteProfileModalProps) {
-  // Prevent closing the modal via ESC key
+  // Only prevent closing if isRequired is true (first login scenario)
   useEffect(() => {
-    if (open) {
+    if (open && isRequired) {
       const handleEscape = (e: KeyboardEvent) => {
         if (e.key === "Escape") {
           e.preventDefault();
@@ -39,36 +50,42 @@ export function CompleteProfileModal({
       document.addEventListener("keydown", handleEscape);
       return () => document.removeEventListener("keydown", handleEscape);
     }
-  }, [open]);
+  }, [open, isRequired]);
 
   return (
     <Dialog
       open={open}
       onOpenChange={(isOpen) => {
-        // Prevent closing - always keep it open if trying to close
-        if (!isOpen) {
+        // Only prevent closing if isRequired is true
+        if (isRequired && !isOpen) {
           // Do nothing - modal stays open
+        } else if (!isRequired && !isOpen) {
+          // Allow closing for edit mode
+          onClose();
         }
       }}
     >
       <DialogContent
-        className="sm:max-w-[600px] [&_button[aria-label='Close']]:hidden"
+        className={`sm:max-w-[600px] ${isRequired ? "[&_button[aria-label='Close']]:hidden" : ""}`}
         onEscapeKeyDown={(e) => {
-          // Prevent ESC from closing
-          e.preventDefault();
+          // Only prevent ESC if required
+          if (isRequired) {
+            e.preventDefault();
+          }
         }}
         onInteractOutside={(e) => {
-          // Prevent clicking outside from closing
-          e.preventDefault();
+          // Only prevent clicking outside if required
+          if (isRequired) {
+            e.preventDefault();
+          }
         }}
       >
         <DialogHeader>
           <DialogTitle className="text-2xl font-semibold text-slate-900 font-sans">
-            Complete your profile
+            {title}
           </DialogTitle>
           <DialogDescription className="text-slate-600 font-sans">
-            Please provide your first name, last name, and date of birth to continue. This information
-            helps us personalize your experience.
+            {description}
           </DialogDescription>
         </DialogHeader>
 
@@ -78,13 +95,13 @@ export function CompleteProfileModal({
             initialFirstName={initialFirstName}
             initialLastName={initialLastName}
             initialDateOfBirth={initialDateOfBirth ?? null}
-            requireNames={true}
+            requireNames={isRequired} // Only require names if it's the required modal
             hideDateOfBirth={false}
-            submitLabel="Complete Profile"
+            submitLabel={submitLabel}
             onUpdate={() => {
-              // Close modal and remove post_login from URL
               onClose();
             }}
+            onCancel={onCancel}
           />
         </div>
       </DialogContent>
