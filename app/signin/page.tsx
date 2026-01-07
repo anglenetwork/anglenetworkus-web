@@ -141,7 +141,7 @@ export default function SignInPage() {
       const { error } = await supabase.auth.signInWithOtp({
         email,
         options: {
-          emailRedirectTo: `${window.location.origin}/auth/callback?next=/myprofile`,
+          emailRedirectTo: `${window.location.origin}/auth/callback?next=/myprofile/profile-details&post_login=1`,
         },
       });
 
@@ -165,7 +165,7 @@ export default function SignInPage() {
       const { error } = await supabase.auth.signInWithOAuth({
         provider: "google",
         options: {
-          redirectTo: `${window.location.origin}/auth/callback?next=/myprofile`,
+          redirectTo: `${window.location.origin}/auth/callback?next=/myprofile/profile-details&post_login=1`,
         },
       });
 

@@ -1,30 +1,17 @@
 import { test, expect } from "@playwright/test";
 
 test.describe("Complete Profile Modal After Login", () => {
-  test.beforeEach(async ({ page, context }) => {
-    // Clear any existing session
-    await context.clearCookies();
-  });
-
   test("modal appears after login when profile is incomplete", async ({
     page,
   }) => {
-    // Skip if no test credentials
+    // Skip if no test email (authentication is handled by global setup)
     test.skip(
-      !process.env.PLAYWRIGHT_TEST_EMAIL || !process.env.PLAYWRIGHT_TEST_PASSWORD,
-      "Test credentials not provided"
+      !process.env.PLAYWRIGHT_TEST_EMAIL,
+      "Test email not provided"
     );
 
-    // Navigate to signin
-    await page.goto("/signin");
-    await page.waitForLoadState("networkidle");
-
-    // Perform login (this would need to be adapted based on your auth flow)
-    // For now, we'll test the modal display logic directly
-    // In a real scenario, you'd sign in first, then navigate
-
     // Navigate directly to profile-details with post_login=1
-    // (simulating post-login redirect)
+    // Authentication is handled by global setup, so we can go straight to protected routes
     await page.goto("/myprofile/profile-details?post_login=1");
 
     // Wait for page to load
@@ -106,13 +93,14 @@ test.describe("Complete Profile Modal After Login", () => {
   });
 
   test("submit completes profile and closes modal", async ({ page }) => {
-    // Skip if no test credentials
+    // Skip if no test email (authentication is handled by global setup)
     test.skip(
-      !process.env.PLAYWRIGHT_TEST_EMAIL || !process.env.PLAYWRIGHT_TEST_PASSWORD,
-      "Test credentials not provided"
+      !process.env.PLAYWRIGHT_TEST_EMAIL,
+      "Test email not provided"
     );
 
     // Navigate to profile-details with post_login=1
+    // Authentication is handled by global setup
     await page.goto("/myprofile/profile-details?post_login=1");
     await page.waitForLoadState("networkidle");
 
@@ -158,14 +146,15 @@ test.describe("Complete Profile Modal After Login", () => {
   test("modal does not show if profile is already complete", async ({
     page,
   }) => {
-    // Skip if no test credentials
+    // Skip if no test email (authentication is handled by global setup)
     test.skip(
-      !process.env.PLAYWRIGHT_TEST_EMAIL || !process.env.PLAYWRIGHT_TEST_PASSWORD,
-      "Test credentials not provided"
+      !process.env.PLAYWRIGHT_TEST_EMAIL,
+      "Test email not provided"
     );
 
     // This test assumes user already has first_name, last_name, and date_of_birth
     // Navigate to profile-details with post_login=1
+    // Authentication is handled by global setup
     await page.goto("/myprofile/profile-details?post_login=1");
     await page.waitForLoadState("networkidle");
 
@@ -192,13 +181,14 @@ test.describe("Complete Profile Modal After Login", () => {
   });
 
   test("logout works and session is cleared", async ({ page, context }) => {
-    // Skip if no test credentials
+    // Skip if no test email (authentication is handled by global setup)
     test.skip(
-      !process.env.PLAYWRIGHT_TEST_EMAIL || !process.env.PLAYWRIGHT_TEST_PASSWORD,
-      "Test credentials not provided"
+      !process.env.PLAYWRIGHT_TEST_EMAIL,
+      "Test email not provided"
     );
 
     // Navigate to a protected route
+    // Authentication is handled by global setup
     await page.goto("/myprofile");
     await page.waitForLoadState("networkidle");
 

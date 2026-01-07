@@ -69,7 +69,7 @@ export function UserMenu({ variant = "desktop" }: UserMenuProps) {
       if (session?.user) {
         const { data: profile } = await supabase
           .from("profiles")
-          .select("first_name, last_name, avatar_url")
+          .select("first_name, last_name")
           .eq("id", session.user.id)
           .maybeSingle();
 
@@ -77,7 +77,12 @@ export function UserMenu({ variant = "desktop" }: UserMenuProps) {
 
         setFirstName(profile?.first_name ?? null);
         setLastName(profile?.last_name ?? null);
-        setAvatarUrl(profile?.avatar_url ?? null);
+        // Get avatar from user metadata (Google OAuth provides it there)
+        setAvatarUrl(
+          session.user.user_metadata?.avatar_url ||
+            session.user.user_metadata?.picture ||
+            null
+        );
       }
 
       setLoading(false);
@@ -93,13 +98,18 @@ export function UserMenu({ variant = "desktop" }: UserMenuProps) {
       if (session?.user) {
         const { data: profile } = await supabase
           .from("profiles")
-          .select("first_name, last_name, avatar_url")
+          .select("first_name, last_name")
           .eq("id", session.user.id)
           .maybeSingle();
 
         setFirstName(profile?.first_name ?? null);
         setLastName(profile?.last_name ?? null);
-        setAvatarUrl(profile?.avatar_url ?? null);
+        // Get avatar from user metadata (Google OAuth provides it there)
+        setAvatarUrl(
+          session.user.user_metadata?.avatar_url ||
+            session.user.user_metadata?.picture ||
+            null
+        );
       } else {
         setFirstName(null);
         setLastName(null);

@@ -45,3 +45,11 @@ next-env.d.ts
 # Env files created by scripts for working locally
 .env
 .env.local
+
+#testing
+playwright-report/
+supabase-migrations/
+test-results/
+
+# Playwright auth storage state (generated)
+playwright/.auth/

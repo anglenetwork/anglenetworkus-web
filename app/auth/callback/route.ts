@@ -5,7 +5,16 @@ import { createServerClient } from "@supabase/ssr";
 export async function GET(request: Request) {
   const url = new URL(request.url);
   const code = url.searchParams.get("code");
-  const next = url.searchParams.get("next") ?? "/myprofile";
+  const nextParam = url.searchParams.get("next");
+  
+  // Default to profile-details with post_login flag
+  let next = nextParam ?? "/myprofile/profile-details?post_login=1";
+  
+  // If next param exists but doesn't have post_login, append it
+  if (nextParam && !nextParam.includes("post_login")) {
+    const separator = nextParam.includes("?") ? "&" : "?";
+    next = `${nextParam}${separator}post_login=1`;
+  }
 
   const supabaseUrl =
     process.env.NEXT_PUBLIC_SUPABASE_PROJECT_URL ||
@@ -105,12 +114,12 @@ export async function GET(request: Request) {
 
         // Build update object with Google OAuth data
         // We always update these fields if we have them from Google (for first-time login or profile refresh)
+        // Note: avatar_url is not stored in profiles table, it's available from user_metadata
         const profileUpdate: {
           id: string;
           email?: string | null;
           first_name?: string | null;
           last_name?: string | null;
-          avatar_url?: string | null;
           updated_at: string;
         } = {
           id: user.id,
@@ -132,10 +141,8 @@ export async function GET(request: Request) {
           profileUpdate.last_name = lastName;
         }
 
-        // Set avatar_url if available from Google
-        if (avatarUrl) {
-          profileUpdate.avatar_url = avatarUrl;
-        }
+        // Note: avatar_url is available from user.user_metadata.avatar_url or user.user_metadata.picture
+        // It's not stored in the profiles table
 
         // Log what we're about to update
         console.log("Updating profile with Google OAuth data:", JSON.stringify(profileUpdate, null, 2));

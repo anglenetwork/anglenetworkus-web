@@ -13,7 +13,6 @@ interface Profile {
   last_name?: string | null;
   date_of_birth?: string | null; // "YYYY-MM-DD" from Supabase (date column)
   email?: string | null;
-  avatar_url?: string | null;
 }
 
 // Safe formatter for YYYY-MM-DD without timezone shifting
