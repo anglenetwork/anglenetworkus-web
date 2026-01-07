@@ -1,11 +1,12 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { ProfileEditForm } from "../components/ProfileEditForm";
+import { CompleteProfileModal } from "../components/CompleteProfileModal";
 
 interface Profile {
   first_name?: string | null;
@@ -33,13 +34,17 @@ export default function ProfileDetailsClient({
   userId,
   email,
   profile,
+  namePrefill,
 }: {
   userId: string;
   email: string | null;
   profile: Profile | null;
+  namePrefill?: { firstName: string | null; lastName: string | null };
 }) {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [isEditing, setIsEditing] = useState(false);
+  const [showModal, setShowModal] = useState(false);
   const [formData, setFormData] = useState({
     firstName: profile?.first_name ?? "",
     lastName: profile?.last_name ?? "",
@@ -56,10 +61,35 @@ export default function ProfileDetailsClient({
     });
   }, [profile, email]);
 
-  const refreshProfile = async () => {
-    // Re-runs the server component fetch
+  // Check for post_login=1 and show modal if profile is incomplete
+  useEffect(() => {
+    const postLogin = searchParams.get("post_login");
+    const isProfileIncomplete =
+      !profile?.first_name || !profile?.last_name || !profile?.date_of_birth;
+
+    if (postLogin === "1" && isProfileIncomplete) {
+      setShowModal(true);
+    }
+  }, [searchParams, profile]);
+
+  const handleModalClose = async () => {
+    setShowModal(false);
+    // Remove post_login=1 from URL
+    const params = new URLSearchParams(searchParams.toString());
+    params.delete("post_login");
+    const newSearch = params.toString();
+    const newPath = newSearch
+      ? `/myprofile/profile-details?${newSearch}`
+      : `/myprofile/profile-details`;
+    router.replace(newPath);
+    // Force server component re-fetch (page has force-dynamic, so this should work)
     router.refresh();
+  };
+
+  const refreshProfile = async () => {
     setIsEditing(false);
+    // Force server component re-fetch (page has force-dynamic, so this should work)
+    router.refresh();
   };
 
   const handleCancel = () => {
@@ -72,9 +102,19 @@ export default function ProfileDetailsClient({
     setIsEditing(false);
   };
 
-  if (!isEditing) {
-    return (
-      <div>
+  return (
+    <>
+      <CompleteProfileModal
+        open={showModal}
+        onClose={handleModalClose}
+        initialFirstName={namePrefill?.firstName ?? null}
+        initialLastName={namePrefill?.lastName ?? null}
+        initialDateOfBirth={profile?.date_of_birth ?? null}
+        userId={userId}
+      />
+
+      {!isEditing ? (
+        <div>
         <div className="mb-12">
           <h1 className="text-3xl font-semibold text-slate-900 mb-2 font-sans">
             Profile
@@ -90,7 +130,9 @@ export default function ProfileDetailsClient({
               First Name
             </label>
             <p className="text-slate-900 font-sans">
-              {profile?.first_name || "Not set"}
+              {profile?.first_name && profile.first_name.trim()
+                ? profile.first_name
+                : "Not set"}
             </p>
           </div>
 
@@ -99,7 +141,9 @@ export default function ProfileDetailsClient({
               Last Name
             </label>
             <p className="text-slate-900 font-sans">
-              {profile?.last_name || "Not set"}
+              {profile?.last_name && profile.last_name.trim()
+                ? profile.last_name
+                : "Not set"}
             </p>
           </div>
 
@@ -133,11 +177,8 @@ export default function ProfileDetailsClient({
           </div>
         </div>
       </div>
-    );
-  }
-
-  return (
-    <div>
+      ) : (
+        <div>
       <div className="mb-12">
         <h1 className="text-3xl font-semibold text-slate-900 mb-2 font-sans">
           Profile
@@ -175,5 +216,7 @@ export default function ProfileDetailsClient({
         />
       </div>
     </div>
+      )}
+    </>
   );
 }

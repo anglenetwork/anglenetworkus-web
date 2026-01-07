@@ -13,6 +13,9 @@ interface ProfileEditFormProps {
   initialDateOfBirth?: string | null; // "YYYY-MM-DD"
   onUpdate?: () => void;
   onCancel?: () => void;
+  requireNames?: boolean; // Default: false
+  hideDateOfBirth?: boolean; // Default: false
+  submitLabel?: string; // Default: "Save Changes"
 }
 
 export function ProfileEditForm({
@@ -22,6 +25,9 @@ export function ProfileEditForm({
   initialDateOfBirth,
   onUpdate,
   onCancel,
+  requireNames = false,
+  hideDateOfBirth = false,
+  submitLabel = "Save Changes",
 }: ProfileEditFormProps) {
   const [firstName, setFirstName] = useState(initialFirstName ?? "");
   const [lastName, setLastName] = useState(initialLastName ?? "");
@@ -31,6 +37,11 @@ export function ProfileEditForm({
     type: "success" | "error";
     text: string;
   } | null>(null);
+  const [fieldErrors, setFieldErrors] = useState<{
+    firstName?: string;
+    lastName?: string;
+    dateOfBirth?: string;
+  }>({});
 
   const router = useRouter();
 
@@ -44,6 +55,31 @@ export function ProfileEditForm({
     e.preventDefault();
     setLoading(true);
     setMessage(null);
+    setFieldErrors({});
+
+    // Validate required fields if requireNames is true
+    if (requireNames) {
+      const errors: {
+        firstName?: string;
+        lastName?: string;
+        dateOfBirth?: string;
+      } = {};
+      if (!firstName.trim()) {
+        errors.firstName = "First name is required";
+      }
+      if (!lastName.trim()) {
+        errors.lastName = "Last name is required";
+      }
+      if (!hideDateOfBirth && !dateOfBirth.trim()) {
+        errors.dateOfBirth = "Date of birth is required";
+      }
+
+      if (Object.keys(errors).length > 0) {
+        setFieldErrors(errors);
+        setLoading(false);
+        return;
+      }
+    }
 
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), 12000);
@@ -58,7 +94,11 @@ export function ProfileEditForm({
           // userId kept in component but NOT needed/sent; server uses auth user id.
           firstName,
           lastName,
-          dateOfBirth: dateOfBirth ? dateOfBirth : null,
+          dateOfBirth: hideDateOfBirth
+            ? null
+            : dateOfBirth
+              ? dateOfBirth
+              : null,
         }),
       });
 
@@ -117,17 +157,29 @@ export function ProfileEditForm({
           htmlFor="firstName"
           className="text-sm font-semibold text-slate-900 mb-3 block font-sans"
         >
-          First Name
+          First Name {requireNames && <span className="text-red-500">*</span>}
         </Label>
         <Input
           id="firstName"
           type="text"
           name="firstName"
           value={firstName}
-          onChange={(e) => setFirstName(e.target.value)}
+          onChange={(e) => {
+            setFirstName(e.target.value);
+            if (fieldErrors.firstName) {
+              setFieldErrors((prev) => ({ ...prev, firstName: undefined }));
+            }
+          }}
           disabled={loading}
-          className="w-full max-w-xl font-sans"
+          className={`w-full max-w-xl font-sans ${
+            fieldErrors.firstName ? "border-red-500" : ""
+          }`}
         />
+        {fieldErrors.firstName && (
+          <p className="text-sm text-red-500 mt-1 font-sans">
+            {fieldErrors.firstName}
+          </p>
+        )}
       </div>
 
       <div>
@@ -135,36 +187,63 @@ export function ProfileEditForm({
           htmlFor="lastName"
           className="text-sm font-semibold text-slate-900 mb-3 block font-sans"
         >
-          Last Name
+          Last Name {requireNames && <span className="text-red-500">*</span>}
         </Label>
         <Input
           id="lastName"
           type="text"
           name="lastName"
           value={lastName}
-          onChange={(e) => setLastName(e.target.value)}
+          onChange={(e) => {
+            setLastName(e.target.value);
+            if (fieldErrors.lastName) {
+              setFieldErrors((prev) => ({ ...prev, lastName: undefined }));
+            }
+          }}
           disabled={loading}
-          className="w-full max-w-xl font-sans"
+          className={`w-full max-w-xl font-sans ${
+            fieldErrors.lastName ? "border-red-500" : ""
+          }`}
         />
+        {fieldErrors.lastName && (
+          <p className="text-sm text-red-500 mt-1 font-sans">
+            {fieldErrors.lastName}
+          </p>
+        )}
       </div>
 
-      <div>
-        <Label
-          htmlFor="dateOfBirth"
-          className="text-sm font-semibold text-slate-900 mb-3 block font-sans"
-        >
-          Date of Birth
-        </Label>
-        <Input
-          id="dateOfBirth"
-          type="date"
-          name="dateOfBirth"
-          value={dateOfBirth}
-          onChange={(e) => setDateOfBirth(e.target.value)}
-          disabled={loading}
-          className="w-full max-w-xl font-sans"
-        />
-      </div>
+      {!hideDateOfBirth && (
+        <div>
+          <Label
+            htmlFor="dateOfBirth"
+            className="text-sm font-semibold text-slate-900 mb-3 block font-sans"
+          >
+            Date of Birth{" "}
+            {requireNames && <span className="text-red-500">*</span>}
+          </Label>
+          <Input
+            id="dateOfBirth"
+            type="date"
+            name="dateOfBirth"
+            value={dateOfBirth}
+            onChange={(e) => {
+              setDateOfBirth(e.target.value);
+              if (fieldErrors.dateOfBirth) {
+                setFieldErrors((prev) => ({ ...prev, dateOfBirth: undefined }));
+              }
+            }}
+            disabled={loading}
+            className={`w-full max-w-xl font-sans ${
+              fieldErrors.dateOfBirth ? "border-red-500" : ""
+            }`}
+          />
+          {fieldErrors.dateOfBirth && (
+            <p className="text-sm text-red-500 mt-1 font-sans">
+              {fieldErrors.dateOfBirth}
+            </p>
+          )}
+        </div>
+      )}
 
       {message && (
         <div
@@ -179,10 +258,16 @@ export function ProfileEditForm({
       <div className="flex gap-3 pt-4">
         <Button
           type="submit"
-          disabled={loading}
+          disabled={
+            loading ||
+            (requireNames &&
+              (!firstName.trim() ||
+                !lastName.trim() ||
+                (!hideDateOfBirth && !dateOfBirth.trim())))
+          }
           className="bg-slate-900 text-white hover:bg-slate-800 font-sans"
         >
-          {loading ? "Saving..." : "Save Changes"}
+          {loading ? "Saving..." : submitLabel}
         </Button>
         {onCancel && (
           <Button

@@ -62,10 +62,26 @@ export async function POST(req: Request) {
     .maybeSingle();
 
   if (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    return NextResponse.json(
+      { error: error.message },
+      {
+        status: 500,
+        headers: {
+          "Cache-Control": "no-store, no-cache, must-revalidate",
+        },
+      }
+    );
   }
 
-  return NextResponse.json({ profile: data ?? null }, { status: 200 });
+  return NextResponse.json(
+    { profile: data ?? null },
+    {
+      status: 200,
+      headers: {
+        "Cache-Control": "no-store, no-cache, must-revalidate",
+      },
+    }
+  );
 }
 
 
