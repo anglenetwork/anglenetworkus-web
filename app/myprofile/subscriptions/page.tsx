@@ -1,98 +1,242 @@
-import { createSupabaseServerClient } from "@/lib/supabase/server";
+"use client";
+
+import { useEffect, useMemo, useState } from "react";
+import { createClient } from "@/lib/supabase/client";
+import type { PostgrestError } from "@supabase/supabase-js";
+
+import { Switch } from "@/components/ui/switch";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Check } from "lucide-react";
+import PricingCard from "@/app/components/ui/pricing-card";
+import { useSupabaseAuth } from "@/app/providers/SupabaseAuthProvider";
 
-export const dynamic = "force-dynamic";
-export const revalidate = 0;
+import { getTierFromEntitlements, type Tier } from "@/lib/subscriptions/tier";
 
-const subscriptions = [
-  {
-    id: 1,
-    name: "Pro Plan",
-    price: "$29/month",
-    status: "active",
-    features: ["Advanced analytics", "Priority support", "Custom domain"],
-  },
-  {
-    id: 2,
-    name: "Storage Add-on",
-    price: "$5/month",
-    status: "active",
-    features: ["Extra 100GB storage"],
-  },
-];
+type EntitlementRow = {
+  key: string;
+  active: boolean;
+  valid_until: string | null;
+};
 
-export default async function SubscriptionPage() {
-  const supabase = await createSupabaseServerClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+function formatDate(iso: string) {
+  try {
+    return new Date(iso).toLocaleDateString();
+  } catch {
+    return iso;
+  }
+}
 
-  if (!user) return null;
+export default function SubscriptionsPage() {
+  const supabase = useMemo(() => createClient(), []);
+  const { ready: authReady } = useSupabaseAuth();
+
+  const [loading, setLoading] = useState(true);
+  const [tier, setTier] = useState<Tier>("free");
+  const [validUntil, setValidUntil] = useState<string | null>(null);
+
+  const [billingYearly, setBillingYearly] = useState(false); // OFF => monthly, ON => yearly
+  const [error, setError] = useState<string | null>(null);
+
+  const pricingData = {
+    monthly: {
+      starter: { price: null, pricingLabel: "Free", description: null },
+      professional: { price: 9.99, pricingLabel: null, description: null },
+      business: {
+        price: 299,
+        pricingLabel: null,
+        description: "Once",
+        periodLabel: "/once",
+      },
+    },
+    yearly: {
+      starter: { price: null, pricingLabel: "Free", description: null },
+      professional: { price: 99, pricingLabel: null, description: null },
+      business: {
+        price: 299,
+        pricingLabel: null,
+        description: "Once",
+        periodLabel: "/once",
+      },
+    },
+  };
+
+  const currentPricing = billingYearly
+    ? pricingData.yearly
+    : pricingData.monthly;
+
+  async function loadEntitlements() {
+    setError(null);
+
+    // Ensure free tier exists (idempotent). This avoids "empty entitlements" on first login.
+    const ensure = await supabase.rpc("ensure_free_tier");
+    if (ensure.error) throw ensure.error;
+
+    const { data, error } = await supabase
+      .from("entitlements")
+      .select("key, active, valid_until")
+      .in("key", ["tier:free", "tier:pro", "tier:lifetime"]);
+
+    if (error) throw error;
+
+    const rows = (data ?? []) as EntitlementRow[];
+    const computed = getTierFromEntitlements(rows);
+
+    setTier(computed.tier);
+    setValidUntil(computed.validUntil);
+  }
+
+  useEffect(() => {
+    if (!authReady) {
+      return;
+    }
+
+    (async () => {
+      try {
+        setLoading(true);
+        await loadEntitlements();
+      } catch (e: unknown) {
+        const msg =
+          (e as PostgrestError)?.message ??
+          (e as any)?.message ??
+          "Failed to load subscription data.";
+        setError(msg);
+      } finally {
+        setLoading(false);
+      }
+    })();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [authReady]);
+
+  // For now, purchase buttons are disabled until Stripe is implemented.
+  // Later: clicking will start Stripe checkout and webhook will upsert entitlements.
+  const purchasesEnabled = false;
+
+  const getTierDisplayName = (tier: Tier) => {
+    switch (tier) {
+      case "free":
+        return "Starter";
+      case "pro":
+        return "Pro";
+      case "lifetime":
+        return "Lifetime";
+      default:
+        return "Starter";
+    }
+  };
+
+  const getValidUntilText = () => {
+    if (!validUntil) return "Forever";
+    return formatDate(validUntil);
+  };
 
   return (
-    <div>
-      <div className="mb-12">
-        <h1 className="text-3xl font-semibold text-slate-900 mb-2 font-sans">
-          Subscriptions
-        </h1>
-        <p className="text-slate-600 font-sans">
-          Manage your active subscriptions and billing
-        </p>
-      </div>
-
-      <div className="space-y-8">
-        {subscriptions.map((subscription) => (
-          <div
-            key={subscription.id}
-            className="pb-8 border-b border-slate-200 last:border-b-0"
-          >
-            <div className="flex items-start justify-between mb-4">
-              <div>
-                <h3 className="text-lg font-semibold text-slate-900 font-sans">
-                  {subscription.name}
-                </h3>
-                <p className="text-sm text-slate-600 mt-1 font-sans">
-                  {subscription.price}
-                </p>
+    <div className="font-sans pt-10">
+      {/* Current Tier Display */}
+      <div className="mb-8 p-6 bg-gray-100 rounded-lg w-full space-y-1">
+        {loading ? (
+          <div className="text-gray-600 text-sm">Loading…</div>
+        ) : (
+          <>
+            <div className="text-gray-600 text-xs uppercase tracking-wide font-semibold">
+              Current tier
+            </div>
+            <div className="flex items-center justify-start gap-3">
+              <div className="text-gray-900 text-2xl font-bold">
+                {getTierDisplayName(tier)}
               </div>
-              <Badge
-                variant="default"
-                className="bg-green-100 text-green-700 hover:bg-green-100 font-sans"
+              <Button
+                variant="outline"
+                size="sm"
+                className="text-indigo-600 border-indigo-600 hover:bg-indigo-50 bg-transparent"
               >
-                {subscription.status === "active" ? "Active" : "Inactive"}
-              </Badge>
-            </div>
-
-            <div className="space-y-2 mb-6">
-              {subscription.features.map((feature, idx) => (
-                <div
-                  key={idx}
-                  className="flex items-center gap-2 text-sm text-slate-700 font-sans"
-                >
-                  <Check className="h-4 w-4 text-slate-900" />
-                  {feature}
-                </div>
-              ))}
-            </div>
-
-            <div className="flex gap-3">
-              <Button className=" text-black  font-sans" variant="outline">
-                Manage
-              </Button>
-              <Button className=" font-sans" variant="secondary">
-                Cancel
+                Upgrade
               </Button>
             </div>
-          </div>
-        ))}
+            <div className="text-gray-600 text-sm">
+              Valid until: {getValidUntilText()}
+            </div>
+            {error && <div className="text-sm text-red-600 mt-2">{error}</div>}
+          </>
+        )}
       </div>
 
-      <div className="mt-12">
-        <Button className="bg-slate-900 text-white hover:bg-slate-800 font-sans">
-          View Billing History
-        </Button>
+      {/* Billing Toggle */}
+      <div className="flex justify-center mb-12">
+        <div className="flex items-center justify-center gap-4 px-4 py-2 rounded-full border border-gray-300 bg-transparent">
+          <span
+            className={`text-lg font-semibold ${!billingYearly ? "text-gray-900" : "text-gray-500"}`}
+          >
+            Billed monthly
+          </span>
+          <Switch checked={billingYearly} onCheckedChange={setBillingYearly} />
+          <span
+            className={`text-lg font-semibold ${billingYearly ? "text-gray-900" : "text-gray-500"}`}
+          >
+            Billed yearly
+          </span>
+        </div>
+      </div>
+
+      {/* Pricing Cards */}
+      <div className="flex flex-col items-center gap-8 lg:flex-row lg:items-stretch lg:justify-center">
+        {/* Starter Plan - Free */}
+        <PricingCard
+          plan="Starter"
+          price={currentPricing.starter.price}
+          pricingLabel={currentPricing.starter.pricingLabel}
+          recommended={false}
+          periodLabel="Forever"
+          features={[
+            "AI Super Resolution",
+            "Basic enhancements",
+            "Standard support",
+          ]}
+          buttonText={
+            tier === "free" ? "Current subscription" : "Downgrade to Starter"
+          }
+          buttonVariant={tier === "free" ? "current" : "default"}
+          disabled={tier === "free"}
+        />
+
+        {/* Professional Plan - Recommended */}
+        <PricingCard
+          plan="Pro"
+          price={currentPricing.professional.price}
+          recommended={true}
+          periodLabel={billingYearly ? "/yearly" : "/month"}
+          features={[
+            "All Starter features",
+            "Up to 100 enhancements",
+            "API access",
+            "Presets",
+            "Organise with folders",
+          ]}
+          buttonText={
+            tier === "pro" ? "Current subscription" : "Upgrade to Pro"
+          }
+          buttonVariant={tier === "pro" ? "current" : "default"}
+          disabled={tier === "pro"}
+        />
+
+        {/* Lifetime Plan */}
+        <PricingCard
+          plan="Lifetime"
+          price={currentPricing.business.price}
+          recommended={false}
+          periodLabel="/once"
+          features={[
+            "All Pro features",
+            "Up to 500 enhancements",
+            "Workflows",
+            "Company account",
+            "User roles & permissions",
+          ]}
+          buttonText={
+            tier === "lifetime" ? "Current subscription" : "Upgrade to Lifetime"
+          }
+          buttonVariant={tier === "lifetime" ? "current" : "default"}
+          disabled={tier === "lifetime"}
+          borderColor="border-indigo-600"
+        />
       </div>
     </div>
   );
