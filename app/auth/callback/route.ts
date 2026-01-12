@@ -166,12 +166,12 @@ export async function GET(request: Request) {
         } else {
           console.log("Profile upserted successfully:", JSON.stringify(updatedProfile, null, 2));
           
-          // Ensure free tier entitlement exists (idempotent)
+          // Ensure subscription row exists (idempotent)
           // This provides app-level guarantee in addition to the database trigger
-          const { error: tierError } = await supabase.rpc("ensure_free_tier");
+          const { error: tierError } = await supabase.rpc("ensure_subscription_row");
           if (tierError) {
-            console.error("Error ensuring free tier:", tierError);
-            // Don't block auth flow if tier creation fails (trigger should handle it)
+            console.error("Error ensuring subscription row:", tierError);
+            // Don't block auth flow if subscription creation fails (trigger should handle it)
           }
         }
       }

@@ -22,7 +22,7 @@ export function ProfileSidebar() {
   return (
     <>
       {/* Desktop Sidebar */}
-      <aside className="hidden md:flex w-64 flex-col border-r border-slate-200 bg-white h-screen sticky top-0">
+      <aside className="hidden md:flex w-64 flex-col border-r border-border bg-background h-screen sticky top-0">
         <div className="flex-1 overflow-y-auto px-8 py-10 flex flex-col">
           <nav className="space-y-0.5 flex-1">
             {navigation.map((item) => {
@@ -38,8 +38,8 @@ export function ProfileSidebar() {
                   className={cn(
                     "flex items-center gap-3 px-4 py-3 text-sm font-medium transition-colors rounded-lg font-sans",
                     isActive
-                      ? "text-slate-900 bg-slate-100"
-                      : "text-slate-600 hover:text-slate-900 hover:bg-slate-50"
+                      ? "bg-accent text-accent-foreground"
+                      : "text-muted-foreground hover:text-foreground hover:bg-accent"
                   )}
                 >
                   <Icon className="h-4 w-4" />
@@ -53,7 +53,7 @@ export function ProfileSidebar() {
 
       {/* Mobile/Tablet Navigation */}
       <div className="md:hidden w-full">
-        <nav className="flex gap-2 border-b border-slate-200 bg-white px-4 py-3 overflow-x-auto sticky top-0">
+        <nav className="flex gap-2 border-b border-border bg-background px-4 py-3 overflow-x-auto sticky top-0">
           {navigation.map((item) => {
             const Icon = item.icon;
             const isActive =
@@ -67,8 +67,8 @@ export function ProfileSidebar() {
                 className={cn(
                   "flex items-center gap-2 rounded-lg px-3 py-2 text-xs font-medium whitespace-nowrap transition-colors flex-shrink-0 font-sans",
                   isActive
-                    ? "bg-slate-900 text-white"
-                    : "text-slate-600 hover:bg-slate-50"
+                    ? "bg-primary text-primary-foreground"
+                    : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
                 )}
               >
                 <Icon className="h-4 w-4" />

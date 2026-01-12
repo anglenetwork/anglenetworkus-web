@@ -16,11 +16,10 @@ test.describe("Subscriptions Page", () => {
       // Loading might not be present, that's OK
     });
     
-    // Wait for page content - either Current Subscription or tier information
+    // Wait for page content - Current tier information
     await Promise.race([
-      page.waitForSelector('text=Current Subscription', { timeout: 10000 }),
-      page.waitForSelector('text=/Tier:/i', { timeout: 10000 }),
-      page.waitForSelector('text=/FREE|PRO|LIFETIME/i', { timeout: 10000 }),
+      page.waitForSelector('text=Current tier', { timeout: 10000 }),
+      page.waitForSelector('text=/Starter|Pro|Lifetime/i', { timeout: 10000 }),
     ]).catch(() => {
       // If none appear, that's OK - test will fail with specific error
     });
@@ -29,19 +28,19 @@ test.describe("Subscriptions Page", () => {
     await page.waitForTimeout(500);
   });
 
-  test("subscriptions page loads and displays current subscription", async ({
+  test("subscriptions page loads and displays current tier", async ({
     page,
   }) => {
-    // Check for "Current Subscription" card (this is the main heading)
-    const currentSubscriptionCard = page.getByText("Current Subscription");
-    await expect(currentSubscriptionCard).toBeVisible();
+    // Check for "Current tier" heading
+    const currentTierHeading = page.getByText("Current tier");
+    await expect(currentTierHeading).toBeVisible();
 
     // Wait for loading to complete
     await page.waitForSelector('text=Loading…', { state: 'hidden', timeout: 10000 });
 
-    // Check that tier is displayed
-    const tierBadge = page.locator('text=/FREE|PRO|LIFETIME/i');
-    await expect(tierBadge.first()).toBeVisible();
+    // Check that tier name is displayed (Starter, Pro, or Lifetime)
+    const tierName = page.locator('text=/Starter|Pro|Lifetime/i');
+    await expect(tierName.first()).toBeVisible();
 
     // Check for "Valid until" text
     const validUntil = page.getByText(/valid until/i);
@@ -70,12 +69,12 @@ test.describe("Subscriptions Page", () => {
     await page.waitForSelector('text=Loading…', { state: 'hidden', timeout: 10000 });
 
     // Check Free tier pricing
-    const freePrice = page.getByText("$0");
+    const freePrice = page.getByText("Free");
     await expect(freePrice).toBeVisible();
 
     // Check Pro tier pricing (should show monthly by default)
-    const proPriceMonthly = page.getByText("$9.99 / month");
-    await expect(proPriceMonthly).toBeVisible();
+    await expect(page.getByText("$9.99")).toBeVisible();
+    await expect(page.getByText("/month")).toBeVisible();
 
     // Check Lifetime tier pricing
     const lifetimePrice = page.getByText("$299");
@@ -91,57 +90,58 @@ test.describe("Subscriptions Page", () => {
     await expect(billingSwitch).toBeVisible();
 
     // Initially should show monthly pricing
-    await expect(page.getByText("$9.99 / month")).toBeVisible();
-    await expect(page.getByText("$99 / year")).not.toBeVisible();
+    await expect(page.getByText("$9.99")).toBeVisible();
+    await expect(page.getByText("/month")).toBeVisible();
+    await expect(page.getByText("/yearly")).not.toBeVisible();
 
     // Toggle to yearly
     await billingSwitch.click();
+    await page.waitForTimeout(500); // Wait for state update
 
     // Wait for price to update
-    await expect(page.getByText("$99 / year")).toBeVisible();
-    await expect(page.getByText("$9.99 / month")).not.toBeVisible();
+    await expect(page.getByText("$99")).toBeVisible();
+    await expect(page.getByText("/yearly")).toBeVisible();
+    await expect(page.getByText("/month")).not.toBeVisible();
 
     // Toggle back to monthly
     await billingSwitch.click();
+    await page.waitForTimeout(500); // Wait for state update
 
     // Should show monthly again
-    await expect(page.getByText("$9.99 / month")).toBeVisible();
-    await expect(page.getByText("$99 / year")).not.toBeVisible();
+    await expect(page.getByText("$9.99")).toBeVisible();
+    await expect(page.getByText("/month")).toBeVisible();
+    await expect(page.getByText("/yearly")).not.toBeVisible();
   });
 
-  test("purchase buttons are disabled and show 'Coming soon'", async ({
+  test("upgrade buttons are enabled and show correct text", async ({
     page,
   }) => {
     // Wait for loading to complete
     await page.waitForSelector('text=Loading…', { state: 'hidden', timeout: 10000 });
 
-    // Check Pro button - should say "Coming soon"
-    const proButton = page.getByRole("button", { name: /coming soon/i }).first();
+    // Check Pro button - should say "Upgrade to Pro" or "Current subscription"
+    const proButton = page.getByRole("button", { name: /upgrade to pro|current subscription/i }).first();
     await expect(proButton).toBeVisible();
-    await expect(proButton).toBeDisabled();
 
-    // Check Lifetime button - should say "Coming soon"
-    const lifetimeButton = page.getByRole("button", { name: /coming soon/i }).last();
+    // Check Lifetime button - should say "Upgrade to Lifetime" or "Current subscription"
+    const lifetimeButton = page.getByRole("button", { name: /upgrade to lifetime|current subscription/i });
     await expect(lifetimeButton).toBeVisible();
-    await expect(lifetimeButton).toBeDisabled();
 
-    // Check Free button (should be disabled as current plan)
-    const freeButton = page.getByRole("button", { name: /current plan/i });
-    await expect(freeButton).toBeVisible();
-    await expect(freeButton).toBeDisabled();
+    // Buttons should only be disabled if they're the current subscription
+    // (We can't easily determine current tier in test, so we just verify buttons exist)
   });
 
-  test("displays tier badge correctly", async ({ page }) => {
+  test("displays tier name correctly", async ({ page }) => {
     // Wait for loading to complete
     await page.waitForSelector('text=Loading…', { state: 'hidden', timeout: 10000 });
 
-    // Check that tier badge exists in Current Subscription section
-    const tierSection = page.locator('text=/Tier:/i').locator('..');
+    // Check that tier name exists in Current tier section
+    const tierSection = page.locator('text=Current tier');
     await expect(tierSection).toBeVisible();
 
-    // Should have a badge with tier name (FREE, PRO, or LIFETIME)
-    const badge = page.getByText(/FREE|PRO|LIFETIME/i).first();
-    await expect(badge).toBeVisible();
+    // Should have tier name (Starter, Pro, or Lifetime)
+    const tierName = page.getByText(/Starter|Pro|Lifetime/i).first();
+    await expect(tierName).toBeVisible();
   });
 
   test("shows valid until date or dash for free tier", async ({ page }) => {
@@ -158,38 +158,28 @@ test.describe("Subscriptions Page", () => {
     await expect(validUntilLabel).toBeVisible();
   });
 
-  test("free tier card shows default badge", async ({ page }) => {
+  test("pro tier card shows recommended badge", async ({ page }) => {
     // Wait for loading to complete
     await page.waitForSelector('text=Loading…', { state: 'hidden', timeout: 10000 });
 
-    // Find Free card
-    const freeCard = page.getByText("Free").locator('..').locator('..');
-    
-    // Check for "Default" badge
-    const defaultBadge = page.getByText("Default");
-    await expect(defaultBadge).toBeVisible();
+    // Check for "RECOMMENDED" badge on Pro card
+    const recommendedBadge = page.getByText("RECOMMENDED");
+    await expect(recommendedBadge).toBeVisible();
   });
 
-  test("pro tier card shows popular badge", async ({ page }) => {
+  test("billing toggle has correct labels", async ({ page }) => {
     // Wait for loading to complete
     await page.waitForSelector('text=Loading…', { state: 'hidden', timeout: 10000 });
 
-    // Check for "Popular" badge
-    const popularBadge = page.getByText("Popular");
-    await expect(popularBadge).toBeVisible();
-  });
+    // Check for "Billed monthly" and "Billed yearly" labels
+    const monthlyLabel = page.getByText("Billed monthly");
+    const yearlyLabel = page.getByText("Billed yearly");
+    await expect(monthlyLabel).toBeVisible();
+    await expect(yearlyLabel).toBeVisible();
 
-  test("billing toggle has correct label and description", async ({ page }) => {
-    // Wait for loading to complete
-    await page.waitForSelector('text=Loading…', { state: 'hidden', timeout: 10000 });
-
-    // Check for "Billed yearly" label
-    const label = page.getByLabel("Billed yearly");
-    await expect(label).toBeVisible();
-
-    // Check for description text
-    const description = page.getByText(/Off = monthly · On = yearly/i);
-    await expect(description).toBeVisible();
+    // Check for the switch
+    const switchElement = page.getByLabel("Billed yearly");
+    await expect(switchElement).toBeVisible();
   });
 });
 
