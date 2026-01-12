@@ -1,11 +1,13 @@
 "use client";
 
+import Link from "next/link";
 import { HamburgerButton } from "./hamburger-button";
 import { Logo } from "./logo";
 import { SearchButton } from "./search-button";
 import { CategoriesNav } from "./categories-nav";
 import { UserMenu } from "./user-menu";
 import { Category } from "./types";
+import { Button } from "@/components/ui/button";
 
 interface DesktopHeaderProps {
   isMenuOpen: boolean;
@@ -35,6 +37,15 @@ export function DesktopHeader({
         />
       </div>
       <div className="flex items-center gap-2">
+        <Link href="/pricing">
+          <Button
+            variant="default"
+            size="sm"
+            className="bg-black text-white font-medium font-sans"
+          >
+            Become Pro
+          </Button>
+        </Link>
         <SearchButton onClick={onMenuToggle} variant="desktop" />
         <UserMenu variant="desktop" />
       </div>
