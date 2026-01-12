@@ -1,10 +1,13 @@
 export default function PrivacyPolicyPage() {
+  // Use a static date to avoid hydration mismatches
+  const lastUpdated = "January 1, 2025";
+  
   return (
     <div className="container mx-auto px-4 py-16 max-w-4xl">
       <h1 className="text-4xl font-bold mb-6 font-sans">Privacy Policy</h1>
       <div className="prose prose-lg max-w-none font-secondary">
         <p className="mb-4 text-sm text-gray-600">
-          Last updated: {new Date().toLocaleDateString()}
+          Last updated: {lastUpdated}
         </p>
 
         <h2 className="text-2xl font-semibold mt-8 mb-4 font-sans">

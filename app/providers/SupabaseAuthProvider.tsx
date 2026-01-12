@@ -67,14 +67,20 @@ export function SupabaseAuthProvider({
         setUserId(data.session?.user?.id ?? null);
         setReady(true);
       } catch (e) {
-        console.warn("[AuthProvider] getSession hang -> resetting client", e);
+        // Silently recover from timeout (common in dev/HMR scenarios)
         // Recover from locked state (dev/HMR)
         resetSupabaseBrowserClient();
         const fresh = getSupabaseBrowserClient();
-        const { data } = await fresh.auth.getSession();
-        if (!mounted.current) return;
-        setUserId(data.session?.user?.id ?? null);
-        setReady(true);
+        try {
+          const { data } = await fresh.auth.getSession();
+          if (!mounted.current) return;
+          setUserId(data.session?.user?.id ?? null);
+          setReady(true);
+        } catch (retryError) {
+          // If retry also fails, just set ready to true to unblock UI
+          if (!mounted.current) return;
+          setReady(true);
+        }
       }
     })();
 

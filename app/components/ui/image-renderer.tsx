@@ -63,6 +63,20 @@ export function ImageRenderer({
     );
   }
 
+  // Check if className modifies dimensions via CSS
+  // Next.js warns when CSS modifies dimensions - we add auto style to maintain aspect ratio
+  const hasHeightConstraint = className?.match(/\bh-\[?[\d.]+(px|rem|em|vh|%)?\]?|\bh-full|\bh-screen/);
+  const hasWidthConstraint = className?.match(/\bw-\[?[\d.]+(px|rem|em|vw|%)?\]?|\bw-full|\bw-screen/);
+  
+  // When width is constrained (like w-full), add height: auto to maintain aspect ratio
+  // When height is constrained but width isn't, add width: auto
+  // This prevents Next.js warnings about aspect ratio
+  const style = hasWidthConstraint
+    ? { height: "auto" }
+    : hasHeightConstraint
+      ? { width: "auto" }
+      : undefined;
+
   return (
     <Image
       src={src}
@@ -75,6 +89,7 @@ export function ImageRenderer({
       quality={quality}
       sizes={sizes}
       className={className}
+      style={style}
     />
   );
 }

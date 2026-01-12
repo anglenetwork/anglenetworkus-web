@@ -345,13 +345,23 @@ export async function POST(req: Request) {
           cancelAtPeriodEnd: sub.cancel_at_period_end,
         });
 
-        // Update subscription status (may be 'active' but with cancel_at_period_end=true)
+        // Update subscription status
+        // If cancel_at_period_end is true, set status to "canceling" and keep tier=pro
+        // Otherwise, use the subscription status from Stripe
+        const subscriptionStatus = sub.cancel_at_period_end
+          ? "canceling"
+          : sub.status === "canceled" || sub.status === "unpaid"
+            ? "canceled"
+            : "active";
+
         await must(
           supabaseAdmin
             .from("subscriptions")
             .update({
-              status: sub.cancel_at_period_end ? "canceled" : sub.status,
+              status: subscriptionStatus,
               valid_until: currentPeriodEndIso,
+              tier: "pro",
+              billing_cycle: billingCycle,
             })
             .eq("user_id", userId) as unknown as Promise<{ data: unknown; error: any }>,
           "subscriptions update (subscription updated)"

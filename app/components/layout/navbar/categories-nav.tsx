@@ -13,13 +13,13 @@ export function CategoriesNav({
   onCategoryClick,
 }: CategoriesNavProps) {
   return (
-    <nav className="ml-12 flex items-center gap-8">
+    <nav className="ml-4 flex items-center gap-8">
       {categories.slice(0, 10).map((category) => (
         <Link
           key={category.slug}
           href={`/category/${category.slug}`}
           onClick={onCategoryClick}
-          className="font-medium tracking-normal text-neutral-900 capitalize transition-all duration-500 ease-out whitespace-nowrap font-sans text-sm"
+          className="font-medium tracking-normal text-black capitalize transition-all duration-500 ease-out whitespace-nowrap font-sans text-sm"
         >
           {category.name}
         </Link>

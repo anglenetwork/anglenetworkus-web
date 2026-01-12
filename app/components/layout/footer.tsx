@@ -46,7 +46,7 @@ export function Footer({ categories, tags }: FooterProps) {
 
           {/* Navigation Links */}
           <div className="col-span-1">
-            <h4 className="font-semibold text-white mb-4">Sections</h4>
+            <h4 className="font-semibold text-red-500 mb-4">Sections</h4>
             <ul className="space-y-2 text-sm">
               {categories.length > 0 ? (
                 categories.slice(0, 5).map((category) => (
@@ -93,7 +93,7 @@ export function Footer({ categories, tags }: FooterProps) {
 
           {/* Topics */}
           <div className="col-span-1">
-            <h4 className="font-semibold text-white mb-4">Topics</h4>
+            <h4 className="font-semibold text-red-500 mb-4">Topics</h4>
             <ul className="space-y-2 text-sm">
               {tags.length > 0 ? (
                 tags.slice(0, 5).map((tag) => (
@@ -140,7 +140,7 @@ export function Footer({ categories, tags }: FooterProps) {
 
           {/* Company */}
           <div className="col-span-1">
-            <h4 className="font-semibold text-white mb-4">Company</h4>
+            <h4 className="font-semibold text-red-500 mb-4">Company</h4>
             <ul className="space-y-2 text-sm">
               <li>
                 <Link
