@@ -220,6 +220,33 @@ export function UserMenu({ variant = "desktop" }: UserMenuProps) {
           </Link>
         </DropdownMenuItem>
 
+        <DropdownMenuItem asChild>
+          <Link
+            href="/myprofile/subscriptions"
+            className="font-sans cursor-pointer w-full"
+          >
+            Subscriptions
+          </Link>
+        </DropdownMenuItem>
+
+        <DropdownMenuItem asChild>
+          <Link
+            href="/myprofile/bookmarks"
+            className="font-sans cursor-pointer w-full"
+          >
+            Bookmarks
+          </Link>
+        </DropdownMenuItem>
+
+        <DropdownMenuItem asChild>
+          <Link
+            href="/myprofile/newsletters"
+            className="font-sans cursor-pointer w-full"
+          >
+            Newsletters
+          </Link>
+        </DropdownMenuItem>
+
         <DropdownMenuItem
           className="font-sans cursor-pointer"
           onClick={handleSignOut}

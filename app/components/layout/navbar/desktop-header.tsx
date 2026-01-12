@@ -7,7 +7,6 @@ import { SearchButton } from "./search-button";
 import { CategoriesNav } from "./categories-nav";
 import { UserMenu } from "./user-menu";
 import { Category } from "./types";
-import { Button } from "@/components/ui/button";
 
 interface DesktopHeaderProps {
   isMenuOpen: boolean;
@@ -37,14 +36,11 @@ export function DesktopHeader({
         />
       </div>
       <div className="flex items-center gap-2">
-        <Link href="/pricing">
-          <Button
-            variant="default"
-            size="sm"
-            className="bg-black text-white font-medium font-sans"
-          >
-            Become Pro
-          </Button>
+        <Link
+          href="/pricing"
+          className="text-red-500 font-semibold font-sans text-sm hover:underline transition-colors"
+        >
+          Become Pro
         </Link>
         <SearchButton onClick={onMenuToggle} variant="desktop" />
         <UserMenu variant="desktop" />

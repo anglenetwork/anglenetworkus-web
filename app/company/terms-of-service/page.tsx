@@ -16,7 +16,7 @@ interface TermsOfServicePageProps {
 // Default content structure - can be replaced with data from CMS, API, or props
 const defaultContent: TermsOfServiceContent = {
   title: "Terms of Service",
-  lastUpdated: new Date(),
+  lastUpdated: "January 1, 2025",
   sections: [
     {
       type: "heading",
@@ -96,10 +96,11 @@ function renderSection(section: ContentSection, index: number) {
 export default function TermsOfServicePage({
   content = defaultContent,
 }: TermsOfServicePageProps) {
+  // Use static date string to avoid hydration mismatches
   const lastUpdatedDate =
     content.lastUpdated instanceof Date
       ? content.lastUpdated.toLocaleDateString()
-      : content.lastUpdated || new Date().toLocaleDateString();
+      : content.lastUpdated || "January 1, 2025";
 
   return (
     <div className="container mx-auto px-4 py-16 max-w-4xl">

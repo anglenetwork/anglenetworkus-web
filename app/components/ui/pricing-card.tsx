@@ -14,6 +14,7 @@ interface PricingCardProps {
   buttonVariant?: string;
   disabled?: boolean;
   borderColor?: string;
+  backgroundColor?: string;
   discountText?: string;
   onClick?: () => void | Promise<void>;
 }
@@ -29,35 +30,41 @@ const PricingCard: React.FC<PricingCardProps> = ({
   buttonVariant = "default",
   disabled = false,
   borderColor,
+  backgroundColor,
   discountText,
   onClick,
 }) => {
-  const cardClass = recommended
-    ? "bg-emerald-500 border-0"
-    : borderColor
-      ? `bg-gray-50 border-2 ${borderColor}`
-      : "bg-gray-50 border border-gray-200";
+  const hasCustomBackground = !!backgroundColor;
+  const cardClass = backgroundColor
+    ? `${backgroundColor} border-0`
+    : recommended
+      ? "bg-emerald-500 border-0"
+      : borderColor
+        ? `bg-gray-50 border-2 ${borderColor}`
+        : "bg-gray-50 border border-gray-200";
 
-  const textClass = recommended ? "text-white" : "text-gray-900";
-  const secondaryTextClass = recommended ? "text-emerald-100" : "text-gray-600";
+  const textClass =
+    hasCustomBackground || recommended ? "text-white" : "text-gray-900";
+  const secondaryTextClass =
+    hasCustomBackground || recommended ? "text-red-100" : "text-gray-600";
 
   const getButtonClass = () => {
     if (buttonVariant === "current") {
       return "border border-gray-300 bg-white text-gray-900 hover:bg-gray-50";
     }
-    if (recommended) {
-      return "bg-white text-emerald-600 hover:bg-gray-50 border-0";
+    if (hasCustomBackground || recommended) {
+      return "bg-white text-red-600 hover:bg-gray-50 border-0";
     }
     return "bg-gray-200 text-gray-900 hover:bg-gray-300 border-0";
   };
 
   return (
     <Card
-      className={`font-sans flex-1 rounded-2xl p-8 flex flex-col min-w-0 ${cardClass} ${textClass}`}
+      className={`font-sans w-full lg:flex-1 rounded-2xl p-8 flex flex-col min-w-0 ${cardClass} ${textClass}`}
     >
       {/* Header */}
       <div className="mb-6">
-        {recommended && (
+        {(recommended || hasCustomBackground) && (
           <div className="inline-block bg-white/20 text-white px-4 py-1 rounded-full text-sm font-semibold mb-4">
             RECOMMENDED
           </div>
@@ -80,7 +87,7 @@ const PricingCard: React.FC<PricingCardProps> = ({
               </div>
               {discountText && (
                 <div
-                  className={`text-2xl font-semibold mt-1 ${recommended ? "text-emerald-200" : "text-emerald-600"}`}
+                  className={`text-2xl font-semibold mt-1 ${hasCustomBackground || recommended ? "text-red-200" : "text-emerald-600"}`}
                 >
                   {discountText}
                 </div>
@@ -101,7 +108,7 @@ const PricingCard: React.FC<PricingCardProps> = ({
               </div>
               {discountText && (
                 <div
-                  className={`text-sm font-semibold mt-1 ${recommended ? "text-emerald-200" : "text-emerald-600"}`}
+                  className={`text-sm font-semibold mt-1 ${hasCustomBackground || recommended ? "text-red-200" : "text-emerald-600"}`}
                 >
                   {discountText}
                 </div>
@@ -116,7 +123,7 @@ const PricingCard: React.FC<PricingCardProps> = ({
         {features.map((feature, index) => (
           <div key={index} className="flex items-start gap-3">
             <Check
-              className={`w-5 h-5 flex-shrink-0 ${recommended ? "text-emerald-200" : "text-emerald-600"} mt-0.5`}
+              className={`w-5 h-5 flex-shrink-0 ${hasCustomBackground || recommended ? "text-red-200" : "text-emerald-600"} mt-0.5`}
             />
             <span className={`text-base ${secondaryTextClass}`}>{feature}</span>
           </div>

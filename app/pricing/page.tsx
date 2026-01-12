@@ -150,13 +150,13 @@ export default function PricingPage() {
       </div>
 
       {/* Error Message */}
-      {error && (
+      {/* {error && (
         <div className="max-w-4xl mx-auto px-4 mb-6">
           <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
             {error}
           </div>
         </div>
-      )}
+      )} */}
 
       {/* Pricing Cards */}
       <div className="max-w-6xl mx-auto px-4">
@@ -190,6 +190,7 @@ export default function PricingPage() {
             plan="Pro"
             price={currentPricing.professional.price}
             recommended={true}
+            backgroundColor="bg-red-500"
             periodLabel={billingYearly ? "/yearly" : "/month"}
             discountText={billingYearly ? "10% off" : undefined}
             features={[
@@ -209,7 +210,9 @@ export default function PricingPage() {
                     : "Upgrade to Pro"
             }
             buttonVariant={tier === "pro" ? "current" : "default"}
-            disabled={tier === "pro" || tier === "lifetime" || checkoutLoading !== null}
+            disabled={
+              tier === "pro" || tier === "lifetime" || checkoutLoading !== null
+            }
             onClick={
               tier !== "pro" && tier !== "lifetime"
                 ? () => handleCheckout("pro", billingYearly ? "year" : "month")
@@ -239,7 +242,7 @@ export default function PricingPage() {
             }
             buttonVariant={tier === "lifetime" ? "current" : "default"}
             disabled={tier === "lifetime" || checkoutLoading !== null}
-            borderColor="border-emerald-500"
+            borderColor="border-red-500"
             onClick={
               tier !== "lifetime" ? () => handleCheckout("lifetime") : undefined
             }
