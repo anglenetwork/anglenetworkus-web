@@ -149,7 +149,7 @@ function ImageCarousel({
               unoptimized={image.unoptimized}
               quality={60}
               sizes="(max-width: 640px) 100vw, (max-width: 1024px) 100vw, 300px"
-              className={`object-cover rounded-sm absolute inset-0 transition-opacity duration-500 ${
+              className={`object-cover rounded-sm transition-opacity duration-500 ${
                 idx === currentIndex ? "opacity-100 z-10" : "opacity-0 z-0"
               }`}
               priority={idx === 0}
