@@ -68,11 +68,12 @@ export default function PostSelectedNews({
                         src={imgUrl}
                         alt={coverData?.alt || post.title || "Article image"}
                         unoptimized={coverData?.unoptimized}
-                        className="w-full h-full object-cover transition-opacity duration-200"
+                        className="object-cover object-center transition-opacity duration-200"
                         width={96}
                         height={77}
                         quality={60}
                         sizes="96px"
+                        fill
                       />
                     </div>
                   ) : (

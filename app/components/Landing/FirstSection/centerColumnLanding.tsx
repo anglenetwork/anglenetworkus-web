@@ -75,18 +75,21 @@ export function CenterColumnLanding({
             return (
               <Link href={`/post/${post.slug}`}>
                 <div className="mb-8">
-                  <ImageRenderer
-                    src={src}
-                    alt={alt}
-                    width={1000}
-                    height={563} // 1000 / 16 * 9 ≈ 562.5
-                    unoptimized={unoptimized}
-                    quality={75}
-                    priority
-                    fetchPriority="high"
-                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 90vw, (max-width: 1280px) 70vw, 1000px"
-                    className="w-full h-80 md:h-[450px] object-cover rounded-sm"
-                  />
+                  <div className="w-full h-64 md:h-[500px] overflow-hidden rounded-sm relative">
+                    <ImageRenderer
+                      src={src}
+                      alt={alt}
+                      width={1000}
+                      height={563} // 1000 / 16 * 9 ≈ 562.5
+                      unoptimized={unoptimized}
+                      quality={75}
+                      priority
+                      fetchPriority="high"
+                      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 90vw, (max-width: 1280px) 70vw, 1000px"
+                      className="object-cover object-center rounded-sm"
+                      fill
+                    />
+                  </div>
                   {credit && (
                     <p className="text-[10px] text-gray-500 font-secondary text-right">
                       {credit}
@@ -128,23 +131,26 @@ export function CenterColumnLanding({
         {/* First row: 2 main stories */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8">
           {moreTopHeadlines.slice(0, 2).map((post) => (
-            <article key={post._id} className="flex gap-4 md:block">
+            <article key={post._id} className="md:block">
               {(() => {
                 const { src, alt, unoptimized, credit } = getCover(post);
                 if (!src) return null;
                 return (
                   <Link href={`/post/${post.slug}`}>
-                    <div className="flex-shrink-0 mb-0 md:mb-2">
-                      <ImageRenderer
-                        src={src}
-                        alt={alt}
-                        width={600}
-                        height={400}
-                        unoptimized={unoptimized}
-                        quality={60}
-                        sizes="(max-width: 640px) 96px, (max-width: 768px) 96px, (max-width: 1024px) 50vw, 384px"
-                        className="w-24 h-20 md:w-full md:h-48 object-cover rounded-sm"
-                      />
+                    <div className="mb-2">
+                      <div className="w-full h-[200px] overflow-hidden rounded-sm relative">
+                        <ImageRenderer
+                          src={src}
+                          alt={alt}
+                          width={600}
+                          height={500}
+                          unoptimized={unoptimized}
+                          quality={60}
+                          sizes="(max-width: 640px) 100vw, (max-width: 768px) 100vw, (max-width: 1024px) 50vw, 600px"
+                          className="object-cover rounded-sm"
+                          fill
+                        />
+                      </div>
                       {/* {credit && (
                         <p className="hidden md:block text-[10px] text-gray-500 font-secondary text-right">
                           {credit}
@@ -154,7 +160,7 @@ export function CenterColumnLanding({
                   </Link>
                 );
               })()}
-              <div className="flex-1 md:block">
+              <div>
                 <Link
                   href={`/post/${post.slug}`}
                   className="hover:text-red-600"
@@ -171,28 +177,31 @@ export function CenterColumnLanding({
         {/* Second row: 3 smaller stories (mobile layout unified with first row) */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
           {moreTopHeadlines.slice(2, 5).map((post) => (
-            <article key={post._id} className="flex gap-4 md:block">
+            <article key={post._id} className="md:block">
               {(() => {
                 const { src, alt, unoptimized } = getCover(post);
                 if (!src) return null;
                 return (
                   <Link href={`/post/${post.slug}`}>
-                    <div className="flex-shrink-0 mb-0 md:mb-3">
-                      <ImageRenderer
-                        src={src}
-                        alt={alt}
-                        width={400}
-                        height={300}
-                        unoptimized={unoptimized}
-                        quality={60}
-                        sizes="(max-width: 640px) 96px, (max-width: 768px) 96px, (max-width: 1024px) 33vw, 256px"
-                        className="w-24 h-20 md:w-full md:h-32 object-cover rounded-sm"
-                      />
+                    <div className="mb-2">
+                      <div className="w-full h-[200px] overflow-hidden rounded-sm relative">
+                        <ImageRenderer
+                          src={src}
+                          alt={alt}
+                          width={600}
+                          height={400}
+                          unoptimized={unoptimized}
+                          quality={60}
+                          sizes="(max-width: 640px) 100vw, (max-width: 768px) 100vw, (max-width: 1024px) 33vw, 600px"
+                          className="object-cover rounded-sm"
+                          fill
+                        />
+                      </div>
                     </div>
                   </Link>
                 );
               })()}
-              <div className="flex-1 md:block">
+              <div>
                 <Link
                   href={`/post/${post.slug}`}
                   className="hover:text-red-600"

@@ -91,7 +91,7 @@ export default function FourthSection({
                             className="block"
                             aria-label={`Read article: ${mainPost?.title || "Featured article"}`}
                           >
-                            <div className="overflow-hidden rounded-sm bg-black">
+                            <div className="w-full h-[300px] overflow-hidden rounded-sm bg-black relative">
                               <ImageRenderer
                                 src={coverData.src}
                                 alt={coverData.alt}
@@ -99,7 +99,8 @@ export default function FourthSection({
                                 height={300}
                                 unoptimized={coverData.unoptimized}
                                 sizes="(max-width: 768px) 100vw, (max-width: 1200px) 25vw, 800px"
-                                className="h-[300px] w-full object-cover rounded-sm"
+                                className="object-cover object-center rounded-sm"
+                                fill
                               />
                             </div>
                           </Link>

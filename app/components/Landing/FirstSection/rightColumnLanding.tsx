@@ -39,16 +39,19 @@ export function RightColumnLanding({
             return (
               <div className="mb-4">
                 <Link href={`/post/${post.slug}`}>
-                  <ImageRenderer
-                    src={coverData.src}
-                    alt={coverData.alt}
-                    width={600}
-                    height={400}
-                    unoptimized={coverData.unoptimized}
-                    quality={60}
-                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 100vw, 384px"
-                    className="w-full h-48 object-cover rounded-sm"
-                  />
+                  <div className="w-full h-48 overflow-hidden rounded-sm relative">
+                    <ImageRenderer
+                      src={coverData.src}
+                      alt={coverData.alt}
+                      width={600}
+                      height={400}
+                      unoptimized={coverData.unoptimized}
+                      quality={60}
+                      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 100vw, 600px"
+                      className="object-cover rounded-sm"
+                      fill
+                    />
+                  </div>
                 </Link>
               </div>
             );
