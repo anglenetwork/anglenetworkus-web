@@ -526,8 +526,14 @@ export default function PostBody({
         if (imageGallery && Array.isArray(imageGallery)) {
           imageGallery.forEach((img) => {
             const galleryData = buildGalleryImage(img);
-            if (galleryData) {
-              galleryImagesData.push(galleryData);
+            if (galleryData && galleryData.src) {
+              galleryImagesData.push({
+                src: galleryData.src,
+                alt: galleryData.alt,
+                unoptimized: galleryData.unoptimized,
+                epigraph: galleryData.epigraph,
+                credit: galleryData.credit,
+              });
             }
           });
         }
@@ -549,6 +555,8 @@ export default function PostBody({
         }
 
         // Fallback to single cover image (no gallery)
+        if (!coverImageData?.src) return null;
+        
         return (
           <figure className="mb-12 text-left">
             <div className="relative w-full h-96 md:h-[500px] overflow-hidden rounded-lg shadow-lg">

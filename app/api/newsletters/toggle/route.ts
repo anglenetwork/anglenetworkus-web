@@ -1,9 +1,9 @@
 import { NextResponse } from "next/server";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
-import { AVAILABLE_NEWSLETTERS } from "@/lib/constants/newsletters";
+import { AVAILABLE_NEWSLETTERS, NewsletterKey } from "@/lib/constants/newsletters";
 
 // Server-side allowlist
-const ALLOWED_KEYS = new Set(
+const ALLOWED_KEYS = new Set<NewsletterKey>(
   AVAILABLE_NEWSLETTERS.map((newsletter) => newsletter.key)
 );
 
@@ -36,7 +36,7 @@ export async function POST(req: Request) {
     );
   }
 
-  if (!ALLOWED_KEYS.has(newsletterKey)) {
+  if (!ALLOWED_KEYS.has(newsletterKey as NewsletterKey)) {
     return NextResponse.json(
       { error: "Invalid newsletter key" },
       { status: 400 }
