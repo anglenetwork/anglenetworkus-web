@@ -99,6 +99,12 @@ export default async function RootLayout({
 
   return (
     <html lang="en">
+      <head>
+        {/* Preconnect to critical image CDNs for faster LCP */}
+        <link rel="preconnect" href="https://images.pexels.com" crossOrigin="" />
+        <link rel="dns-prefetch" href="https://upload.wikimedia.org" />
+        <link rel="dns-prefetch" href="https://cdn.sanity.io" />
+      </head>
       <body
         className={`
         ${interTight.variable}

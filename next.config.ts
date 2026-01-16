@@ -76,6 +76,11 @@ const nextConfig: NextConfig = {
     optimizePackageImports: ["lucide-react", "@radix-ui/react-slot"],
   },
 
+  // Set Turbopack root to silence workspace root warning
+  turbopack: {
+    root: __dirname,
+  },
+
   compiler: {
     // Strip console.* except errors/warnings in prod.
     removeConsole:

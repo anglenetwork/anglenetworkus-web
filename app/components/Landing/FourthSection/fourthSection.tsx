@@ -98,7 +98,7 @@ export default function FourthSection({
                                 width={800}
                                 height={300}
                                 unoptimized={coverData.unoptimized}
-                                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 25vw, 800px"
+                                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 25vw, 400px"
                                 className="object-cover object-center rounded-sm"
                                 fill
                               />

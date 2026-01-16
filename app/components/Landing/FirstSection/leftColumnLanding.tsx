@@ -61,10 +61,20 @@ function getGalleryImageData(
       const isWikimedia = /(^|\.)upload\.wikimedia\.org$/.test(
         new URL(externalUrl).hostname
       );
+      // Use Wikimedia thumbnail API to get optimized sizes
+      if (isWikimedia) {
+        const { getWikimediaThumbnail } = require("@/lib/image-optimization");
+        const optimizedUrl = getWikimediaThumbnail(externalUrl, 1200);
+        return {
+          src: optimizedUrl,
+          alt: galleryImage.alt || "Gallery image",
+          unoptimized: true,
+        };
+      }
       return {
         src: externalUrl,
         alt: galleryImage.alt || "Gallery image",
-        unoptimized: isWikimedia,
+        unoptimized: false,
       };
     } catch {
       return null;
@@ -79,7 +89,7 @@ function getGalleryImageData(
     const imageUrl = urlForImage(galleryImage.image);
     if (imageUrl) {
       try {
-        const url = imageUrl.quality(60).url();
+        const url = imageUrl.quality(55).url();
         if (url && url.length > 0) {
           return {
             src: url,
@@ -147,7 +157,7 @@ function ImageCarousel({
               height={240}
               fill
               unoptimized={image.unoptimized}
-              quality={60}
+                        quality={55}
               sizes="(max-width: 640px) 100vw, (max-width: 1024px) 100vw, 300px"
               className={`object-cover rounded-sm transition-opacity duration-500 ${
                 idx === currentIndex ? "opacity-100 z-10" : "opacity-0 z-0"
@@ -250,10 +260,9 @@ export function LeftColumnLanding({ justInNews }: LeftColumnLandingProps) {
                         height={240}
                         fill
                         unoptimized={coverData.unoptimized}
-                        quality={60}
+                        quality={55}
                         sizes="(max-width: 640px) 100vw, (max-width: 1024px) 100vw, 300px"
                         className="object-cover rounded-sm"
-                        priority
                       />
                       {(post.breakingNews || post.developingStory) && (
                         <div className="absolute bottom-3 left-3 z-10">

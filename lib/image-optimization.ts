@@ -16,6 +16,9 @@ export function getWikimediaThumbnail(
   originalUrl: string,
   maxWidth: number = 1200
 ): string {
+  // Limit maxWidth to reasonable sizes to avoid huge downloads
+  // Wikimedia supports up to 2048px, but we'll cap at 1200px for performance
+  const cappedWidth = Math.min(maxWidth, 1200);
   try {
     const url = new URL(originalUrl);
     
@@ -42,7 +45,7 @@ export function getWikimediaThumbnail(
         const widthMatch = lastPart.match(/^(\d+)px-(.+)$/);
         if (widthMatch) {
           // Replace width in existing thumbnail
-          thumbParts[thumbParts.length - 1] = `${maxWidth}px-${widthMatch[2]}`;
+          thumbParts[thumbParts.length - 1] = `${cappedWidth}px-${widthMatch[2]}`;
           url.pathname = '/' + pathParts.slice(0, commonsIndex + 2).join('/') + '/' + thumbParts.join('/');
           return url.toString();
         }
@@ -65,7 +68,7 @@ export function getWikimediaThumbnail(
     
     // Build thumbnail URL with correct format
     // Format: /wikipedia/commons/thumb/{hash}/{filename}/{width}px-{filename}
-    const thumbnailPath = `/wikipedia/commons/thumb/${hash}/${filename}/${maxWidth}px-${filenameOnly}`;
+    const thumbnailPath = `/wikipedia/commons/thumb/${hash}/${filename}/${cappedWidth}px-${filenameOnly}`;
     url.pathname = thumbnailPath;
     
     // Validate the constructed URL
