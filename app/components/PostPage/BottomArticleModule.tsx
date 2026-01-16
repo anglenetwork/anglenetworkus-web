@@ -52,9 +52,11 @@ export default function BottomArticleModule({
               >
                 <div className="relative aspect-[16/10] w-full overflow-hidden rounded-lg">
                   {(() => {
+                    // Use 800px thumbnail for bottom module (smaller than cover but larger than sidebar)
                     const coverData = getCoverImage(
                       posts[0].cover,
-                      posts[0].title || "Article image"
+                      posts[0].title || "Article image",
+                      800
                     );
                     if (coverData?.src) {
                       return (
@@ -68,7 +70,7 @@ export default function BottomArticleModule({
                           sizes="(max-width: 1024px) 100vw, 60vw"
                           unoptimized={coverData.unoptimized}
                           className="object-cover transition-opacity group-hover:opacity-90"
-                          priority
+                          // Lazy load bottom module images (below the fold)
                         />
                       );
                     }

@@ -77,7 +77,8 @@ export function getCoverImage(
     image?: SanityImageSource | null;
     alt?: string | null;
   } | null | undefined,
-  fallbackAlt: string = "Image"
+  fallbackAlt: string = "Image",
+  maxWidth: number = 1200
 ): { src: string; alt: string; unoptimized: boolean } | null {
   if (!cover || (typeof cover === 'object' && Object.keys(cover).length === 0)) {
     return null;
@@ -117,9 +118,9 @@ export function getCoverImage(
     if (isWikimedia) {
       // Import dynamically to avoid circular dependencies
       const { getWikimediaThumbnail } = require("@/lib/image-optimization");
-      // Use thumbnail API to get appropriately sized images (max 1200px width)
-      // This dramatically reduces file size (e.g., 101MB -> ~500KB)
-      const optimizedUrl = getWikimediaThumbnail(externalUrl, 1200);
+      // Use thumbnail API to get appropriately sized images based on display size
+      // This dramatically reduces file size (e.g., 101MB -> ~500KB for 1200px, ~50KB for 200px)
+      const optimizedUrl = getWikimediaThumbnail(externalUrl, maxWidth);
       return {
         src: optimizedUrl,
         alt: altText,

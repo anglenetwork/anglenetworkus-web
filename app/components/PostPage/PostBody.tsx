@@ -71,18 +71,23 @@ const portableTextComponents = {
       const builder = urlForImage(value);
       if (!builder) return null;
 
-      const imageUrl = builder.width(1200).height(800).fit("max").quality(70).url();
+      const imageUrl = builder.width(1200).height(800).fit("max").quality(60).url();
       return (
         <figure className="my-8 text-left">
-          <ImageRenderer
-            src={imageUrl}
-            alt={value.alt || ""}
-            width={1200}
-            height={800}
-            // Body images are content width; tell Next so it doesn't fetch overly large sizes
-            sizes="(max-width: 768px) 100vw, (max-width: 1280px) 66vw, 800px"
-            className="w-full h-auto rounded-lg shadow-lg"
-          />
+          <div className="relative w-full aspect-[3/2] overflow-hidden rounded-lg shadow-lg">
+            <ImageRenderer
+              src={imageUrl}
+              alt={value.alt || ""}
+              width={1200}
+              height={800}
+              fill
+              // Body images are content width; tell Next so it doesn't fetch overly large sizes
+              sizes="(max-width: 768px) 100vw, (max-width: 1280px) 66vw, 800px"
+              quality={55}
+              className="object-cover rounded-lg"
+              // Lazy load portable text images (below the fold)
+            />
+          </div>
           {(value.alt || value.epigraph || formatImageCredit(value)) && (
             <figcaption className="mt-2 text-left">
               {/* Epigraph + Source in secondary font */}
@@ -217,9 +222,10 @@ function buildGalleryImage(galleryImage: GalleryImage | null | undefined): {
       new URL(externalUrl);
       const isWikimedia = /(^|\.)upload\.wikimedia\.org$/.test(new URL(externalUrl).hostname);
       // Use Wikimedia thumbnail API for Wikimedia images
+      // Use 800px for gallery images (smaller than cover to reduce file size)
       if (isWikimedia) {
         const { getWikimediaThumbnail } = require("@/lib/image-optimization");
-        externalUrl = getWikimediaThumbnail(externalUrl, 1200);
+        externalUrl = getWikimediaThumbnail(externalUrl, 800);
       }
       return {
         src: externalUrl,
@@ -241,7 +247,7 @@ function buildGalleryImage(galleryImage: GalleryImage | null | undefined): {
     const imageUrl = urlForImage(galleryImage.image);
     if (imageUrl) {
       try {
-        const url = imageUrl.quality(70).url();
+        const url = imageUrl.quality(60).url();
         if (url && url.length > 0) {
           return {
             src: url,
@@ -320,7 +326,7 @@ function buildBodyImage(bodyImage: BodyImage | null | undefined): {
     const builder = urlForImage(bodyImage.image);
     if (builder) {
       return {
-        src: builder.width(1200).height(675).fit("max").quality(70).url(),
+        src: builder.width(1200).height(675).fit("max").quality(60).url(),
         alt: bodyImage.alt || bodyImage.image?.alt || "Body image",
         unoptimized: false,
         epigraph: bodyImage.epigraph,
@@ -350,7 +356,9 @@ function renderBodyImage(
           unoptimized={imageData.unoptimized}
           // Same logical width assumptions as the cover/body images
           sizes="(max-width: 768px) 100vw, (max-width: 1280px) 66vw, 800px"
+          quality={55}
           className="object-cover rounded-lg"
+          // Lazy load body block images (below the fold)
         />
       </div>
       {(imageData.epigraph || imageData.credit || imageData.alt) && (
@@ -424,8 +432,8 @@ function CoverImageCarousel({
             height={675}
             fill
             priority={idx === 0}
-            fetchPriority={idx === 0 ? "high" : undefined}
-            quality={70}
+            fetchPriority={idx === 0 ? "high" : "low"}
+            quality={idx === 0 ? 70 : 55}
             sizes="(max-width: 768px) 100vw, (max-width: 1280px) 66vw, 800px"
             unoptimized={image.unoptimized}
             className={`object-cover object-center absolute inset-0 transition-opacity duration-500 ${
