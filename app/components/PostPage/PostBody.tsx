@@ -71,7 +71,7 @@ const portableTextComponents = {
       const builder = urlForImage(value);
       if (!builder) return null;
 
-      const imageUrl = builder.width(1200).height(800).fit("max").quality(75).url();
+      const imageUrl = builder.width(1200).height(800).fit("max").quality(70).url();
       return (
         <figure className="my-8 text-left">
           <ImageRenderer
@@ -216,6 +216,11 @@ function buildGalleryImage(galleryImage: GalleryImage | null | undefined): {
     try {
       new URL(externalUrl);
       const isWikimedia = /(^|\.)upload\.wikimedia\.org$/.test(new URL(externalUrl).hostname);
+      // Use Wikimedia thumbnail API for Wikimedia images
+      if (isWikimedia) {
+        const { getWikimediaThumbnail } = require("@/lib/image-optimization");
+        externalUrl = getWikimediaThumbnail(externalUrl, 1200);
+      }
       return {
         src: externalUrl,
         alt: galleryImage.alt || "Gallery image",
@@ -236,7 +241,7 @@ function buildGalleryImage(galleryImage: GalleryImage | null | undefined): {
     const imageUrl = urlForImage(galleryImage.image);
     if (imageUrl) {
       try {
-        const url = imageUrl.quality(75).url();
+        const url = imageUrl.quality(70).url();
         if (url && url.length > 0) {
           return {
             src: url,
@@ -281,10 +286,27 @@ function buildBodyImage(bodyImage: BodyImage | null | undefined): {
     (bodyImage.source === "external" || !bodyImage.source) &&
     bodyImage.externalUrl
   ) {
+    let externalUrl = bodyImage.externalUrl.trim();
+    // Ensure URL has protocol
+    if (externalUrl.startsWith("//")) {
+      externalUrl = `https:${externalUrl}`;
+    } else if (!externalUrl.match(/^https?:\/\//)) {
+      externalUrl = `https://${externalUrl}`;
+    }
+    
+    // Use Wikimedia thumbnail API for Wikimedia images
+    const isWikimedia = /(^|\.)upload\.wikimedia\.org$/.test(
+      new URL(externalUrl).hostname
+    );
+    if (isWikimedia) {
+      const { getWikimediaThumbnail } = require("@/lib/image-optimization");
+      externalUrl = getWikimediaThumbnail(externalUrl, 1200);
+    }
+    
     return {
-      src: bodyImage.externalUrl,
+      src: externalUrl,
       alt: bodyImage.alt || "Body image",
-      unoptimized: true,
+      unoptimized: isWikimedia,
       epigraph: bodyImage.epigraph,
       credit: formatImageCredit(bodyImage),
     };
@@ -298,7 +320,7 @@ function buildBodyImage(bodyImage: BodyImage | null | undefined): {
     const builder = urlForImage(bodyImage.image);
     if (builder) {
       return {
-        src: builder.width(1200).height(675).fit("max").quality(75).url(),
+        src: builder.width(1200).height(675).fit("max").quality(70).url(),
         alt: bodyImage.alt || bodyImage.image?.alt || "Body image",
         unoptimized: false,
         epigraph: bodyImage.epigraph,
@@ -403,7 +425,7 @@ function CoverImageCarousel({
             fill
             priority={idx === 0}
             fetchPriority={idx === 0 ? "high" : undefined}
-            quality={75}
+            quality={70}
             sizes="(max-width: 768px) 100vw, (max-width: 1280px) 66vw, 800px"
             unoptimized={image.unoptimized}
             className={`object-cover object-center absolute inset-0 transition-opacity duration-500 ${
@@ -568,7 +590,7 @@ export default function PostBody({
                 fill
                 priority
                 fetchPriority="high"
-                quality={75}
+                quality={70}
                 sizes="(max-width: 768px) 100vw, (max-width: 1280px) 66vw, 800px"
                 unoptimized={coverImageData.unoptimized}
                 className="object-cover object-center"

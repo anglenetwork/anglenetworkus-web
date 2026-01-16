@@ -53,8 +53,8 @@ export function isWhitelistedDomain(url: string): boolean {
     const whitelistedDomains = [
       'images.unsplash.com',
       'cdn.sanity.io',
-      // 'upload.wikimedia.org' - Removed due to rate limiting (429 errors)
-      // Wikimedia images are already optimized, serve directly
+      'images.pexels.com', // Allow Next.js to optimize Pexels images
+      // 'upload.wikimedia.org' - Use thumbnail API instead (handled in getCoverImage)
     ];
     return whitelistedDomains.some(domain => urlObj.hostname === domain);
   } catch {
@@ -111,12 +111,17 @@ export function getCoverImage(
       return null;
     }
     
-    // Check if it's Wikimedia Commons (always unoptimize to avoid rate limiting)
+    // Check if it's Wikimedia Commons - use thumbnail API to get optimized sizes
     const isWikimedia = /(^|\.)upload\.wikimedia\.org$/.test(new URL(externalUrl).hostname);
     const altText = cover.alt?.trim() || DEFAULT_ALT_TEXT;
     if (isWikimedia) {
+      // Import dynamically to avoid circular dependencies
+      const { getWikimediaThumbnail } = require("@/lib/image-optimization");
+      // Use thumbnail API to get appropriately sized images (max 1200px width)
+      // This dramatically reduces file size (e.g., 101MB -> ~500KB)
+      const optimizedUrl = getWikimediaThumbnail(externalUrl, 1200);
       return {
-        src: externalUrl,
+        src: optimizedUrl,
         alt: altText,
         unoptimized: true, // Always unoptimize Wikimedia to avoid 429 rate limit errors
       };
@@ -136,7 +141,7 @@ export function getCoverImage(
     const imageUrl = urlForImage(cover.image);
     if (imageUrl) {
       try {
-        const url = imageUrl.quality(60).url();
+        const url = imageUrl.quality(70).url();
         // Validate the URL is not empty and looks like a valid Sanity CDN URL
         if (url && url.length > 0 && (url.includes('cdn.sanity.io') || url.startsWith('/'))) {
           const altText = cover.alt?.trim() || (cover.image as any)?.alt?.trim() || DEFAULT_ALT_TEXT;

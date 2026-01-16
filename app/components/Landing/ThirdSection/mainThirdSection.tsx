@@ -69,7 +69,7 @@ export default function FifthSection({
                             height={675}
                             fill
                             unoptimized={coverData.unoptimized}
-                            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 58vw, 700px"
+                            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 58vw, 600px"
                             className="object-cover rounded-sm"
                           />
                         );
@@ -109,7 +109,7 @@ export default function FifthSection({
                               height={525}
                               fill
                               unoptimized={coverData.unoptimized}
-                              sizes="(max-width: 640px) 100vw, (max-width: 1200px) 50vw, 350px"
+                              sizes="(max-width: 640px) 100vw, (max-width: 1200px) 50vw, 300px"
                               className="object-cover rounded-sm"
                             />
                           );
@@ -150,7 +150,7 @@ export default function FifthSection({
                               height={525}
                               fill
                               unoptimized={coverData.unoptimized}
-                              sizes="(max-width: 640px) 100vw, (max-width: 1200px) 50vw, 350px"
+                              sizes="(max-width: 640px) 100vw, (max-width: 1200px) 50vw, 300px"
                               className="object-cover rounded-sm"
                             />
                           );
@@ -201,7 +201,7 @@ export default function FifthSection({
                                 height={667}
                                 fill
                                 unoptimized={coverData.unoptimized}
-                                sizes="(max-width: 640px) 100vw, (max-width: 1200px) 42vw, 250px"
+                                sizes="(max-width: 640px) 100vw, (max-width: 1200px) 42vw, 200px"
                                 className="object-cover rounded-sm"
                               />
                             );
@@ -272,7 +272,7 @@ export default function FifthSection({
                                 height={667}
                                 fill
                                 unoptimized={coverData.unoptimized}
-                                sizes="(max-width: 640px) 100vw, (max-width: 1200px) 42vw, 250px"
+                                sizes="(max-width: 640px) 100vw, (max-width: 1200px) 42vw, 200px"
                                 className="object-cover rounded-sm"
                               />
                             );

@@ -82,10 +82,10 @@ export function CenterColumnLanding({
                       width={1000}
                       height={563} // 1000 / 16 * 9 ≈ 562.5
                       unoptimized={unoptimized}
-                      quality={75}
+                      quality={70}
                       priority
                       fetchPriority="high"
-                      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 90vw, (max-width: 1280px) 70vw, 1000px"
+                      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 90vw, (max-width: 1280px) 60vw, 800px"
                       className="object-cover object-center rounded-sm"
                       fill
                     />
@@ -128,6 +128,8 @@ export function CenterColumnLanding({
       {/* MORE TOP HEADLINES */}
       {/* Mobile spacing normalized; desktop untouched */}
       <div className="space-y-6 md:space-y-8 mb-8 md:mb-0">
+        {/* Section heading for proper hierarchy (h2 after h1) */}
+        <h2 className="sr-only">More Top Headlines</h2>
         {/* First row: 2 main stories */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8">
           {moreTopHeadlines.slice(0, 2).map((post) => (
@@ -145,8 +147,8 @@ export function CenterColumnLanding({
                           width={600}
                           height={500}
                           unoptimized={unoptimized}
-                          quality={60}
-                          sizes="(max-width: 640px) 100vw, (max-width: 768px) 100vw, (max-width: 1024px) 50vw, 600px"
+                          quality={55}
+                          sizes="(max-width: 640px) 100vw, (max-width: 768px) 100vw, (max-width: 1024px) 50vw, 500px"
                           className="object-cover rounded-sm"
                           fill
                         />
@@ -191,8 +193,8 @@ export function CenterColumnLanding({
                           width={600}
                           height={400}
                           unoptimized={unoptimized}
-                          quality={60}
-                          sizes="(max-width: 640px) 100vw, (max-width: 768px) 100vw, (max-width: 1024px) 33vw, 600px"
+                          quality={55}
+                          sizes="(max-width: 640px) 100vw, (max-width: 768px) 100vw, (max-width: 1024px) 33vw, 400px"
                           className="object-cover rounded-sm"
                           fill
                         />

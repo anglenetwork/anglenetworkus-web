@@ -46,8 +46,8 @@ export function RightColumnLanding({
                       width={600}
                       height={400}
                       unoptimized={coverData.unoptimized}
-                      quality={60}
-                      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 100vw, 600px"
+                      quality={55}
+                      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 100vw, 500px"
                       className="object-cover rounded-sm"
                       fill
                     />

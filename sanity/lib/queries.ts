@@ -116,9 +116,84 @@ export const postQuery = defineQuery(`
   }
 `);
 
+// Lightweight post fields for landing page (excludes bodyBlocks to reduce payload size)
+const postFieldsLightweight = `
+  _id,
+  _type,
+  "status": select(_originalId in path("drafts.**") => "draft", "published"),
+  "title": coalesce(title, "Untitled"),
+  "slug": slug.current,
+  excerpt,
+  // New cover (external or asset)
+  cover{
+    source,
+    externalUrl,
+    image,
+    alt,
+    epigraph,
+    creditProvider,
+    creditAuthor,
+    creditSourceUrl,
+    creditLicense
+  },
+  "date": coalesce(date, _updatedAt),
+  publishedAt,
+  updatedAt,
+  priority,
+  featured,
+  labels,
+  justIn,
+  justInRank,
+  justInUntil,
+  breakingNews,
+  developingStory,
+  mainHeadline,
+  mainHeadlineRank,
+  mainHeadlineUntil,
+  frontline,
+  frontRank,
+  frontUntil,
+  rightHeadline,
+  rightHeadlineRank,
+  rightHeadlineUntil,
+
+  "author": select(
+    defined(author->name) => {
+      "name": coalesce(author->name, "Anonymous"),
+      "picture": author->picture
+    }
+  ),
+
+  "category": select(
+    defined(category->name) && defined(category->slug.current) => {
+      "title": category->name,
+      "slug": category->slug.current
+    }
+  ),
+
+  // Support both tag.title and category.name during transition
+  "tags": tags[]->{
+    "title": coalesce(title, name),
+    "slug": slug.current
+  },
+
+  // Only include imageGallery (used in Just In section), exclude bodyBlocks to reduce payload
+  "imageGallery": imageGallery[]{
+    source,
+    externalUrl,
+    image,
+    alt,
+    epigraph,
+    creditProvider,
+    creditAuthor,
+    creditSourceUrl,
+    creditLicense
+  }
+`;
+
 export const indexQuery = defineQuery(`
   *[_type == "post"] | order(date desc, _updatedAt desc) {
-    ${postFields}
+    ${postFieldsLightweight}
   }
 `);
 

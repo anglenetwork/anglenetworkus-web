@@ -51,37 +51,41 @@ export default async function Page() {
     query: mostViewedPostsQuery,
   });
 
-  // 3) Fetch posts for SecondSection
-  // Left column: US category (1 featured + 6 small)
-  const secondSectionLeftPosts = await sanityFetchStatic({
-    query: latestNineByCategoryQuery,
-    params: { categorySlug: "us" },
-  });
-  // Right column: Politics category (1 featured + 6 small)
-  const secondSectionRightPosts = await sanityFetchStatic({
-    query: latestNineByCategoryQuery,
-    params: { categorySlug: "politics" },
-  });
+  // 3) Fetch posts for SecondSection (above the fold, but can be parallelized)
+  const [secondSectionLeftPosts, secondSectionRightPosts] = await Promise.all([
+    // Left column: US category (1 featured + 6 small)
+    sanityFetchStatic({
+      query: latestNineByCategoryQuery,
+      params: { categorySlug: "us" },
+    }),
+    // Right column: Politics category (1 featured + 6 small)
+    sanityFetchStatic({
+      query: latestNineByCategoryQuery,
+      params: { categorySlug: "politics" },
+    }),
+  ]);
 
   // 4) Fetch latest 6 posts for news ticker
   const newsTickerPosts = await sanityFetchStatic({
     query: newsTickerQuery,
   });
 
-  // 5) Build category tiles for FourthSection and SeventhSection
-  const fourthSectionData = await getFourthSectionData(
-    ["tech", "business", "entertainment", "lifestyle"],
-    ["Tech", "Business", "Entertainment", "Lifestyle"]
-  );
-
-  // 6) Fetch posts for FifthSection (World category)
-  const fifthSectionPosts = await sanityFetchStatic({
-    query: sixthSectionQuery,
-    params: { categorySlug: "world" },
-  });
-
-  // 7) Build third-latest per category for SixthSection
-  const sixthSectionData = await getSecondSectionData();
+  // 5) Parallelize below-the-fold data fetching
+  const [fourthSectionData, fifthSectionPosts, sixthSectionData] =
+    await Promise.all([
+      // Build category tiles for FourthSection and SeventhSection
+      getFourthSectionData(
+        ["tech", "business", "entertainment", "lifestyle"],
+        ["Tech", "Business", "Entertainment", "Lifestyle"]
+      ),
+      // Fetch posts for FifthSection (World category)
+      sanityFetchStatic({
+        query: sixthSectionQuery,
+        params: { categorySlug: "world" },
+      }),
+      // Build third-latest per category for SixthSection
+      getSecondSectionData(),
+    ]);
 
   return (
     <div className="mx-auto lg:mx-32">
