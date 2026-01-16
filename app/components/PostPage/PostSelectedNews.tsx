@@ -48,9 +48,11 @@ export default function PostSelectedNews({
       {/* Articles List */}
       <div className="space-y-4">
         {latestNews.slice(0, 4).map((post) => {
+          // Use smaller thumbnail (200px) for sidebar images to reduce file size
           const coverData = getCoverImage(
             post.cover,
-            post.title || "Article image"
+            post.title || "Article image",
+            200
           );
           const imgUrl = coverData?.src ?? null;
 
@@ -71,9 +73,10 @@ export default function PostSelectedNews({
                         className="object-cover object-center transition-opacity duration-200"
                         width={96}
                         height={77}
-                        quality={60}
+                        quality={50}
                         sizes="96px"
                         fill
+                        // Lazy load sidebar images (below the fold)
                       />
                     </div>
                   ) : (

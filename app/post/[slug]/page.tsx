@@ -19,6 +19,7 @@ import {
 } from "@/sanity/lib/queries";
 import TrackViewClient from "./TrackViewClient";
 import CategoryViewTracker from "./CategoryViewTracker";
+import { PreloadCoverImage } from "@/app/components/PostPage/PreloadCoverImage";
 
 // page.tsx (add near the top, after imports)
 type HeaderCategory = { title: string; slug: string };
@@ -196,8 +197,23 @@ export default async function PostPage({
     (post: any) => post.slug !== null
   ) as any[];
 
+  // Get cover image URL for preloading
+  const coverData = getCoverImage(
+    post.cover as {
+      source?: "asset" | "external";
+      externalUrl?: string | null;
+      image?: any;
+      alt?: string | null;
+    } | null,
+    post.title || "Post"
+  );
+  const coverImageUrl = coverData?.src || null;
+
   return (
     <div className="min-h-screen">
+      {/* Preload cover image for faster LCP */}
+      <PreloadCoverImage imageUrl={coverImageUrl} />
+
       {/* Track view (client) */}
       <TrackViewClient postId={post._id} />
 
