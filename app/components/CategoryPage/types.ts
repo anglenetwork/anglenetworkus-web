@@ -12,6 +12,7 @@ export interface Article {
   imageHeight?: number;
   imageBlurDataURL?: string;
   slug: string;
+  href?: string;
 }
 
 export interface CategoryTickerPost {
@@ -21,6 +22,7 @@ export interface CategoryTickerPost {
 
 export interface CategoryPageProps {
   categoryName: string;
+  hasPosts: boolean;
   categoryDescription?: string;
   latestArticles: Article[];
   mostReadArticles: Article[];

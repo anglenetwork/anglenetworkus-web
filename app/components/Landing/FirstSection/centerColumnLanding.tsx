@@ -36,7 +36,7 @@ export function CenterColumnLanding({
   moreTopHeadlines,
 }: CenterColumnLandingProps) {
   const getCover = (
-    post: Post
+    post: Post,
   ): {
     src: string | null;
     alt: string;
@@ -58,13 +58,13 @@ export function CenterColumnLanding({
 
   return (
     <div className="lg:px-6">
-      {/* <SectionHeader title="Top News" variant="light" /> */}
+      {/* <SectionHeader title="Top News" variant="light" accentStyle="geometric-square" size="large" /> */}
 
       {/* Main Story */}
       {mainStory.map((post, index) => (
         <article key={post._id} className="mb-8">
           <Link href={`/post/${post.slug}`} className="hover:text-red-600">
-            <h1 className="text-3xl md:text-3xl lg:text-4xl font-bold text-gray-900 !leading-tight tracking-tight mb-4 font-sans text-start md:text-center">
+            <h1 className="text-3xl md:text-3xl lg:hidden font-bold text-gray-900 !leading-tight tracking-tight mb-4 font-sans text-start md:text-center">
               {post.title}
             </h1>
           </Link>
@@ -91,7 +91,7 @@ export function CenterColumnLanding({
                     />
                   </div>
                   {credit && (
-                    <p className="text-[10px] text-gray-500 font-secondary text-right">
+                    <p className="text-[10px] text-gray-500 font-sans text-right">
                       {credit}
                     </p>
                   )}
@@ -154,7 +154,7 @@ export function CenterColumnLanding({
                         />
                       </div>
                       {/* {credit && (
-                        <p className="hidden md:block text-[10px] text-gray-500 font-secondary text-right">
+                        <p className="hidden md:block text-[10px] text-gray-500 font-sans text-right">
                           {credit}
                         </p>
                       )} */}

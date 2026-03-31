@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useMemo } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
@@ -23,7 +23,7 @@ export default function SuccessPage() {
 
   const maxPollAttempts = 30; // 30 seconds max
 
-  async function loadSubscription() {
+  const loadSubscription = useCallback(async () => {
     const { data, error } = await supabase
       .from("subscriptions")
       .select("tier, valid_until, status, billing_cycle")
@@ -32,7 +32,7 @@ export default function SuccessPage() {
     if (error) throw error;
 
     return (data?.tier ?? "free") as Tier;
-  }
+  }, [supabase]);
 
   useEffect(() => {
     if (!authReady || !sessionId) {
@@ -63,7 +63,7 @@ export default function SuccessPage() {
         setPolling(false);
       }
     })();
-  }, [authReady, sessionId, supabase]);
+  }, [authReady, sessionId, loadSubscription]);
 
   // Polling effect
   useEffect(() => {
@@ -89,7 +89,13 @@ export default function SuccessPage() {
     }, 1000); // Poll every 1 second
 
     return () => clearInterval(interval);
-  }, [polling, authReady, tier, pollAttempts, supabase]);
+  }, [
+    polling,
+    authReady,
+    tier,
+    pollAttempts,
+    loadSubscription,
+  ]);
 
   if (!sessionId) {
     return (
@@ -146,7 +152,7 @@ export default function SuccessPage() {
               Payment Received
             </h2>
             <p className="text-gray-700">
-              Your payment was successful, but we're still processing your
+              Your payment was successful, but we&apos;re still processing your
               subscription update. This usually takes just a few seconds.
             </p>
             <p className="text-gray-600 text-sm mt-2">

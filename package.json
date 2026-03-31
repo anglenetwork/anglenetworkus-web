@@ -14,13 +14,24 @@
     "prebuild": "npm run typegen",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
     "presetup": "echo 'about to setup env variables, follow the guide here: https://github.com/vercel/next.js/tree/canary/examples/cms-sanity#using-the-sanity-cli'",
     "setup": "npx sanity@latest init --env .env.local",
     "postsetup": "echo 'create the read token by following the rest of the guide: https://github.com/vercel/next.js/tree/canary/examples/cms-sanity#creating-a-read-token'",
     "typegen": "sanity schema extract && sanity typegen generate",
     "seed:tags": "node scripts/seed-tags.mjs",
-    "seed:categories": "node scripts/seed-categories.mjs"
+    "seed:categories": "node scripts/seed-categories.mjs",
+    "seed:articles": "node scripts/seed-articles.mjs",
+    "backfill:article-metrics": "node scripts/backfill-article-metrics.mjs",
+    "verify:article-metrics": "node scripts/verify-article-metrics.mjs",
+    "test:unit": "vitest run",
+    "test:unit:watch": "vitest",
+    "test:e2e": "playwright test --project=chromium",
+    "test:e2e:chromium": "playwright test --project=chromium",
+    "test:e2e:firefox": "playwright test --project=firefox --max-failures=1",
+    "test:e2e:webkit": "playwright test --project=webkit --max-failures=1",
+    "test:e2e:all": "playwright test"
   },
   "dependencies": {
     "@portabletext/react": "^3.2.1",
@@ -65,10 +76,16 @@
     "tailwindcss-animate": "^1.0.7"
   },
   "devDependencies": {
+    "@eslint/eslintrc": "^3.2.0",
     "@playwright/test": "^1.57.0",
+    "@testing-library/jest-dom": "^6.6.3",
+    "@testing-library/react": "^16.0.1",
+    "@vitejs/plugin-react": "^4.3.4",
     "eslint": "^9.13.0",
     "eslint-config-next": "^15.0.0",
+    "jsdom": "^25.0.1",
     "playwright": "^1.57.0",
-    "typescript": "^5.9.3"
+    "typescript": "^5.9.3",
+    "vitest": "^3.0.5"
   }
 }

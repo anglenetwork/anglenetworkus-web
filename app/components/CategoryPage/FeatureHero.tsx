@@ -13,7 +13,7 @@ export function FeatureHero({ article, variant = "light" }: FeatureHeroProps) {
   return (
     <article className="group">
       <Link
-        href={`/post/${article.slug}`}
+        href={article.href ?? `/post/${article.slug}`}
         className="block"
         aria-label={`Read article: ${article.title}`}
       >

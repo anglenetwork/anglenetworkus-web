@@ -111,6 +111,31 @@ export function FullScreenMenu({
               />
             </div>
 
+            {/* Editorial shortcuts */}
+            <div className="flex flex-wrap gap-x-8 gap-y-3 border-b border-border pb-6">
+              <Link
+                href="/opinion"
+                onClick={onClose}
+                className="text-lg font-semibold hover:text-primary transition-colors font-sans"
+              >
+                Opinion
+              </Link>
+              <Link
+                href="/analysis"
+                onClick={onClose}
+                className="text-lg font-semibold hover:text-primary transition-colors font-sans"
+              >
+                Analysis
+              </Link>
+              <Link
+                href="/latest"
+                onClick={onClose}
+                className="text-lg font-semibold hover:text-primary transition-colors font-sans"
+              >
+                Latest
+              </Link>
+            </div>
+
             {/* Navigation Sections */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 md:gap-12">
               {/* Main Sections - Dynamic Categories */}

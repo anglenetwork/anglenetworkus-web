@@ -12,7 +12,7 @@ interface SearchBarProps {
 }
 
 export function SearchBar({
-  placeholder = "Search news, articles, topics and more",
+  placeholder = "Search news, opinion, and analysis",
   ariaLabel = "search bar",
   onSubmit,
   onClose,
@@ -36,7 +36,9 @@ export function SearchBar({
         onSubmit(query.trim());
       } else {
         // Default behavior: navigate to search results page
-        router.push(`/search?q=${encodeURIComponent(query.trim())}`);
+        router.push(
+          `/search?q=${encodeURIComponent(query.trim())}&sort=relevance&type=all&page=1`
+        );
       }
     }
   };
@@ -52,7 +54,7 @@ export function SearchBar({
         type="search"
         name="search"
         placeholder={placeholder}
-        className="w-full h-12 pl-6 pr-16 border border-foreground rounded-lg bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-all font-secondary text-sm"
+        className="w-full h-12 pl-6 pr-16 border border-foreground rounded-lg bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-all font-sans text-sm"
       />
       <button
         type="submit"

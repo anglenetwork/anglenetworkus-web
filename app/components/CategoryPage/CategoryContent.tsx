@@ -7,6 +7,7 @@ interface Post {
   _id: string;
   title: string;
   slug: string | null;
+  href?: string;
   excerpt?: string | null;
   cover?: {
     source?: "asset" | "external";
@@ -70,7 +71,7 @@ export default function CategoryContent({
         </p>
         <Link
           href="/"
-          className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+          className="inline-flex items-center rounded-lg bg-primary px-4 py-2 text-primary-foreground transition-colors hover:bg-primary/90"
         >
           Browse all articles
         </Link>
@@ -96,7 +97,7 @@ export default function CategoryContent({
             {mainArticle && (
               <article className="border-b border-gray-200 pb-8">
                 <div className="relative mb-4">
-                  <Link href={`/post/${mainArticle.slug || "#"}`}>
+                  <Link href={mainArticle.href ?? `/post/${mainArticle.slug || "#"}`}>
                     {(() => {
                       const imageData = getImageData(
                         mainArticle.cover,
@@ -126,7 +127,7 @@ export default function CategoryContent({
                     <span>{mainArticle.author?.name || "Anonymous"}</span>
                   </div>
 
-                  <Link href={`/post/${mainArticle.slug || "#"}`}>
+                  <Link href={mainArticle.href ?? `/post/${mainArticle.slug || "#"}`}>
                     <h2 className="text-2xl md:text-3xl font-bold text-gray-900 leading-tight cursor-pointer hover:text-blue-600 transition-colors">
                       {mainArticle.title || "Untitled"}
                     </h2>
@@ -150,7 +151,7 @@ export default function CategoryContent({
                     className="border-b border-gray-200 pb-6"
                   >
                     <div className="relative mb-4">
-                      <Link href={`/post/${article.slug || "#"}`}>
+                      <Link href={article.href ?? `/post/${article.slug || "#"}`}>
                         {(() => {
                           const imageData = getImageData(
                             article.cover,
@@ -180,7 +181,7 @@ export default function CategoryContent({
                         <span>{article.author?.name || "Anonymous"}</span>
                       </div>
 
-                      <Link href={`/post/${article.slug || "#"}`}>
+                      <Link href={article.href ?? `/post/${article.slug || "#"}`}>
                         <h3 className="text-lg font-bold text-gray-900 leading-tight cursor-pointer hover:text-blue-600 transition-colors">
                           {article.title || "Untitled"}
                         </h3>
@@ -206,7 +207,7 @@ export default function CategoryContent({
                     className="border-b border-gray-200 pb-4"
                   >
                     <div className="relative mb-3">
-                      <Link href={`/post/${article.slug || "#"}`}>
+                      <Link href={article.href ?? `/post/${article.slug || "#"}`}>
                         {(() => {
                           const imageData = getImageData(
                             article.cover,
@@ -236,7 +237,7 @@ export default function CategoryContent({
                         <span>{article.author?.name || "Anonymous"}</span>
                       </div>
 
-                      <Link href={`/post/${article.slug || "#"}`}>
+                      <Link href={article.href ?? `/post/${article.slug || "#"}`}>
                         <h4 className="text-sm font-bold text-gray-900 leading-tight cursor-pointer hover:text-blue-600 transition-colors line-clamp-2">
                           {article.title || "Untitled"}
                         </h4>

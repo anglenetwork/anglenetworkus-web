@@ -135,24 +135,37 @@ export default defineType({
       order: "order",
       deprecated: "deprecated",
       redirect: "redirectTo.title",
-      views: "views",
+      alias0: "aliases[0]",
+      alias1: "aliases[1]",
     },
     prepare(selection) {
-      const { title, slug, emoji, featured, hidden, order, deprecated, redirect, views } =
-        selection as any;
+      const {
+        title,
+        slug,
+        emoji,
+        featured,
+        hidden,
+        order,
+        deprecated,
+        redirect,
+        alias0,
+        alias1,
+      } = selection as any;
+      const aliasBits = [alias0, alias1].filter(Boolean);
+      const aliasStr =
+        aliasBits.length > 0 ? `aka ${aliasBits.join(", ")}` : null;
       const flags = [
         featured ? "★ featured" : null,
         hidden ? "hidden" : null,
         deprecated ? (redirect ? `→ ${redirect}` : "deprecated") : null,
         typeof order === "number" ? `#${order}` : null,
-        views > 0 ? `👁 ${views}` : null,
       ]
         .filter(Boolean)
-        .join(" • ");
+        .join(" · ");
 
       return {
         title: `${emoji ? `${emoji} ` : ""}${title}`,
-        subtitle: [slug, flags].filter(Boolean).join(" • "),
+        subtitle: [slug, aliasStr, flags].filter(Boolean).join(" · "),
       };
     },
   },

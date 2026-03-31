@@ -11,7 +11,7 @@ export default function NotFound() {
         </CardHeader>
         <CardContent className="space-y-4">
           <p className="text-muted-foreground font-sans">
-            This profile section doesn't exist.
+            This profile section doesn&apos;t exist.
           </p>
           <Button asChild className="font-sans">
             <Link href="/myprofile/profile-details">Go to Profile</Link>

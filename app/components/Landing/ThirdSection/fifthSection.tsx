@@ -1,196 +1,191 @@
 import Link from "next/link";
-import { FourthSectionQueryResult } from "@/sanity.types";
-import { getCoverImage, formatImageCredit } from "@/sanity/lib/utils";
+import type { ArticleFamilyCard } from "@/app/lib/article-family/types";
+import { getCoverImage } from "@/sanity/lib/utils";
 import { SectionHeader } from "../../ui/section-header";
 import { ImageRenderer } from "../../ui/image-renderer";
 
+export interface FifthSectionCategoryConfig {
+  slug: string;
+  title: string;
+}
+
 interface FifthSectionProps {
-  posts: FourthSectionQueryResult;
-  categoryTitle: string;
+  leftColumnPosts: ArticleFamilyCard[];
+  rightColumnPosts: ArticleFamilyCard[];
+  leftCategory: FifthSectionCategoryConfig;
+  rightCategory: FifthSectionCategoryConfig;
+}
+
+function getImageData(cover: ArticleFamilyCard["cover"], fallbackTitle: string) {
+  return getCoverImage(cover as Parameters<typeof getCoverImage>[0], fallbackTitle);
 }
 
 export default function FifthSection({
-  posts,
-  categoryTitle,
+  leftColumnPosts,
+  rightColumnPosts,
+  leftCategory,
+  rightCategory,
 }: FifthSectionProps) {
-  // Helper function to get image data from cover
-  const getImageData = (cover: any, fallbackTitle: string = "Article") => {
-    const coverData = getCoverImage(cover, fallbackTitle);
-    return coverData;
-  };
+  const leftForColumn = leftColumnPosts.filter(
+    (p) => p.category?.slug === leftCategory.slug,
+  );
+  const rightForColumn = rightColumnPosts.filter(
+    (p) => p.category?.slug === rightCategory.slug,
+  );
 
-  // Get main article (first post)
-  const mainArticle = posts[0];
-  // Get secondary articles (next 2 posts) - total 3 articles for left column
-  const secondaryArticles = posts.slice(1, 3);
-  // Get all remaining articles for right column
-  const rightColumnArticles = posts.slice(3, 14);
+  if (process.env.NODE_ENV === "development") {
+    if (leftForColumn.length !== leftColumnPosts.length) {
+      console.warn(
+        "[FifthSection] Left column: dropped items whose category.slug !==",
+        leftCategory.slug,
+        {
+          incoming: leftColumnPosts.map((p) => ({
+            slug: p.slug,
+            categorySlug: p.category?.slug,
+          })),
+        },
+      );
+    }
+    if (rightForColumn.length !== rightColumnPosts.length) {
+      console.warn(
+        "[FifthSection] Right column: dropped items whose category.slug !==",
+        rightCategory.slug,
+        {
+          incoming: rightColumnPosts.map((p) => ({
+            slug: p.slug,
+            categorySlug: p.category?.slug,
+          })),
+        },
+      );
+    }
+  }
+
+  const mainArticle = leftForColumn[0];
+  const secondaryArticles = leftForColumn.slice(1, 3);
+
+  const rightFeaturedLeft = rightForColumn[0];
+  const rightTextLeft = rightForColumn.slice(1, 5);
+  const rightFeaturedRight = rightForColumn[5];
+  const rightTextRight = rightForColumn.slice(6, 11);
+
+  if (!mainArticle && rightForColumn.length === 0) {
+    return null;
+  }
 
   return (
-    <div className="min-h-screen">
-      {/* Main container with consistent padding */}
+    <div className="w-full">
       <div className="px-4 md:px-0">
-        <div className="grid grid-cols-12 gap-0">
-          {/* Section Header */}
-          <div className="col-span-12">
+        <div className="flex flex-col lg:grid lg:grid-cols-12 gap-8">
+          <div className="w-full lg:col-span-7 flex flex-col gap-3">
             <SectionHeader
-              title={categoryTitle}
+              title={leftCategory.title}
               variant="light"
-              href={`/category/${categoryTitle.toLowerCase().replace(/\s+/g, "-")}`}
+              accentStyle="geometric-square"
+              size="large"
+              href={`/category/${leftCategory.slug}`}
             />
-          </div>
-
-          <div className="col-span-12 flex flex-col lg:grid lg:grid-cols-12 gap-8">
-            {/* Left Column - Full width on mobile, 7 columns on desktop */}
-            <div className="w-full lg:col-span-7 flex flex-col gap-3">
-              {mainArticle && (
-                <Link
-                  href={`/post/${mainArticle.slug || "#"}`}
-                  className="group block mb-4"
-                >
-                  <div className="mb-4">
-                    <div className="relative aspect-[16/9] overflow-hidden rounded-sm">
-                      {(() => {
-                        const coverData = getCoverImage(
-                          mainArticle.cover as {
-                            source?: "asset" | "external";
-                            externalUrl?: string | null;
-                            image?: any;
-                            alt?: string | null;
-                          } | null,
-                          mainArticle.title || "Featured article"
-                        );
-                        if (!coverData) return null;
-                        return (
-                          <ImageRenderer
-                            src={coverData.src}
-                            alt={coverData.alt}
-                            width={1200}
-                            height={675}
-                            fill
-                            unoptimized={coverData.unoptimized}
-                            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 58vw, 600px"
-                            className="object-cover rounded-sm"
-                          />
-                        );
-                      })()}
-                    </div>
-                    {/* {formatImageCredit(mainArticle.cover) && (
-                      <p className="text-[10px] text-gray-500 font-secondary text-right">
-                        {formatImageCredit(mainArticle.cover)}
-                      </p>
-                    )} */}
+            {mainArticle?.slug && mainArticle.href && (
+              <Link
+                href={mainArticle.href}
+                className="group block mb-4"
+              >
+                <div className="mb-4">
+                  <div className="relative aspect-[16/9] overflow-hidden rounded-sm">
+                    {(() => {
+                      const coverData = getImageData(
+                        mainArticle.cover,
+                        mainArticle.title || "Featured article",
+                      );
+                      if (!coverData) return null;
+                      return (
+                        <ImageRenderer
+                          src={coverData.src}
+                          alt={coverData.alt}
+                          width={1200}
+                          height={675}
+                          fill
+                          unoptimized={coverData.unoptimized}
+                          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 58vw, 600px"
+                          className="object-cover rounded-sm"
+                        />
+                      );
+                    })()}
                   </div>
-                  <h3 className="text-2xl font-sans font-semibold text-neutral-900 leading-snug tracking-tight">
-                    {mainArticle.title || "Untitled"}
-                  </h3>
-                </Link>
+                </div>
+                <h3 className="text-2xl font-sans font-semibold text-neutral-900 leading-snug tracking-tight">
+                  {mainArticle.title || "Untitled"}
+                </h3>
+              </Link>
+            )}
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              {secondaryArticles.map(
+                (article) =>
+                  article.slug &&
+                  article.href && (
+                    <Link
+                      key={article._id}
+                      href={article.href}
+                      className="group block"
+                    >
+                      <div>
+                        <div className="relative aspect-[16/9] sm:aspect-[4/3] overflow-hidden rounded-sm">
+                          {(() => {
+                            const coverData = getImageData(
+                              article.cover,
+                              article.title || "Article image",
+                            );
+                            if (!coverData) return null;
+                            return (
+                              <ImageRenderer
+                                src={coverData.src}
+                                alt={coverData.alt}
+                                width={700}
+                                height={525}
+                                fill
+                                unoptimized={coverData.unoptimized}
+                                sizes="(max-width: 640px) 100vw, (max-width: 1200px) 50vw, 350px"
+                                className="object-cover rounded-sm"
+                              />
+                            );
+                          })()}
+                        </div>
+                      </div>
+                      <div className="mt-2">
+                        <h3 className="text-xl font-sans font-semibold text-neutral-900 leading-snug tracking-tight">
+                          {article.title || "Untitled"}
+                        </h3>
+                      </div>
+                    </Link>
+                  ),
               )}
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                {secondaryArticles[0] && (
-                  <Link
-                    href={`/post/${secondaryArticles[0].slug || "#"}`}
-                    className="group block"
-                  >
-                    <div>
-                      <div className="relative aspect-[16/9] sm:aspect-[4/3] overflow-hidden rounded-sm">
-                        {(() => {
-                          const coverData = getImageData(
-                            secondaryArticles[0].cover,
-                            secondaryArticles[0].title || "Article image"
-                          );
-                          if (!coverData) return null;
-                          return (
-                            <ImageRenderer
-                              src={coverData.src}
-                              alt={coverData.alt}
-                              width={700}
-                              height={525}
-                              fill
-                              unoptimized={coverData.unoptimized}
-                              sizes="(max-width: 640px) 100vw, (max-width: 1200px) 50vw, 350px"
-                              className="object-cover rounded-sm"
-                            />
-                          );
-                        })()}
-                      </div>
-                      {/* {formatImageCredit(secondaryArticles[0].cover) && (
-                        <p className="text-[10px] text-gray-500 font-secondary text-right">
-                          {formatImageCredit(secondaryArticles[0].cover)}
-                        </p>
-                      )} */}
-                    </div>
-                    <div className="mt-2">
-                      <h3 className="text-xl font-sans font-semibold text-neutral-900 leading-snug tracking-tight">
-                        {secondaryArticles[0].title || "Untitled"}
-                      </h3>
-                    </div>
-                  </Link>
-                )}
-
-                {secondaryArticles[1] && (
-                  <Link
-                    href={`/post/${secondaryArticles[1].slug || "#"}`}
-                    className="group block"
-                  >
-                    <div>
-                      <div className="relative aspect-[16/9] sm:aspect-[4/3] overflow-hidden rounded-sm">
-                        {(() => {
-                          const coverData = getImageData(
-                            secondaryArticles[1].cover,
-                            secondaryArticles[1].title || "Article image"
-                          );
-                          if (!coverData) return null;
-                          return (
-                            <ImageRenderer
-                              src={coverData.src}
-                              alt={coverData.alt}
-                              width={700}
-                              height={525}
-                              fill
-                              unoptimized={coverData.unoptimized}
-                              sizes="(max-width: 640px) 100vw, (max-width: 1200px) 50vw, 350px"
-                              className="object-cover rounded-sm"
-                            />
-                          );
-                        })()}
-                      </div>
-                      {/* {formatImageCredit(secondaryArticles[1].cover) && (
-                        <p className="text-[10px] text-gray-500 font-secondary text-right">
-                          {formatImageCredit(secondaryArticles[1].cover)}
-                        </p>
-                      )} */}
-                    </div>
-                    <div className="mt-2">
-                      <h3 className="text-xl font-sans font-semibold text-neutral-900 leading-snug tracking-tight">
-                        {secondaryArticles[1].title || "Untitled"}
-                      </h3>
-                    </div>
-                  </Link>
-                )}
-              </div>
-
-              {/* Separator after secondary articles */}
-              <hr className="border-t border-gray-300 my-4 lg:hidden" />
             </div>
 
-            {/* Right Column - Full width on mobile (appears after left), 5 columns on desktop */}
-            <div className="w-full lg:col-span-5 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-3">
-              {/* Left sidebar column */}
+            <hr className="border-t border-gray-300 my-4 lg:hidden" />
+          </div>
+
+          <div className="w-full lg:col-span-5 flex flex-col gap-3">
+            <SectionHeader
+              title={rightCategory.title}
+              variant="light"
+              accentStyle="geometric-square"
+              size="large"
+              href={`/category/${rightCategory.slug}`}
+            />
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-3">
               <div className="flex flex-col gap-0">
-                {rightColumnArticles[0] && (
+                {rightFeaturedLeft?.slug && rightFeaturedLeft.href && (
                   <>
                     <Link
-                      href={`/post/${rightColumnArticles[0].slug || "#"}`}
+                      href={rightFeaturedLeft.href}
                       className="group block"
                     >
                       <div>
                         <div className="relative aspect-[16/9] lg:aspect-[3/4] overflow-hidden rounded-sm">
                           {(() => {
                             const coverData = getImageData(
-                              rightColumnArticles[0].cover,
-                              rightColumnArticles[0].title || "Article image"
+                              rightFeaturedLeft.cover,
+                              rightFeaturedLeft.title || "Article image",
                             );
                             if (!coverData) return null;
                             return (
@@ -207,61 +202,51 @@ export default function FifthSection({
                             );
                           })()}
                         </div>
-                        {/* {formatImageCredit(rightColumnArticles[0].cover) && (
-                          <p className="text-[10px] text-gray-500 font-secondary text-right">
-                            {formatImageCredit(rightColumnArticles[0].cover)}
-                          </p>
-                        )} */}
                       </div>
                       <div className="mt-2">
                         <h3 className="text-xl font-sans font-semibold text-neutral-900 leading-snug tracking-tight">
-                          {rightColumnArticles[0].title || "Untitled"}
+                          {rightFeaturedLeft.title || "Untitled"}
                         </h3>
                       </div>
                     </Link>
-                    {/* Separator after featured article */}
                     <hr className="border-t border-gray-300 my-3" />
                   </>
                 )}
 
-                {/* Text-only article links */}
                 <div className="flex flex-col gap-4">
-                  {rightColumnArticles.slice(1, 5).map((article, index) => (
-                    <div key={article._id}>
-                      <Link
-                        href={`/post/${article.slug || "#"}`}
-                        className="text-base font-sans font-normal text-neutral-900 leading-snug tracking-normal"
-                      >
-                        {article.title || "Untitled"}
-                      </Link>
-                      {index < 3 && (
-                        <hr className="border-t border-gray-300 mt-4" />
-                      )}
-                    </div>
-                  ))}
+                  {rightTextLeft.map(
+                    (article, index) =>
+                      article.slug &&
+                      article.href && (
+                        <div key={article._id}>
+                          <Link
+                            href={article.href}
+                            className="text-base font-sans font-normal text-neutral-900 leading-snug tracking-normal"
+                          >
+                            {article.title || "Untitled"}
+                          </Link>
+                          {index < rightTextLeft.length - 1 && (
+                            <hr className="border-t border-gray-300 mt-4" />
+                          )}
+                        </div>
+                      ),
+                  )}
                 </div>
               </div>
 
-              {/* Right sidebar column */}
               <div className="flex flex-col gap-0">
-                {rightColumnArticles[
-                  Math.ceil(rightColumnArticles.length / 2)
-                ] && (
+                {rightFeaturedRight?.slug && rightFeaturedRight.href && (
                   <>
                     <Link
-                      href={`/post/${rightColumnArticles[Math.ceil(rightColumnArticles.length / 2)].slug || "#"}`}
+                      href={rightFeaturedRight.href}
                       className="group block"
                     >
                       <div>
                         <div className="relative aspect-[16/9] lg:aspect-[3/4] overflow-hidden rounded-sm">
                           {(() => {
-                            const midIndex = Math.ceil(
-                              rightColumnArticles.length / 2
-                            );
                             const coverData = getImageData(
-                              rightColumnArticles[midIndex].cover,
-                              rightColumnArticles[midIndex].title ||
-                                "Article image"
+                              rightFeaturedRight.cover,
+                              rightFeaturedRight.title || "Article image",
                             );
                             if (!coverData) return null;
                             return (
@@ -278,48 +263,35 @@ export default function FifthSection({
                             );
                           })()}
                         </div>
-                        {/* {formatImageCredit(
-                          rightColumnArticles[
-                            Math.ceil(rightColumnArticles.length / 2)
-                          ]?.cover
-                        ) && (
-                          <p className="text-[10px] text-gray-500 font-secondary text-right">
-                            {formatImageCredit(
-                              rightColumnArticles[
-                                Math.ceil(rightColumnArticles.length / 2)
-                              ]?.cover
-                            )}
-                          </p>
-                        )} */}
                       </div>
                       <div className="mt-2">
                         <h3 className="text-xl font-sans font-semibold text-neutral-900 leading-snug tracking-tight">
-                          {rightColumnArticles[
-                            Math.ceil(rightColumnArticles.length / 2)
-                          ].title || "Untitled"}
+                          {rightFeaturedRight.title || "Untitled"}
                         </h3>
                       </div>
                     </Link>
-                    {/* Separator after featured article */}
                     <hr className="border-t border-gray-300 my-3" />
                   </>
                 )}
 
-                {/* Text-only article links */}
                 <div className="flex flex-col gap-4">
-                  {rightColumnArticles.slice(7, 12).map((article, index) => (
-                    <div key={article._id}>
-                      <Link
-                        href={`/post/${article.slug || "#"}`}
-                        className="text-base font-sans font-normal text-neutral-900 leading-snug tracking-normal"
-                      >
-                        {article.title || "Untitled"}
-                      </Link>
-                      {index < 3 && (
-                        <hr className="border-t border-gray-300 mt-4" />
-                      )}
-                    </div>
-                  ))}
+                  {rightTextRight.map(
+                    (article, index) =>
+                      article.slug &&
+                      article.href && (
+                        <div key={article._id}>
+                          <Link
+                            href={article.href}
+                            className="text-base font-sans font-normal text-neutral-900 leading-snug tracking-normal"
+                          >
+                            {article.title || "Untitled"}
+                          </Link>
+                          {index < rightTextRight.length - 1 && (
+                            <hr className="border-t border-gray-300 mt-4" />
+                          )}
+                        </div>
+                      ),
+                  )}
                 </div>
               </div>
             </div>

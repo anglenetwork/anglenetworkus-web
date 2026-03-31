@@ -6,6 +6,7 @@ interface TagArticleItemProps {
   imageUnoptimized?: boolean;
   title: string;
   slug: string;
+  href?: string;
 }
 
 export function TagArticleItem({
@@ -13,11 +14,13 @@ export function TagArticleItem({
   imageUnoptimized,
   title,
   slug,
+  href,
 }: TagArticleItemProps) {
+  const to = href ?? `/post/${slug}`;
   return (
     <article className="flex gap-6 py-4 first:pt-0">
       <div className="relative h-28 w-40 flex-shrink-0 overflow-hidden rounded-lg">
-        <Link href={`/post/${slug}`} className="block h-full">
+        <Link href={to} className="block h-full">
           <ImageRenderer
             src={image || "/placeholder.svg"}
             alt={title}
@@ -31,7 +34,7 @@ export function TagArticleItem({
           />
         </Link>
       </div>
-      <Link href={`/post/${slug}`} className="block flex-1">
+      <Link href={to} className="block flex-1">
         <h2 className="text-lg font-sans font-normal text-neutral-900 leading-normal tracking-normal">
           {title}
         </h2>

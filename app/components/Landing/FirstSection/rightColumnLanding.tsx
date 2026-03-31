@@ -66,7 +66,12 @@ export function RightColumnLanding({
 
       {/* What Matters section */}
       <div className="pt-8">
-        <SectionHeader title="What Matters" variant="light" />
+        <SectionHeader
+          title="What Matters"
+          variant="light"
+          accentStyle="geometric-square"
+          size="large"
+        />
 
         <div className="space-y-6">
           {/* Numbered list of most read articles */}

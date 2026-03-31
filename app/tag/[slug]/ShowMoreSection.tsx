@@ -7,11 +7,13 @@ import { Button } from "@/components/ui/button";
 import { SectionHeader } from "@/app/components/ui/section-header";
 import { ChevronDown } from "lucide-react";
 import { getCoverImage } from "@/sanity/lib/utils";
+import { SitePageWidth } from "@/app/components/layout/site-page-width";
 
 interface Post {
   _id: string;
   title: string | null;
   slug: string | null;
+  href?: string;
   excerpt?: string | null;
   cover?: {
     source?: "asset" | "external";
@@ -56,8 +58,13 @@ export default function ShowMoreSection({
   };
 
   return (
-    <div className="mx-auto mt-16 max-w-7xl">
-      <SectionHeader title="In case you missed it..." variant="light" />
+    <SitePageWidth className="mt-16">
+      <SectionHeader
+        title="In case you missed it..."
+        variant="light"
+        accentStyle="geometric-square"
+        size="large"
+      />
       <div className="space-y-0 divide-y divide-dotted divide-border border-b border-dotted">
         {visiblePosts.map((post) => {
           const coverData = getCoverImage(
@@ -73,6 +80,7 @@ export default function ShowMoreSection({
               description={post.excerpt || ""}
               readTime={`${post.readTime || 3} MIN READ`}
               slug={post.slug || "#"}
+              href={post.href}
             />
           );
         })}
@@ -84,7 +92,7 @@ export default function ShowMoreSection({
             onClick={handleShowMore}
             disabled={isLoading}
             variant="outline"
-            className="flex items-center gap-2 font-secondary"
+            className="flex items-center gap-2 font-sans"
           >
             {isLoading ? (
               "Loading..."
@@ -97,7 +105,7 @@ export default function ShowMoreSection({
           </Button>
         </div>
       )}
-    </div>
+    </SitePageWidth>
   );
 }
 
@@ -108,6 +116,7 @@ function FullWidthArticle({
   description,
   readTime,
   slug,
+  href,
 }: {
   image: string;
   imageUnoptimized?: boolean;
@@ -115,12 +124,14 @@ function FullWidthArticle({
   description: string;
   readTime: string;
   slug: string;
+  href?: string;
 }) {
+  const to = href ?? `/post/${slug}`;
   return (
     <article className="flex flex-col gap-4 py-8 lg:flex-row lg:gap-8">
       <div className="relative aspect-video w-full overflow-hidden rounded-lg lg:h-32 lg:w-32 lg:flex-shrink-0">
         <Link
-          href={`/post/${slug}`}
+          href={to}
           className="block h-full"
           aria-label={`Read article: ${title}`}
         >
@@ -137,15 +148,15 @@ function FullWidthArticle({
         </Link>
       </div>
       <div className="flex-1">
-        <Link href={`/post/${slug}`} className="block">
+        <Link href={to} className="block">
           <h2 className="text-2xl font-sans font-semibold text-neutral-900 leading-snug tracking-tight">
             {title}
           </h2>
         </Link>
-        <p className="text-muted-foreground leading-relaxed text-pretty font-secondary text-base mt-2">
+        <p className="text-muted-foreground leading-relaxed text-pretty font-sans text-base mt-2">
           {description}
         </p>
-        <p className="mt-3 text-xs font-semibold capitalize tracking-wide text-muted-foreground font-secondary">
+        <p className="mt-3 text-xs font-semibold capitalize tracking-wide text-muted-foreground font-sans">
           {readTime}
         </p>
       </div>

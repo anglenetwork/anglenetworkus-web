@@ -1,5 +1,19 @@
+import type { Metadata } from "next";
 import { Suspense } from "react";
 import SearchResults from "@/app/search/SearchResults";
+import * as demo from "@/sanity/lib/demo";
+import { getCachedSettings } from "@/app/lib/cached-settings";
+import { buildSearchPageMetadata } from "@/app/lib/seo/metadata-builders";
+
+export async function generateMetadata({
+  searchParams,
+}: {
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
+}): Promise<Metadata> {
+  const sp = await searchParams;
+  const settings = await getCachedSettings();
+  return buildSearchPageMetadata(sp, settings, demo.title);
+}
 
 export default function SearchPage() {
   return (

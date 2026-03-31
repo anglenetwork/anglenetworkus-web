@@ -2,6 +2,7 @@ import { FeatureHero } from "./FeatureHero";
 import { FeatureSideItem } from "./FeatureSideItem";
 import { SectionHeader } from "@/app/components/ui/section-header";
 import type { Article } from "./types";
+import { SitePageWidth } from "@/app/components/layout/site-page-width";
 
 interface FeaturedArticlesSectionProps {
   featuredArticles: {
@@ -16,8 +17,13 @@ export function FeaturedArticlesSection({
 }: FeaturedArticlesSectionProps) {
   return (
     <section className="border-b border-border bg-black">
-      <div className="container mx-auto px-4 md:px-20 py-12">
-        <SectionHeader title="Featured" variant="dark" />
+      <SitePageWidth className="py-12">
+        <SectionHeader
+          title="Featured"
+          variant="dark"
+          accentStyle="geometric-square"
+          size="large"
+        />
         {/* Mobile: center hero, then left, then right (stacked) */}
         <div className="block md:hidden space-y-8">
           <div className="mb-12">
@@ -65,7 +71,7 @@ export function FeaturedArticlesSection({
             ))}
           </div>
         </div>
-      </div>
+      </SitePageWidth>
     </section>
   );
 }

@@ -1,13 +1,24 @@
 import { notFound } from "next/navigation";
+import type { Metadata } from "next";
 import { sanityFetchStatic } from "@/sanity/lib/fetch";
 import {
   categorySlugsQuery,
   postsByCategoryQuery,
-  mostViewedQuery,
   categoryTickerQuery,
 } from "@/sanity/lib/queries";
+import {
+  fetchRankingRowsForArticleIds,
+  sortIdsByRankingThenPublishedAt,
+} from "@/app/lib/article-family/metrics";
 import { CategoryPage } from "@/app/components/CategoryPage";
 import { getCoverImage } from "@/sanity/lib/utils";
+import { articleFamilyHref } from "@/app/lib/article-family/routes";
+import type { ArticleFamilyDocType } from "@/app/lib/article-family/types";
+import * as demo from "@/sanity/lib/demo";
+import { getCachedSettings } from "@/app/lib/cached-settings";
+import { jsonLdScriptContent } from "@/app/lib/article-family/structured-data";
+import { buildBreadcrumbJsonLd } from "@/app/lib/seo/json-ld";
+import { buildCategoryPageMetadata } from "@/app/lib/seo/metadata-builders";
 
 // Keep this in sync with the client Article type shape
 interface Article {
@@ -24,6 +35,7 @@ interface Article {
   imageHeight?: number;
   imageBlurDataURL?: string;
   slug: string;
+  href?: string;
 }
 
 // Generate static params for SSG
@@ -36,15 +48,14 @@ export async function generateStaticParams() {
     }));
 }
 
-// Generate metadata for SEO
 export async function generateMetadata({
   params,
 }: {
   params: Promise<{ slug: string }>;
-}) {
+}): Promise<Metadata> {
   const { slug } = await params;
 
-  const [categoryData, posts, mostViewed] = await Promise.all([
+  const [categoryData, posts, settings] = await Promise.all([
     sanityFetchStatic({
       query: `*[_type == "category" && slug.current == $slug][0]{name, slug}`,
       params: { slug },
@@ -53,10 +64,7 @@ export async function generateMetadata({
       query: postsByCategoryQuery,
       params: { categorySlug: slug },
     }),
-    sanityFetchStatic({
-      query: mostViewedQuery,
-      params: { categorySlug: slug },
-    }),
+    getCachedSettings(),
   ]);
 
   const categoryName =
@@ -66,15 +74,15 @@ export async function generateMetadata({
       .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
       .join(" ");
 
-  return {
-    title: `${categoryName} | The Angle`,
-    description: `Latest news and articles in the ${categoryName} category. ${posts.length} articles available.`,
-    openGraph: {
-      title: `${categoryName} | The Angle`,
-      description: `Latest news and articles in the ${categoryName} category.`,
-      type: "website",
-    },
-  };
+  const resultCount = Array.isArray(posts) ? posts.length : 0;
+
+  return buildCategoryPageMetadata({
+    categoryName,
+    resultCount,
+    settings,
+    demoTitle: demo.title,
+    slug,
+  });
 }
 
 export default async function CategoryPageRoute({
@@ -84,25 +92,31 @@ export default async function CategoryPageRoute({
 }) {
   const { slug } = await params;
 
-  const [categoryData, posts, mostViewed, categoryTickerPosts] =
-    await Promise.all([
-      sanityFetchStatic({
-        query: `*[_type == "category" && slug.current == $slug][0]{name, slug}`,
-        params: { slug },
-      }),
-      sanityFetchStatic({
-        query: postsByCategoryQuery,
-        params: { categorySlug: slug },
-      }),
-      sanityFetchStatic({
-        query: mostViewedQuery,
-        params: { categorySlug: slug },
-      }),
-      sanityFetchStatic({
-        query: categoryTickerQuery,
-        params: { categorySlug: slug },
-      }),
-    ]);
+  const [categoryData, posts, categoryTickerPosts] = await Promise.all([
+    sanityFetchStatic({
+      query: `*[_type == "category" && slug.current == $slug][0]{name, slug}`,
+      params: { slug },
+    }),
+    sanityFetchStatic({
+      query: postsByCategoryQuery,
+      params: { categorySlug: slug },
+    }),
+    sanityFetchStatic({
+      query: categoryTickerQuery,
+      params: { categorySlug: slug },
+    }),
+  ]);
+
+  const postList = Array.isArray(posts) ? posts : [];
+
+  const metricsMap = await fetchRankingRowsForArticleIds(
+    postList.map((p: { _id: string }) => p._id)
+  );
+  const mostViewedSorted = sortIdsByRankingThenPublishedAt(
+    postList as { _id: string; publishedAt?: string | null }[],
+    metricsMap
+  );
+  const mostViewed = mostViewedSorted.slice(0, 5);
 
   if (!categoryData) {
     notFound();
@@ -117,18 +131,26 @@ export default async function CategoryPageRoute({
 
   const transformPostToArticle = (post: any): Article => {
     const coverData = getCoverImage(post.cover, post.title || "Article image");
+    const slug = post.slug || "#";
+    const t = (post._type as ArticleFamilyDocType | undefined) ?? "post";
 
     return {
       id: post._id,
       title: post.title || "Untitled",
       excerpt: post.excerpt || "",
       author: post.author?.name || "Anonymous",
-      publishedAt: post.date || post._updatedAt,
+      publishedAt:
+        post.publishedAt ??
+        post.updatedAt ??
+        post.date ??
+        post._updatedAt ??
+        "",
       readTime: "5 min read",
       category: post.category?.title || categoryName,
       imageUrl: coverData?.src,
       imageUnoptimized: coverData?.unoptimized,
-      slug: post.slug || "#",
+      slug,
+      href: articleFamilyHref(t, slug),
     };
   };
 
@@ -136,7 +158,15 @@ export default async function CategoryPageRoute({
     .slice(0, 5)
     .map(transformPostToArticle);
 
-  const latestArticles = posts.slice(5).map(transformPostToArticle);
+  const n = postList.length;
+  const hasPosts = n > 0;
+
+  const latestArticles =
+    n >= 5
+      ? postList.slice(5).map(transformPostToArticle)
+      : n >= 1
+        ? postList.map(transformPostToArticle)
+        : [];
 
   let featuredArticles:
     | {
@@ -146,22 +176,35 @@ export default async function CategoryPageRoute({
       }
     | undefined = undefined;
 
-  if (posts.length >= 5) {
+  if (n >= 5) {
     featuredArticles = {
-      leftColumn: posts.slice(1, 3).map(transformPostToArticle),
-      centerArticle: transformPostToArticle(posts[0]),
-      rightColumn: posts.slice(3, 5).map(transformPostToArticle),
+      leftColumn: postList.slice(1, 3).map(transformPostToArticle),
+      centerArticle: transformPostToArticle(postList[0]),
+      rightColumn: postList.slice(3, 5).map(transformPostToArticle),
     };
   }
 
+  const breadcrumbLd = buildBreadcrumbJsonLd([
+    { name: "Home", path: "/" },
+    { name: categoryName, path: `/category/${slug}` },
+  ]);
+
   return (
-    <CategoryPage
-      categoryName={categoryName}
-      // categoryDescription={`Stay updated with the latest news and insights in the ${categoryName} category.`}
-      latestArticles={latestArticles}
-      mostReadArticles={mostReadArticles}
-      featuredArticles={featuredArticles}
-      categoryTickerPosts={categoryTickerPosts as any}
-    />
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: jsonLdScriptContent(breadcrumbLd),
+        }}
+      />
+      <CategoryPage
+        categoryName={categoryName}
+        hasPosts={hasPosts}
+        latestArticles={latestArticles}
+        mostReadArticles={mostReadArticles}
+        featuredArticles={featuredArticles}
+        categoryTickerPosts={categoryTickerPosts as any}
+      />
+    </>
   );
 }

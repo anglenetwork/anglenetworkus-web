@@ -126,7 +126,7 @@ const nextConfig: NextConfig = {
     formats: ["image/avif", "image/webp"], // modern formats
     deviceSizes: [480, 768, 1024, 1280, 1600],
     imageSizes: [16, 32, 64, 96, 128, 256, 384],
-    qualities: [60, 75, 80, 90, 100], // Configure allowed quality values
+    qualities: [50, 55, 60, 70, 75, 85],
     minimumCacheTTL: 31536000, // 1 year cache
   },
 

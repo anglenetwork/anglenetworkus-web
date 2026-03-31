@@ -71,7 +71,7 @@ function buildGalleryImageData(galleryImage: GalleryImage): {
     try {
       new URL(externalUrl);
       const isWikimedia = /(^|\.)upload\.wikimedia\.org$/.test(
-        new URL(externalUrl).hostname
+        new URL(externalUrl).hostname,
       );
       return {
         src: externalUrl,
@@ -190,7 +190,7 @@ export default function SecondSection({
   // Left article images
   const leftCoverData = getCoverImage(
     leftArticle.cover,
-    leftArticle.title || "Featured article"
+    leftArticle.title || "Featured article",
   );
   let leftGalleryImagesData: Array<{
     src: string;
@@ -202,7 +202,7 @@ export default function SecondSection({
       .map((img) => buildGalleryImageData(img))
       .filter(
         (img): img is { src: string; alt: string; unoptimized: boolean } =>
-          img !== null
+          img !== null,
       );
   }
   const hasLeftGalleryImages = leftGalleryImagesData.length > 0;
@@ -210,7 +210,7 @@ export default function SecondSection({
   // Right article images
   const rightCoverData = getCoverImage(
     rightArticle.cover,
-    rightArticle.title || "Featured article"
+    rightArticle.title || "Featured article",
   );
   let rightGalleryImagesData: Array<{
     src: string;
@@ -222,7 +222,7 @@ export default function SecondSection({
       .map((img) => buildGalleryImageData(img))
       .filter(
         (img): img is { src: string; alt: string; unoptimized: boolean } =>
-          img !== null
+          img !== null,
       );
   }
   const hasRightGalleryImages = rightGalleryImagesData.length > 0;
@@ -237,6 +237,8 @@ export default function SecondSection({
           <SectionHeader
             title={leftArticle.category?.title || "More Top Headlines"}
             variant="light"
+            accentStyle="geometric-square"
+            size="large"
           />
 
           {/* Featured Article */}
@@ -306,6 +308,8 @@ export default function SecondSection({
           <SectionHeader
             title={rightArticle.category?.title || "More Top Headlines"}
             variant="light"
+            accentStyle="geometric-square"
+            size="large"
           />
 
           {/* Featured Article */}

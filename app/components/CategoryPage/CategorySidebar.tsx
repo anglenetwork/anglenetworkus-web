@@ -6,6 +6,7 @@ interface Post {
   _id: string;
   title: string;
   slug: string | null;
+  href?: string;
   excerpt?: string | null;
   cover?: {
     source?: "asset" | "external";
@@ -73,7 +74,7 @@ export default function CategorySidebar({
           {recentPosts.map((post, index) => (
             <div key={post._id} className="flex gap-3">
               <div className="flex-shrink-0">
-                <Link href={`/post/${post.slug || "#"}`}>
+                <Link href={post.href ?? `/post/${post.slug || "#"}`}>
                   {(() => {
                     const imageData = getImageData(
                       post.cover,
@@ -96,7 +97,7 @@ export default function CategorySidebar({
                 <div className="text-xs text-gray-500 mb-1">
                   {formatDate(post.date)}
                 </div>
-                <Link href={`/post/${post.slug || "#"}`}>
+                <Link href={post.href ?? `/post/${post.slug || "#"}`}>
                   <h4 className="text-sm font-semibold text-gray-900 leading-tight cursor-pointer hover:text-blue-600 transition-colors line-clamp-2">
                     {post.title || "Untitled"}
                   </h4>
@@ -122,7 +123,7 @@ export default function CategorySidebar({
                 {index + 1}
               </div>
               <div className="flex-1 min-w-0">
-                <Link href={`/post/${post.slug || "#"}`}>
+                <Link href={post.href ?? `/post/${post.slug || "#"}`}>
                   <h4 className="text-sm font-semibold text-gray-900 leading-tight cursor-pointer hover:text-blue-600 transition-colors line-clamp-2">
                     {post.title || "Untitled"}
                   </h4>

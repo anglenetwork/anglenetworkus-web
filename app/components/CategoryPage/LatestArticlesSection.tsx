@@ -23,6 +23,7 @@ interface Article {
   imageHeight?: number;
   imageBlurDataURL?: string;
   slug: string;
+  href?: string;
 }
 
 interface LatestArticlesSectionProps {
@@ -30,7 +31,20 @@ interface LatestArticlesSectionProps {
   layout: "mobile" | "desktop";
 }
 
+function formatArticleDateLabel(iso: string | undefined): string | null {
+  if (!iso) return null;
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return null;
+  return d.toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  });
+}
+
 function LatestArticleItem({ article }: { article: Article }) {
+  const dateLabel = formatArticleDateLabel(article.publishedAt);
+
   return (
     <article className="group">
       <Card className="border-0 shadow-none bg-transparent transition-colors duration-200">
@@ -40,7 +54,7 @@ function LatestArticleItem({ article }: { article: Article }) {
             {article.imageUrl && (
               <div className="md:col-span-1">
                 <Link
-                  href={`/post/${article.slug}`}
+                  href={article.href ?? `/post/${article.slug}`}
                   className="block"
                   aria-label={`View image for article: ${article.title}`}
                 >
@@ -66,15 +80,11 @@ function LatestArticleItem({ article }: { article: Article }) {
                 article.imageUrl ? "md:col-span-2" : "md:col-span-3"
               } space-y-3`}
             >
-              <div className="flex items-center gap-4 text-sm text-muted-foreground font-secondary">
-                <time dateTime={article.publishedAt}>
-                  {new Date(article.publishedAt).toLocaleDateString("en-US", {
-                    month: "short",
-                    day: "numeric",
-                    year: "numeric",
-                  })}
-                </time>
-                <div className="flex items-center gap-1 text-neutral-500 font-secondary">
+              <div className="flex items-center gap-4 text-sm text-muted-foreground font-sans">
+                {dateLabel ? (
+                  <time dateTime={article.publishedAt}>{dateLabel}</time>
+                ) : null}
+                <div className="flex items-center gap-1 text-neutral-500 font-sans">
                   <Clock className="w-3 h-3" />
                   <span>{article.readTime}</span>
                 </div>
@@ -82,14 +92,14 @@ function LatestArticleItem({ article }: { article: Article }) {
 
               <h3 className="text-2xl font-sans font-semibold text-neutral-900 leading-snug tracking-tight">
                 <Link
-                  href={`/post/${article.slug}`}
+                  href={article.href ?? `/post/${article.slug}`}
                   className="hover:underline"
                 >
                   {article.title}
                 </Link>
               </h3>
 
-              <p className="text-muted-foreground leading-relaxed text-pretty font-secondary text-sm">
+              <p className="text-muted-foreground leading-relaxed text-pretty font-sans text-sm">
                 {article.excerpt}
               </p>
             </div>
@@ -105,6 +115,11 @@ export function LatestArticlesSection({
   layout,
 }: LatestArticlesSectionProps) {
   const [displayedArticles, setDisplayedArticles] = useState(5);
+
+  if (latestArticles.length === 0) {
+    return null;
+  }
+
   const articlesToShow = latestArticles.slice(0, displayedArticles);
   const hasMoreArticles = displayedArticles < latestArticles.length;
 
@@ -115,7 +130,12 @@ export function LatestArticlesSection({
   // Shared content block
   const content = (
     <>
-      <SectionHeader title="Latest Articles" variant="light" />
+      <SectionHeader
+        title="Latest Articles"
+        variant="light"
+        accentStyle="geometric-square"
+        size="large"
+      />
 
       <div className="space-y-8">
         {articlesToShow.map((article, index) => (
@@ -133,7 +153,7 @@ export function LatestArticlesSection({
           <Button
             onClick={handleShowMore}
             variant="outline"
-            className="font-secondary"
+            className="font-sans"
           >
             Show More
           </Button>

@@ -43,6 +43,28 @@ sanity/
 └── lib/                     # Sanity configuration
 ```
 
+### Sanity Studio — editorial desk
+
+The Studio desk (`sanity/structure/editorialDesk.ts`) is organized for the article family and supporting docs:
+
+1. **Posts** — all/draft/scheduled/published, homepage rails (Main Headline, Frontline, Right Rail, Just In), breaking/developing, featured, **Needs Editorial QA** (incomplete essentials).
+2. **Opinion** — all/draft/published, by format (Op-Ed, Editorial, Column, Commentary), **Needs Editorial QA**.
+3. **Analysis** — all/draft/published, **Needs Editorial QA**.
+4. **Sponsored** — all/draft/published, **Needs Sponsor Disclosure Review** (attribution/disclosure gaps).
+5. **Taxonomy** — categories, tags.
+6. **People** — authors.
+7. **Site Settings** — singleton settings document.
+8. **Legacy / Utilities** — `topic` and any other types not in the main flow.
+
+**Article types (when to use which):**
+
+- **Post** — Standard reported news for the main editorial news flow.
+- **Opinion** — Viewpoint or commentary with a clearly attributable author and opinion format.
+- **Analysis** — Explanatory or interpretive journalism grounded in reporting and context, distinct from opinion.
+- **Sponsored** — Paid or partner-published content with clear sponsor attribution and disclosure.
+
+**Not in this desk:** A Dashboard / “Editorial Home” landing pane (would need a custom plugin or document type; intentionally skipped). **Document badges** (Draft/Published/Scheduled, etc.) are not enabled — list subtitles and filters carry that signal instead, to avoid brittle Studio API coupling. **Vision** (GROQ) remains in the Studio toolbar when `NODE_ENV=development`. **Live metrics** are not queried inside Studio; rankings use **Supabase** operationally — legacy Sanity `views*` fields on posts are read-only and labeled as transitional.
+
 ## 📰 Website Sections
 
 ### Homepage Layout
@@ -111,10 +133,9 @@ The homepage features a sophisticated multi-section layout designed for news con
 
 #### **Search Results**
 
-- Full-text search across all content
-- Real-time search suggestions
-- Filter by category and topic
-- Paginated results
+- Editorial search across published `post`, `opinion`, and `analysis` documents (sponsored is excluded)
+- URL-driven filters: `q`, `sort` (`relevance` | `newest`), `type` (`all` | `post` | `opinion` | `analysis`), `page`
+- Server-side pagination via `GET /api/search` (no live tag/topic bucket branches in the UI)
 
 ## 🛠️ Tech Stack
 
@@ -226,151 +247,74 @@ The homepage features a sophisticated multi-section layout designed for news con
 - **Tablet**: Two-column layout with improved spacing
 - **Desktop**: Full multi-column layout with sidebar content
 
-## 🔍 Search & Navigation
+## 🔍 Search (Stage 6)
 
-### Search Functionality
+### API contract — `GET /api/search`
 
-- **Full-text Search**: Search across posts, categories, and topics
-- **Real-time Results**: Instant search suggestions
-- **Advanced Filtering**: Category and topic-based filtering
-- **Search API**: Dedicated GROQ-powered search endpoint
+Query parameters:
 
-## 🔎 Search Algorithm
+| Param | Values | Default |
+| --- | --- | --- |
+| `q` | Free text | (required for results) |
+| `sort` | `relevance`, `newest` | `relevance` |
+| `type` | `all`, `post`, `opinion`, `analysis` | `all` |
+| `page` | Integer ≥ 1 | `1` |
 
-### Overview
+JSON response shape:
 
-The search feature fetches, sorts, and displays posts based on user queries with two strategies: Relevancy (default) and Newest. It prioritizes recent engagement and freshness for high-quality results.
-
-### Architecture
-
-1. Frontend — `app/search/SearchResults.tsx`
-   - Search bar, sorting controls, paginated results
-   - State: `sortBy` ("relevancy" | "newest"), `currentPage`, `searchResults`
-2. API — `app/api/search/route.ts`
-   - Accepts `q`, `sort`, `postLimit` (default 10)
-   - Tokenizes query and applies prefix matching (each term gets `*`)
-   - Chooses GROQ: `searchPostsRelevanceQuery` or `searchPostsNewestQuery`
-3. Data — `sanity/lib/queries.ts`
-   - GROQ queries filter to published posts and project only needed fields
-
-### Algorithm Details
-
-Relevancy (default)
-
-- Filters to published posts
-- Applies multi-field search filter (see Filtering)
-- Sorts by `views7d` desc, then `publishedAt` desc
-
-Newest
-
-- Same filters as Relevancy
-- Sorts by `publishedAt` desc only
-
-### Search Filtering
-
-Fields matched (case-insensitive, prefix-tokenized):
-
-- Title, excerpt, epigraph
-- Body content (rich body and legacy text fields)
-- Category name
-- Tag titles (supports legacy `name`)
-- Author name
-- Tag aliases (see below)
-
-Query processing:
-
-1. Tokenization by whitespace
-2. Prefix matching for each token (adds `*`)
-3. Combined term string matched across fields
-
-### Tag Aliases Matching (Important)
-
-- Posts can be discovered by searching any alias of their tags.
-- Implementation in GROQ dereferences tag references and checks alias elements with prefix matching:
-
-```12:18:sanity/lib/queries.ts
-count(tags[]->aliases[@ match $term]) > 0
+```json
+{
+  "query": "",
+  "sort": "relevance",
+  "type": "all",
+  "page": 1,
+  "pageSize": 10,
+  "total": 0,
+  "totalPages": 0,
+  "results": []
+}
 ```
 
-Why: `tags` is an array of references; alias data lives on the tag docs. We dereference with `tags[]->` and evaluate `@ match $term` for each alias element. This fixes missed results when searching for a tag’s alias (e.g., searching "presidency" returns posts tagged "White House").
+Each `results[]` item is a normalized **article-family card** (same shape as editorial rails / listings). **Sponsored** documents are never returned. There are **no** separate tag/topic buckets in the live search UI; taxonomy is reached via `/tag/[slug]` and `/category/[slug]`.
 
-Constraints and behavior:
+Implementation:
 
-- Matching is case-insensitive and prefix-based due to tokenization (e.g., "presiden\*" matches "presidency").
-- Exact matching can be implemented with `@ == $term` if needed.
+- **UI** — `app/search/SearchResults.tsx` reads `q`, `sort`, `type`, `page` from the URL and calls `/api/search`.
+- **Route** — `app/api/search/route.ts` picks the GROQ list + count queries from `sanity/lib/queries.ts` (`searchEditorial*`).
+- **Tokenization** — Whitespace-split terms; each term gets a prefix wildcard for GROQ `match` filters.
 
-### Data Flow
+## 🧭 SEO & publication policy (Stage 7)
 
-1. User enters query; URL updates; results component loads
-2. User toggles sort; API called with selected mode
-3. API builds tokenized term, executes GROQ, returns posts
-4. Client paginates and renders results
+Centralized helpers live under `app/lib/seo/` (site URL from `NEXT_PUBLIC_SITE_URL`, robots, canonical URLs, shared metadata builders, JSON-LD builders). The **main sitemap** is `app/sitemap.xml`; a **news sitemap** for recent `post` + `analysis` (48h window) is at `app/news-sitemap.xml`. Robots: `app/robots.txt`.
 
-### Performance Notes
+## Article metrics and ranking (Stage 8 / Stage 9)
 
-- 10 results per page (client-side slicing)
-- Sanity CDN caches published reads
-- Queries project only fields required by the UI and limit results
+**Architecture (summary):** View counts and ranking windows (`views_all`, rolling 7d / 30d from daily buckets) live in **Supabase** (`article_metrics_daily`, `article_metrics_totals`, views `article_metrics_rankings*`, RPC `increment_article_view`). Sanity is not updated when a page view is recorded. Ranking rules for “most read” surfaces are centralized in `app/lib/article-family/ranking-policy.ts`; **sponsored** is excluded from editorial ranking by default.
 
-### UX
+**Application:** Server helpers in `app/lib/article-family/metrics.ts` read `article_metrics_rankings` and expose ranking helpers. Article pages send `POST /api/article-view` from `ArticleViewTracker` with a **30-minute** browser dedupe (`localStorage` key `article-viewed:${articleId}`). **Playwright and automation** are excluded via `navigator.webdriver === true` (no view requests).
 
-- Loading states, clear errors, empty results messaging
-- URL persistence for query and sort
-- Accessible controls and semantic markup
+**Legacy Sanity fields:** `viewsAll` / `views30d` / `views7d` remain in the schema as **transitional only**; they do not drive application ranking or live metrics (Supabase is the operational source of truth).
 
-### Future Enhancements
+**Migration** — Apply `supabase-migrations/20260327_article_metrics.sql` to your Supabase project before backfill or verification.
 
-## 🧮 Category Page: "Most Read" Algorithm
+**Commands:**
 
-> Summary: In this component we display the 5 most viewed articles during the last 7 days for the current category.
+```bash
+npm run backfill:article-metrics
+npm run verify:article-metrics
+```
 
-### Overview
+Backfill seeds `article_metrics_totals` from published article-family documents (legacy `viewsAll` on `post` only as an initial `views_all` when present). It does not write daily history or write back to Sanity. Verification is read-only and exits non-zero if readiness checks fail.
 
-The Category page includes a Most Read block that highlights top-performing content per category based on recent readership. The algorithm ranks posts by `views7d` (sitewide metric), ensuring the list reflects what readers are engaging with right now.
+**Readiness:** `checkArticleMetricsReadiness()` in `app/lib/article-family/metrics-readiness.ts` probes tables, the rankings view, and the RPC without mutating data.
 
-### Algorithm
+**Diagnostics (internal JSON):** `GET /api/internal/article-metrics-status` — allowed in **development** without auth; in production, send header `x-internal-article-metrics-secret` matching `INTERNAL_ARTICLE_METRICS_SECRET` in the environment.
 
-- Scope: Only posts within the current category
-- Visibility: Published posts with `publishedAt` in the past
-- Primary sort key: `views7d` (descending)
-- Secondary sort key: `publishedAt` (descending) — used when view counts are tied or missing
-- Limit: Top 5 posts
+**Unit tests:** `npm run test:unit` (Vitest).
 
-### Data Flow
+## Category page: Most Read
 
-1. Route loader (`app/category/[slug]/page.tsx`)
-   - Fetches category posts and most viewed posts for the category
-   - Maps the 5 most-viewed posts (7-day window) to the UI `Article` shape as `mostReadArticles`
-   - Passes `mostReadArticles` to `CategoryPage`
-
-2. UI rendering (`app/components/CategoryPage/CategoryPage.tsx`)
-   - Displays the Most Read block using `mostReadArticles`
-   - Shows rank, title, author and date; links to each post
-
-### Query
-
-- Source: `sanity/lib/queries.ts`
-- Query used: `mostViewedQuery`
-- Behavior: Selects posts where `status == "published"`, `publishedAt <= now()` and orders by `views7d` desc with a secondary recency order, then limited to 5
-
-### Implementation Pointers
-
-- Ensure `views7d` is tracked and updated (the list relies on it)
-- If `views7d` is missing, the secondary `publishedAt` sort prevents empty or unstable lists
-- To change window (e.g., 30 days), either add a `mostViewed30dQuery` or adjust the existing query and props
-- If you need to include/exclude drafts or scheduled posts, change the visibility filter in the query
-
-### Tips to Post
-
-- Publishing quickly after a spike in traffic ensures visibility in Most Read
-- Use compelling titles and images — click-throughs increase `views7d`
-- Cross-link relevant articles within the same category to concentrate engagement
-- Feature fresh posts during peak traffic hours to maximize the 7-day window impact
-
-- Weighted scoring blending views, recency, priority
-- Personalization and ML relevance
-- Suggestions/autocomplete, faceting, boolean operators
-- Analytics for search insights
+The Category route loads published **post** and **analysis** documents for the category from Sanity, joins **Supabase** metrics for those document IDs, and sorts by 7-day views (then `last_viewed_at`, then `publishedAt`). The UI still shows the top five; layout is unchanged.
 
 ### Navigation Structure
 
@@ -378,6 +322,46 @@ The Category page includes a Most Read block that highlights top-performing cont
 - **Breadcrumbs**: Clear navigation hierarchy
 - **Related Content**: Smart content recommendations
 - **Footer Links**: Additional navigation and information
+
+## Lint and Playwright
+
+### ESLint
+
+- Run `npm run lint` — uses the **ESLint CLI** directly (flat config in `eslint.config.mjs`), not `next lint`.
+- Auto-fix where safe: `npm run lint:fix`.
+
+### Playwright (E2E)
+
+**Primary gate (stabilization):** Chromium runs the full intended suite (smoke + integration). Firefox and WebKit run **smoke only** during cross-browser stabilization; use `test:e2e:all` for the full matrix.
+
+| Script | Purpose |
+|--------|---------|
+| `npm run test:e2e` | **Chromium** — default validation gate (smoke + integration tests). |
+| `npm run test:e2e:chromium` | Same as `test:e2e`. |
+| `npm run test:e2e:firefox` | Firefox — smoke tests only (`--max-failures=1`). |
+| `npm run test:e2e:webkit` | WebKit — smoke tests only (`--max-failures=1`). |
+| `npm run test:e2e:all` | All browser projects (Chromium + Firefox + WebKit per `playwright.config.ts`). |
+| `npm run test:unit` | Vitest unit tests (metrics, API routes, components). |
+
+**Test layout:**
+
+- `tests/smoke/**` — Cross-browser UI smoke (sign-in shell, protected-route gate, subscriptions shell). Run on Chromium, Firefox, and WebKit.
+- `tests/smoke/zz-logout.spec.ts` — Logout flow runs **last** (file name) so `signOut` does not invalidate the shared Playwright user session mid-suite.
+- `tests/integration/**` — Heavier flows (Stripe, OAuth redirect, profile modal, etc.). **Chromium only** for now (via `testMatch` on projects).
+
+**Config:** `playwright.config.ts` — `trace: "on-first-retry"`, `screenshot: "only-on-failure"`, `video: "retain-on-failure"`, HTML reporter.
+
+Global setup (`tests/global-setup.ts`) provisions a dedicated test user with the **Supabase service role** (admin API), then signs in with the password using the **publishable** key, and saves `playwright/.auth/state.json` (reusable across Chromium, Firefox, and WebKit). Configure these in `.env.local` (do not commit secrets):
+
+| Variable | Purpose |
+|----------|---------|
+| `NEXT_PUBLIC_SUPABASE_URL` | Supabase project URL |
+| `SUPABASE_SERVICE_ROLE_KEY` | Server-only; used to create/update the test user |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` or `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` | Public key; used for `signInWithPassword` after provisioning |
+| `PLAYWRIGHT_TEST_EMAIL` | Email for the test user |
+| `PLAYWRIGHT_TEST_PASSWORD` | Password for the test user |
+
+After a run, the HTML report is written to `playwright-report/index.html` (open with `npx playwright show-report`).
 
 ---
 

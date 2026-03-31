@@ -48,7 +48,6 @@ next-env.d.ts
 
 #testing
 playwright-report/
-supabase-migrations/
 test-results/
 
 # Playwright auth storage state (generated)

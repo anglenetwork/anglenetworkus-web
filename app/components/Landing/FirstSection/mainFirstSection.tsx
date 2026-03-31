@@ -1,6 +1,7 @@
 import { LeftColumnLanding } from "./leftColumnLanding";
 import { CenterColumnLanding } from "./centerColumnLanding";
 import { RightColumnLanding } from "./rightColumnLanding";
+import Link from "next/link";
 
 interface Post {
   _id: string;
@@ -193,7 +194,7 @@ export function FirstSection({ posts, mostReadPosts }: FirstSectionProps) {
             }
           : undefined,
       author: post.author,
-    })
+    }),
   );
   const mainStory = mainHeadlinePosts.slice(0, 1);
 
@@ -236,7 +237,7 @@ export function FirstSection({ posts, mostReadPosts }: FirstSectionProps) {
                   }
                 : undefined,
             author: post.author,
-          })
+          }),
         )
     : [];
 
@@ -282,7 +283,7 @@ export function FirstSection({ posts, mostReadPosts }: FirstSectionProps) {
               }
             : undefined,
         author: post.author,
-      })
+      }),
     );
   const moreTopHeadlines = frontlinePosts.slice(0, 5);
 
@@ -322,7 +323,7 @@ export function FirstSection({ posts, mostReadPosts }: FirstSectionProps) {
     .filter(
       (post) =>
         !!post.slug &&
-        (!post.category || (!!post.category.title && !!post.category.slug))
+        (!post.category || (!!post.category.title && !!post.category.slug)),
     )
     .map((post) => ({
       _id: post._id,
@@ -335,6 +336,18 @@ export function FirstSection({ posts, mostReadPosts }: FirstSectionProps) {
 
   return (
     <main className="w-full px-4 md:px-0 pt-4">
+      {mainStoryPost?.title && mainStoryPost?.slug && (
+        <div className="hidden lg:block mb-6">
+          <Link
+            href={`/post/${mainStoryPost.slug}`}
+            className="hover:text-red-600 block"
+          >
+            <h1 className="text-6xl font-bold text-gray-900 !leading-tight tracking-tight text-center font-sans">
+              {mainStoryPost.title}
+            </h1>
+          </Link>
+        </div>
+      )}
       {/* Mobile order: Center, Left, Right */}
       {/* Desktop order: Left, Center, Right */}
       <div className="grid grid-cols-1 lg:grid-cols-10 gap-0">

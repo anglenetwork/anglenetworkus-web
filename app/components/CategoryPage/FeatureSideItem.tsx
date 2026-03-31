@@ -14,7 +14,7 @@ export function FeatureSideItem({ article, variant = "light" }: FeatureSideItemP
   return (
     <article className="group">
       <Link
-        href={`/post/${article.slug}`}
+        href={article.href ?? `/post/${article.slug}`}
         className="block"
         aria-label={`Read article: ${article.title}`}
       >

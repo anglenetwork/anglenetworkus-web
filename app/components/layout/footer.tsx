@@ -48,43 +48,58 @@ export function Footer({ categories, tags }: FooterProps) {
           <div className="col-span-1">
             <h4 className="font-semibold text-red-600 mb-4">Sections</h4>
             <ul className="space-y-2 text-sm">
+              <li>
+                <Link href="/opinion" className="text-gray-300 hover:text-white">
+                  Opinion
+                </Link>
+              </li>
+              <li>
+                <Link href="/analysis" className="text-gray-300 hover:text-white">
+                  Analysis
+                </Link>
+              </li>
+              <li>
+                <Link href="/latest" className="text-gray-300 hover:text-white">
+                  Latest
+                </Link>
+              </li>
               {categories.length > 0 ? (
                 categories.slice(0, 5).map((category) => (
                   <li key={category.slug}>
-                    <a
+                    <Link
                       href={`/category/${category.slug}`}
                       className="text-gray-300 hover:text-white capitalize"
                     >
                       {category.name}
-                    </a>
+                    </Link>
                   </li>
                 ))
               ) : (
                 <>
                   <li>
-                    <a href="#" className="text-gray-300 hover:text-white">
+                    <Link href="#" className="text-gray-300 hover:text-white">
                       Congress
-                    </a>
+                    </Link>
                   </li>
                   <li>
-                    <a href="#" className="text-gray-300 hover:text-white">
+                    <Link href="#" className="text-gray-300 hover:text-white">
                       White House
-                    </a>
+                    </Link>
                   </li>
                   <li>
-                    <a href="#" className="text-gray-300 hover:text-white">
+                    <Link href="#" className="text-gray-300 hover:text-white">
                       Defense
-                    </a>
+                    </Link>
                   </li>
                   <li>
-                    <a href="#" className="text-gray-300 hover:text-white">
+                    <Link href="#" className="text-gray-300 hover:text-white">
                       Energy
-                    </a>
+                    </Link>
                   </li>
                   <li>
-                    <a href="#" className="text-gray-300 hover:text-white">
+                    <Link href="#" className="text-gray-300 hover:text-white">
                       Health Care
-                    </a>
+                    </Link>
                   </li>
                 </>
               )}

@@ -1,6 +1,4 @@
 import Link from "next/link";
-import { Play } from "lucide-react";
-import { SectionHeader } from "../../ui/section-header";
 import { ImageRenderer } from "../../ui/image-renderer";
 
 interface ArticleCardAlternativeProps {
@@ -14,7 +12,8 @@ interface ArticleCardAlternativeProps {
   imageSource?: string;
   isDecorative?: boolean;
   slug?: string;
-  views7d?: number;
+  /** Full path for article-family routes (e.g. /opinion/slug). Defaults to /post/{slug}. */
+  href?: string;
   readTime?: number;
 }
 
@@ -29,12 +28,13 @@ export default function ArticleCardAlternative({
   imageSource,
   isDecorative = false,
   slug = "#",
-  views7d = 0,
+  href: hrefProp,
   readTime = 5,
 }: ArticleCardAlternativeProps) {
+  const to = hrefProp ?? (slug && slug !== "#" ? `/post/${slug}` : "#");
   return (
     <div>
-      <Link href={`/post/${slug}`} className="block">
+      <Link href={to} className="block">
         <div className="relative w-full h-[400px] bg-black rounded-lg overflow-hidden cursor-pointer hover:opacity-90 transition-opacity duration-200">
           <div className="absolute inset-0">
             <ImageRenderer
@@ -57,7 +57,7 @@ export default function ArticleCardAlternative({
 
             <div className="flex items-center gap-2">
               {/* <Play className="h-4 w-4 fill-white" /> */}
-              <span className="text-xs font-secondary font-light">
+              <span className="text-xs font-sans font-light">
                 {readTime} min read
               </span>
             </div>

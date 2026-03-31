@@ -5,7 +5,7 @@ import type { Metadata } from "next";
 import { Suspense } from "react";
 import { toPlainText, type PortableTextBlock } from "next-sanity";
 import { draftMode } from "next/headers";
-import { Inter, DM_Sans, Spectral, IBM_Plex_Sans } from "next/font/google";
+import { DM_Sans, Spectral } from "next/font/google";
 
 import { AlertBanner, ContentLayoutWrapper } from "./components/layout";
 import { SessionProviderWrapper } from "./components/SessionProviderWrapper";
@@ -16,42 +16,23 @@ import * as demo from "@/sanity/lib/demo";
 import { sanityFetch } from "@/sanity/lib/fetch";
 import { settingsQuery } from "@/sanity/lib/queries";
 import { resolveOpenGraphImage } from "@/sanity/lib/utils";
+import { getPublicSiteUrl } from "@/app/lib/seo/site-url";
 
-// Configure Google Fonts - optimized to only load weights actually used
-// Using subset optimization and font-display swap to prevent render blocking
-// All fonts set to preload: false to reduce render blocking - they'll load with display: swap
-const interTight = Inter({
-  subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700"], // Only weights actually used
-  variable: "--font-secondary",
-  display: "swap",
-  preload: false, // Defer to reduce render blocking
-  adjustFontFallback: true,
-});
-
+// Primary UI sans (Tailwind `font-sans`) and article body serif (Tailwind `font-body`).
+// Weights match in-app usage (no extrabold/black on DM Sans).
 const dmSans = DM_Sans({
   subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700", "800", "900"], // Only weights actually used
-  variable: "--font-sans-dmsans",
+  weight: ["300", "400", "500", "600", "700"],
+  variable: "--font-sans",
   display: "swap",
-  preload: false, // Defer to reduce render blocking - main font but loads with swap
+  preload: false,
   adjustFontFallback: true,
 });
 
 const spectral = Spectral({
   subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700"], // Only weights actually used
-  variable: "--font-serif",
-  display: "swap",
-  preload: false, // Less critical, can load later
-  adjustFontFallback: true,
-});
-
-// Test fonts - available on Google Fonts
-const ibmPlexSans = IBM_Plex_Sans({
-  subsets: ["latin"],
   weight: ["300", "400", "500", "600", "700"],
-  variable: "--font-sans",
+  variable: "--font-body",
   display: "swap",
   preload: false,
   adjustFontFallback: true,
@@ -69,11 +50,15 @@ export async function generateMetadata(): Promise<Metadata> {
   const ogImage = resolveOpenGraphImage(settings?.ogImage);
   let metadataBase: URL | undefined = undefined;
   try {
-    metadataBase = settings?.ogImage?.metadataBase
-      ? new URL(settings.ogImage.metadataBase)
-      : undefined;
+    metadataBase = new URL(getPublicSiteUrl());
   } catch {
-    // ignore
+    try {
+      metadataBase = settings?.ogImage?.metadataBase
+        ? new URL(settings.ogImage.metadataBase)
+        : undefined;
+    } catch {
+      // ignore
+    }
   }
   return {
     metadataBase,
@@ -93,8 +78,6 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const data = await sanityFetch({ query: settingsQuery });
-  const footer = data?.footer || [];
   const { isEnabled: isDraftMode } = await draftMode();
 
   return (
@@ -105,14 +88,7 @@ export default async function RootLayout({
         <link rel="dns-prefetch" href="https://upload.wikimedia.org" />
         <link rel="dns-prefetch" href="https://cdn.sanity.io" />
       </head>
-      <body
-        className={`
-        ${interTight.variable}
-        ${dmSans.variable}
-        ${spectral.variable}
-        ${ibmPlexSans.variable}
-      `}
-      >
+      <body className={`${dmSans.variable} ${spectral.variable}`}>
         <SupabaseAuthProvider>
           <SessionProviderWrapper>
             <section className="min-h-screen">

@@ -11,6 +11,12 @@ import { resolve } from "path";
 dotenv.config({ path: resolve(__dirname, ".env.local") });
 
 /**
+ * Playwright architecture (stabilization):
+ * - chromium: primary gate — runs `tests/smoke/**` + `tests/integration/**` (Stripe, OAuth, profile flows).
+ * - firefox / webkit: smoke only (`tests/smoke/**`) to reduce cross-browser noise while stabilizing.
+ * - Global setup writes `playwright/.auth/state.json`; individual specs use `test.use({ storageState: … })`
+ *   to opt out when unauthenticated flows are required (see smoke auth tests).
+ *
  * See https://playwright.dev/docs/test-configuration.
  */
 export default defineConfig({
@@ -37,6 +43,8 @@ export default defineConfig({
     storageState: "playwright/.auth/state.json",
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     trace: "on-first-retry",
+    screenshot: "only-on-failure",
+    video: "retain-on-failure",
   },
 
   /* Configure projects for major browsers */
@@ -44,16 +52,19 @@ export default defineConfig({
     {
       name: "chromium",
       use: { ...devices["Desktop Chrome"] },
+      testMatch: ["tests/smoke/**/*.spec.ts", "tests/integration/**/*.spec.ts"],
     },
 
     {
       name: "firefox",
       use: { ...devices["Desktop Firefox"] },
+      testMatch: ["tests/smoke/**/*.spec.ts"],
     },
 
     {
       name: "webkit",
       use: { ...devices["Desktop Safari"] },
+      testMatch: ["tests/smoke/**/*.spec.ts"],
     },
   ],
 
@@ -62,6 +73,8 @@ export default defineConfig({
     command: "npm run dev",
     url: "http://localhost:3000",
     reuseExistingServer: !process.env.CI,
+    // `npm run dev` runs `predev` typegen (Sanity) which can exceed the default 60s on cold start.
+    timeout: 180_000,
   },
 });
 

@@ -29,13 +29,20 @@ export function resolveOpenGraphImage(
   return { url, alt: (image as any)?.alt as string | undefined, width, height };
 }
 
+/** Prefer `articleFamilyHref` from `@/app/lib/article-family/routes` in app code. */
 export function resolveHref(
   documentType?: string,
   slug?: string
 ): string | undefined {
   switch (documentType) {
     case "post":
-      return slug ? `/posts/${slug}` : undefined;
+      return slug ? `/post/${slug}` : undefined;
+    case "opinion":
+      return slug ? `/opinion/${slug}` : undefined;
+    case "analysis":
+      return slug ? `/analysis/${slug}` : undefined;
+    case "sponsored":
+      return slug ? `/sponsored/${slug}` : undefined;
     default:
       console.warn("Invalid document type:", documentType);
       return undefined;

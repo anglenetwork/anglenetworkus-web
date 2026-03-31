@@ -8,7 +8,12 @@ export function LeftColumnFifth() {
   return (
     <div className="border-r border-gray-200 pr-6 pl-4">
       <div className="sticky top-6">
-        <SectionHeader title="Partner with Us" variant="light" />
+        <SectionHeader
+          title="Partner with Us"
+          variant="light"
+          accentStyle="geometric-square"
+          size="large"
+        />
         <Link href="/company/advertise-with-us" className="block group">
           <div className="relative w-full h-96 overflow-hidden rounded-sm">
             <video
