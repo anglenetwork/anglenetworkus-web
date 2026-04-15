@@ -33,7 +33,7 @@ interface Post {
 
 // Helper to get image data from gallery image (similar to getCoverImage)
 function getGalleryImageData(
-  galleryImage: GalleryImage
+  galleryImage: GalleryImage,
 ): { src: string; alt: string; unoptimized: boolean } | null {
   if (!galleryImage) return null;
 
@@ -59,7 +59,7 @@ function getGalleryImageData(
     try {
       new URL(externalUrl);
       const isWikimedia = /(^|\.)upload\.wikimedia\.org$/.test(
-        new URL(externalUrl).hostname
+        new URL(externalUrl).hostname,
       );
       // Use Wikimedia thumbnail API to get optimized sizes
       if (isWikimedia) {
@@ -157,7 +157,7 @@ function ImageCarousel({
               height={240}
               fill
               unoptimized={image.unoptimized}
-                        quality={55}
+              quality={55}
               sizes="(max-width: 640px) 100vw, (max-width: 1024px) 100vw, 300px"
               className={`object-cover rounded-sm transition-opacity duration-500 ${
                 idx === currentIndex ? "opacity-100 z-10" : "opacity-0 z-0"
@@ -201,7 +201,12 @@ function ImageCarousel({
 export function LeftColumnLanding({ justInNews }: LeftColumnLandingProps) {
   return (
     <div className=" lg:sticky lg:top-20 lg:h-auto lg:overflow-hidden text-left px-0 md:px-4">
-      <SectionHeader title="Just in" variant="light" />
+      <SectionHeader
+        title="Just in"
+        variant="light"
+        accentStyle="geometric-square"
+        size="large"
+      />
 
       <div className="space-y-6">
         {justInNews.map((post, index) => {
@@ -225,9 +230,9 @@ export function LeftColumnLanding({ justInNews }: LeftColumnLandingProps) {
               .map((img) => getGalleryImageData(img))
               .filter(
                 (
-                  img
+                  img,
                 ): img is { src: string; alt: string; unoptimized: boolean } =>
-                  img !== null
+                  img !== null,
               );
           }
 

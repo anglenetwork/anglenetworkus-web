@@ -1,12 +1,12 @@
 "use client";
 
 import { useRef } from "react";
-import ArticleCard from "./article-card";
-import ArticleCardAlternative from "./articleCardAlternative";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { getCoverImage, formatImageCredit } from "@/sanity/lib/utils";
 import { SectionHeader } from "../../ui/section-header";
+import ArticleFamilyCard from "@/app/components/article-family/ArticleFamilyCard";
+import { articleFamilyHref } from "@/app/lib/article-family/routes";
+import type { ArticleFamilyCard as CardModel } from "@/app/lib/article-family/types";
 
 interface Post {
   _id: string;
@@ -29,7 +29,6 @@ interface Post {
     title: string | null;
     slug: string | null;
   } | null;
-  views7d?: number | null;
   readTime?: number | null;
 }
 
@@ -43,75 +42,82 @@ interface SixthSectionProps {
   categoriesData?: CategoryData[];
 }
 
+function postToCard(post: Post, categoryLabel: string): CardModel {
+  const slug = post.slug || "";
+  const catTitle = post.category?.title?.trim() || categoryLabel;
+  const catSlug = post.category?.slug?.trim() || "news";
+  return {
+    _id: post._id,
+    _type: "post",
+    title: post.title || "Untitled",
+    tickerTitle: post.title || "Untitled",
+    excerpt: post.excerpt ?? null,
+    slug,
+    href: slug ? articleFamilyHref("post", slug) : "#",
+    cover: post.cover ?? null,
+    body: null,
+    author: post.author
+      ? { name: post.author.name, picture: post.author.picture }
+      : null,
+    publishedAt: post.date || null,
+    updatedAt: null,
+    date: post.date,
+    seo: null,
+    category: { title: catTitle, slug: catSlug },
+    tags: null,
+  };
+}
+
+function fallbackCard(): CardModel {
+  return {
+    _id: "fallback-1",
+    _type: "post",
+    title: "Sample Article Title",
+    tickerTitle: "Sample Article Title",
+    excerpt:
+      "This is a sample article description to test the component rendering.",
+    slug: "",
+    href: "#",
+    cover: null,
+    body: null,
+    author: { name: "Sample Author" },
+    publishedAt: null,
+    updatedAt: null,
+    date: new Date().toISOString(),
+    seo: null,
+    category: { title: "Sample Category", slug: "sample" },
+    tags: null,
+  };
+}
+
 export default function SixthSection({
   categoriesData,
 }: SixthSectionProps) {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
-  // Transform the data into the format expected by ArticleCard
-  const stories =
+  const rows =
     categoriesData?.flatMap((category) => {
-      // Skip categories that don't have a 3rd article
       if (!category.thirdArticle || !category.thirdArticle.slug) {
         return [];
       }
-
       return [
         {
           id: category.thirdArticle._id,
-          category: category.name || "Uncategorized",
-          title: category.thirdArticle.title || "Untitled",
-          description: category.thirdArticle.excerpt || "",
-          author: category.thirdArticle.author?.name || "Anonymous",
-          image: category.thirdArticle.cover
-            ? getCoverImage(
-                category.thirdArticle.cover,
-                category.thirdArticle.title || "Article image"
-              )?.src
-            : undefined,
-          imageAlt: category.thirdArticle.cover
-            ? getCoverImage(
-                category.thirdArticle.cover,
-                category.thirdArticle.title || "Article image"
-              )?.alt ||
-              category.thirdArticle.title ||
-              "Article image"
-            : "Article image",
-          imageUnoptimized: category.thirdArticle.cover
-            ? getCoverImage(
-                category.thirdArticle.cover,
-                category.thirdArticle.title || "Article image"
-              )?.unoptimized || false
-            : false,
-          imageSource:
-            formatImageCredit(category.thirdArticle.cover) || undefined,
-          isDecorative: !category.thirdArticle.cover,
-          slug: category.thirdArticle.slug,
-          views7d: category.thirdArticle.views7d || 0,
+          categoryName: category.name || "Uncategorized",
+          post: category.thirdArticle,
           readTime: category.thirdArticle.readTime || 5,
         },
       ];
-    }) || [];
+    }) ?? [];
 
-  // Fallback content if no stories are available
-  const displayStories =
-    stories.length > 0
-      ? stories
+  const displayRows =
+    rows.length > 0
+      ? rows
       : [
           {
             id: "fallback-1",
-            category: "Sample Category",
-            title: "Sample Article Title",
-            description:
-              "This is a sample article description to test the component rendering.",
-            author: "Sample Author",
-            image: undefined,
-            imageAlt: "Sample image",
-            imageUnoptimized: false,
-            imageSource: undefined,
-            isDecorative: true,
-            slug: "#",
-            views7d: 0,
+            categoryName: "Sample Category",
+            post: null as Post | null,
             readTime: 5,
           },
         ];
@@ -119,7 +125,7 @@ export default function SixthSection({
   const scrollLeft = () => {
     if (scrollContainerRef.current) {
       scrollContainerRef.current.scrollBy({
-        left: -344, // Card width (320px) + gap (24px)
+        left: -344,
         behavior: "smooth",
       });
     }
@@ -128,7 +134,7 @@ export default function SixthSection({
   const scrollRight = () => {
     if (scrollContainerRef.current) {
       scrollContainerRef.current.scrollBy({
-        left: 344, // Card width (320px) + gap (24px)
+        left: 344,
         behavior: "smooth",
       });
     }
@@ -137,69 +143,52 @@ export default function SixthSection({
   return (
     <div className="bg-white">
       <div className="px-6">
-        {/* Title Section */}
-        <SectionHeader title="Featured Stories" variant="light" />
+        <SectionHeader
+          title="Featured Stories"
+          variant="light"
+          accentStyle="geometric-square"
+          size="large"
+        />
 
         <div className="relative">
-          {/* Left Arrow */}
           <Button
             variant="outline"
             size="icon"
             aria-label="Scroll left"
-            className="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-white shadow-lg hover:bg-gray-50"
+            className="absolute left-0 top-1/2 z-10 -translate-y-1/2 bg-white shadow-lg hover:bg-gray-50"
             onClick={scrollLeft}
           >
             <ChevronLeft className="h-4 w-4" />
           </Button>
 
-          {/* Right Arrow */}
           <Button
             variant="outline"
             size="icon"
             aria-label="Scroll right"
-            className="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-white shadow-lg hover:bg-gray-50"
+            className="absolute right-0 top-1/2 z-10 -translate-y-1/2 bg-white shadow-lg hover:bg-gray-50"
             onClick={scrollRight}
           >
             <ChevronRight className="h-4 w-4" />
           </Button>
 
-          {/* Horizontal Scrolling Container */}
           <div
             ref={scrollContainerRef}
-            className="flex gap-6 overflow-x-auto scrollbar-hide px-12"
+            className="flex gap-6 overflow-x-auto px-12 scrollbar-hide"
           >
-            {displayStories.map((story) => (
-              <div key={story.id} className="flex-shrink-0 w-[300px]">
-                <ArticleCardAlternative
-                  category={story.category}
-                  title={story.title}
-                  description={story.description}
-                  author={story.author}
-                  image={story.image}
-                  imageAlt={story.imageAlt}
-                  imageUnoptimized={story.imageUnoptimized}
-                  imageSource={story.imageSource}
-                  isDecorative={story.isDecorative}
-                  slug={story.slug}
-                  views7d={story.views7d}
-                  readTime={story.readTime}
-                />
-              </div>
-            ))}
-            {/* Original ArticleCard (commented out for now)
-            {displayStories.map((story) => (
-              <ArticleCard
-                key={story.id}
-                category={story.category}
-                title={story.title}
-                description={story.description}
-                author={story.author}
-                image={story.image}
-                imageAlt={story.imageAlt}
-                isDecorative={story.isDecorative}
-              />
-            ))}
-            */}
+            {displayRows.map((row) => {
+              const card = row.post
+                ? postToCard(row.post, row.categoryName)
+                : fallbackCard();
+              return (
+                <div key={row.id} className="w-[300px] flex-shrink-0">
+                  <ArticleFamilyCard
+                    article={card}
+                    layout="heroTile"
+                    readTimeMinutes={row.readTime}
+                  />
+                </div>
+              );
+            })}
           </div>
         </div>
       </div>

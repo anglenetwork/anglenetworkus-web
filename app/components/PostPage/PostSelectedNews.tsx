@@ -2,33 +2,10 @@ import Link from "next/link";
 import { format, parseISO } from "date-fns";
 import { getCoverImage } from "@/sanity/lib/utils";
 import { ImageRenderer } from "../ui/image-renderer";
-
-interface Post {
-  _id: string;
-  title: string;
-  slug: string;
-  excerpt?: string;
-  cover?: {
-    source?: "asset" | "external";
-    externalUrl?: string | null;
-    image?: any;
-    alt?: string | null;
-    epigraph?: string | null;
-    imageSource?: string | null;
-  } | null;
-  date?: string; // normalized in queries (coalesce(publishedAt, date))
-  author?: {
-    name: string;
-    picture?: any;
-  };
-  category?: {
-    title: string;
-    slug: string;
-  };
-}
+import type { ArticleSidebarPost } from "@/app/lib/article-family/types";
 
 interface PostSelectedNewsProps {
-  latestNews: Post[];
+  latestNews: ArticleSidebarPost[];
   title: string;
 }
 
@@ -41,16 +18,16 @@ export default function PostSelectedNews({
   return (
     <div className="w-full max-w-md mx-auto bg-white rounded-lg">
       {/* Header */}
-      <h2 className="text-xl font-secondary font-bold text-foreground mb-6">
+      <h2 className="text-xl font-sans font-bold text-foreground mb-6">
         {title}
       </h2>
 
       {/* Articles List */}
       <div className="space-y-4">
-        {latestNews.slice(0, 4).map((post) => {
+        {latestNews.slice(0, 4).map((post: ArticleSidebarPost) => {
           // Use smaller thumbnail (200px) for sidebar images to reduce file size
           const coverData = getCoverImage(
-            post.cover,
+            post.cover as Parameters<typeof getCoverImage>[0],
             post.title || "Article image",
             200
           );
@@ -59,7 +36,7 @@ export default function PostSelectedNews({
           return (
             <article key={post._id} className="group">
               <Link
-                href={`/post/${post.slug}`}
+                href={post.href}
                 className="flex items-start gap-4 rounded-lg transition-colors duration-200 cursor-pointer"
               >
                 {/* Article Image */}
@@ -80,7 +57,7 @@ export default function PostSelectedNews({
                       />
                     </div>
                   ) : (
-                    <div className="w-24 h-[77px] rounded-lg bg-gray-200/80 flex items-center justify-center text-[10px] text-gray-500 font-secondary">
+                    <div className="w-24 h-[77px] rounded-lg bg-gray-200/80 flex items-center justify-center text-[10px] text-gray-500 font-sans">
                       No Image
                     </div>
                   )}
@@ -88,11 +65,11 @@ export default function PostSelectedNews({
 
                 {/* Article Content */}
                 <div className="flex-1 min-w-0">
-                  <h3 className="text-sm font-secondary font-semibold text-neutral-900 leading-snug tracking-normal mb-2">
+                  <h3 className="text-sm font-sans font-semibold text-neutral-900 leading-snug tracking-normal mb-2">
                     {post.title}
                   </h3>
                   {post.date && (
-                    <p className="text-xs text-neutral-500 mt-1 font-secondary">
+                    <p className="text-xs text-neutral-500 mt-1 font-sans">
                       {(() => {
                         try {
                           return format(parseISO(post.date), "MMM dd, h:mm a");

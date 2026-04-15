@@ -352,7 +352,7 @@ export default function SubscriptionsPage() {
                   Current Plan
                 </span>
                 <h2 className="text-4xl font-bold mb-2">
-                  You're on the{" "}
+                  You&apos;re on the{" "}
                   <span className="text-red-500">
                     {getTierDisplayName(originalTier)}
                   </span>{" "}
@@ -417,7 +417,7 @@ export default function SubscriptionsPage() {
                                 <AlertDialogDescription>
                                   Your subscription will remain active until the
                                   end of your current billing period (
-                                  {getValidUntilText()}). You'll continue to
+                                  {getValidUntilText()}). You&apos;ll continue to
                                   have access to Pro features until then.
                                 </AlertDialogDescription>
                               </AlertDialogHeader>
@@ -442,7 +442,7 @@ export default function SubscriptionsPage() {
                   {/* Right: Features Grid */}
                   <div className="md:col-span-2">
                     <p className="text-sm font-semibold uppercase tracking-wide text-muted-foreground mb-6">
-                      What's Included
+                      What&apos;s Included
                     </p>
                     <div className="grid sm:grid-cols-2 gap-4">
                       {getCurrentPlanFeatures().map((feature, idx) => (

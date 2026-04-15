@@ -13,16 +13,27 @@ import {
 import { structureTool } from "sanity/structure";
 
 import { apiVersion, dataset, projectId, studioUrl } from "@/sanity/lib/api";
-import { pageStructure, singletonPlugin } from "@/sanity/plugins/settings";
+import { singletonPlugin } from "@/sanity/plugins/settings";
+import { editorialDeskStructure } from "@/sanity/structure/editorialDesk";
 import { assistWithPresets } from "@/sanity/plugins/assist";
 import author from "@/sanity/schemas/documents/author";
 import category from "@/sanity/schemas/documents/category";
+import analysis from "@/sanity/schemas/documents/analysis";
+import opinion from "@/sanity/schemas/documents/opinion";
 import post from "@/sanity/schemas/documents/post";
+import sponsored from "@/sanity/schemas/documents/sponsored";
 import settings from "@/sanity/schemas/singletons/settings";
 import tag from "@/sanity/schemas/documents/tag";
 import topic from "@/sanity/schemas/documents/topic";
 import blockContent from "@/sanity/schemas/objects/blockContent";
+import editorialImage from "@/sanity/schemas/objects/editorialImage";
+import pullQuote from "@/sanity/schemas/objects/pullQuote";
+import articleDivider from "@/sanity/schemas/objects/articleDivider";
+import videoEmbed from "@/sanity/schemas/objects/videoEmbed";
+import coverMedia from "@/sanity/schemas/objects/coverMedia";
+import galleryImageItem from "@/sanity/schemas/objects/galleryImageItem";
 import seo from "@/sanity/schemas/objects/seo";
+import sponsorAttribution from "@/sanity/schemas/objects/sponsorAttribution";
 import { resolveHref } from "@/sanity/lib/utils";
 
 const homeLocation = {
@@ -40,13 +51,23 @@ export default defineConfig({
       settings,
       // Documents
       post,
+      opinion,
+      analysis,
+      sponsored,
       author,
       category,
       tag,
       topic,
       // Objects
       blockContent,
+      editorialImage,
+      coverMedia,
+      galleryImageItem,
+      pullQuote,
+      articleDivider,
+      videoEmbed,
       seo,
+      sponsorAttribution,
     ],
   },
   plugins: [
@@ -56,6 +77,18 @@ export default defineConfig({
           {
             route: "/posts/:slug",
             filter: `_type == "post" && slug.current == $slug`,
+          },
+          {
+            route: "/opinion/:slug",
+            filter: `_type == "opinion" && slug.current == $slug`,
+          },
+          {
+            route: "/analysis/:slug",
+            filter: `_type == "analysis" && slug.current == $slug`,
+          },
+          {
+            route: "/sponsored/:slug",
+            filter: `_type == "sponsored" && slug.current == $slug`,
           },
         ]),
         locations: {
@@ -85,11 +118,74 @@ export default defineConfig({
               };
             },
           }),
+          opinion: defineLocations({
+            select: {
+              title: "title",
+              slug: "slug.current",
+            },
+            resolve: (doc) => {
+              const opinionHref = resolveHref("opinion", doc?.slug);
+              return {
+                locations: [
+                  {
+                    title: doc?.title || "Untitled",
+                    href: opinionHref || "#",
+                  },
+                  {
+                    title: "Home",
+                    href: "/",
+                  },
+                ],
+              };
+            },
+          }),
+          analysis: defineLocations({
+            select: {
+              title: "title",
+              slug: "slug.current",
+            },
+            resolve: (doc) => {
+              const analysisHref = resolveHref("analysis", doc?.slug);
+              return {
+                locations: [
+                  {
+                    title: doc?.title || "Untitled",
+                    href: analysisHref || "#",
+                  },
+                  {
+                    title: "Home",
+                    href: "/",
+                  },
+                ],
+              };
+            },
+          }),
+          sponsored: defineLocations({
+            select: {
+              title: "title",
+              slug: "slug.current",
+            },
+            resolve: (doc) => {
+              const sponsoredHref = resolveHref("sponsored", doc?.slug);
+              return {
+                locations: [
+                  {
+                    title: doc?.title || "Untitled",
+                    href: sponsoredHref || "#",
+                  },
+                  {
+                    title: "Home",
+                    href: "/",
+                  },
+                ],
+              };
+            },
+          }),
         },
       },
       previewUrl: { previewMode: { enable: "/api/draft-mode/enable" } },
     }),
-    structureTool({ structure: pageStructure([settings]) }),
+    structureTool({ structure: editorialDeskStructure }),
     // Configures the global "new document" button, and document actions, to suit the Settings document singleton
     singletonPlugin([settings.name]),
     // Sets up AI Assist with preset prompts

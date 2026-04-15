@@ -17,7 +17,12 @@ export function RightColumnFourth({ videosData }: RightColumnFourthProps) {
       <div className="sticky top-6">
         {/* Videos Section (replacing Most Read) */}
         <div className="mb-8">
-          <SectionHeader title="Videos" variant="light" />
+          <SectionHeader
+            title="Videos"
+            variant="light"
+            accentStyle="geometric-square"
+            size="large"
+          />
 
           <div className="space-y-4">
             {videosData.map((video, index) => (
@@ -53,7 +58,12 @@ export function RightColumnFourth({ videosData }: RightColumnFourthProps) {
 
         {/* Additional Section */}
         <div>
-          <SectionHeader title="TRENDING" variant="light" />
+          <SectionHeader
+            title="TRENDING"
+            variant="light"
+            accentStyle="geometric-square"
+            size="large"
+          />
           <div className="p-2 border border-gray-200 rounded">
             <div className="text-sm text-gray-600 text-center font-sans">
               Trending content placeholder

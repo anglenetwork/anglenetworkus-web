@@ -19,7 +19,7 @@ export default async function NewslettersPage() {
           Newsletters
         </h1>
         <p className="text-slate-600 font-sans">
-          Choose which newsletters you'd like to receive
+          Choose which newsletters you&apos;d like to receive
         </p>
       </div>
 
@@ -27,8 +27,8 @@ export default async function NewslettersPage() {
 
       <div className="mt-12 p-4 rounded-lg border border-slate-200 bg-slate-50">
         <p className="text-sm text-slate-700 font-sans">
-          You can manage your email preferences at any time. We'll only send you
-          the newsletters you've opted in to receive.
+          You can manage your email preferences at any time. We&apos;ll only send you
+          the newsletters you&apos;ve opted in to receive.
         </p>
       </div>
     </div>

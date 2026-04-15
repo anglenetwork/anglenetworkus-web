@@ -33,6 +33,8 @@ export function CenterColumnFifth({
         <SectionHeader
           title={categoryTitle}
           variant="light"
+          accentStyle="geometric-square"
+          size="large"
           href={`/category/${categoryTitle.toLowerCase()}`}
         />
 
@@ -55,7 +57,7 @@ export function CenterColumnFifth({
                     />
                   </Link>
                   {/* {article.imageSource && (
-                    <p className="text-[10px] text-gray-500 font-secondary text-right">
+                    <p className="text-[10px] text-gray-500 font-sans text-right">
                       {article.imageSource}
                     </p>
                   )} */}

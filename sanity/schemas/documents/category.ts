@@ -137,10 +137,9 @@ export default defineType({
       order: "order",
       parentName: "parent.name",
       media: "hero",
-      views: "views",
     },
     prepare(selection) {
-      const { title, slug, emoji, featured, hidden, order, parentName, media, views } =
+      const { title, slug, emoji, featured, hidden, order, parentName, media } =
         selection as any;
 
       const flags = [
@@ -148,14 +147,13 @@ export default defineType({
         featured ? "★ featured" : null,
         hidden ? "hidden" : null,
         typeof order === "number" ? `#${order}` : null,
-        views > 0 ? `👁 ${views}` : null,
       ]
         .filter(Boolean)
-        .join(" • ");
+        .join(" · ");
 
       return {
         title: `${emoji ? `${emoji} ` : ""}${title}`,
-        subtitle: [slug, flags].filter(Boolean).join(" • "),
+        subtitle: [slug, flags].filter(Boolean).join(" · "),
         media,
       };
     },

@@ -13,7 +13,7 @@ function BreakingNewsLabel({
   return (
     <div
       className={cn(
-        "font-secondary inline-flex items-center justify-center rounded-sm bg-gradient-to-r from-red-500 to-red-800 px-4 py-1.5 text-xs font-semibold uppercase tracking-wide text-white",
+        "font-sans inline-flex items-center justify-center rounded-sm bg-gradient-to-r from-red-500 to-red-800 px-4 py-1.5 text-xs font-semibold uppercase tracking-wide text-white",
         className
       )}
       {...props}

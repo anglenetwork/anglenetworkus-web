@@ -19,7 +19,7 @@ export default function AdvertiseWithUsPage() {
               <div className="font-bold">Real Impact.</div>
             </h1>
 
-            <p className="text-lg md:text-lg text-white leading-relaxed max-w-2xl mx-auto font-secondary">
+            <p className="text-lg md:text-lg text-white leading-relaxed max-w-2xl mx-auto font-sans">
               Partner with us to put your brand in front of a highly engaged,
               news-driven audience. For advertising and sponsorship
               opportunities, get in touch:
@@ -38,7 +38,7 @@ export default function AdvertiseWithUsPage() {
 
         {/* Video source attribution - bottom right */}
         <div className="absolute bottom-4 right-4 z-10">
-          <p className="text-sm text-white/80 font-secondary">
+          <p className="text-sm text-white/80 font-sans">
             Video source:{" "}
             <a
               href="https://www.pexels.com/@kelly/"

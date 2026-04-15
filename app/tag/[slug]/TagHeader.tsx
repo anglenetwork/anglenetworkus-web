@@ -34,7 +34,7 @@ export default function TagHeader({ tag }: TagHeaderProps) {
       </div>
 
       {tag.description && (
-        <p className="text-lg text-gray-600 font-secondary leading-relaxed">
+        <p className="text-lg text-gray-600 font-sans leading-relaxed">
           {tag.description}
         </p>
       )}

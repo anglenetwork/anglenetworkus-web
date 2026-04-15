@@ -8,7 +8,7 @@ const sanityClient = createClient({
   dataset: process.env.NEXT_PUBLIC_SANITY_DATASET!,
   apiVersion: "2024-01-01",
   useCdn: false,
-  token: process.env.SANITY_READ_TOKEN!, // read-only, server-side only
+  token: process.env.SANITY_API_READ_TOKEN!, // read-only, server-side only
 });
 
 export const authOptions: NextAuthOptions = {

@@ -1,5 +1,6 @@
 // /sanity/lib/queries.ts
 import { defineQuery } from "next-sanity";
+import { articleFamilyListFragment } from "./article-family-queries";
 
 /** ---------------------------
  *  Shared post field projection
@@ -23,7 +24,7 @@ const postFields = `
     creditSourceUrl,
     creditLicense
   },
-  "date": coalesce(date, _updatedAt),
+  "date": coalesce(publishedAt, _updatedAt),
   publishedAt,
   updatedAt,
   priority,
@@ -64,20 +65,10 @@ const postFields = `
     "slug": slug.current
   },
 
-  bodyTextOne,
-  
-  "bodyBlocks": bodyBlocks[]{
-    bodyText,
-    bodyImage{
-      source,
-      externalUrl,
-      image,
-      alt,
-      epigraph,
-      creditProvider,
-      creditAuthor,
-      creditSourceUrl,
-      creditLicense
+  "body": body[]{
+    ...,
+    _type == "editorialImage" => {
+      ...
     }
   },
   "imageGallery": imageGallery[]{
@@ -90,6 +81,17 @@ const postFields = `
     creditAuthor,
     creditSourceUrl,
     creditLicense
+  },
+  seo{
+    title,
+    description,
+    canonicalUrl,
+    ogImage{
+      asset,
+      hotspot,
+      crop,
+      alt
+    }
   }
 `;
 
@@ -99,13 +101,13 @@ const postFields = `
 export const settingsQuery = defineQuery(`*[_type == "settings"][0]`);
 
 export const heroQuery = defineQuery(`
-  *[_type == "post" && defined(slug.current)] | order(date desc, _updatedAt desc) [0] {
+  *[_type == "post" && defined(slug.current)] | order(coalesce(publishedAt, _updatedAt) desc, _updatedAt desc) [0] {
     ${postFields}
   }
 `);
 
 export const moreStoriesQuery = defineQuery(`
-  *[_type == "post" && _id != $skip && defined(slug.current)] | order(date desc, _updatedAt desc) [0...$limit] {
+  *[_type == "post" && _id != $skip && defined(slug.current)] | order(coalesce(publishedAt, _updatedAt) desc, _updatedAt desc) [0...$limit] {
     ${postFields}
   }
 `);
@@ -116,7 +118,7 @@ export const postQuery = defineQuery(`
   }
 `);
 
-// Lightweight post fields for landing page (excludes bodyBlocks to reduce payload size)
+// Lightweight post fields for landing page.
 const postFieldsLightweight = `
   _id,
   _type,
@@ -136,7 +138,7 @@ const postFieldsLightweight = `
     creditSourceUrl,
     creditLicense
   },
-  "date": coalesce(date, _updatedAt),
+  "date": coalesce(publishedAt, _updatedAt),
   publishedAt,
   updatedAt,
   priority,
@@ -177,7 +179,7 @@ const postFieldsLightweight = `
     "slug": slug.current
   },
 
-  // Only include imageGallery (used in Just In section), exclude bodyBlocks to reduce payload
+  // Only include imageGallery in lightweight payloads.
   "imageGallery": imageGallery[]{
     source,
     externalUrl,
@@ -192,7 +194,7 @@ const postFieldsLightweight = `
 `;
 
 export const indexQuery = defineQuery(`
-  *[_type == "post"] | order(date desc, _updatedAt desc) {
+  *[_type == "post"] | order(coalesce(publishedAt, _updatedAt) desc, _updatedAt desc) {
     ${postFieldsLightweight}
   }
 `);
@@ -202,13 +204,13 @@ export const postQueryWithRelated = defineQuery(`
   "post": *[_type == "post" && slug.current == $slug] | order(_updatedAt desc) [0] {
     ${postFields}
   },
-  "latestNews": *[_type == "post" && slug.current != $slug] | order(date desc, _updatedAt desc) [0...6] {
+  "latestNews": *[_type == "post" && slug.current != $slug] | order(coalesce(publishedAt, _updatedAt) desc, _updatedAt desc) [0...6] {
     ${postFields}
   },
-  "morePosts": *[_type == "post" && slug.current != $slug] | order(date desc, _updatedAt desc) [4...8] {
+  "morePosts": *[_type == "post" && slug.current != $slug] | order(coalesce(publishedAt, _updatedAt) desc, _updatedAt desc) [4...8] {
     ${postFields}
   },
-  "nextArticles": *[_type == "post" && slug.current != $slug] | order(date desc, _updatedAt desc) [8...18] {
+  "nextArticles": *[_type == "post" && slug.current != $slug] | order(coalesce(publishedAt, _updatedAt) desc, _updatedAt desc) [8...18] {
     ${postFields}
   }
 }
@@ -219,16 +221,16 @@ export const postQueryWithCategoryRelated = defineQuery(`
   "post": *[_type == "post" && slug.current == $slug] | order(_updatedAt desc) [0] {
     ${postFields}
   },
-  "latestNews": *[_type == "post" && slug.current != $slug] | order(date desc, _updatedAt desc) [0...6] {
+  "latestNews": *[_type == "post" && slug.current != $slug] | order(coalesce(publishedAt, _updatedAt) desc, _updatedAt desc) [0...6] {
     ${postFields}
   },
-  "morePosts": *[_type == "post" && slug.current != $slug] | order(date desc, _updatedAt desc) [4...8] {
+  "morePosts": *[_type == "post" && slug.current != $slug] | order(coalesce(publishedAt, _updatedAt) desc, _updatedAt desc) [4...8] {
     ${postFields}
   },
-  "newsForYou": *[_type == "post" && slug.current != $slug] | order(date desc, _updatedAt desc) [0...4] {
+  "newsForYou": *[_type == "post" && slug.current != $slug] | order(coalesce(publishedAt, _updatedAt) desc, _updatedAt desc) [0...4] {
     ${postFields}
   },
-  "categoryArticles": *[_type == "post" && slug.current != $slug && category->slug.current == $categorySlug] | order(date desc, _updatedAt desc) [0...6] {
+  "categoryArticles": *[_type == "post" && slug.current != $slug && category->slug.current == $categorySlug] | order(coalesce(publishedAt, _updatedAt) desc, _updatedAt desc) [0...6] {
     ${postFields}
   }
 }
@@ -246,53 +248,24 @@ export const latestNews4Query = `
   defined(publishedAt) && publishedAt <= now() &&
   _id != $currentPostId
 ] | order(publishedAt desc)[0...4] {
-  _id, title, "slug": slug.current, excerpt, 
+  _id,
+  _type,
+  title,
+  "slug": slug.current,
+  excerpt, 
   cover{
     source,
     externalUrl,
     image,
     alt,
     epigraph,
-    imageSource
   },
-  publishedAt
+  publishedAt,
+  "date": coalesce(publishedAt, _updatedAt)
 }
 `;
 
-// Popular reads (sitewide trending with real views + fallbacks)
-export const popularReadsTrendingQuery = `
-*[
-  _type == "post" &&
-  status == "published" &&
-  defined(publishedAt) && publishedAt <= now() &&
-  _id != $currentPostId
-]{
-  _id, title, "slug": slug.current, excerpt, 
-  cover{
-    source,
-    externalUrl,
-    image,
-    alt,
-    epigraph,
-    imageSource
-  },
-  publishedAt,
-  priority, featured,
-  views7d, views30d, viewsAll,
-  readTime,
-  "recencyBoost": select(publishedAt > dateTime(now()) - 60*60*24*14 => 1.5, 0),
-  "editorialBoost": (coalesce(priority, 0) * 0.3) + select(featured == true => 0.4, 0),
-  "hasViews": coalesce(views7d, 0) > 0,
-  "totalScore": coalesce(views7d, 0) + recencyBoost + editorialBoost
-} | order(
-  hasViews desc,
-  coalesce(views7d, 0) desc,
-  (recencyBoost + editorialBoost) desc,
-  publishedAt desc
-)[0...4]
-`;
-
-// Fallback query for when no posts have views yet
+/** Recency + editorial fallback for "Popular reads" when Supabase metrics are empty (no Sanity views). */
 export const popularReadsFallbackQuery = `
 *[
   _type == "post" &&
@@ -307,7 +280,6 @@ export const popularReadsFallbackQuery = `
     image,
     alt,
     epigraph,
-    imageSource
   },
   publishedAt,
   priority, featured,
@@ -319,17 +291,38 @@ export const popularReadsFallbackQuery = `
 )[0...4]
 `;
 
+/** Homepage most-read fallback (no current-article exclusion). */
+export const homepageMostReadFallbackQuery = `
+*[
+  _type == "post" &&
+  status == "published" &&
+  defined(publishedAt) && publishedAt <= now()
+]{
+  _id, title, "slug": slug.current, excerpt, 
+  cover{
+    source,
+    externalUrl,
+    image,
+    alt,
+    epigraph,
+  },
+  publishedAt,
+  priority, featured,
+  "recencyBoost": select(publishedAt > dateTime(now()) - 60*60*24*14 => 1.5, 0),
+  "editorialBoost": (coalesce(priority, 0) * 0.3) + select(featured == true => 0.4, 0)
+} | order(
+  (recencyBoost + editorialBoost) desc,
+  publishedAt desc
+)[0...5]
+`;
+
 export const postBySlugQuery = defineQuery(`
   *[_type == "post" && slug.current == $slug][0] {
     ${postFields}
   }
 `);
 
-export const postsByCategoryQuery = defineQuery(`
-  *[_type == "post" && category->slug.current == $categorySlug] | order(date desc, _updatedAt desc) {
-    ${postFields}
-  }
-`);
+export { articlesByCategoryEditorialQuery as postsByCategoryQuery } from "./article-family-queries";
 
 export const categorySlugsQuery = defineQuery(`
   *[_type == "category" && defined(slug.current)]{ "slug": slug.current, name, views }
@@ -392,11 +385,7 @@ export const tagBySlugQuery = defineQuery(`
   }
 `);
 
-export const postsByTagQuery = defineQuery(`
-  *[_type == "post" && $tagSlug in tags[]->slug.current] | order(date desc, _updatedAt desc) {
-    ${postFields}
-  }
-`);
+export { articlesByTagEditorialQuery as postsByTagQuery } from "./article-family-queries";
 
 /** ---------------------------
  *  Authors / comments
@@ -405,7 +394,7 @@ export const authorQuery = defineQuery(`
   *[_type == "author" && slug.current == $slug][0] {
     name,
     picture,
-    "posts": *[_type == "post" && author->slug.current == $slug] | order(date desc, _updatedAt desc) {
+    "posts": *[_type == "post" && author->slug.current == $slug] | order(coalesce(publishedAt, _updatedAt) desc, _updatedAt desc) {
       ${postFields}
     }
   }
@@ -422,25 +411,19 @@ export const commentsQuery = defineQuery(`
 `);
 
 export const fourthSectionQuery = defineQuery(`
-  *[_type == "post" && category->slug.current == $categorySlug] | order(date desc, _updatedAt desc) [0...4] {
-    ${postFields}
-  }
-`);
-
-export const mostViewedQuery = defineQuery(`
-  *[_type == "post" && category->slug.current == $categorySlug] | order(coalesce(views7d, 0) desc, publishedAt desc) [0...5] {
+  *[_type == "post" && category->slug.current == $categorySlug] | order(coalesce(publishedAt, _updatedAt) desc, _updatedAt desc) [0...4] {
     ${postFields}
   }
 `);
 
 export const thirdLatestArticleQuery = defineQuery(`
-  *[_type == "post" && category->slug.current == $categorySlug] | order(date desc, _updatedAt desc) [2...3] {
+  *[_type == "post" && category->slug.current == $categorySlug] | order(coalesce(publishedAt, _updatedAt) desc, _updatedAt desc) [2...3] {
     ${postFields}
   }
 `);
 
 export const thirdSectionQuery = defineQuery(`
-  *[_type == "post" && category->slug.current == $categorySlug] | order(date desc, _updatedAt desc) [0...4] {
+  *[_type == "post" && category->slug.current == $categorySlug] | order(coalesce(publishedAt, _updatedAt) desc, _updatedAt desc) [0...4] {
     ${postFields}
   }
 `);
@@ -448,202 +431,194 @@ export const thirdSectionQuery = defineQuery(`
 // Latest 9 posts for a given category (for Fifth Section layout)
 export const latestNineByCategoryQuery = defineQuery(`
   *[_type == "post" && category->slug.current == $categorySlug]
-  | order(date desc, _updatedAt desc) [0...9] {
+  | order(coalesce(publishedAt, _updatedAt) desc, _updatedAt desc) [0...9] {
     ${postFields}
   }
 `);
 
 export const mostReadQuery = defineQuery(`
-  *[_type == "post"] | order(date desc, _updatedAt desc) [0...5] {
+  *[_type == "post"] | order(coalesce(publishedAt, _updatedAt) desc, _updatedAt desc) [0...5] {
     ${postFields}
   }
 `);
 
-export const mostViewedPostsQuery = `
-*[
-  _type == "post" &&
-  status == "published" &&
-  defined(publishedAt) && publishedAt <= now()
-]{
-  _id, title, "slug": slug.current, excerpt, 
-  cover{
-    source,
-    externalUrl,
-    image,
-    alt
-  },
-  publishedAt,
-  priority, featured,
-  views7d, views30d, viewsAll,
-  "recencyBoost": select(publishedAt > dateTime(now()) - 60*60*24*14 => 1.5, 0),
-  "editorialBoost": (coalesce(priority, 0) * 0.3) + select(featured == true => 0.4, 0),
-  "hasViews": coalesce(views7d, 0) > 0,
-  "totalScore": coalesce(views7d, 0) + recencyBoost + editorialBoost
-} | order(
-  hasViews desc,
-  totalScore desc,
-  publishedAt desc
-)[0...5]
-`;
+/** Fetch post cards by Sanity ids (homepage / sidebars; order preserved in application code). */
+export const postsByIdsLightweightQuery = defineQuery(`
+  *[_type == "post" && _id in $ids] {
+    ${postFieldsLightweight}
+  }
+`);
 
 export const sixthSectionQuery = defineQuery(`
-  *[_type == "post" && category->slug.current == $categorySlug] | order(date desc, _updatedAt desc) [0...20] {
+  *[_type == "post" && category->slug.current == $categorySlug] | order(coalesce(publishedAt, _updatedAt) desc, _updatedAt desc) [0...20] {
     ${postFields}
   }
 `);
 
 export const newsTickerQuery = defineQuery(`
-  *[_type == "post" && defined(slug.current) && defined(tickerTitle)] | order(date desc, _updatedAt desc) [0...6] {
+  *[_type == "post" && defined(slug.current) && defined(tickerTitle)] | order(coalesce(publishedAt, _updatedAt) desc, _updatedAt desc) [0...4] {
     tickerTitle,
     "slug": slug.current
   }
 `);
 
 export const categoryTickerQuery = defineQuery(`
-  *[_type == "post" && category->slug.current == $categorySlug && defined(slug.current) && defined(tickerTitle)] | order(date desc, _updatedAt desc) [5...10] {
+  *[_type == "post" && category->slug.current == $categorySlug && defined(slug.current) && defined(tickerTitle)] | order(coalesce(publishedAt, _updatedAt) desc, _updatedAt desc) [5...10] {
     tickerTitle,
     "slug": slug.current
   }
 `);
 
 /** ---------------------------
- *  SEARCH (posts-only) with safe relevance
+ *  SEARCH (editorial: post, opinion, analysis — sponsored excluded)
+ *  Relevance: GROQ score() + boost() weights; newest: publishedAt desc only.
  *  --------------------------- */
-const SEARCH_BASE = `_type == "post" && status == "published" && defined(publishedAt) && publishedAt <= now()`;
-const SEARCH_FILTER = `(
+const SEARCH_PUBLISHED = `status == "published" && defined(publishedAt) && publishedAt <= now()`;
+
+/** Document must match at least one field (prefix tokens in $term) */
+const SEARCH_TEXT_MATCH = `(
   title match $term ||
+  tickerTitle match $term ||
   excerpt match $term ||
-  epigraph match $term ||
-  pt::text(bodyRich) match $term ||
-  pt::text(bodyTextOne) match $term ||
-  // Search in bodyBlocks text content
-  count(bodyBlocks[pt::text(bodyText) match $term]) > 0 ||
+  cover.epigraph match $term ||
+  pt::text(body) match $term ||
   category->name match $term ||
-  coalesce(tags[]->title, tags[]->name) match $term ||   // <— supports both
-  // Check tag aliases on referenced tag documents (prefix tokenized)
+  coalesce(tags[]->title, tags[]->name) match $term ||
   count(tags[]->aliases[@ match $term]) > 0 ||
   author->name match $term
 )`;
 
-const SEARCH_FIELDS = `
-  _id, _type, title, slug, excerpt, 
-  cover{
-    source,
-    externalUrl,
-    image,
-    alt
-  },
-  publishedAt, priority, featured, date,
-  views7d, views30d, viewsAll,
-  "author": select(
-    defined(author->name) => {
-      "name": coalesce(author->name, "Anonymous"),
-      "picture": author->picture
-    }
-  ),
-  "category": select(
-    defined(category->name) && defined(category->slug.current) => {
-      "title": category->name,
-      "slug": category->slug.current
-    }
-  ),
-  "tags": tags[]->{
-    "title": coalesce(title, name),
-    "slug": slug.current
-  }
+const SEARCH_SCORE_PIPE = `
+| score(
+  boost(title match $term, 100),
+  boost(tickerTitle match $term, 80),
+  boost(excerpt match $term, 65),
+  boost(cover.epigraph match $term, 55),
+  boost(pt::text(body) match $term, 40),
+  boost(category->name match $term, 40),
+  boost(coalesce(tags[]->title, tags[]->name) match $term, 40),
+  boost(count(tags[]->aliases[@ match $term]) > 0, 40),
+  boost(author->name match $term, 20)
+)
+| order(_score desc, publishedAt desc)
 `;
 
-export const searchPostsRelevanceQuery = `
+const SEARCH_NEWEST_PIPE = `| order(publishedAt desc)`;
+
+const SEARCH_SLICE_PROJECT = `[$start...$end] {
+  ${articleFamilyListFragment}
+}`;
+
+/** Mixed editorial — relevance */
+export const searchEditorialAllRelevanceQuery = `
 *[
-  ${SEARCH_BASE} && ${SEARCH_FILTER}
-]{
-  ${SEARCH_FIELDS}
-} | order(
-  coalesce(views7d, 0) desc,
-  publishedAt desc
-) [0...$limit]
+  _type in ["post", "opinion", "analysis"] &&
+  ${SEARCH_PUBLISHED} &&
+  ${SEARCH_TEXT_MATCH}
+] ${SEARCH_SCORE_PIPE} ${SEARCH_SLICE_PROJECT}
 `;
 
-export const searchPostsNewestQuery = `
+/** Mixed editorial — newest */
+export const searchEditorialAllNewestQuery = `
 *[
-  ${SEARCH_BASE} && ${SEARCH_FILTER}
-]{
-  ${SEARCH_FIELDS}
-} | order(publishedAt desc) [0...$limit]
+  _type in ["post", "opinion", "analysis"] &&
+  ${SEARCH_PUBLISHED} &&
+  ${SEARCH_TEXT_MATCH}
+] ${SEARCH_NEWEST_PIPE} ${SEARCH_SLICE_PROJECT}
 `;
 
-/** ---------------------------
- *  Tag / Topic search (unchanged)
- *  --------------------------- */
-export const searchTagsQuery = `
-*[_type == "tag" && (
-  title match $term ||
-  description match $term ||
-  $term in aliases
-)] | order(order asc, title asc) [0...$limit] {
-  _id,
-  title,
-  "slug": slug.current,
-  description,
-  emoji,
-  color,
-  featured,
-  views
-}
+/** Post-only — relevance */
+export const searchEditorialPostRelevanceQuery = `
+*[
+  _type == "post" &&
+  ${SEARCH_PUBLISHED} &&
+  ${SEARCH_TEXT_MATCH}
+] ${SEARCH_SCORE_PIPE} ${SEARCH_SLICE_PROJECT}
 `;
 
-export const searchTopicsQuery = `
-*[_type == "topic" && (
-  title match $term ||
-  description match $term
-)] | order(title asc) [0...$limit] {
-  _id,
-  title,
-  "slug": slug.current,
-  kind,
-  description,
-  image
-}
+/** Post-only — newest */
+export const searchEditorialPostNewestQuery = `
+*[
+  _type == "post" &&
+  ${SEARCH_PUBLISHED} &&
+  ${SEARCH_TEXT_MATCH}
+] ${SEARCH_NEWEST_PIPE} ${SEARCH_SLICE_PROJECT}
 `;
 
-export const searchAllQuery = defineQuery(`
-{
-  "posts": *[${SEARCH_BASE} && ${SEARCH_FILTER}] | order(publishedAt desc) [0...$postLimit] {
-    ${postFields}
-  },
-  "tags": *[_type == "tag" && (
-    title match $term ||
-    description match $term ||
-    $term in aliases
-  )] | order(order asc, title asc) [0...$tagLimit] {
-    _id,
-    title,
-    "slug": slug.current,
-    description,
-    emoji,
-    color,
-    featured,
-    views
-  },
-  "topics": *[_type == "topic" && (
-    title match $term ||
-    description match $term
-  )] | order(title asc) [0...$topicLimit] {
-    _id,
-    title,
-    "slug": slug.current,
-    kind,
-    description,
-    image
-  }
-}
+/** Opinion-only — relevance */
+export const searchEditorialOpinionRelevanceQuery = `
+*[
+  _type == "opinion" &&
+  ${SEARCH_PUBLISHED} &&
+  ${SEARCH_TEXT_MATCH}
+] ${SEARCH_SCORE_PIPE} ${SEARCH_SLICE_PROJECT}
+`;
+
+/** Opinion-only — newest */
+export const searchEditorialOpinionNewestQuery = `
+*[
+  _type == "opinion" &&
+  ${SEARCH_PUBLISHED} &&
+  ${SEARCH_TEXT_MATCH}
+] ${SEARCH_NEWEST_PIPE} ${SEARCH_SLICE_PROJECT}
+`;
+
+/** Analysis-only — relevance */
+export const searchEditorialAnalysisRelevanceQuery = `
+*[
+  _type == "analysis" &&
+  ${SEARCH_PUBLISHED} &&
+  ${SEARCH_TEXT_MATCH}
+] ${SEARCH_SCORE_PIPE} ${SEARCH_SLICE_PROJECT}
+`;
+
+/** Analysis-only — newest */
+export const searchEditorialAnalysisNewestQuery = `
+*[
+  _type == "analysis" &&
+  ${SEARCH_PUBLISHED} &&
+  ${SEARCH_TEXT_MATCH}
+] ${SEARCH_NEWEST_PIPE} ${SEARCH_SLICE_PROJECT}
+`;
+
+/** Total matches for current term + type scope (no pagination) */
+export const searchEditorialCountAllQuery = defineQuery(`
+  count(*[
+    _type in ["post", "opinion", "analysis"] &&
+    ${SEARCH_PUBLISHED} &&
+    ${SEARCH_TEXT_MATCH}
+  ])
+`);
+
+export const searchEditorialCountPostQuery = defineQuery(`
+  count(*[
+    _type == "post" &&
+    ${SEARCH_PUBLISHED} &&
+    ${SEARCH_TEXT_MATCH}
+  ])
+`);
+
+export const searchEditorialCountOpinionQuery = defineQuery(`
+  count(*[
+    _type == "opinion" &&
+    ${SEARCH_PUBLISHED} &&
+    ${SEARCH_TEXT_MATCH}
+  ])
+`);
+
+export const searchEditorialCountAnalysisQuery = defineQuery(`
+  count(*[
+    _type == "analysis" &&
+    ${SEARCH_PUBLISHED} &&
+    ${SEARCH_TEXT_MATCH}
+  ])
 `);
 
 export const eighthSectionQuery = defineQuery(`
   *[_type == "category" && slug.current in $categorySlugs] {
     "slug": slug.current,
     "name": name,
-    "posts": *[_type == "post" && category->slug.current == slug.current] | order(date desc, _updatedAt desc) [0...3] {
+    "posts": *[_type == "post" && category->slug.current == slug.current] | order(coalesce(publishedAt, _updatedAt) desc, _updatedAt desc) [0...3] {
       ${postFields}
     }
   }
@@ -655,7 +630,7 @@ export const postsByIdsQuery = defineQuery(`
     _id,
     title,
     "slug": slug.current,
-    "date": coalesce(date, _updatedAt),
+    "date": coalesce(publishedAt, _updatedAt),
     cover{
       source,
       externalUrl,
@@ -672,7 +647,7 @@ export const postsByIdsQuery = defineQuery(`
 
 export const mainHeadlinesQuery = defineQuery(`
   *[_type == "post" && mainHeadline == true && defined(slug.current)] 
-  | order(date desc, _updatedAt desc) [0...5] {
+  | order(coalesce(publishedAt, _updatedAt) desc, _updatedAt desc) [0...5] {
     _id,
     title,
     "slug": slug.current,
@@ -694,7 +669,7 @@ export const secondSectionQuery = defineQuery(`
   *[_type == "category" && slug.current in $categorySlugs] {
     "slug": slug.current,
     "name": name,
-    "thirdMostViewed": *[_type == "post" && category->slug.current == slug.current] | order(coalesce(views7d, 0) desc, publishedAt desc) [0...5] {
+    "thirdMostViewed": *[_type == "post" && category->slug.current == slug.current] | order(publishedAt desc, _updatedAt desc) [0...5] {
       _id, title, "slug": slug.current, excerpt, 
       cover{
         source,
@@ -702,7 +677,7 @@ export const secondSectionQuery = defineQuery(`
         image,
         alt
       },
-      "date": coalesce(date, _updatedAt), publishedAt,
+      "date": coalesce(publishedAt, _updatedAt), publishedAt,
       "author": select(
         defined(author->name) => {
           "name": coalesce(author->name, "Anonymous"),
@@ -714,8 +689,7 @@ export const secondSectionQuery = defineQuery(`
           "title": category->name,
           "slug": category->slug.current
         }
-      ),
-      views7d
+      )
     },
     "thirdLatest": *[_type == "post" && category->slug.current == slug.current] | order(publishedAt desc, _updatedAt desc) [0...5] {
       _id, title, "slug": slug.current, excerpt, 
@@ -725,7 +699,7 @@ export const secondSectionQuery = defineQuery(`
         image,
         alt
       },
-      "date": coalesce(date, _updatedAt), publishedAt,
+      "date": coalesce(publishedAt, _updatedAt), publishedAt,
       "author": select(
         defined(author->name) => {
           "name": coalesce(author->name, "Anonymous"),
@@ -737,8 +711,7 @@ export const secondSectionQuery = defineQuery(`
           "title": category->name,
           "slug": category->slug.current
         }
-      ),
-      views7d
+      )
     }
   }
 `);

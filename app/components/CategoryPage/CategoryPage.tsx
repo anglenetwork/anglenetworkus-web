@@ -2,10 +2,13 @@ import { LatestArticlesSection } from "./LatestArticlesSection";
 import { CategoryHeader } from "./CategoryHeader";
 import { FeaturedArticlesSection } from "./FeaturedArticlesSection";
 import { MostReadSection } from "./MostReadSection";
+import { CategoryArticlesEmptyState } from "./CategoryArticlesEmptyState";
 import type { CategoryPageProps } from "./types";
+import { SitePageWidth } from "@/app/components/layout/site-page-width";
 
 export function CategoryPage({
   categoryName,
+  hasPosts,
   categoryDescription,
   latestArticles,
   mostReadArticles,
@@ -24,31 +27,39 @@ export function CategoryPage({
         <FeaturedArticlesSection featuredArticles={featuredArticles} />
       )}
 
-      <main className="container mx-auto px-4 md:px-20 py-12">
-        {/* Mobile: Most Read + Latest */}
-        <div className="block lg:hidden space-y-12">
-          <MostReadSection articles={mostReadArticles} />
-          <LatestArticlesSection
-            layout="mobile"
-            latestArticles={latestArticles}
-          />
-        </div>
+      <main>
+        <SitePageWidth className="py-12">
+          {!hasPosts ? (
+            <CategoryArticlesEmptyState categoryName={categoryName} />
+          ) : (
+            <>
+              {/* Mobile: Most Read + Latest */}
+              <div className="block lg:hidden space-y-12">
+                <MostReadSection articles={mostReadArticles} />
+                <LatestArticlesSection
+                  layout="mobile"
+                  latestArticles={latestArticles}
+                />
+              </div>
 
-        {/* Desktop: Latest (main) + Most Read (sidebar) */}
-        <div className="hidden lg:grid grid-cols-3 gap-12">
-          <div className="col-span-2">
-            <LatestArticlesSection
-              layout="desktop"
-              latestArticles={latestArticles}
-            />
-          </div>
+              {/* Desktop: Latest (main) + Most Read (sidebar) */}
+              <div className="hidden lg:grid grid-cols-3 gap-12">
+                <div className="col-span-2">
+                  <LatestArticlesSection
+                    layout="desktop"
+                    latestArticles={latestArticles}
+                  />
+                </div>
 
-          <aside className="col-span-1">
-            <div className="sticky top-8">
-              <MostReadSection articles={mostReadArticles} />
-            </div>
-          </aside>
-        </div>
+                <aside className="col-span-1">
+                  <div className="sticky top-8">
+                    <MostReadSection articles={mostReadArticles} />
+                  </div>
+                </aside>
+              </div>
+            </>
+          )}
+        </SitePageWidth>
       </main>
     </div>
   );

@@ -7,6 +7,7 @@ interface TagNewsItemProps {
   title: string;
   readTime: string;
   slug: string;
+  href?: string;
 }
 
 export function TagNewsItem({
@@ -15,21 +16,23 @@ export function TagNewsItem({
   title,
   readTime,
   slug,
+  href,
 }: TagNewsItemProps) {
+  const to = href ?? `/post/${slug}`;
   return (
     <article className="flex gap-4 py-6">
       <div className="flex-1">
-        <Link href={`/post/${slug}`} className="block">
+        <Link href={to} className="block">
           <h2 className="text-base font-sans font-normal text-white leading-normal tracking-normal">
             {title}
           </h2>
         </Link>
-        <p className="mt-2 text-xs font-secondary font-semibold capitalize tracking-wide text-neutral-400">
+        <p className="mt-2 text-xs font-sans font-semibold capitalize tracking-wide text-neutral-400">
           {readTime}
         </p>
       </div>
       <div className="relative h-20 w-32 flex-shrink-0 overflow-hidden rounded-lg">
-        <Link href={`/post/${slug}`} className="block h-full">
+        <Link href={to} className="block h-full">
           <ImageRenderer
             src={image || "/placeholder.svg"}
             alt={title}

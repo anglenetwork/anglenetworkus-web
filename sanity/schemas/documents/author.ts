@@ -133,32 +133,20 @@ export default defineType({
   preview: {
     select: {
       title: "name",
-      subtitleAlt: "title",
+      roleTitle: "title",
       media: "picture",
-      handleX: "twitter",
-      website: "website",
       cmsRole: "cmsRole",
       canAccessStudio: "canAccessStudio",
     },
     prepare(selection) {
-      const {
-        title,
-        subtitleAlt,
-        handleX,
-        website,
-        cmsRole,
-        canAccessStudio,
-        media,
-      } = selection as any;
+      const { title, roleTitle, cmsRole, canAccessStudio, media } =
+        selection as any;
 
-      const bits = [
-        subtitleAlt || null,
-        handleX ? `@${handleX}` : null,
-        website ? new URL(website).hostname.replace(/^www\./, "") : null,
-        canAccessStudio ? `Studio: ${cmsRole || "yes"}` : null,
-      ]
-        .filter(Boolean)
-        .join(" • ");
+      const studioBit = canAccessStudio
+        ? `Studio access (${cmsRole || "on"})`
+        : "Byline only (no Studio login)";
+
+      const bits = [roleTitle || null, studioBit].filter(Boolean).join(" · ");
 
       return {
         title,

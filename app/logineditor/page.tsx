@@ -15,7 +15,7 @@ function LoginForm() {
           <h1 className="text-2xl font-bold mb-6 text-center font-sans">
             Sanity Studio Access
           </h1>
-          <p className="text-muted-foreground text-center mb-8 font-secondary">
+          <p className="text-muted-foreground text-center mb-8 font-sans">
             Please sign in to access the content management system.
           </p>
           <div className="space-y-3">

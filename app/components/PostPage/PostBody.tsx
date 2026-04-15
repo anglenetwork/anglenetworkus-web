@@ -23,11 +23,6 @@ interface BodyImage {
   creditLicense?: string | null;
 }
 
-interface BodyBlock {
-  bodyText?: any;
-  bodyImage?: BodyImage | null;
-}
-
 interface GalleryImage {
   source?: "asset" | "external";
   externalUrl?: string | null;
@@ -41,8 +36,9 @@ interface GalleryImage {
 }
 
 interface PostBodyProps {
-  bodyTextOne: any;
-  bodyBlocks?: Array<BodyBlock> | null;
+  /** Public path for sharing (e.g. /opinion/slug). Defaults to /post/{slug} when omitted. */
+  sharePath?: string;
+  body?: any[] | null;
   cover?: {
     source?: "asset" | "external";
     externalUrl?: string | null;
@@ -63,7 +59,7 @@ interface PostBodyProps {
   articleId?: string;
 }
 
-/** Portable Text renderers (Spectral for body, DM Sans for headings) */
+/** Portable Text: `font-body` (Spectral) for paragraphs/lists; `font-sans` (DM Sans) for headings, block quotes, captions, and meta. */
 const portableTextComponents = {
   types: {
     image: ({ value }: any) => {
@@ -90,9 +86,9 @@ const portableTextComponents = {
           </div>
           {(value.alt || value.epigraph || formatImageCredit(value)) && (
             <figcaption className="mt-2 text-left">
-              {/* Epigraph + Source in secondary font */}
+              {/* Epigraph + source (UI sans) */}
               {(value.epigraph || formatImageCredit(value)) && (
-                <p className="font-secondary text-[12px] sm:text-xs text-neutral-500">
+                <p className="font-sans text-[12px] sm:text-xs text-neutral-500">
                   {value.epigraph && (
                     <span className="italic">{value.epigraph}</span>
                   )}
@@ -109,12 +105,106 @@ const portableTextComponents = {
               {/* Optional alt-as-caption (muted) */}
               {value.alt && (
                 <p
-                  className="font-secondary text-[12px] sm:text-xs text-neutral-400"
+                  className="font-sans text-[12px] sm:text-xs text-neutral-400"
                   aria-hidden="true"
                 >
                   {value.alt}
                 </p>
               )}
+            </figcaption>
+          )}
+        </figure>
+      );
+    },
+    editorialImage: ({ value }: any) => {
+      const imageData = buildBodyImage(value);
+      if (!imageData?.src) return null;
+
+      const layoutClass =
+        value?.layout === "full"
+          ? "w-full"
+          : value?.layout === "wide"
+            ? "w-full md:w-[110%] md:-ml-[5%]"
+            : "w-full";
+
+      return (
+        <figure className={`my-8 text-left ${layoutClass}`}>
+          <div className="relative w-full aspect-[4/3] max-h-[700px] overflow-hidden rounded-lg shadow-lg">
+            <ImageRenderer
+              src={imageData.src}
+              alt={imageData.alt}
+              width={1200}
+              height={900}
+              fill
+              unoptimized={imageData.unoptimized}
+              sizes="(max-width: 768px) 100vw, (max-width: 1280px) 66vw, 900px"
+              quality={55}
+              className="object-cover rounded-lg"
+            />
+          </div>
+          {(imageData.epigraph || imageData.credit || imageData.alt) && (
+            <figcaption className="mt-2 text-left">
+              {(imageData.epigraph || imageData.credit) && (
+                <p className="font-sans text-[12px] sm:text-xs text-neutral-500">
+                  {imageData.epigraph && <span>{imageData.epigraph}</span>}
+                  {imageData.epigraph && imageData.credit && (
+                    <span className="text-neutral-400"> • </span>
+                  )}
+                  {imageData.credit && (
+                    <span className="text-neutral-400">{imageData.credit}</span>
+                  )}
+                </p>
+              )}
+            </figcaption>
+          )}
+        </figure>
+      );
+    },
+    pullQuote: ({ value }: any) => {
+      if (!value?.quote) return null;
+      return (
+        <blockquote className="my-10 md:my-12 border-l-2 border-neutral-300 pl-4 md:pl-6 text-left">
+          <p className="font-sans text-2xl md:text-3xl leading-tight text-neutral-900">
+            {value.quote}
+          </p>
+          {(value.attribution || value.sourceLabel) && (
+            <footer className="mt-3 font-sans text-xs text-neutral-500">
+              {value.attribution || ""}
+              {value.attribution && value.sourceLabel ? " • " : ""}
+              {value.sourceLabel || ""}
+            </footer>
+          )}
+        </blockquote>
+      );
+    },
+    articleDivider: ({ value }: any) => {
+      if (value?.style === "spacer") {
+        return <div className="my-8 h-8" aria-hidden="true" />;
+      }
+      return <hr className="my-10 border-neutral-200" />;
+    },
+    videoEmbed: ({ value }: any) => {
+      const src = getVideoEmbedSrc(value?.url);
+      if (!src) {
+        return null;
+      }
+      return (
+        <figure className="my-8 text-left">
+          <div className="relative w-full overflow-hidden rounded-lg shadow-lg">
+            <div className="relative w-full pt-[56.25%]">
+              <iframe
+                src={src}
+                title={value?.title || "Embedded video"}
+                className="absolute inset-0 h-full w-full rounded-lg"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                allowFullScreen
+                loading="lazy"
+              />
+            </div>
+          </div>
+          {value?.title && (
+            <figcaption className="mt-2 font-sans text-xs text-neutral-500">
+              {value.title}
             </figcaption>
           )}
         </figure>
@@ -187,6 +277,32 @@ const portableTextComponents = {
 };
 
 /** Helpers */
+function getVideoEmbedSrc(url: string | null | undefined): string | null {
+  if (!url) return null;
+
+  try {
+    const parsed = new URL(url);
+    const host = parsed.hostname.replace(/^www\./, "");
+
+    if (host === "youtube.com" || host === "m.youtube.com") {
+      const id = parsed.searchParams.get("v");
+      return id ? `https://www.youtube.com/embed/${id}` : null;
+    }
+    if (host === "youtu.be") {
+      const id = parsed.pathname.replace("/", "");
+      return id ? `https://www.youtube.com/embed/${id}` : null;
+    }
+    if (host === "vimeo.com") {
+      const id = parsed.pathname.split("/").filter(Boolean)[0];
+      return id ? `https://player.vimeo.com/video/${id}` : null;
+    }
+
+    return null;
+  } catch {
+    return null;
+  }
+}
+
 function buildGalleryImage(galleryImage: GalleryImage | null | undefined): {
   src: string | null;
   alt: string;
@@ -337,60 +453,6 @@ function buildBodyImage(bodyImage: BodyImage | null | undefined): {
   return null;
 }
 
-function renderBodyImage(
-  bodyImage: BodyImage | null | undefined,
-  key: string | number
-) {
-  const imageData = buildBodyImage(bodyImage);
-  if (!imageData?.src) return null;
-
-  return (
-    <figure key={key} className="my-8 text-left">
-      <div className="relative w-full aspect-[4/3] max-h-[600px] overflow-hidden rounded-lg shadow-lg">
-        <ImageRenderer
-          src={imageData.src}
-          alt={imageData.alt}
-          width={1200}
-          height={900}
-          fill
-          unoptimized={imageData.unoptimized}
-          // Same logical width assumptions as the cover/body images
-          sizes="(max-width: 768px) 100vw, (max-width: 1280px) 66vw, 800px"
-          quality={55}
-          className="object-cover rounded-lg"
-          // Lazy load body block images (below the fold)
-        />
-      </div>
-      {(imageData.epigraph || imageData.credit || imageData.alt) && (
-        <figcaption className="mt-2 text-left">
-          {(imageData.epigraph || imageData.credit) && (
-            <p className="font-secondary text-[12px] sm:text-xs text-neutral-500">
-              {imageData.epigraph && (
-                <span className="">{imageData.epigraph}</span>
-              )}
-              {imageData.epigraph && imageData.credit && (
-                <span className="text-neutral-400"> • </span>
-              )}
-              {imageData.credit && (
-                <span className="text-neutral-400">{imageData.credit}</span>
-              )}
-            </p>
-          )}
-        </figcaption>
-      )}
-    </figure>
-  );
-}
-
-function renderBodyText(content: any, key: string | number) {
-  if (!content) return null;
-  return (
-    <div key={key} className="font-body space-y-5 sm:space-y-6 text-left">
-      <PortableText value={content} components={portableTextComponents} />
-    </div>
-  );
-}
-
 // Cover image carousel component
 function CoverImageCarousel({
   coverImage,
@@ -459,7 +521,7 @@ function CoverImageCarousel({
           </div>
         )}
       </div>
-      <figcaption className="mt-2 font-secondary text-sm tracking-tight leading-snug text-neutral-500 text-left">
+      <figcaption className="mt-2 font-sans text-sm tracking-tight leading-snug text-neutral-500 text-left">
         <span className="font-bold">
           {currentImage.epigraph || "Catch up on the latest headlines and developing news."}
         </span>
@@ -477,8 +539,8 @@ function CoverImageCarousel({
 }
 
 export default function PostBody({
-  bodyTextOne,
-  bodyBlocks,
+  sharePath,
+  body,
   cover,
   imageGallery,
   title,
@@ -488,14 +550,17 @@ export default function PostBody({
   slug,
   articleId,
 }: PostBodyProps) {
+  const shareUrl = sharePath ?? (slug ? `/post/${slug}` : "");
+  const normalizedBody = Array.isArray(body) ? body : [];
+
   return (
     <div className="antialiased text-left mb-8">
-      {/* Byline / Meta / Share — secondary font */}
-      <div className="flex items-center justify-between mb-6 font-secondary">
+      {/* Byline / meta / share (UI sans) */}
+      <div className="flex items-center justify-between mb-6 font-sans">
         <div className="flex flex-col">
           <div className="text-xs text-muted-foreground">
             By{" "}
-            <span className="text-blue-600 font-medium">
+            <span className="font-medium text-link">
               {author?.name || "Unknown Author"}
             </span>
           </div>
@@ -529,7 +594,9 @@ export default function PostBody({
               articleSlug={slug}
             />
           )}
-          {slug && <SocialShareButtons title={title} url={`/post/${slug}`} />}
+          {slug && shareUrl && (
+            <SocialShareButtons title={title} url={shareUrl} />
+          )}
         </div>
       </div>
 
@@ -604,7 +671,7 @@ export default function PostBody({
                 className="object-cover object-center"
               />
             </div>
-            <figcaption className="mt-2 font-secondary text-sm tracking-tight leading-snug text-neutral-500 text-left">
+            <figcaption className="mt-2 font-sans text-sm tracking-tight leading-snug text-neutral-500 text-left">
               <span className="font-bold">
                 {cover?.epigraph || "Catch up on the latest headlines and developing news."}
               </span>
@@ -623,20 +690,10 @@ export default function PostBody({
 
       {/* Main text */}
       <div className="space-y-8 text-left">
-        {renderBodyText(bodyTextOne, "main-text")}
-      </div>
-
-      {/* Dynamic body blocks */}
-      {bodyBlocks && bodyBlocks.length > 0 && (
-        <div className="space-y-8 text-left mt-8">
-          {bodyBlocks.map((block, index) => (
-            <div key={`block-${index}`}>
-              {renderBodyImage(block.bodyImage, `block-image-${index}`)}
-              {renderBodyText(block.bodyText, `block-text-${index}`)}
-            </div>
-          ))}
+        <div className="font-body space-y-5 sm:space-y-6 text-left">
+          <PortableText value={normalizedBody} components={portableTextComponents} />
         </div>
-      )}
+      </div>
     </div>
   );
 }

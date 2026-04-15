@@ -1,3 +1,4 @@
+/* eslint-disable react/no-unescaped-entities -- legal prose with extensive quotation marks */
 /**
  * Privacy Policy Content
  * 

@@ -1,46 +1,74 @@
+"use client";
+
 import Link from "next/link";
+import { useEffect, useState } from "react";
+
+const VIDEO_SRC =
+  "https://videos.pexels.com/video-files/4622514/4622514-uhd_2560_1440_24fps.mp4";
+
+/** Static gradient fallback when video fails or motion is reduced. */
+function StaticBackdrop() {
+  return (
+    <div
+      className="absolute inset-0 bg-gradient-to-br from-neutral-800 via-neutral-900 to-black"
+      aria-hidden
+    />
+  );
+}
 
 export function ThirdSection() {
-  const videoSrc =
-    "https://videos.pexels.com/video-files/4622514/4622514-uhd_2560_1440_24fps.mp4";
+  const [reduceMotion, setReduceMotion] = useState(false);
+  const [videoFailed, setVideoFailed] = useState(false);
+
+  useEffect(() => {
+    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const update = () => setReduceMotion(mq.matches);
+    update();
+    mq.addEventListener("change", update);
+    return () => mq.removeEventListener("change", update);
+  }, []);
+
+  const showVideo = !reduceMotion && !videoFailed;
 
   return (
     <div className="px-4 md:px-0">
-      <div className="relative w-full h-96 overflow-hidden rounded-md">
-        {/* Background Video */}
-        <video
-          src={videoSrc}
-          autoPlay
-          loop
-          muted
-          playsInline
-          className="absolute top-0 left-0 w-full h-full object-cover"
-        />
+      <div className="relative h-96 w-full overflow-hidden rounded-md bg-neutral-900">
+        <StaticBackdrop />
+        {showVideo ? (
+          <video
+            src={VIDEO_SRC}
+            autoPlay
+            loop
+            muted
+            playsInline
+            className="absolute left-0 top-0 h-full w-full object-cover"
+            onError={() => setVideoFailed(true)}
+          />
+        ) : null}
 
-        {/* Dark overlay for better text contrast */}
         <div className="absolute inset-0 bg-black/50" />
 
-        {/* Text overlay */}
-        <div className="absolute inset-0 flex flex-col items-center justify-center z-10 px-4">
-          <h1 className="text-white text-center leading-tight font-sans">
-            <div className="font-light text-lg md:text-xl">Your Message.</div>
-            <div className="font-medium text-2xl md:text-4xl mt-2">
+        <div className="absolute inset-0 z-10 flex flex-col items-center justify-center px-4">
+          <h2 className="text-center font-sans leading-tight text-white">
+            <span className="block text-lg font-light md:text-xl">
+              Your Message.
+            </span>
+            <span className="mt-2 block text-2xl font-medium md:text-4xl">
               Our Audience.
-            </div>
-            <div className="font-bold text-4xl md:text-5xl lg:text-6xl mt-2">
+            </span>
+            <span className="mt-2 block text-4xl font-bold md:text-5xl lg:text-6xl">
               Real Impact.
-            </div>
-          </h1>
+            </span>
+          </h2>
 
-          {/* CTA Button */}
-          <Link href="/company/advertise-with-us">
-            <button className="mt-6 px-6 py-3 border-2 border-white text-white bg-transparent hover:bg-white/10 transition-colors font-sans font-medium text-sm uppercase tracking-wide rounded">
-              Reach Our Audience
-            </button>
+          <Link
+            href="/company/advertise-with-us"
+            className="mt-6 inline-flex items-center rounded border-2 border-white bg-transparent px-6 py-3 font-sans text-sm font-medium uppercase tracking-wide text-white transition-colors hover:bg-white/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+          >
+            Reach Our Audience
           </Link>
         </div>
       </div>
     </div>
   );
 }
-

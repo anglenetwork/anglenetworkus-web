@@ -70,6 +70,8 @@ export default function FourthSection({
                 <SectionHeader
                   title={category.name || "Category"}
                   variant={variant}
+                  accentStyle="geometric-square"
+                  size="large"
                   href={
                     category.slug ? `/category/${category.slug}` : undefined
                   }
@@ -106,7 +108,7 @@ export default function FourthSection({
                           </Link>
                           {/* {formatImageCredit(mainPost?.cover) && (
                             <p
-                              className={`text-[10px] font-secondary text-right ${variant === "dark" ? "text-gray-400" : "text-gray-500"}`}
+                              className={`text-[10px] font-sans text-right ${variant === "dark" ? "text-gray-400" : "text-gray-500"}`}
                             >
                               {formatImageCredit(mainPost?.cover)}
                             </p>

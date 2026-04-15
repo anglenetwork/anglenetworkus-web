@@ -1,33 +1,11 @@
 import Link from "next/link";
-import { format, parseISO } from "date-fns";
 import { getCoverImage } from "@/sanity/lib/utils";
 import { SectionHeader } from "@/app/components/ui/section-header";
 import { ImageRenderer } from "../ui/image-renderer";
-
-interface Post {
-  _id: string;
-  title: string;
-  slug: string;
-  excerpt?: string;
-  cover?: {
-    source?: "asset" | "external";
-    externalUrl?: string | null;
-    image?: any;
-    alt?: string | null;
-  } | null;
-  date: string;
-  author?: {
-    name: string;
-    picture?: any;
-  };
-  category?: {
-    title: string;
-    slug: string;
-  };
-}
+import type { ArticleSidebarPost } from "@/app/lib/article-family/types";
 
 interface BottomArticleModuleProps {
-  posts: Post[];
+  posts: ArticleSidebarPost[];
 }
 
 export default function BottomArticleModule({
@@ -41,20 +19,25 @@ export default function BottomArticleModule({
     <div className="">
       <div className="py-12 px-0">
         {/* Section Header */}
-        <SectionHeader title="Related Articles" variant="light" />
+        <SectionHeader
+          title="Related Articles"
+          variant="light"
+          accentStyle="geometric-square"
+          size="large"
+        />
 
         <div className="flex flex-col gap-8 lg:flex-row">
           <div className="lg:w-[60%]">
             {posts[0] && (
               <Link
-                href={`/post/${posts[0].slug || "#"}`}
+                href={posts[0].href}
                 className="group block"
               >
                 <div className="relative aspect-[16/10] w-full overflow-hidden rounded-lg">
                   {(() => {
                     // Use 800px thumbnail for bottom module (smaller than cover but larger than sidebar)
                     const coverData = getCoverImage(
-                      posts[0].cover,
+                      posts[0].cover as Parameters<typeof getCoverImage>[0],
                       posts[0].title || "Article image",
                       800
                     );
@@ -92,7 +75,7 @@ export default function BottomArticleModule({
             {posts.slice(1).map((post, index) => (
               <div key={post._id}>
                 <Link
-                  href={`/post/${post.slug || "#"}`}
+                  href={post.href}
                   className="block py-4 transition-opacity"
                 >
                   <h3 className="text-lg font-sans font-normal text-neutral-900 leading-normal tracking-normal mb-2">

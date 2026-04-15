@@ -18,7 +18,7 @@ export function SectionHeader({
   accentStyle = "gradient-fade",
 }: SectionHeaderProps) {
   const textColor = variant === "dark" ? "text-white" : "text-foreground";
-  const fontSize = size === "large" ? "text-xl" : "text-base";
+  const fontSize = size === "large" ? "text-lg" : "text-base";
 
   const renderAccent = () => {
     switch (accentStyle) {
@@ -43,7 +43,7 @@ export function SectionHeader({
         <div className="flex items-center gap-3">
           {renderAccent()}
           <h2
-            className={`${fontSize} font-secondary font-bold uppercase tracking-wide ${textColor}`}
+            className={`${fontSize} font-sans font-bold uppercase tracking-wide ${textColor}`}
           >
             {title}
           </h2>
@@ -70,7 +70,7 @@ export function SectionHeader({
   const content = (
     <div className={containerClassName}>
       <h2
-        className={`${fontSize} font-secondary font-bold uppercase tracking-wide ${textColor}`}
+        className={`${fontSize} font-sans font-bold uppercase tracking-wide ${textColor}`}
       >
         {title}
       </h2>

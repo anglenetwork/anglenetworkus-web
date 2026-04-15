@@ -6,10 +6,22 @@ import {
   tagBySlugQuery,
   postsByTagQuery,
   tagSlugsQuery,
-  popularReadsTrendingQuery,
   popularReadsFallbackQuery,
 } from "@/sanity/lib/queries";
+import {
+  fetchRankingRowsForArticleIds,
+  sortIdsByRankingThenPublishedAt,
+} from "@/app/lib/article-family/metrics";
+import { logDevMetricsFallback } from "@/app/lib/article-family/metrics-dev-log";
+import { editorialTagArticleCountQuery } from "@/sanity/lib/article-family-queries";
+import * as demo from "@/sanity/lib/demo";
+import { getCachedSettings } from "@/app/lib/cached-settings";
+import { jsonLdScriptContent } from "@/app/lib/article-family/structured-data";
+import { buildBreadcrumbJsonLd } from "@/app/lib/seo/json-ld";
+import { buildTagPageMetadata } from "@/app/lib/seo/metadata-builders";
 import { getCoverImage } from "@/sanity/lib/utils";
+import { articleFamilyHref } from "@/app/lib/article-family/routes";
+import type { ArticleFamilyDocType } from "@/app/lib/article-family/types";
 import { SectionHeader } from "@/app/components/ui/section-header";
 import ShowMoreSection from "./ShowMoreSection";
 import TagViewTracker from "./TagViewTracker";
@@ -17,6 +29,7 @@ import { TagFeaturedArticle } from "./components/TagFeaturedArticle";
 import { TagArticleItem } from "./components/TagArticleItem";
 import { TagNewsItem } from "./components/TagNewsItem";
 import { TagTextNewsItem } from "./components/TagTextNewsItem";
+import { SitePageWidth } from "@/app/components/layout/site-page-width";
 
 // Revalidate this page every 60s
 export const revalidate = 60;
@@ -29,17 +42,23 @@ export async function generateStaticParams() {
     .map((tag: any) => ({ slug: tag.slug }));
 }
 
-// Generate metadata for SEO
 export async function generateMetadata({
   params,
 }: {
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const tag = await sanityFetch({
-    query: tagBySlugQuery,
-    params: { slug },
-  });
+  const [tag, countRaw, settings] = await Promise.all([
+    sanityFetch({
+      query: tagBySlugQuery,
+      params: { slug },
+    }),
+    sanityFetch({
+      query: editorialTagArticleCountQuery,
+      params: { tagSlug: slug },
+    }),
+    getCachedSettings(),
+  ]);
 
   if (!tag) {
     return {
@@ -48,22 +67,15 @@ export async function generateMetadata({
   }
 
   const title = tag.title ?? "Tag";
-  const description = tag.description ?? `Posts tagged with ${title}`;
+  const resultCount = typeof countRaw === "number" ? countRaw : 0;
 
-  return {
-    title: `${title} | The Angle`,
-    description,
-    openGraph: {
-      title,
-      description,
-      type: "website",
-    },
-    twitter: {
-      card: "summary",
-      title,
-      description,
-    },
-  };
+  return buildTagPageMetadata({
+    tagTitle: title,
+    resultCount,
+    settings,
+    demoTitle: demo.title,
+    slug,
+  });
 }
 
 async function getTagData(slug: string) {
@@ -82,34 +94,62 @@ async function getTagData(slug: string) {
     redirect(`/tag/${tag.redirectTo.slug}`);
   }
 
-  // Fetch all posts with this tag
-  const posts = await sanityFetch({
+  const postsRaw = await sanityFetch({
     query: postsByTagQuery,
     params: { tagSlug: slug },
   });
 
-  // Fetch trending posts for this tag
-  const trendingPosts = await client.fetch(popularReadsTrendingQuery, {
-    currentPostId: null,
-  });
+  const editorial = (postsRaw || []) as Array<{
+    _id: string;
+    _type: string;
+    publishedAt?: string | null;
+    tags?: Array<{ slug?: string | null }>;
+  }>;
 
-  // Filter trending posts to only include those with this tag
-  const tagTrendingPosts = trendingPosts.filter((post: any) =>
-    post.tags?.some((tag: any) => tag.slug === slug)
+  const postOnly = editorial.filter((p) => p._type === "post");
+  const metricsMap = await fetchRankingRowsForArticleIds(
+    postOnly.map((p) => p._id)
+  );
+  const sortedByMetrics = sortIdsByRankingThenPublishedAt(
+    postOnly,
+    metricsMap
+  );
+  const hasMetricViews = sortedByMetrics.some(
+    (p) => (metricsMap.get(p._id)?.views7d ?? 0) > 0
   );
 
-  // Use fallback if no trending data
-  const hasViews = tagTrendingPosts?.some((post: any) => post.views7d > 0);
-  const popularReads = hasViews
-    ? tagTrendingPosts
-    : await client.fetch(popularReadsFallbackQuery, {
-        currentPostId: null,
-      });
+  let popularReads: unknown[] = sortedByMetrics.slice(0, 5);
+  if (!hasMetricViews || popularReads.length === 0) {
+    logDevMetricsFallback("tag_page_popular", "empty_or_no_activity");
+    const fallback = await client.fetch(popularReadsFallbackQuery, {
+      currentPostId: "",
+    });
+    popularReads = (fallback as Array<{ tags?: Array<{ slug?: string }> }>).filter(
+      (post) => post.tags?.some((t) => t.slug === slug)
+    );
+  }
+
+  const popularIds = (popularReads as { _id: string }[]).map((p) => p._id);
+  const popularMetrics = await fetchRankingRowsForArticleIds(popularIds);
+  const popularReadsWithViews = (popularReads as Record<string, unknown>[]).map(
+    (p) => ({
+      ...p,
+      views7d: popularMetrics.get(String(p._id))?.views7d ?? 0,
+    })
+  );
+
+  const allMetrics = await fetchRankingRowsForArticleIds(
+    editorial.map((p) => p._id)
+  );
+  const postsWithViews = editorial.map((p) => ({
+    ...p,
+    views7d: allMetrics.get(p._id)?.views7d ?? 0,
+  }));
 
   return {
     tag,
-    posts: posts || [],
-    popularReads: popularReads || [],
+    posts: postsWithViews,
+    popularReads: popularReadsWithViews,
   };
 }
 
@@ -126,17 +166,47 @@ export default async function TagPage({
     notFound();
   }
 
-  const { tag, posts, popularReads } = data;
+  const { tag, posts: rawPosts, popularReads } = data;
+
+  const posts = (rawPosts as Record<string, unknown>[]).map((p) => ({
+    ...p,
+    href: articleFamilyHref(
+      ((p._type as ArticleFamilyDocType) || "post") as ArticleFamilyDocType,
+      String(p.slug ?? "#")
+    ),
+  })) as Array<
+    Record<string, unknown> & {
+      href: string;
+      _id: string;
+      slug?: string | null;
+      title?: string | null;
+      cover?: unknown;
+    }
+  >;
+
+  const breadcrumbLd = buildBreadcrumbJsonLd([
+    { name: "Home", path: "/" },
+    { name: tag.title || "Tag", path: `/tag/${slug}` },
+  ]);
 
   return (
-    <main className="min-h-screen bg-background p-4 md:p-8">
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: jsonLdScriptContent(breadcrumbLd),
+        }}
+      />
+      <main className="min-h-screen bg-background py-4 md:py-8">
       <TagViewTracker tagSlug={slug} />
-      <div className="mx-auto lg:mx-32  flex flex-col gap-8 lg:flex-row">
+      <SitePageWidth>
+      <div className="flex flex-col gap-8 lg:flex-row">
         {/* Left Column - 60% */}
         <div className="w-full lg:w-[60%]">
           <SectionHeader
             title={tag.title || "Tag"}
             variant="light"
+            accentStyle="geometric-square"
             size="large"
           />
 
@@ -161,6 +231,7 @@ export default async function TagPage({
                   imageUnoptimized={coverData?.unoptimized}
                   title={posts[0].title || "Untitled"}
                   slug={posts[0].slug || "#"}
+                  href={posts[0].href}
                 />
               );
             })()}
@@ -183,6 +254,7 @@ export default async function TagPage({
                   imageUnoptimized={coverData?.unoptimized}
                   title={post.title || "Untitled"}
                   slug={post.slug || "#"}
+                  href={post.href}
                 />
               );
             })}
@@ -218,21 +290,29 @@ export default async function TagPage({
           </div>
 
           <div className="mt-2 bg-neutral-100 p-8 rounded-lg">
-            <SectionHeader title="More News" variant="light" />
+            <SectionHeader
+              title="More News"
+              variant="light"
+              accentStyle="geometric-square"
+              size="large"
+            />
             <div className="space-y-0 divide-y divide-border">
               {posts.slice(4, 8).map((post) => (
                 <TagTextNewsItem
                   key={post._id}
                   title={post.title || "Untitled"}
                   slug={post.slug || "#"}
+                  href={post.href}
                 />
               ))}
             </div>
           </div>
         </aside>
       </div>
+      </SitePageWidth>
 
       <ShowMoreSection posts={posts as any} tagSlug={slug} />
     </main>
+    </>
   );
 }

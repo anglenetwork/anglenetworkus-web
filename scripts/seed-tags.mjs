@@ -61,6 +61,34 @@ const TAGS = [
   },
 ];
 
+async function deleteAllPosts() {
+  console.log('Deleting all existing posts...');
+
+  const allPosts = await client.fetch(`*[_type=="post"]{_id}`);
+
+  if (allPosts.length === 0) {
+    console.log('No existing posts to delete.');
+    return;
+  }
+
+  console.log(`Found ${allPosts.length} posts to delete.`);
+
+  let deletedCount = 0;
+  for (const post of allPosts) {
+    try {
+      await client.delete(post._id);
+      deletedCount++;
+      if (deletedCount % 10 === 0) {
+        console.log(`Deleted ${deletedCount}/${allPosts.length} posts...`);
+      }
+    } catch (error) {
+      console.error(`Error deleting post ${post._id}:`, error.message);
+    }
+  }
+
+  console.log(`Successfully deleted ${deletedCount} posts.`);
+}
+
 async function deleteAllTags() {
   console.log('Deleting all existing tags...');
   
@@ -93,10 +121,9 @@ async function deleteAllTags() {
   console.log(`Successfully deleted ${deletedCount} tags.`);
 }
 
-async function createTag({ title, aliases = [] }) {
+async function createTag({ title, aliases = [] }, orderIndex) {
   const slug = slugify(title);
 
-  // Create new tag
   await client.create({
     _type: 'tag',
     title,
@@ -105,6 +132,8 @@ async function createTag({ title, aliases = [] }) {
     featured: false,
     hidden: false,
     deprecated: false,
+    order: orderIndex,
+    views: 0,
   });
 
   console.log(`Created: ${title} (${slug})`);
@@ -116,13 +145,16 @@ async function run() {
   }
 
   try {
-    // Step 1: Delete all existing tags
+    // Step 1: Remove posts that reference tags (otherwise tag deletes can fail)
+    await deleteAllPosts();
+
+    // Step 2: Delete all existing tags
     await deleteAllTags();
 
-    // Step 2: Create all tags fresh
+    // Step 3: Create all tags fresh
     console.log('\nCreating new tags...');
-    for (const t of TAGS) {
-      await createTag(t);
+    for (let i = 0; i < TAGS.length; i++) {
+      await createTag(TAGS[i], i);
     }
 
     console.log('\nDone seeding tags.');

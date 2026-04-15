@@ -232,6 +232,7 @@ export function BookmarksList({}: BookmarksListProps) {
                         : "#"
                     }
                   >
+                    {/* eslint-disable-next-line @next/next/no-img-element -- remote bookmark URLs; dimensions vary */}
                     <img
                       src={bookmark.article_cover.src}
                       alt={bookmark.article_cover.alt}

@@ -34,6 +34,8 @@ export function CenterColumnFourthSection({
         <SectionHeader
           title={categoryTitle}
           variant="light"
+          accentStyle="geometric-square"
+          size="large"
           href={categorySlug ? `/category/${categorySlug}` : undefined}
         />
 
@@ -50,7 +52,7 @@ export function CenterColumnFourthSection({
               />
             </Link>
             {data.mainStory.imageSource && (
-              <p className="text-[10px] text-gray-500 font-secondary text-right">
+              <p className="text-[10px] text-gray-500 font-sans text-right">
                 {data.mainStory.imageSource}
               </p>
             )}
@@ -80,7 +82,7 @@ export function CenterColumnFourthSection({
                   />
                 </Link>
                 {story.imageSource && (
-                  <p className="text-[10px] text-gray-500 font-secondary text-right">
+                  <p className="text-[10px] text-gray-500 font-sans text-right">
                     {story.imageSource}
                   </p>
                 )}

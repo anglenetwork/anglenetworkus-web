@@ -7,6 +7,7 @@ interface TagFeaturedArticleProps {
   imageUnoptimized?: boolean;
   title: string;
   slug: string;
+  href?: string;
 }
 
 export function TagFeaturedArticle({
@@ -15,10 +16,11 @@ export function TagFeaturedArticle({
   imageUnoptimized,
   title,
   slug,
+  href,
 }: TagFeaturedArticleProps) {
   return (
     <article className="mb-8">
-      <Link href={`/post/${slug}`} className="block group">
+      <Link href={href ?? `/post/${slug}`} className="block group">
         <div className="relative aspect-video w-full overflow-hidden rounded-xl">
           {image ? (
             <ImageRenderer

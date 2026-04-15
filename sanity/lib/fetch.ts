@@ -60,17 +60,24 @@ export async function sanityFetch<const QueryString extends string>({
 /**
  * Used to fetch data during static generation (generateStaticParams, etc.)
  * This function doesn't use draft mode and always fetches published content.
+ *
+ * @param tag Optional Sanity request tag — use unique values when the same GROQ
+ *   string is fetched in parallel with different params so CDN / memo keys differ.
  */
 export async function sanityFetchStatic<const QueryString extends string>({
   query,
   params = {},
+  tag,
 }: {
   query: QueryString;
   params?: QueryParams | Promise<QueryParams>;
+  tag?: string;
 }) {
   return client.fetch(query, await params, {
     perspective: "published",
     useCdn: true,
+    stega: false,
     next: { revalidate: 60 },
+    ...(tag ? { tag } : {}),
   });
 }

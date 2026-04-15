@@ -36,6 +36,8 @@ export default function FifthSection({
             <SectionHeader
               title={categoryTitle}
               variant="light"
+              accentStyle="geometric-square"
+              size="large"
               href={`/category/${categoryTitle.toLowerCase().replace(/\s+/g, "-")}`}
             />
           </div>
@@ -76,7 +78,7 @@ export default function FifthSection({
                       })()}
                     </div>
                     {/* {formatImageCredit(mainArticle.cover) && (
-                      <p className="text-[10px] text-gray-500 font-secondary text-right">
+                      <p className="text-[10px] text-gray-500 font-sans text-right">
                         {formatImageCredit(mainArticle.cover)}
                       </p>
                     )} */}
@@ -116,7 +118,7 @@ export default function FifthSection({
                         })()}
                       </div>
                       {/* {formatImageCredit(secondaryArticles[0].cover) && (
-                        <p className="text-[10px] text-gray-500 font-secondary text-right">
+                        <p className="text-[10px] text-gray-500 font-sans text-right">
                           {formatImageCredit(secondaryArticles[0].cover)}
                         </p>
                       )} */}
@@ -157,7 +159,7 @@ export default function FifthSection({
                         })()}
                       </div>
                       {/* {formatImageCredit(secondaryArticles[1].cover) && (
-                        <p className="text-[10px] text-gray-500 font-secondary text-right">
+                        <p className="text-[10px] text-gray-500 font-sans text-right">
                           {formatImageCredit(secondaryArticles[1].cover)}
                         </p>
                       )} */}
@@ -208,7 +210,7 @@ export default function FifthSection({
                           })()}
                         </div>
                         {/* {formatImageCredit(rightColumnArticles[0].cover) && (
-                          <p className="text-[10px] text-gray-500 font-secondary text-right">
+                          <p className="text-[10px] text-gray-500 font-sans text-right">
                             {formatImageCredit(rightColumnArticles[0].cover)}
                           </p>
                         )} */}
@@ -283,7 +285,7 @@ export default function FifthSection({
                             Math.ceil(rightColumnArticles.length / 2)
                           ]?.cover
                         ) && (
-                          <p className="text-[10px] text-gray-500 font-secondary text-right">
+                          <p className="text-[10px] text-gray-500 font-sans text-right">
                             {formatImageCredit(
                               rightColumnArticles[
                                 Math.ceil(rightColumnArticles.length / 2)

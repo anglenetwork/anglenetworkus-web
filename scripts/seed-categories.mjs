@@ -106,7 +106,7 @@ async function deleteAllCategories() {
   console.log(`Successfully deleted ${deletedCount} categories.`);
 }
 
-async function createCategory({ name, slug }) {
+async function createCategory({ name, slug }, orderIndex) {
   const categorySlug = slugify(slug);
 
   // Create new category (we deleted all, so no need to check)
@@ -116,7 +116,7 @@ async function createCategory({ name, slug }) {
     slug: { _type: 'slug', current: categorySlug },
     featured: false,
     hidden: false,
-    order: 0,
+    order: orderIndex,
     views: 0,
   });
 
@@ -137,8 +137,8 @@ async function run() {
 
     // Step 3: Create new categories
     console.log('\nCreating new categories...');
-    for (const category of CATEGORIES) {
-      await createCategory(category);
+    for (let i = 0; i < CATEGORIES.length; i++) {
+      await createCategory(CATEGORIES[i], i);
     }
 
     console.log('\nDone seeding categories.');

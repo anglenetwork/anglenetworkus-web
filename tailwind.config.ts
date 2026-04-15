@@ -18,10 +18,10 @@ const config: Config = {
         24: "repeat(24, minmax(0, 1fr))",
       },
       fontFamily: {
-        sans: ["var(--font-sans)"],
-        dmsans: ["var(--font-sans-dmsans)"],
-        secondary: ["var(--font-secondary)"],
-        serif: ["var(--font-serif)"],
+        /** Primary UI sans (DM Sans) */
+        sans: ["var(--font-sans)", "ui-sans-serif", "system-ui", "sans-serif"],
+        /** Article body / long-form reading (Spectral) */
+        body: ["var(--font-body)", "Georgia", "serif"],
       },
       borderRadius: {
         lg: "var(--radius)",
@@ -69,6 +69,9 @@ const config: Config = {
           4: "hsl(var(--chart-4))",
           5: "hsl(var(--chart-5))",
         },
+        sectionAccent: "hsl(var(--section-accent))",
+        editorialKicker: "hsl(var(--editorial-kicker))",
+        link: "hsl(var(--text-link))",
       },
     },
   },

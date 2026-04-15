@@ -29,7 +29,6 @@ interface Post {
     title: string | null;
     slug: string | null;
   } | null;
-  views7d?: number | null;
   readTime?: number | null;
 }
 
@@ -87,7 +86,6 @@ export default function SixthSection({
             formatImageCredit(category.thirdArticle.cover) || undefined,
           isDecorative: !category.thirdArticle.cover,
           slug: category.thirdArticle.slug,
-          views7d: category.thirdArticle.views7d || 0,
           readTime: category.thirdArticle.readTime || 5,
         },
       ];
@@ -111,7 +109,6 @@ export default function SixthSection({
             imageSource: undefined,
             isDecorative: true,
             slug: "#",
-            views7d: 0,
             readTime: 5,
           },
         ];
@@ -138,7 +135,12 @@ export default function SixthSection({
     <div className="bg-white">
       <div className="px-6">
         {/* Title Section */}
-        <SectionHeader title="Featured Stories" variant="light" />
+        <SectionHeader
+          title="Featured Stories"
+          variant="light"
+          accentStyle="geometric-square"
+          size="large"
+        />
 
         <div className="relative">
           {/* Left Arrow */}
@@ -181,7 +183,6 @@ export default function SixthSection({
                   imageSource={story.imageSource}
                   isDecorative={story.isDecorative}
                   slug={story.slug}
-                  views7d={story.views7d}
                   readTime={story.readTime}
                 />
               </div>
