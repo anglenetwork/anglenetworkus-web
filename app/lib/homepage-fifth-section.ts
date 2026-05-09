@@ -7,5 +7,11 @@ export const HOMEPAGE_FIFTH_SECTION_CATEGORIES = {
   right: { slug: "politics", title: "Politics" },
 } as const;
 
-/** Max posts fetched per column (right layout uses up to ~11). */
-export const HOMEPAGE_FIFTH_SECTION_FETCH_LIMIT = 21;
+/** Left column: 1 hero + 2 secondary cards. */
+export const HOMEPAGE_FIFTH_SECTION_LEFT_FETCH_LIMIT = 3;
+
+/**
+ * Right column: 2 featured-image slots + 4 headline-only links
+ * (indices [0], [1–2], [3], [4–5]).
+ */
+export const HOMEPAGE_FIFTH_SECTION_RIGHT_FETCH_LIMIT = 6;

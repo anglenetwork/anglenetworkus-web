@@ -14,6 +14,7 @@ import { getCoverImage } from "@/sanity/lib/utils";
 import ArticleViewTracker from "@/app/components/article-family/ArticleViewTracker";
 import CategoryViewTracker from "@/app/post/[slug]/CategoryViewTracker";
 import { SitePageWidth } from "@/app/components/layout/site-page-width";
+import { articleFamilyCanonicalHref } from "@/app/lib/article-family/routes";
 
 function TypeBadge({ children }: { children: ReactNode }) {
   return (
@@ -53,6 +54,10 @@ export default async function ArticleFamilyPage({
   const showOpinionChrome = article._type === "opinion";
   const showAnalysisChrome = article._type === "analysis";
   const showSponsoredChrome = article._type === "sponsored";
+  const canonicalArticlePath = articleFamilyCanonicalHref(
+    article._type,
+    article.slug
+  );
 
   return (
     <div className="min-h-screen">
@@ -148,7 +153,7 @@ export default async function ArticleFamilyPage({
               </header>
 
               <PostBody
-                sharePath={article.href}
+                sharePath={canonicalArticlePath}
                 body={article.body}
                 cover={article.cover as ComponentProps<typeof PostBody>["cover"]}
                 imageGallery={

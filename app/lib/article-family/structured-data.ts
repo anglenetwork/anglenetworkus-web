@@ -9,9 +9,11 @@ import { getPublicSiteUrl } from "@/app/lib/seo/site-url";
 import { resolveOpenGraphImage } from "@/sanity/lib/utils";
 import type { SiteSettingsForSeo } from "@/app/lib/seo/metadata-builders";
 import { resolveSiteName } from "@/app/lib/seo/metadata-builders";
+import { articleFamilyCanonicalHref } from "./routes";
 
 export function getArticleBreadcrumbItems(article: ArticleFamily): BreadcrumbItem[] {
   const home: BreadcrumbItem = { name: "Home", path: "/" };
+  const articlePath = articleFamilyCanonicalHref(article._type, article.slug);
   switch (article._type) {
     case "post":
       if (article.category?.slug && article.category.title) {
@@ -21,30 +23,30 @@ export function getArticleBreadcrumbItems(article: ArticleFamily): BreadcrumbIte
             name: article.category.title,
             path: `/category/${article.category.slug}`,
           },
-          { name: article.title, path: article.href },
+          { name: article.title, path: articlePath },
         ];
       }
-      return [home, { name: article.title, path: article.href }];
+      return [home, { name: article.title, path: articlePath }];
     case "opinion":
       return [
         home,
         { name: "Opinion", path: "/opinion" },
-        { name: article.title, path: article.href },
+        { name: article.title, path: articlePath },
       ];
     case "analysis":
       return [
         home,
         { name: "Analysis", path: "/analysis" },
-        { name: article.title, path: article.href },
+        { name: article.title, path: articlePath },
       ];
     case "sponsored":
       return [
         home,
         { name: "Sponsored", path: "/sponsored" },
-        { name: article.title, path: article.href },
+        { name: article.title, path: articlePath },
       ];
     default:
-      return [home, { name: article.title, path: article.href }];
+      return [home, { name: article.title, path: articlePath }];
   }
 }
 

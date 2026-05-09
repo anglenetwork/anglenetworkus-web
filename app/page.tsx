@@ -22,10 +22,14 @@ import { buildWebsiteJsonLd } from "@/app/lib/seo/json-ld";
 import { getPublicSiteUrl } from "@/app/lib/seo/site-url";
 import {
   homepageMostReadFallbackQuery,
-  indexQuery,
-  latestNineByCategoryQuery,
+  homepageHeroFrontlineQuery,
+  homepageHeroJustInQuery,
+  homepageHeroMainHeadlineQuery,
+  homepageHeroRelatedByCategoryQuery,
+  homepageHeroRightHeadlineQuery,
+  highlightedStoriesByCategoryQuery,
   newsTickerQuery,
-  postsByCategoryQuery,
+  postsByCategoryStandardPostsLimitedQuery,
   postsByIdsLightweightQuery,
 } from "@/sanity/lib/queries";
 import {
@@ -38,9 +42,16 @@ import type { ArticleFamilyCard } from "@/app/lib/article-family/types";
 import { getFourthSectionData, getSecondSectionData } from "./lib/homepage";
 import {
   HOMEPAGE_FIFTH_SECTION_CATEGORIES,
-  HOMEPAGE_FIFTH_SECTION_FETCH_LIMIT,
+  HOMEPAGE_FIFTH_SECTION_LEFT_FETCH_LIMIT,
+  HOMEPAGE_FIFTH_SECTION_RIGHT_FETCH_LIMIT,
 } from "./lib/homepage-fifth-section";
 import { SitePageWidth } from "@/app/components/layout/site-page-width";
+
+type HeroPostWithCategory = {
+  _id: string;
+  slug?: string | null;
+  category?: { slug?: string | null } | null;
+};
 
 function fifthSectionCardsForCategory(
   raw: unknown,
@@ -127,22 +138,58 @@ export default async function Page() {
     publisher,
   });
   //LANDING PAGE DATA FETCHING
-  // 1) Fetch posts for FirstSection (hero/main content)
-  const firstSectionPosts = await sanityFetchStatic({ query: indexQuery });
-
-  // 2) Most read posts (Supabase metrics + Sanity cards; fallback recency)
-  const mostReadPosts = await loadHomepageMostReadPosts();
-
-  // 3) Fetch posts for SecondSection (above the fold, but can be parallelized)
-  const [secondSectionLeftPosts, secondSectionRightPosts] = await Promise.all([
-    // Left column: US category (1 featured + 6 small)
+  // 1) Fetch hero slices for FirstSection (server-side filtered/ranked in GROQ)
+  const [
+    justInPosts,
+    mainHeadlinePosts,
+    frontlinePosts,
+    rightHeadlinePosts,
+    mostReadPosts,
+  ] = await Promise.all([
     sanityFetchStatic({
-      query: latestNineByCategoryQuery,
+      query: homepageHeroJustInQuery,
+      tag: "homepage.hero.just-in",
+    }),
+    sanityFetchStatic({
+      query: homepageHeroMainHeadlineQuery,
+      tag: "homepage.hero.main-headline",
+    }),
+    sanityFetchStatic({
+      query: homepageHeroFrontlineQuery,
+      tag: "homepage.hero.frontline",
+    }),
+    sanityFetchStatic({
+      query: homepageHeroRightHeadlineQuery,
+      tag: "homepage.hero.right-headline",
+    }),
+    // 2) Most read posts (Supabase metrics + Sanity cards; fallback recency)
+    loadHomepageMostReadPosts(),
+  ]);
+
+  const mainStoryPost = (
+    Array.isArray(mainHeadlinePosts) ? mainHeadlinePosts[0] : null
+  ) as HeroPostWithCategory | null;
+  const mainStoryCategorySlug = mainStoryPost?.category?.slug ?? null;
+  const relatedCategoryPosts =
+    mainStoryCategorySlug && mainStoryPost?._id
+      ? await sanityFetchStatic({
+          query: homepageHeroRelatedByCategoryQuery,
+          params: {
+            categorySlug: mainStoryCategorySlug,
+            excludePostId: mainStoryPost._id,
+          },
+          tag: "homepage.hero.related-category",
+        })
+      : [];
+
+  // 3) Fetch posts for SecondSection (1 featured + 2 small per column)
+  const [secondSectionLeftPosts, secondSectionRightPosts] = await Promise.all([
+    sanityFetchStatic({
+      query: highlightedStoriesByCategoryQuery,
       params: { categorySlug: "us" },
     }),
-    // Right column: Politics category (1 featured + 6 small)
     sanityFetchStatic({
-      query: latestNineByCategoryQuery,
+      query: highlightedStoriesByCategoryQuery,
       params: { categorySlug: "politics" },
     }),
   ]);
@@ -162,43 +209,36 @@ export default async function Page() {
     getSecondSectionData(),
   ]);
 
-  // Same query + params pattern as `/category/[slug]` (`postsByCategoryQuery`).
-  // Unique `tag` per column for Sanity CDN / request identity.
+  // Newest `post` only per category (no analysis) — `/category/[slug]` still uses post+analysis.
   const [fifthSectionLeftRaw, fifthSectionRightRaw] = await Promise.all([
     sanityFetchStatic({
-      query: postsByCategoryQuery,
-      params: { categorySlug: HOMEPAGE_FIFTH_SECTION_CATEGORIES.left.slug },
+      query: postsByCategoryStandardPostsLimitedQuery,
+      params: {
+        categorySlug: HOMEPAGE_FIFTH_SECTION_CATEGORIES.left.slug,
+        limit: HOMEPAGE_FIFTH_SECTION_LEFT_FETCH_LIMIT,
+      },
       tag: "homepage.fifth-column.left",
     }),
     sanityFetchStatic({
-      query: postsByCategoryQuery,
-      params: { categorySlug: HOMEPAGE_FIFTH_SECTION_CATEGORIES.right.slug },
+      query: postsByCategoryStandardPostsLimitedQuery,
+      params: {
+        categorySlug: HOMEPAGE_FIFTH_SECTION_CATEGORIES.right.slug,
+        limit: HOMEPAGE_FIFTH_SECTION_RIGHT_FETCH_LIMIT,
+      },
       tag: "homepage.fifth-column.right",
     }),
   ]);
 
-  if (process.env.NODE_ENV === "development") {
-    const peek = (rows: unknown, label: string, slug: string) => {
-      const arr = Array.isArray(rows) ? rows : [];
-      const first = arr[0] as { category?: { slug?: string }; title?: string } | undefined;
-      console.log("[homepage][fifth-section]", label, {
-        slugParam: slug,
-        rowCount: arr.length,
-        firstCategorySlug: first?.category?.slug,
-        firstTitle: first?.title,
-      });
-    };
-    peek(
-      fifthSectionLeftRaw,
-      "left",
-      HOMEPAGE_FIFTH_SECTION_CATEGORIES.left.slug,
-    );
-    peek(
-      fifthSectionRightRaw,
-      "right",
-      HOMEPAGE_FIFTH_SECTION_CATEGORIES.right.slug,
-    );
-  }
+  const fifthSectionLeftCards = fifthSectionCardsForCategory(
+    fifthSectionLeftRaw,
+    HOMEPAGE_FIFTH_SECTION_CATEGORIES.left.slug,
+    HOMEPAGE_FIFTH_SECTION_LEFT_FETCH_LIMIT,
+  );
+  const fifthSectionRightCards = fifthSectionCardsForCategory(
+    fifthSectionRightRaw,
+    HOMEPAGE_FIFTH_SECTION_CATEGORIES.right.slug,
+    HOMEPAGE_FIFTH_SECTION_RIGHT_FETCH_LIMIT,
+  );
 
   return (
     <>
@@ -212,40 +252,35 @@ export default async function Page() {
         <NewsTicker posts={newsTickerPosts as any} />
         <div className="space-y-10 md:space-y-14">
           <FirstSection
-            posts={firstSectionPosts as any}
+            justInNews={justInPosts as any}
+            mainStory={mainHeadlinePosts as any}
+            relatedCategoryPosts={relatedCategoryPosts as any}
+            moreTopHeadlines={frontlinePosts as any}
+            sideStories={rightHeadlinePosts as any}
             mostReadPosts={mostReadPosts as any}
+          />
+                    <FourthSection
+            variant="dark"
+            categoriesData={fourthSectionData as any}
           />
           {secondSectionLeftPosts?.length > 0 &&
             secondSectionRightPosts?.length > 0 && (
               <SecondSection
                 leftArticle={secondSectionLeftPosts[0] as any}
                 leftSmallArticles={(
-                  secondSectionLeftPosts.slice(1, 7) as any[]
+                  secondSectionLeftPosts.slice(1, 3) as any[]
                 ).filter((p) => p.slug)}
                 rightArticle={secondSectionRightPosts[0] as any}
                 rightSmallArticles={(
-                  secondSectionRightPosts.slice(1, 7) as any[]
+                  secondSectionRightPosts.slice(1, 3) as any[]
                 ).filter((p) => p.slug)}
               />
             )}
-
-          <FourthSection
-            variant="dark"
-            categoriesData={fourthSectionData as any}
-          />
           <EditorialRailsSection />
           <ThirdSection />
           <FifthSection
-            leftColumnPosts={fifthSectionCardsForCategory(
-              fifthSectionLeftRaw,
-              HOMEPAGE_FIFTH_SECTION_CATEGORIES.left.slug,
-              HOMEPAGE_FIFTH_SECTION_FETCH_LIMIT,
-            ).slice(0, 3)}
-            rightColumnPosts={fifthSectionCardsForCategory(
-              fifthSectionRightRaw,
-              HOMEPAGE_FIFTH_SECTION_CATEGORIES.right.slug,
-              HOMEPAGE_FIFTH_SECTION_FETCH_LIMIT,
-            )}
+            leftColumnPosts={fifthSectionLeftCards}
+            rightColumnPosts={fifthSectionRightCards}
             leftCategory={HOMEPAGE_FIFTH_SECTION_CATEGORIES.left}
             rightCategory={HOMEPAGE_FIFTH_SECTION_CATEGORIES.right}
           />

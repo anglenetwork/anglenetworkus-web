@@ -181,12 +181,6 @@ function tagRefs(tagDocs) {
   return tagDocs.map((t) => ({ _type: 'reference', _ref: t._id, _key: `tag-${t._id}` }));
 }
 
-function hoursFromNow(h) {
-  const d = new Date();
-  d.setTime(d.getTime() + h * 60 * 60 * 1000);
-  return d.toISOString();
-}
-
 function parsePositiveIntArg(flagName, fallback) {
   const raw = process.argv.find((arg) => arg.startsWith(`${flagName}=`));
   if (!raw) return fallback;
@@ -383,20 +377,12 @@ function buildPostDoc({
 
   if (placement.group === 'A') {
     doc.mainHeadline = true;
-    doc.mainHeadlineRank = placement.rank;
-    doc.mainHeadlineUntil = placement.until;
   } else if (placement.group === 'B') {
     doc.frontline = true;
-    doc.frontRank = placement.rank;
-    doc.frontUntil = placement.until;
   } else if (placement.group === 'C') {
     doc.rightHeadline = true;
-    doc.rightHeadlineRank = placement.rank;
-    doc.rightHeadlineUntil = placement.until;
   } else if (placement.group === 'D') {
     doc.justIn = true;
-    doc.justInRank = placement.rank;
-    doc.justInUntil = placement.until;
     if (placement.variant === 'breaking') doc.breakingNews = true;
     else if (placement.variant === 'developing') doc.developingStory = true;
   } else if (placement.group === 'E') {
@@ -554,7 +540,7 @@ const POST_DEFINITIONS = [
     tickerTitle: 'TSMC affirms U.S. expansion timeline',
     excerpt:
       'Contract manufacturers signal steady equipment orders while policymakers track onshoring milestones tied to federal incentives.',
-    placement: { group: 'A', rank: 10, until: null },
+    placement: { group: 'A' },
   },
   {
     group: 'A',
@@ -562,7 +548,7 @@ const POST_DEFINITIONS = [
     tickerTitle: 'Agencies warn on VPN patch delays',
     excerpt:
       'Security teams are prioritizing certificate rotations and identity checks while vendors finalize maintenance windows.',
-    placement: { group: 'A', rank: 9, until: null },
+    placement: { group: 'A' },
   },
   {
     group: 'B',
@@ -570,7 +556,7 @@ const POST_DEFINITIONS = [
     tickerTitle: 'SEC hints at AI risk disclosures',
     excerpt:
       'Public companies are reviewing controls narratives as regulators look for clearer materiality framing around generative tools.',
-    placement: { group: 'B', rank: 8, until: null },
+    placement: { group: 'B' },
   },
   {
     group: 'B',
@@ -578,7 +564,7 @@ const POST_DEFINITIONS = [
     tickerTitle: 'Cloud renewals hold steady in Q view',
     excerpt:
       'IT budgets show fewer pullbacks than feared, with optimization projects offsetting incremental AI inference costs.',
-    placement: { group: 'B', rank: 7, until: null },
+    placement: { group: 'B' },
   },
   {
     group: 'B',
@@ -586,7 +572,7 @@ const POST_DEFINITIONS = [
     tickerTitle: 'Panel pushes new coastal flood benchmarks',
     excerpt:
       'Local planners are weighing infrastructure grants against tighter building codes and insurance requirements.',
-    placement: { group: 'B', rank: 6, until: null },
+    placement: { group: 'B' },
   },
   {
     group: 'C',
@@ -594,7 +580,7 @@ const POST_DEFINITIONS = [
     tickerTitle: 'OEMs tighten default encryption defaults',
     excerpt:
       'Device vendors balance consumer privacy messaging with carrier and government compliance timelines.',
-    placement: { group: 'C', rank: 8, until: null },
+    placement: { group: 'C' },
   },
   {
     group: 'C',
@@ -602,7 +588,7 @@ const POST_DEFINITIONS = [
     tickerTitle: 'Enterprise AI bundles land in renewals',
     excerpt:
       'Procurement teams negotiate seat counts and data residency terms as assistants move from pilot to standard SKUs.',
-    placement: { group: 'C', rank: 7, until: null },
+    placement: { group: 'C' },
   },
   {
     group: 'C',
@@ -610,7 +596,7 @@ const POST_DEFINITIONS = [
     tickerTitle: 'Foldable battery variance shows in tests',
     excerpt:
       'Early units show wider variance than slab phones, prompting retailers to tighten return policies for open-box devices.',
-    placement: { group: 'C', rank: 6, until: null },
+    placement: { group: 'C' },
   },
   {
     group: 'D',
@@ -619,7 +605,7 @@ const POST_DEFINITIONS = [
     tickerTitle: 'Briefing set on infrastructure priorities',
     excerpt:
       'Agencies are aligning grant timelines with state applications as construction season accelerates.',
-    placement: { group: 'D', rank: 9, until: null, variant: 'breaking' },
+    placement: { group: 'D', variant: 'breaking' },
   },
   {
     group: 'D',
@@ -628,7 +614,7 @@ const POST_DEFINITIONS = [
     tickerTitle: 'Antitrust markup paused in Senate panel',
     excerpt:
       'Staff are revisiting definitions around self-preferencing and app store rules before a rescheduled session.',
-    placement: { group: 'D', rank: 8, until: null, variant: 'developing' },
+    placement: { group: 'D', variant: 'developing' },
   },
   {
     group: 'D',
@@ -637,7 +623,7 @@ const POST_DEFINITIONS = [
     tickerTitle: 'Commerce posts early chip import figures',
     excerpt:
       'Analysts are cross-checking volumes against fab utilization reports from major manufacturing hubs.',
-    placement: { group: 'D', rank: 7, until: null, variant: 'plain' },
+    placement: { group: 'D', variant: 'plain' },
   },
   {
     group: 'E',
@@ -681,7 +667,7 @@ const POST_DEFINITIONS_BATCH2 = [
     tickerTitle: 'Intel sketches advanced packaging path',
     excerpt:
       'Engineering teams emphasize test throughput and defect budgets while fabs bring new lines online.',
-    placement: { group: 'A', rank: 10, until: null },
+    placement: { group: 'A' },
   },
   {
     group: 'A',
@@ -689,7 +675,7 @@ const POST_DEFINITIONS_BATCH2 = [
     tickerTitle: 'API exposure draws ransomware probes',
     excerpt:
       'Incident responders recommend scoped tokens and short-lived credentials for partner integrations.',
-    placement: { group: 'A', rank: 9, until: null },
+    placement: { group: 'A' },
   },
   {
     group: 'B',
@@ -697,7 +683,7 @@ const POST_DEFINITIONS_BATCH2 = [
     tickerTitle: 'Treasury clarifies crypto sanctions screens',
     excerpt:
       'Compliance leads are updating vendor questionnaires and transaction monitoring thresholds.',
-    placement: { group: 'B', rank: 8, until: null },
+    placement: { group: 'B' },
   },
   {
     group: 'B',
@@ -705,7 +691,7 @@ const POST_DEFINITIONS_BATCH2 = [
     tickerTitle: 'Traders favor megacap tech again',
     excerpt:
       'Flows show preference for cash-rich balance sheets over speculative small caps this quarter.',
-    placement: { group: 'B', rank: 7, until: null },
+    placement: { group: 'B' },
   },
   {
     group: 'B',
@@ -713,7 +699,7 @@ const POST_DEFINITIONS_BATCH2 = [
     tickerTitle: 'NOAA updates Gulf surge projections',
     excerpt:
       'City planners weigh evacuation routes against new elevation benchmarks ahead of peak season.',
-    placement: { group: 'B', rank: 6, until: null },
+    placement: { group: 'B' },
   },
   {
     group: 'C',
@@ -721,7 +707,7 @@ const POST_DEFINITIONS_BATCH2 = [
     tickerTitle: 'Browser defaults draw overseas scrutiny',
     excerpt:
       'Regulators question whether choice screens meaningfully shift share away from preinstalled apps.',
-    placement: { group: 'C', rank: 8, until: null },
+    placement: { group: 'C' },
   },
   {
     group: 'C',
@@ -729,7 +715,7 @@ const POST_DEFINITIONS_BATCH2 = [
     tickerTitle: 'ITSM vendors embed triage agents',
     excerpt:
       'Buyers evaluate hallucination safeguards before letting models close tickets without humans.',
-    placement: { group: 'C', rank: 7, until: null },
+    placement: { group: 'C' },
   },
   {
     group: 'C',
@@ -737,7 +723,7 @@ const POST_DEFINITIONS_BATCH2 = [
     tickerTitle: 'Drone tests flag wind limits',
     excerpt:
       'Operators tighten geofencing when gusts exceed vendor thresholds during suburban trials.',
-    placement: { group: 'C', rank: 6, until: null },
+    placement: { group: 'C' },
   },
   {
     group: 'D',
@@ -746,7 +732,7 @@ const POST_DEFINITIONS_BATCH2 = [
     tickerTitle: 'Breaking: FAA OKs BVLOS drone corridor test',
     excerpt:
       'Operators must broadcast telemetry to regional hubs during the limited pilot window.',
-    placement: { group: 'D', rank: 9, until: null, variant: 'breaking' },
+    placement: { group: 'D', variant: 'breaking' },
   },
   {
     group: 'D',
@@ -755,7 +741,7 @@ const POST_DEFINITIONS_BATCH2 = [
     tickerTitle: 'Developing: grid operator eyes conservation',
     excerpt:
       'Industrial users may face voluntary curtailment incentives before mandatory cuts trigger.',
-    placement: { group: 'D', rank: 8, until: null, variant: 'developing' },
+    placement: { group: 'D', variant: 'developing' },
   },
   {
     group: 'D',
@@ -764,7 +750,7 @@ const POST_DEFINITIONS_BATCH2 = [
     tickerTitle: 'Weekly jobless claims near consensus',
     excerpt:
       'Seasonal adjustments mask some state-level quirks; revisions could arrive next Thursday.',
-    placement: { group: 'D', rank: 7, until: null, variant: 'plain' },
+    placement: { group: 'D', variant: 'plain' },
   },
   {
     group: 'E',
@@ -1157,8 +1143,6 @@ async function run() {
   }
 
   const schedule = buildPublicationSchedule(totalDocs);
-  // Placement "until" times: near future so homepage rails stay active; publishedAt remain in the past.
-  let homepagePlacementSlot = 0;
 
   let docIndex = 0;
   const toCreate = [];
@@ -1166,9 +1150,6 @@ async function run() {
   for (let i = 0; i < postDefinitionsForRun.length; i++) {
     const def = postDefinitionsForRun[i];
     const placement = { ...def.placement };
-    if (['A', 'B', 'C', 'D'].includes(placement.group)) {
-      placement.until = hoursFromNow(18 + homepagePlacementSlot++ * 1.15);
-    }
     const author = authors[i % 2];
     const cat = categories[Math.floor(i / perCategory) % categories.length];
     const categoryRef = { _type: 'reference', _ref: cat._id };

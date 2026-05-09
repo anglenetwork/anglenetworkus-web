@@ -75,7 +75,7 @@ export default defineConfig({
       resolve: {
         mainDocuments: defineDocuments([
           {
-            route: "/posts/:slug",
+            route: "/post/:slug",
             filter: `_type == "post" && slug.current == $slug`,
           },
           {
@@ -104,17 +104,19 @@ export default defineConfig({
             },
             resolve: (doc) => {
               const postHref = resolveHref("post", doc?.slug);
+              if (postHref) {
+                return {
+                  locations: [
+                    {
+                      title: doc?.title || "Untitled",
+                      href: postHref,
+                    },
+                    homeLocation,
+                  ],
+                };
+              }
               return {
-                locations: [
-                  {
-                    title: doc?.title || "Untitled",
-                    href: postHref || "#",
-                  },
-                  {
-                    title: "Home",
-                    href: "/",
-                  },
-                ],
+                locations: [homeLocation],
               };
             },
           }),

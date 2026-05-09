@@ -18,12 +18,6 @@ const homepageRailExclusivity =
   "Only one primary homepage rail may be on at a time: Main Headline, Frontline, Right Rail, or Just In. " +
   "You cannot combine two rails on the same post (Studio validation enforces this).";
 
-const rankHelp =
-  "Editorial order within this rail only: higher numbers surface earlier (e.g. 10 above 5). Not site-wide priority.";
-
-const untilHelp =
-  "Placement expiry: after this date/time the post stops appearing in this rail (even if the toggle stays on). Required when the placement is enabled.";
-
 export default defineType({
   name: "post",
   title: "Post",
@@ -82,61 +76,7 @@ export default defineType({
             if (doc?.justIn) {
               return "Cannot be both Main Headline and Just In at the same time";
             }
-            if (doc?.mainHeadlineUntil) {
-              const mainHeadlineUntilDate = new Date(doc.mainHeadlineUntil);
-              const now = new Date();
-              const threeDaysFromNow = new Date(now);
-              threeDaysFromNow.setDate(threeDaysFromNow.getDate() + 3);
-
-              if (mainHeadlineUntilDate > threeDaysFromNow) {
-                return "Warning: Main Headline Until date is more than 3 days away. Consider setting it to 24-48 hours to ensure content freshness.";
-              }
-            }
           }
-          return true;
-        }),
-    }),
-    defineField({
-      name: "mainHeadlineRank",
-      title: "Main Headline order",
-      type: "number",
-      group: ARTICLE_FIELD_GROUPS.typeSpecific,
-      fieldset: "homepage",
-      description: `${rankHelp} (Main Headline rail.)`,
-      hidden: ({ parent }) => !parent?.mainHeadline,
-      validation: (rule) => rule.min(0).max(10),
-    }),
-    defineField({
-      name: "mainHeadlineUntil",
-      title: "Main Headline until (expiry)",
-      type: "datetime",
-      group: ARTICLE_FIELD_GROUPS.typeSpecific,
-      fieldset: "homepage",
-      description: `${untilHelp} Recommended: 24–48 hours (max 3 days).`,
-      hidden: ({ parent }) => !parent?.mainHeadline,
-      validation: (rule) =>
-        rule.custom((value, ctx) => {
-          const doc = ctx.document as any;
-
-          if (doc?.mainHeadline && !value) {
-            return "Main Headline Until is required when Main Headline is enabled.";
-          }
-
-          if (!value) return true;
-
-          if (typeof value !== "string") return true;
-
-          const mainHeadlineUntilDate = new Date(value);
-          if (isNaN(mainHeadlineUntilDate.getTime())) return true;
-
-          const now = new Date();
-          const threeDaysFromNow = new Date(now);
-          threeDaysFromNow.setDate(threeDaysFromNow.getDate() + 3);
-
-          if (mainHeadlineUntilDate > threeDaysFromNow) {
-            return "Warning: Main Headline Until date is more than 3 days away. This may keep the article in the main headline section longer than intended. Recommended: 24-48 hours.";
-          }
-
           return true;
         }),
     }),
@@ -165,61 +105,7 @@ export default defineType({
             if (!doc?.publishedAt) {
               return "Warning: Published date is recommended when showing on front page";
             }
-            if (doc?.frontUntil) {
-              const frontUntilDate = new Date(doc.frontUntil);
-              const now = new Date();
-              const threeDaysFromNow = new Date(now);
-              threeDaysFromNow.setDate(threeDaysFromNow.getDate() + 3);
-
-              if (frontUntilDate > threeDaysFromNow) {
-                return "Warning: Front Until date is more than 3 days away. Consider setting it to 24-48 hours to ensure content freshness.";
-              }
-            }
           }
-          return true;
-        }),
-    }),
-    defineField({
-      name: "frontRank",
-      title: "Frontline order",
-      type: "number",
-      group: ARTICLE_FIELD_GROUPS.typeSpecific,
-      fieldset: "homepage",
-      description: `${rankHelp} (Frontline rail.)`,
-      hidden: ({ parent }) => !parent?.frontline,
-      validation: (rule) => rule.min(0).max(10),
-    }),
-    defineField({
-      name: "frontUntil",
-      title: "Frontline until (expiry)",
-      type: "datetime",
-      group: ARTICLE_FIELD_GROUPS.typeSpecific,
-      fieldset: "homepage",
-      description: `${untilHelp} Recommended: 24–48 hours (max 3 days).`,
-      hidden: ({ parent }) => !parent?.frontline,
-      validation: (rule) =>
-        rule.custom((value, ctx) => {
-          const doc = ctx.document as any;
-
-          if (doc?.frontline && !value) {
-            return "Front Until is required when Frontline is enabled.";
-          }
-
-          if (!value) return true;
-
-          if (typeof value !== "string") return true;
-
-          const frontUntilDate = new Date(value);
-          if (isNaN(frontUntilDate.getTime())) return true;
-
-          const now = new Date();
-          const threeDaysFromNow = new Date(now);
-          threeDaysFromNow.setDate(threeDaysFromNow.getDate() + 3);
-
-          if (frontUntilDate > threeDaysFromNow) {
-            return "Warning: Front Until date is more than 3 days away. This may keep the article in the Frontline section longer than intended. Recommended: 24-48 hours.";
-          }
-
           return true;
         }),
     }),
@@ -245,61 +131,7 @@ export default defineType({
             if (doc?.justIn) {
               return "Cannot be both Right Rail and Just In at the same time";
             }
-            if (doc?.rightHeadlineUntil) {
-              const rightHeadlineUntilDate = new Date(doc.rightHeadlineUntil);
-              const now = new Date();
-              const threeDaysFromNow = new Date(now);
-              threeDaysFromNow.setDate(threeDaysFromNow.getDate() + 3);
-
-              if (rightHeadlineUntilDate > threeDaysFromNow) {
-                return "Warning: Right Rail Until date is more than 3 days away. Consider setting it to 24-48 hours to ensure content freshness.";
-              }
-            }
           }
-          return true;
-        }),
-    }),
-    defineField({
-      name: "rightHeadlineRank",
-      title: "Right Rail order",
-      type: "number",
-      group: ARTICLE_FIELD_GROUPS.typeSpecific,
-      fieldset: "homepage",
-      description: `${rankHelp} (Right Rail.)`,
-      hidden: ({ parent }) => !parent?.rightHeadline,
-      validation: (rule) => rule.min(0).max(10),
-    }),
-    defineField({
-      name: "rightHeadlineUntil",
-      title: "Right Rail until (expiry)",
-      type: "datetime",
-      group: ARTICLE_FIELD_GROUPS.typeSpecific,
-      fieldset: "homepage",
-      description: `${untilHelp} Recommended: 24–48 hours (max 3 days).`,
-      hidden: ({ parent }) => !parent?.rightHeadline,
-      validation: (rule) =>
-        rule.custom((value, ctx) => {
-          const doc = ctx.document as any;
-
-          if (doc?.rightHeadline && !value) {
-            return "Right Rail Until is required when Right Rail is enabled.";
-          }
-
-          if (!value) return true;
-
-          if (typeof value !== "string") return true;
-
-          const rightHeadlineUntilDate = new Date(value);
-          if (isNaN(rightHeadlineUntilDate.getTime())) return true;
-
-          const now = new Date();
-          const threeDaysFromNow = new Date(now);
-          threeDaysFromNow.setDate(threeDaysFromNow.getDate() + 3);
-
-          if (rightHeadlineUntilDate > threeDaysFromNow) {
-            return "Warning: Right Rail Until date is more than 3 days away. This may keep the article in the right rail longer than intended. Recommended: 24-48 hours.";
-          }
-
           return true;
         }),
     }),
@@ -325,61 +157,7 @@ export default defineType({
             if (doc?.rightHeadline) {
               return "Cannot be both Just In and Right Rail at the same time";
             }
-            if (doc?.justInUntil) {
-              const justInUntilDate = new Date(doc.justInUntil);
-              const now = new Date();
-              const threeDaysFromNow = new Date(now);
-              threeDaysFromNow.setDate(threeDaysFromNow.getDate() + 3);
-
-              if (justInUntilDate > threeDaysFromNow) {
-                return "Warning: Just In Until date is more than 3 days away. Consider setting it to 24-48 hours to ensure content freshness.";
-              }
-            }
           }
-          return true;
-        }),
-    }),
-    defineField({
-      name: "justInRank",
-      title: "Just In order",
-      type: "number",
-      group: ARTICLE_FIELD_GROUPS.typeSpecific,
-      fieldset: "homepage",
-      description: `${rankHelp} (Just In rail.)`,
-      hidden: ({ parent }) => !parent?.justIn,
-      validation: (rule) => rule.min(0).max(10),
-    }),
-    defineField({
-      name: "justInUntil",
-      title: "Just In until (expiry)",
-      type: "datetime",
-      group: ARTICLE_FIELD_GROUPS.typeSpecific,
-      fieldset: "homepage",
-      description: `${untilHelp} Recommended: 24–48 hours (max 3 days).`,
-      hidden: ({ parent }) => !parent?.justIn,
-      validation: (rule) =>
-        rule.custom((value, ctx) => {
-          const doc = ctx.document as any;
-
-          if (doc?.justIn && !value) {
-            return "Just In Until is required when Just In is enabled.";
-          }
-
-          if (!value) return true;
-
-          if (typeof value !== "string") return true;
-
-          const justInUntilDate = new Date(value);
-          if (isNaN(justInUntilDate.getTime())) return true;
-
-          const now = new Date();
-          const threeDaysFromNow = new Date(now);
-          threeDaysFromNow.setDate(threeDaysFromNow.getDate() + 3);
-
-          if (justInUntilDate > threeDaysFromNow) {
-            return "Warning: Just In Until date is more than 3 days away. This may keep the article in Just In longer than intended. Recommended: 24-48 hours.";
-          }
-
           return true;
         }),
     }),

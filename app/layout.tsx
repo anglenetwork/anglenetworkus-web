@@ -5,7 +5,7 @@ import type { Metadata } from "next";
 import { Suspense } from "react";
 import { toPlainText, type PortableTextBlock } from "next-sanity";
 import { draftMode } from "next/headers";
-import { DM_Sans, Spectral } from "next/font/google";
+import { Libre_Franklin, Newsreader } from "next/font/google";
 
 import { AlertBanner, ContentLayoutWrapper } from "./components/layout";
 import { SessionProviderWrapper } from "./components/SessionProviderWrapper";
@@ -19,8 +19,8 @@ import { resolveOpenGraphImage } from "@/sanity/lib/utils";
 import { getPublicSiteUrl } from "@/app/lib/seo/site-url";
 
 // Primary UI sans (Tailwind `font-sans`) and article body serif (Tailwind `font-body`).
-// Weights match in-app usage (no extrabold/black on DM Sans).
-const dmSans = DM_Sans({
+// Weights match in-app usage.
+const libreFranklin = Libre_Franklin({
   subsets: ["latin"],
   weight: ["300", "400", "500", "600", "700"],
   variable: "--font-sans",
@@ -29,7 +29,7 @@ const dmSans = DM_Sans({
   adjustFontFallback: true,
 });
 
-const spectral = Spectral({
+const newsreader = Newsreader({
   subsets: ["latin"],
   weight: ["300", "400", "500", "600", "700"],
   variable: "--font-body",
@@ -88,7 +88,7 @@ export default async function RootLayout({
         <link rel="dns-prefetch" href="https://upload.wikimedia.org" />
         <link rel="dns-prefetch" href="https://cdn.sanity.io" />
       </head>
-      <body className={`${dmSans.variable} ${spectral.variable}`}>
+      <body className={`${libreFranklin.variable} ${newsreader.variable}`}>
         <SupabaseAuthProvider>
           <SessionProviderWrapper>
             <section className="min-h-screen">

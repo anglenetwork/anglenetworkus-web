@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { toPlainText, type PortableTextBlock } from "next-sanity";
 import { getCoverImage, resolveOpenGraphImage } from "@/sanity/lib/utils";
 import type { ArticleFamily } from "@/app/lib/article-family/types";
+import { articleFamilyCanonicalHref } from "@/app/lib/article-family/routes";
 import { getPublicSiteUrl } from "./site-url";
 import { buildCanonicalUrl } from "./canonical";
 import {
@@ -101,7 +102,10 @@ export function buildArticlePageMetadata(
     sameOriginCanonical(siteUrl, seo!.canonicalUrl!)
       ? seo!.canonicalUrl!.trim()
       : undefined;
-  const canonicalPath = `${siteUrl}${article.href}`;
+  const canonicalPath = `${siteUrl}${articleFamilyCanonicalHref(
+    article._type,
+    article.slug
+  )}`;
 
   const ogDescription = isNonEmpty(seo?.description)
     ? seo!.description!.trim()

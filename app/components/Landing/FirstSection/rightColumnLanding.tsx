@@ -65,7 +65,7 @@ export function RightColumnLanding({
       ))}
 
       {/* What Matters section */}
-      <div className="pt-8">
+      <div className="p-8 bg-neutral-200 rounded-xl">
         <SectionHeader
           title="What Matters"
           variant="light"

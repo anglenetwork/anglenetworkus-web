@@ -31,19 +31,11 @@ const postFields = `
   featured,
   labels,
   justIn,
-  justInRank,
-  justInUntil,
   breakingNews,
   developingStory,
   mainHeadline,
-  mainHeadlineRank,
-  mainHeadlineUntil,
   frontline,
-  frontRank,
-  frontUntil,
   rightHeadline,
-  rightHeadlineRank,
-  rightHeadlineUntil,
 
   "author": select(
     defined(author->name) => {
@@ -93,6 +85,41 @@ const postFields = `
       alt
     }
   }
+`;
+
+/** Homepage SecondSection: 1 lead + 2 small cards (no body/tags/seo). */
+const postFieldsHighlightedStories = `
+  _id,
+  "title": coalesce(title, "Untitled"),
+  "slug": slug.current,
+  cover{
+    source,
+    externalUrl,
+    image,
+    alt,
+    epigraph,
+    creditProvider,
+    creditAuthor,
+    creditSourceUrl,
+    creditLicense
+  },
+  "imageGallery": imageGallery[]{
+    source,
+    externalUrl,
+    image,
+    alt,
+    epigraph,
+    creditProvider,
+    creditAuthor,
+    creditSourceUrl,
+    creditLicense
+  },
+  "category": select(
+    defined(category->name) && defined(category->slug.current) => {
+      "title": category->name,
+      "slug": category->slug.current
+    }
+  )
 `;
 
 /** ---------------------------
@@ -145,19 +172,11 @@ const postFieldsLightweight = `
   featured,
   labels,
   justIn,
-  justInRank,
-  justInUntil,
   breakingNews,
   developingStory,
   mainHeadline,
-  mainHeadlineRank,
-  mainHeadlineUntil,
   frontline,
-  frontRank,
-  frontUntil,
   rightHeadline,
-  rightHeadlineRank,
-  rightHeadlineUntil,
 
   "author": select(
     defined(author->name) => {
@@ -195,6 +214,72 @@ const postFieldsLightweight = `
 
 export const indexQuery = defineQuery(`
   *[_type == "post"] | order(coalesce(publishedAt, _updatedAt) desc, _updatedAt desc) {
+    ${postFieldsLightweight}
+  }
+`);
+
+export const homepageHeroJustInQuery = defineQuery(`
+  *[
+    _type == "post" &&
+    defined(slug.current) &&
+    justIn == true
+  ] | order(
+    dateTime(coalesce(publishedAt, _updatedAt)) desc,
+    dateTime(_updatedAt) desc
+  )[0...5] {
+    ${postFieldsLightweight}
+  }
+`);
+
+export const homepageHeroMainHeadlineQuery = defineQuery(`
+  *[
+    _type == "post" &&
+    defined(slug.current) &&
+    mainHeadline == true
+  ] | order(
+    dateTime(coalesce(publishedAt, _updatedAt)) desc,
+    dateTime(_updatedAt) desc
+  )[0...1] {
+    ${postFieldsLightweight}
+  }
+`);
+
+export const homepageHeroFrontlineQuery = defineQuery(`
+  *[
+    _type == "post" &&
+    defined(slug.current) &&
+    frontline == true
+  ] | order(
+    dateTime(coalesce(publishedAt, _updatedAt)) desc,
+    dateTime(_updatedAt) desc
+  )[0...3] {
+    ${postFieldsLightweight}
+  }
+`);
+
+export const homepageHeroRightHeadlineQuery = defineQuery(`
+  *[
+    _type == "post" &&
+    defined(slug.current) &&
+    rightHeadline == true
+  ] | order(
+    dateTime(coalesce(publishedAt, _updatedAt)) desc,
+    dateTime(_updatedAt) desc
+  )[0...2] {
+    ${postFieldsLightweight}
+  }
+`);
+
+export const homepageHeroRelatedByCategoryQuery = defineQuery(`
+  *[
+    _type == "post" &&
+    defined(slug.current) &&
+    category->slug.current == $categorySlug &&
+    _id != $excludePostId
+  ] | order(
+    dateTime(coalesce(publishedAt, _updatedAt)) desc,
+    dateTime(_updatedAt) desc
+  )[0...3] {
     ${postFieldsLightweight}
   }
 `);
@@ -322,7 +407,11 @@ export const postBySlugQuery = defineQuery(`
   }
 `);
 
-export { articlesByCategoryEditorialQuery as postsByCategoryQuery } from "./article-family-queries";
+export {
+  articlesByCategoryEditorialQuery as postsByCategoryQuery,
+  articlesByCategoryStandardPostsQuery as postsByCategoryStandardPostsQuery,
+  articlesByCategoryStandardPostsLimitedQuery as postsByCategoryStandardPostsLimitedQuery,
+} from "./article-family-queries";
 
 export const categorySlugsQuery = defineQuery(`
   *[_type == "category" && defined(slug.current)]{ "slug": slug.current, name, views }
@@ -411,7 +500,7 @@ export const commentsQuery = defineQuery(`
 `);
 
 export const fourthSectionQuery = defineQuery(`
-  *[_type == "post" && category->slug.current == $categorySlug] | order(coalesce(publishedAt, _updatedAt) desc, _updatedAt desc) [0...4] {
+  *[_type == "post" && category->slug.current == $categorySlug] | order(coalesce(publishedAt, _updatedAt) desc, _updatedAt desc) [0...3] {
     ${postFields}
   }
 `);
@@ -428,11 +517,11 @@ export const thirdSectionQuery = defineQuery(`
   }
 `);
 
-// Latest 9 posts for a given category (for Fifth Section layout)
-export const latestNineByCategoryQuery = defineQuery(`
+/** Latest 3 posts per category: 1 featured + 2 in the small list (SecondSection). */
+export const highlightedStoriesByCategoryQuery = defineQuery(`
   *[_type == "post" && category->slug.current == $categorySlug]
-  | order(coalesce(publishedAt, _updatedAt) desc, _updatedAt desc) [0...9] {
-    ${postFields}
+  | order(coalesce(publishedAt, _updatedAt) desc, _updatedAt desc) [0...3] {
+    ${postFieldsHighlightedStories}
   }
 `);
 

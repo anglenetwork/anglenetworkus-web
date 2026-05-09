@@ -289,7 +289,7 @@ export function LeftColumnLanding({ justInNews }: LeftColumnLandingProps) {
                   className={
                     isFirstArticle
                       ? "text-xl font-sans font-semibold text-neutral-900 leading-snug tracking-tight"
-                      : "text-base font-sans font-normal text-neutral-900 leading-normal tracking-normal"
+                      : "text-lg font-sans font-normal text-neutral-900 leading-normal tracking-normal"
                   }
                 >
                   {post.title}
