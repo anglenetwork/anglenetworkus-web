@@ -144,6 +144,13 @@ export const articleFamilyPageBySlugQuery = defineQuery(`
   }
 `);
 
+/** Single document by stable Sanity ID, with slug guard for duplicate-slug routes. */
+export const articleFamilyPageByIdQuery = defineQuery(`
+  *[_type == $type && _id == $id && slug.current == $slug][0] {
+    ${articleFamilyPageFragment}
+  }
+`);
+
 export const opinionSlugsQuery = defineQuery(`
   *[_type == "opinion" && defined(slug.current)][].slug.current
 `);
@@ -263,6 +270,30 @@ export const articlesByCategoryEditorialQuery = defineQuery(`
     ${ARTICLE_FAMILY_PUBLISHED} &&
     defined(slug.current)
   ] | order(coalesce(publishedAt, _updatedAt) desc, _updatedAt desc) {
+    ${articleFamilyListFragment}
+  }
+`);
+
+/** Category listing: `post` only (homepage Fifth Section — newest news, no analysis). */
+export const articlesByCategoryStandardPostsQuery = defineQuery(`
+  *[
+    _type == "post" &&
+    category->slug.current == $categorySlug &&
+    ${ARTICLE_FAMILY_PUBLISHED} &&
+    defined(slug.current)
+  ] | order(coalesce(publishedAt, _updatedAt) desc, _updatedAt desc) {
+    ${articleFamilyListFragment}
+  }
+`);
+
+/** Same filter/order as `articlesByCategoryStandardPostsQuery`, capped for homepage Fifth Section. */
+export const articlesByCategoryStandardPostsLimitedQuery = defineQuery(`
+  *[
+    _type == "post" &&
+    category->slug.current == $categorySlug &&
+    ${ARTICLE_FAMILY_PUBLISHED} &&
+    defined(slug.current)
+  ] | order(coalesce(publishedAt, _updatedAt) desc, _updatedAt desc) [0...$limit] {
     ${articleFamilyListFragment}
   }
 `);

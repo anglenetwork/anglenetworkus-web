@@ -1,5 +1,6 @@
 import { getCoverImage } from "@/sanity/lib/utils";
 import type { ArticleFamily, ArticleFamilyDocType } from "@/app/lib/article-family/types";
+import { articleFamilyCanonicalHref } from "@/app/lib/article-family/routes";
 import { getPublicSiteUrl } from "./site-url";
 import { buildPublisherJsonLd, type PublisherJsonLd } from "./publisher";
 
@@ -23,7 +24,10 @@ export function buildArticleJsonLd(
   }
 ): Record<string, unknown> {
   const siteUrl = getPublicSiteUrl();
-  const absoluteUrl = `${siteUrl}${article.href}`;
+  const absoluteUrl = `${siteUrl}${articleFamilyCanonicalHref(
+    article._type,
+    article.slug
+  )}`;
   const cover = getCoverImage(
     article.cover as Parameters<typeof getCoverImage>[0],
     article.title

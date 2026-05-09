@@ -141,55 +141,53 @@ export default function SixthSection({
   };
 
   return (
-    <div className="bg-white">
-      <div className="px-6">
-        <SectionHeader
-          title="Featured Stories"
-          variant="light"
-          accentStyle="geometric-square"
-          size="large"
-        />
+    <div className="mb-10 bg-white pb-16">
+      <SectionHeader
+        title="Featured Stories"
+        variant="light"
+        accentStyle="geometric-square"
+        size="large"
+      />
 
-        <div className="relative">
-          <Button
-            variant="outline"
-            size="icon"
-            aria-label="Scroll left"
-            className="absolute left-0 top-1/2 z-10 -translate-y-1/2 bg-white shadow-lg hover:bg-gray-50"
-            onClick={scrollLeft}
-          >
-            <ChevronLeft className="h-4 w-4" />
-          </Button>
+      <div className="relative">
+        <Button
+          variant="outline"
+          size="icon"
+          aria-label="Scroll left"
+          className="absolute left-0 top-1/2 z-10 -translate-y-1/2 bg-white shadow-lg hover:bg-gray-50"
+          onClick={scrollLeft}
+        >
+          <ChevronLeft className="h-4 w-4" />
+        </Button>
 
-          <Button
-            variant="outline"
-            size="icon"
-            aria-label="Scroll right"
-            className="absolute right-0 top-1/2 z-10 -translate-y-1/2 bg-white shadow-lg hover:bg-gray-50"
-            onClick={scrollRight}
-          >
-            <ChevronRight className="h-4 w-4" />
-          </Button>
+        <Button
+          variant="outline"
+          size="icon"
+          aria-label="Scroll right"
+          className="absolute right-0 top-1/2 z-10 -translate-y-1/2 bg-white shadow-lg hover:bg-gray-50"
+          onClick={scrollRight}
+        >
+          <ChevronRight className="h-4 w-4" />
+        </Button>
 
-          <div
-            ref={scrollContainerRef}
-            className="flex gap-6 overflow-x-auto px-12 scrollbar-hide"
-          >
-            {displayRows.map((row) => {
-              const card = row.post
-                ? postToCard(row.post, row.categoryName)
-                : fallbackCard();
-              return (
-                <div key={row.id} className="w-[300px] flex-shrink-0">
-                  <ArticleFamilyCard
-                    article={card}
-                    layout="heroTile"
-                    readTimeMinutes={row.readTime}
-                  />
-                </div>
-              );
-            })}
-          </div>
+        <div
+          ref={scrollContainerRef}
+          className="flex gap-6 overflow-x-auto px-12 scrollbar-hide"
+        >
+          {displayRows.map((row) => {
+            const card = row.post
+              ? postToCard(row.post, row.categoryName)
+              : fallbackCard();
+            return (
+              <div key={row.id} className="w-[300px] flex-shrink-0">
+                <ArticleFamilyCard
+                  article={card}
+                  layout="heroTile"
+                  readTimeMinutes={row.readTime}
+                />
+              </div>
+            );
+          })}
         </div>
       </div>
     </div>

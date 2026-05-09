@@ -181,6 +181,46 @@ function ArticleImageCarousel({
   );
 }
 
+function SmallArticleGridItem({ article }: { article: Article }) {
+  const coverData = getCoverImage(
+    article.cover,
+    article.title || "Article",
+    480,
+  );
+  const firstGallery =
+    article.imageGallery?.[0] != null
+      ? buildGalleryImageData(article.imageGallery[0])
+      : null;
+  const thumbImage = coverData ?? firstGallery;
+
+  return (
+    <div className="pb-4 border-b border-gray-200">
+      <Link
+        href={`/post/${article.slug}`}
+        className="flex gap-4 items-start text-neutral-900 group"
+      >
+        <div className="relative shrink-0 w-[160px] h-[100px] rounded-md overflow-hidden bg-neutral-100">
+          {thumbImage?.src ? (
+            <ImageRenderer
+              src={thumbImage.src}
+              alt={thumbImage.alt}
+              width={240}
+              height={180}
+              fill
+              unoptimized={thumbImage.unoptimized}
+              sizes="120px"
+              className="object-cover transition-opacity group-hover:opacity-90"
+            />
+          ) : null}
+        </div>
+        <span className="leading-snug font-sans text-lg md:text-xl font-normal tracking-tight flex-1 min-w-0">
+          {article.title}
+        </span>
+      </Link>
+    </div>
+  );
+}
+
 export default function SecondSection({
   leftArticle,
   leftSmallArticles,
@@ -230,7 +270,7 @@ export default function SecondSection({
   return (
     <main className="bg-background text-foreground">
       {/* Main container */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 px-4 md:px-0">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Left Column */}
         <div className="space-y-8">
           {/* Section Header */}
@@ -272,32 +312,15 @@ export default function SecondSection({
             </Link>
           </article>
 
-          {/* Small Articles Grid - 1 column on mobile, 2 columns on desktop */}
+          {/* Two small stories: stacked list (thumb + title) */}
           {leftSmallArticles.length > 0 && (
-            <div className="w-full">
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                {leftSmallArticles.map((article, idx) => {
-                  // In a 2-column grid: even indices (0,2,4...) are left column, odd (1,3,5...) are right column
-                  const isLeftColumn = idx % 2 === 0;
-                  const nextItemInSameColumn = idx + 2;
-                  const hasNextInColumn =
-                    nextItemInSameColumn < leftSmallArticles.length;
-
-                  return (
-                    <div
-                      key={article.slug || idx}
-                      className="pb-4 border-b border-gray-200"
-                    >
-                      <Link
-                        href={`/post/${article.slug}`}
-                        className="text-neutral-900 leading-snug font-sans text-lg sm:text-base font-normal tracking-tight block"
-                      >
-                        {article.title}
-                      </Link>
-                    </div>
-                  );
-                })}
-              </div>
+            <div className="w-full flex flex-col gap-5">
+              {leftSmallArticles.map((article, idx) => (
+                <SmallArticleGridItem
+                  key={article.slug || idx}
+                  article={article}
+                />
+              ))}
             </div>
           )}
         </div>
@@ -343,32 +366,15 @@ export default function SecondSection({
             </Link>
           </article>
 
-          {/* Small Articles Grid - 1 column on mobile, 2 columns on desktop */}
+          {/* Two small stories: stacked list (thumb + title) */}
           {rightSmallArticles.length > 0 && (
-            <div className="w-full">
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                {rightSmallArticles.map((article, idx) => {
-                  // In a 2-column grid: even indices (0,2,4...) are left column, odd (1,3,5...) are right column
-                  const isLeftColumn = idx % 2 === 0;
-                  const nextItemInSameColumn = idx + 2;
-                  const hasNextInColumn =
-                    nextItemInSameColumn < rightSmallArticles.length;
-
-                  return (
-                    <div
-                      key={article.slug || idx}
-                      className="pb-4 border-b border-gray-200"
-                    >
-                      <Link
-                        href={`/post/${article.slug}`}
-                        className="text-neutral-900 leading-snug font-sans text-lg sm:text-base font-normal tracking-tight block"
-                      >
-                        {article.title}
-                      </Link>
-                    </div>
-                  );
-                })}
-              </div>
+            <div className="w-full flex flex-col gap-5">
+              {rightSmallArticles.map((article, idx) => (
+                <SmallArticleGridItem
+                  key={article.slug || idx}
+                  article={article}
+                />
+              ))}
             </div>
           )}
         </div>

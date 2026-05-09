@@ -36,7 +36,7 @@ export default function PostHeader({
       </h1>
 
       {excerpt && (
-        <p className="text-sm lg:text-sm text-neutral-500 mb-6 leading-relaxed font-sans font-light tracking-snug">
+        <p className="text-sm md:text-lg text-neutral-500 mb-6 leading-relaxed font-sans font-light tracking-snug">
           {excerpt}
         </p>
       )}

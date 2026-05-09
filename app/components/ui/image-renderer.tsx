@@ -1,18 +1,26 @@
 import Image from "next/image";
 
-interface ImageRendererProps {
+type ImageRendererProps = {
   src: string;
   alt: string;
-  width: number;
-  height: number;
   unoptimized?: boolean;
   priority?: boolean;
   fetchPriority?: "auto" | "high" | "low";
   quality?: number;
   sizes?: string;
   className?: string;
-  fill?: boolean;
-}
+} & (
+  | {
+      fill: true;
+      width?: number;
+      height?: number;
+    }
+  | {
+      fill?: false;
+      width: number;
+      height: number;
+    }
+);
 
 /**
  * Reusable image renderer component that handles:
@@ -20,19 +28,18 @@ interface ImageRendererProps {
  * - Other external images (based on unoptimized prop)
  * - Sanity asset images (optimized through Next.js)
  */
-export function ImageRenderer({
-  src,
-  alt,
-  width,
-  height,
-  unoptimized: propUnoptimized = false,
-  priority = false,
-  fetchPriority,
-  quality,
-  sizes,
-  className,
-  fill = false,
-}: ImageRendererProps) {
+export function ImageRenderer(props: ImageRendererProps) {
+  const {
+    src,
+    alt,
+    unoptimized: propUnoptimized = false,
+    priority = false,
+    fetchPriority,
+    quality,
+    sizes,
+    className,
+    fill = false,
+  } = props;
   // Helper to detect Wikimedia Commons images
   const isWikimedia = (url: string): boolean => {
     try {
@@ -62,6 +69,8 @@ export function ImageRenderer({
       />
     );
   }
+
+  const { width, height } = props;
 
   // Check if className modifies dimensions via CSS
   // Next.js warns when CSS modifies dimensions - we add auto style to maintain aspect ratio

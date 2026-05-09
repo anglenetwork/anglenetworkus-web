@@ -1,4 +1,3 @@
-import { ArrowRight } from "lucide-react";
 import Link from "next/link";
 import { getCoverImage, formatImageCredit } from "@/sanity/lib/utils";
 import { SectionHeader } from "../../ui/section-header";
@@ -39,6 +38,49 @@ interface CategoryData {
 interface FourthSectionProps {
   categoriesData: CategoryData[];
   variant?: "light" | "dark";
+}
+
+function FourthSectionSecondaryRow({
+  post,
+  variant,
+}: {
+  post: Post;
+  variant: "light" | "dark";
+}) {
+  if (!post.slug) return null;
+
+  const coverData = getCoverImage(post.cover, post.title || "Article image");
+  const titleClass =
+    variant === "dark"
+      ? "text-white"
+      : "text-neutral-900";
+
+  return (
+    <Link
+      href={`/post/${post.slug}`}
+      className="flex gap-3 items-start group"
+    >
+      {coverData?.src ? (
+        <div className="relative h-20 w-28 flex-shrink-0 overflow-hidden rounded-sm bg-black">
+          <ImageRenderer
+            src={coverData.src}
+            alt={coverData.alt}
+            width={112}
+            height={80}
+            unoptimized={coverData.unoptimized}
+            sizes="112px"
+            className="object-cover object-center rounded-sm"
+            fill
+          />
+        </div>
+      ) : null}
+      <h3
+        className={`flex-1 min-w-0 text-base font-sans font-normal leading-snug ${titleClass}`}
+      >
+        {post.title}
+      </h3>
+    </Link>
+  );
 }
 
 export default function FourthSection({
@@ -138,30 +180,18 @@ export default function FourthSection({
                   className={`border-t ${variant === "dark" ? "border-white" : "border-neutral-200"}`}
                 />
 
-                {/* Related Articles */}
+                {/* Related Articles — image left, title right */}
                 <div className="space-y-4">
                   {secondPost && secondPost.slug && (
-                    <>
-                      <Link href={`/post/${secondPost.slug}`}>
-                        <h3
-                          className={`text-base font-sans font-normal leading-snug mb-4 ${variant === "dark" ? "text-white" : "text-neutral-900"}`}
-                        >
-                          {secondPost.title}
-                        </h3>
-                      </Link>
-                    </>
+                    <FourthSectionSecondaryRow post={secondPost} variant={variant} />
                   )}
                   {thirdPost && thirdPost.slug && (
-                    <Link href={`/post/${thirdPost.slug}`}>
+                    <>
                       <hr
-                        className={`border-1 my-4 ${variant === "dark" ? "border-white" : "border-neutral-200"}`}
+                        className={`border-t my-2 ${variant === "dark" ? "border-white" : "border-neutral-200"}`}
                       />
-                      <h3
-                        className={`leading-snug mb-2 font-sans text-base font-normal ${variant === "dark" ? "text-white" : "text-neutral-900"}`}
-                      >
-                        {thirdPost.title}
-                      </h3>
-                    </Link>
+                      <FourthSectionSecondaryRow post={thirdPost} variant={variant} />
+                    </>
                   )}
                 </div>
               </article>

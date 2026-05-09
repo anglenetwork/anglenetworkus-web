@@ -79,7 +79,7 @@ export function normalizeArticleFamily(raw: unknown): ArticleFamily | null {
     tickerTitle,
     excerpt,
     slug,
-    href: articleFamilyHref(_type, slug),
+    href: articleFamilyHref(_type, slug, { id: _id }),
     cover: r.cover ?? null,
     body: Array.isArray(r.body) ? (r.body as unknown[]) : null,
     author: (r.author as ArticleFamily["author"]) ?? null,

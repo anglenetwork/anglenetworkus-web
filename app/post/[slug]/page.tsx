@@ -21,11 +21,15 @@ export async function generateStaticParams() {
 
 export async function generateMetadata({
   params,
+  searchParams,
 }: {
   params: Promise<{ slug: string }>;
+  searchParams: Promise<{ id?: string | string[] }>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const article = await fetchArticleFamilyPage({ type: "post", slug });
+  const { id: rawId } = await searchParams;
+  const id = Array.isArray(rawId) ? rawId[0] : rawId;
+  const article = await fetchArticleFamilyPage({ type: "post", slug, id });
   if (!article) {
     return { title: "Post Not Found" };
   }
@@ -34,11 +38,15 @@ export async function generateMetadata({
 
 export default async function PostPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ slug: string }>;
+  searchParams: Promise<{ id?: string | string[] }>;
 }) {
   const { slug } = await params;
-  const article = await fetchArticleFamilyPage({ type: "post", slug });
+  const { id: rawId } = await searchParams;
+  const id = Array.isArray(rawId) ? rawId[0] : rawId;
+  const article = await fetchArticleFamilyPage({ type: "post", slug, id });
   if (!article) {
     notFound();
   }
