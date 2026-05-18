@@ -2,11 +2,16 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import ArticleFamilyPage from "@/app/components/article-family/ArticleFamilyPage";
 import PostSelectedNews from "@/app/components/PostPage/PostSelectedNews";
-import BottomArticleModule from "@/app/components/PostPage/BottomArticleModule";
+import BottomArticleModule, {
+  RELATED_MODULE_MODERN_TOTAL,
+} from "@/app/components/PostPage/BottomArticleModule";
 import { SuggestedTags } from "@/app/components/SuggestedTags";
 import { fetchArticleFamilyPage } from "@/app/lib/article-family/fetch";
 import { buildArticleFamilyMetadata } from "@/app/lib/article-family/metadata";
-import { loadArticlePageSidebars } from "@/app/lib/article-family/sidebars";
+import {
+  loadArticlePageSidebars,
+  loadLatestInCategory,
+} from "@/app/lib/article-family/sidebars";
 import { client } from "@/sanity/lib/client";
 import { postSlugsQuery } from "@/sanity/lib/queries";
 
@@ -51,8 +56,11 @@ export default async function PostPage({
     notFound();
   }
 
-  const { newsForYou, popularReads, relatedArticles } =
-    await loadArticlePageSidebars(article);
+  const [{ newsForYou, popularReads, relatedArticles }, categoryLatest] =
+    await Promise.all([
+      loadArticlePageSidebars(article),
+      loadLatestInCategory(article, RELATED_MODULE_MODERN_TOTAL),
+    ]);
 
   const tagsForSuggested =
     article.tags
@@ -62,7 +70,15 @@ export default async function PostPage({
         slug: tag.slug as string,
       })) ?? [];
 
-  const bottomSlice = relatedArticles.slice(0, 8);
+  // Same-category latest (10 for modern: 6 grid + 4 sidebar). Fall back to
+  // broader related when the article has no category.
+  const bottomSlice = (
+    categoryLatest.length > 0 ? categoryLatest : relatedArticles
+  ).slice(0, RELATED_MODULE_MODERN_TOTAL);
+  const categoryName = article.category?.title || undefined;
+  const categoryHref = article.category?.slug
+    ? `/category/${article.category.slug}`
+    : undefined;
 
   return (
     <ArticleFamilyPage
@@ -77,7 +93,12 @@ export default async function PostPage({
         <>
           <SuggestedTags tags={tagsForSuggested} />
           {bottomSlice.length > 0 && (
-            <BottomArticleModule posts={bottomSlice} />
+            <BottomArticleModule
+              posts={bottomSlice}
+              variant="modern"
+              categoryName={categoryName}
+              categoryHref={categoryHref}
+            />
           )}
         </>
       }

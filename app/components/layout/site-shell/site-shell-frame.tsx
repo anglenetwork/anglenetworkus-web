@@ -1,35 +1,26 @@
 "use client";
 
-import type React from "react";
+import type { ReactNode } from "react";
 import { usePathname } from "next/navigation";
-import { HeaderClient } from "./navbar";
-import { Footer } from "./footer";
+import { HeaderClient } from "../navbar";
+import { Footer } from "../footer";
+import type { SiteShellNav } from "./types";
 
-interface Category {
-  slug: string;
-  name: string;
-  views?: number;
+interface SiteShellFrameProps extends SiteShellNav {
+  children: ReactNode;
 }
 
-interface Tag {
-  slug: string;
-  title: string;
-  views?: number;
-}
-
-interface MainLayoutWrapperProps {
-  children: React.ReactNode;
-  categories: Category[];
-  tags: Tag[];
-  showsTags: Tag[];
-}
-
-export function MainLayoutWrapper({
+/**
+ * Client half of the site shell. Wraps page content with the global header
+ * and footer, hiding them on `/studio` routes so the Sanity Studio embed
+ * renders without app chrome.
+ */
+export function SiteShellFrame({
   children,
   categories,
   tags,
   showsTags,
-}: MainLayoutWrapperProps) {
+}: SiteShellFrameProps) {
   const pathname = usePathname();
   const isStudioRoute = pathname?.startsWith("/studio");
 

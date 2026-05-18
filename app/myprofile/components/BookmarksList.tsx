@@ -236,7 +236,7 @@ export function BookmarksList({}: BookmarksListProps) {
                     <img
                       src={bookmark.article_cover.src}
                       alt={bookmark.article_cover.alt}
-                      className="w-full h-40 sm:h-32 object-cover rounded-lg bg-slate-100"
+                      className="h-40 w-full rounded-lg object-cover sm:h-32"
                     />
                   </Link>
                 ) : (

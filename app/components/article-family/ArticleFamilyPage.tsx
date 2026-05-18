@@ -54,10 +54,24 @@ export default async function ArticleFamilyPage({
   const showOpinionChrome = article._type === "opinion";
   const showAnalysisChrome = article._type === "analysis";
   const showSponsoredChrome = article._type === "sponsored";
+  const showEditorialChrome = showOpinionChrome || showAnalysisChrome;
   const canonicalArticlePath = articleFamilyCanonicalHref(
     article._type,
     article.slug
   );
+  const postBodyProps: ComponentProps<typeof PostBody> = {
+    sharePath: canonicalArticlePath,
+    body: article.body,
+    cover: article.cover as ComponentProps<typeof PostBody>["cover"],
+    imageGallery:
+      article.imageGallery as ComponentProps<typeof PostBody>["imageGallery"],
+    title: article.title || "Untitled",
+    author: article.author ?? undefined,
+    date: article.date,
+    updatedAt: article.updatedAt || null,
+    slug: article.slug || undefined,
+    articleId: article._id,
+  };
 
   return (
     <div className="min-h-screen">
@@ -83,15 +97,84 @@ export default async function ArticleFamilyPage({
       )}
 
       <SitePageWidth className="py-4">
-        <article className="mt-4 lg:mt-8">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-0 lg:gap-16">
-            <div className="col-span-1 lg:col-span-8">
-              <header className="mb-6 not-prose space-y-3">
+        {showEditorialChrome ? (
+          <article className="mt-4 lg:mt-8">
+            <header className="mx-auto mb-8 max-w-[860px] not-prose">
+              <div>
+                <p className="mb-2 font-sans text-xs font-bold uppercase tracking-[0.18em] text-red-700">
+                  {showOpinionChrome ? "Opinion" : "Analysis"}
+                  {showOpinionChrome && article.opinionFormat
+                    ? ` / ${article.opinionFormat.replace(/-/g, " ")}`
+                    : ""}
+                </p>
+                <h1 className="font-sans text-[36px] font-bold leading-[1.05] tracking-tight text-neutral-950 sm:text-[48px] lg:text-[56px]">
+                  {article.title || "Untitled"}
+                </h1>
+                {article.excerpt && (
+                  <p className="mt-4 max-w-3xl font-sans text-base font-light leading-relaxed text-neutral-600 md:text-lg">
+                    {article.excerpt}
+                  </p>
+                )}
+              </div>
+
+              {showAnalysisChrome && article.analysisFocus && (
+                <p className="mt-5 max-w-3xl border-l-4 border-neutral-300 pl-4 font-sans text-sm font-medium text-neutral-700">
+                  {article.analysisFocus}
+                </p>
+              )}
+
+              {showOpinionChrome && article.disclosure && (
+                <aside className="mt-5 max-w-3xl rounded-md bg-neutral-100 px-4 py-3 font-sans text-sm text-neutral-800">
+                  {article.disclosure}
+                </aside>
+              )}
+            </header>
+
+            <PostBody {...postBodyProps} variant="editorial" />
+
+            {showAnalysisChrome &&
+              (article.methodologyNote || article.sourcesNote) && (
+                <section
+                  className="mx-auto mt-10 max-w-[860px] border-t border-neutral-200 pt-8 not-prose"
+                  aria-labelledby="transparency-heading"
+                >
+                  <h2
+                    id="transparency-heading"
+                    className="mb-4 font-sans text-lg font-bold text-neutral-900"
+                  >
+                    Context and transparency
+                  </h2>
+                  {article.methodologyNote && (
+                    <div className="mb-4">
+                      <h3 className="mb-1 font-sans text-sm font-semibold text-neutral-800">
+                        Methodology
+                      </h3>
+                      <p className="whitespace-pre-wrap font-sans text-sm text-neutral-700">
+                        {article.methodologyNote}
+                      </p>
+                    </div>
+                  )}
+                  {article.sourcesNote && (
+                    <div>
+                      <h3 className="mb-1 font-sans text-sm font-semibold text-neutral-800">
+                        Sources
+                      </h3>
+                      <p className="whitespace-pre-wrap font-sans text-sm text-neutral-700">
+                        {article.sourcesNote}
+                      </p>
+                    </div>
+                  )}
+                </section>
+              )}
+          </article>
+        ) : (
+          <article className="mt-4 lg:mt-8">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-0 lg:gap-16">
+              <div className="col-span-1 lg:col-span-8">
+                <header className="mb-6 not-prose space-y-3">
                 {showSponsoredChrome && (
                   <TypeBadge>Sponsored</TypeBadge>
                 )}
-                {showOpinionChrome && <TypeBadge>Opinion</TypeBadge>}
-                {showAnalysisChrome && <TypeBadge>Analysis</TypeBadge>}
 
                 {showSponsoredChrome && article.sponsorAttribution && (
                   <div className="rounded-md border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-950">
@@ -150,24 +233,9 @@ export default async function ArticleFamilyPage({
                     {article.disclosure}
                   </aside>
                 )}
-              </header>
+                </header>
 
-              <PostBody
-                sharePath={canonicalArticlePath}
-                body={article.body}
-                cover={article.cover as ComponentProps<typeof PostBody>["cover"]}
-                imageGallery={
-                  article.imageGallery as ComponentProps<
-                    typeof PostBody
-                  >["imageGallery"]
-                }
-                title={article.title || "Untitled"}
-                author={article.author ?? undefined}
-                date={article.date}
-                updatedAt={article.updatedAt || null}
-                slug={article.slug || undefined}
-                articleId={article._id}
-              />
+                <PostBody {...postBodyProps} />
 
               {showAnalysisChrome &&
                 (article.methodologyNote || article.sourcesNote) && (
@@ -203,15 +271,16 @@ export default async function ArticleFamilyPage({
                     )}
                   </section>
                 )}
-            </div>
-
-            {sidebar && (
-              <div className="flex flex-col col-span-1 lg:col-span-4 gap-8">
-                {sidebar}
               </div>
-            )}
-          </div>
-        </article>
+
+              {sidebar && (
+                <div className="flex flex-col col-span-1 lg:col-span-4 gap-8">
+                  {sidebar}
+                </div>
+              )}
+            </div>
+          </article>
+        )}
 
         {footer}
       </SitePageWidth>

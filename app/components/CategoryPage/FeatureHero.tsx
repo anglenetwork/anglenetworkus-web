@@ -17,7 +17,9 @@ export function FeatureHero({ article, variant = "light" }: FeatureHeroProps) {
         className="block"
         aria-label={`Read article: ${article.title}`}
       >
-        <div className="aspect-[16/9] bg-muted overflow-hidden mb-4 relative rounded-lg">
+        <div
+          className={`relative mb-4 aspect-[16/9] overflow-hidden rounded-lg ${variant === "dark" ? "bg-black" : "bg-muted"}`}
+        >
           <ImageRenderer
             src={
               article.imageUrl ||

@@ -311,7 +311,7 @@ export default function FifthSection({
                               article.category?.slug ?? ""
                             }
                           >
-                            <div className="relative shrink-0 w-[160px] h-[100px] rounded-md overflow-hidden bg-neutral-100">
+                            <div className="relative h-[100px] w-[160px] shrink-0 overflow-hidden rounded-md">
                               {thumb?.src ? (
                                 <ImageRenderer
                                   src={thumb.src}

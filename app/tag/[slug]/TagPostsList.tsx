@@ -77,7 +77,7 @@ export default function TagPostsList({
         {posts.map((post) => (
           <article
             key={post._id}
-            className="border border-gray-200 rounded-lg overflow-hidden hover:shadow-lg transition-shadow duration-200"
+            className="overflow-hidden rounded-lg shadow-sm transition-shadow duration-200 hover:shadow-lg"
           >
             <div className="md:flex">
               {/* Image */}

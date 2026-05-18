@@ -74,12 +74,12 @@ export default function PostSelectedNewsAlt({
                       quality={60}
                       sizes="80px"
                       unoptimized={coverData.unoptimized}
-                      className="w-20 h-16 object-cover rounded-md border border-border group-hover:border-primary/30 transition-colors duration-200"
+                      className="h-16 w-20 rounded-md object-cover transition-opacity duration-200 group-hover:opacity-90"
                     />
                   );
                 }
                 return (
-                  <div className="w-20 h-16 bg-gray-200 rounded-md border border-border flex items-center justify-center">
+                  <div className="flex h-16 w-20 items-center justify-center rounded-md bg-gray-200/80">
                     <span className="text-gray-400 text-xs">No Image</span>
                   </div>
                 );

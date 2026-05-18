@@ -1,17 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
-
-interface Category {
-  slug: string;
-  name: string;
-  views?: number;
-}
-
-interface Tag {
-  slug: string;
-  title: string;
-  views?: number;
-}
+import type { Category, Tag } from "./site-shell/types";
 
 interface FooterProps {
   categories: Category[];

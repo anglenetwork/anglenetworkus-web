@@ -10,6 +10,10 @@ interface FeatureSideItemProps {
 export function FeatureSideItem({ article, variant = "light" }: FeatureSideItemProps) {
   const textColor = variant === "dark" ? "text-white" : "";
   const desktopTextColor = variant === "dark" ? "text-white" : "text-neutral-900";
+  const imageFrameClass =
+    variant === "dark"
+      ? "overflow-hidden rounded-lg bg-black"
+      : "overflow-hidden rounded-lg bg-muted";
   
   return (
     <article className="group">
@@ -20,7 +24,7 @@ export function FeatureSideItem({ article, variant = "light" }: FeatureSideItemP
       >
         {/* Mobile row style */}
         <div className="md:hidden flex gap-4">
-          <div className="flex-shrink-0 w-24 h-16 bg-muted overflow-hidden relative rounded-lg">
+          <div className={`relative h-16 w-24 shrink-0 ${imageFrameClass}`}>
             <ImageRenderer
               src={
                 article.imageUrl ||
@@ -44,7 +48,7 @@ export function FeatureSideItem({ article, variant = "light" }: FeatureSideItemP
 
         {/* Desktop card style */}
         <div className="hidden md:block">
-          <div className="aspect-[4/3] bg-muted overflow-hidden mb-3 relative rounded-lg">
+          <div className={`relative mb-3 aspect-[4/3] ${imageFrameClass}`}>
             <ImageRenderer
               src={
                 article.imageUrl ||

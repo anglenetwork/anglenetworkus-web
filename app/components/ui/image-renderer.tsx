@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { cn } from "@/lib/utils";
 
 type ImageRendererProps = {
   src: string;
@@ -52,6 +53,7 @@ export function ImageRenderer(props: ImageRendererProps) {
 
   // Force unoptimized for Wikimedia images to avoid rate limiting (429 errors)
   const shouldUnoptimize = isWikimedia(src) || propUnoptimized;
+  const imageClassName = cn("border-0 outline-none ring-0", className);
 
   // If using fill, don't pass width/height
   if (fill) {
@@ -65,7 +67,7 @@ export function ImageRenderer(props: ImageRendererProps) {
         fetchPriority={fetchPriority}
         quality={quality}
         sizes={sizes}
-        className={className}
+        className={imageClassName}
       />
     );
   }
@@ -97,7 +99,7 @@ export function ImageRenderer(props: ImageRendererProps) {
       fetchPriority={fetchPriority}
       quality={quality}
       sizes={sizes}
-      className={className}
+      className={imageClassName}
       style={style}
     />
   );

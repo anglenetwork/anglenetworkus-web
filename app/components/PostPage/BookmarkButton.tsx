@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 interface BookmarkButtonProps {
   articleId: string;
   articleSlug: string;
+  variant?: "default" | "compact";
 }
 
 function withTimeout<T>(
@@ -30,6 +31,7 @@ function withTimeout<T>(
 export default function BookmarkButton({
   articleId,
   articleSlug,
+  variant = "default",
 }: BookmarkButtonProps) {
   const router = useRouter();
 
@@ -137,6 +139,12 @@ export default function BookmarkButton({
     }
   };
 
+  const isCompact = variant === "compact";
+  const buttonClass = isCompact
+    ? "h-6 w-6 rounded-sm bg-white border border-gray-200 hover:bg-gray-50 shadow-none"
+    : "h-10 w-10 rounded-full bg-white border border-gray-200 hover:bg-gray-50 shadow-sm";
+  const iconClass = isCompact ? "h-3 w-3" : "h-5 w-5";
+
   return (
     <Button
       variant="ghost"
@@ -145,12 +153,12 @@ export default function BookmarkButton({
       disabled={isToggling}
       aria-busy={isToggling || statusLoading}
       title={statusLoading ? "Checking bookmark..." : undefined}
-      className={`h-10 w-10 rounded-full bg-white border border-gray-200 hover:bg-gray-50 shadow-sm ${
+      className={`${buttonClass} ${
         isBookmarked ? "text-yellow-500 fill-yellow-500" : "text-black"
       } ${isToggling ? "opacity-60" : ""}`}
       aria-label={isBookmarked ? "Remove bookmark" : "Add bookmark"}
     >
-      <Star className={`h-5 w-5 ${isBookmarked ? "fill-current" : ""}`} />
+      <Star className={`${iconClass} ${isBookmarked ? "fill-current" : ""}`} />
     </Button>
   );
 }

@@ -199,7 +199,7 @@ function SmallArticleGridItem({ article }: { article: Article }) {
         href={`/post/${article.slug}`}
         className="flex gap-4 items-start text-neutral-900 group"
       >
-        <div className="relative shrink-0 w-[160px] h-[100px] rounded-md overflow-hidden bg-neutral-100">
+        <div className="relative h-[100px] w-[160px] shrink-0 overflow-hidden rounded-md">
           {thumbImage?.src ? (
             <ImageRenderer
               src={thumbImage.src}

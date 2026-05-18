@@ -7,7 +7,7 @@ import { toPlainText, type PortableTextBlock } from "next-sanity";
 import { draftMode } from "next/headers";
 import { Libre_Franklin, Newsreader } from "next/font/google";
 
-import { AlertBanner, ContentLayoutWrapper } from "./components/layout";
+import { AlertBanner, SiteShell } from "./components/layout";
 import { SessionProviderWrapper } from "./components/SessionProviderWrapper";
 import { VisualEditingProvider } from "./components/VisualEditingProvider";
 import { SupabaseAuthProvider } from "@/app/providers/SupabaseAuthProvider";
@@ -97,9 +97,9 @@ export default async function RootLayout({
                   <AlertBanner />
                 </Suspense>
               )}
-              <ContentLayoutWrapper>
+              <SiteShell>
                 <main className="">{children}</main>
-              </ContentLayoutWrapper>
+              </SiteShell>
             </section>
 
             {isDraftMode && <VisualEditingProvider />}

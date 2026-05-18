@@ -6,14 +6,22 @@ import { Button } from "@/components/ui/button";
 interface SocialShareButtonsProps {
   title: string;
   url: string;
+  variant?: "default" | "compact";
 }
 
 export default function SocialShareButtons({
   title,
   url,
+  variant = "default",
 }: SocialShareButtonsProps) {
   const encodedTitle = encodeURIComponent(title);
   const encodedUrl = encodeURIComponent(url);
+  const isCompact = variant === "compact";
+  const buttonClass = isCompact
+    ? "h-6 w-6 rounded-sm bg-white border border-gray-200 hover:bg-gray-50 text-black shadow-none"
+    : "h-10 w-10 rounded-full bg-white border border-gray-200 hover:bg-gray-50 text-black shadow-sm";
+  const iconClass = isCompact ? "h-3 w-3" : "h-5 w-5";
+  const xIconClass = isCompact ? "h-3 w-3 fill-current" : "h-4 w-4 fill-current";
 
   const handleCopyLink = async () => {
     try {
@@ -29,7 +37,7 @@ export default function SocialShareButtons({
       <Button
         variant="ghost"
         size="icon"
-        className="h-10 w-10 rounded-full bg-white border border-gray-200 hover:bg-gray-50 text-black shadow-sm"
+        className={buttonClass}
         aria-label="Share on Facebook"
         onClick={() =>
           window.open(
@@ -38,13 +46,13 @@ export default function SocialShareButtons({
           )
         }
       >
-        <Facebook className="h-5 w-5 fill-current" />
+        <Facebook className={`${iconClass} fill-current`} />
       </Button>
 
       <Button
         variant="ghost"
         size="icon"
-        className="h-10 w-10 rounded-full bg-white border border-gray-200 hover:bg-gray-50 text-black shadow-sm"
+        className={buttonClass}
         aria-label="Share on X"
         onClick={() =>
           window.open(
@@ -53,7 +61,7 @@ export default function SocialShareButtons({
           )
         }
       >
-        <svg className="h-4 w-4 fill-current" viewBox="0 0 24 24">
+        <svg className={xIconClass} viewBox="0 0 24 24">
           <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
         </svg>
       </Button>
@@ -61,7 +69,7 @@ export default function SocialShareButtons({
       <Button
         variant="ghost"
         size="icon"
-        className="h-10 w-10 rounded-full bg-white border border-gray-200 hover:bg-gray-50 text-black shadow-sm"
+        className={buttonClass}
         aria-label="Share via Email"
         onClick={() =>
           window.open(
@@ -70,17 +78,17 @@ export default function SocialShareButtons({
           )
         }
       >
-        <Mail className="h-5 w-5" />
+        <Mail className={iconClass} />
       </Button>
 
       <Button
         variant="ghost"
         size="icon"
-        className="h-10 w-10 rounded-full bg-white border border-gray-200 hover:bg-gray-50 text-black shadow-sm"
+        className={buttonClass}
         aria-label="Copy Link"
         onClick={handleCopyLink}
       >
-        <LinkIcon className="h-5 w-5" />
+        <LinkIcon className={iconClass} />
       </Button>
     </div>
   );

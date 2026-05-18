@@ -13,6 +13,7 @@ import {
 } from "@/app/lib/article-family/metrics";
 import { logDevMetricsFallback } from "@/app/lib/article-family/metrics-dev-log";
 import {
+  latestInCategoryForRelatedQuery,
   relatedContentForAnalysisQuery,
   relatedContentForOpinionQuery,
   relatedContentForPostQuery,
@@ -131,4 +132,45 @@ export async function loadArticlePageSidebars(article: ArticleFamily) {
     popularReads: attachPostHref(popularReads),
     relatedArticles,
   };
+}
+
+/**
+ * Latest N articles in the same category as the given article (post + analysis),
+ * excluding the article itself. Returns [] when the article has no category.
+ *
+ * Fetch limits for the related module: 7 (classic: 1 hero + 6 list),
+ * 10 (modern: 6 grid + 4 sidebar).
+ */
+export async function loadLatestInCategory(
+  article: ArticleFamily,
+  limit: number
+): Promise<SidebarArticleLink[]> {
+  const categorySlug = article.category?.slug;
+  if (!categorySlug) return [];
+
+  const rows = await sanityFetch({
+    query: latestInCategoryForRelatedQuery,
+    params: {
+      categorySlug,
+      currentId: article._id,
+      limit,
+    },
+  });
+
+  const normalized = (rows || [])
+    .map((r: unknown) => normalizeArticleFamilyCard(r))
+    .filter((r): r is NonNullable<typeof r> => r != null);
+
+  return normalized.map((r) => ({
+    _id: r._id,
+    _type: r._type,
+    title: r.title,
+    slug: r.slug,
+    href: r.href,
+    excerpt: r.excerpt,
+    cover: r.cover,
+    date: r.date,
+    author: r.author ?? null,
+    category: r.category ?? null,
+  }));
 }
