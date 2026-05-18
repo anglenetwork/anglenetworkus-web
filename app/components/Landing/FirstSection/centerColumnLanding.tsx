@@ -64,7 +64,7 @@ export function CenterColumnLanding({
       {mainStory.map((post, index) => (
         <article key={post._id} className="mb-8">
           <Link href={`/post/${post.slug}`} className="hover:text-red-600">
-            <h1 className="text-3xl md:text-3xl lg:hidden font-bold text-gray-900 !leading-tight tracking-tight mb-4 font-sans text-start md:text-center">
+            <h1 className="text-2xl md:text-3xl lg:hidden font-bold text-gray-900 !leading-tight tracking-tight mb-4 font-sans text-start md:text-center">
               {post.title}
             </h1>
           </Link>
@@ -75,7 +75,7 @@ export function CenterColumnLanding({
             return (
               <Link href={`/post/${post.slug}`}>
                 <div className="mb-8">
-                  <div className="w-full h-64 md:h-[500px] overflow-hidden rounded-sm relative">
+                  <div className="relative w-full aspect-[5/6] overflow-hidden rounded-sm md:aspect-auto md:h-[500px]">
                     <ImageRenderer
                       src={src}
                       alt={alt}
@@ -90,8 +90,8 @@ export function CenterColumnLanding({
                       fill
                     />
                     {post.excerpt && (
-                      <div className="absolute bottom-2 left-0 right-0 bg-white rounded-sm p-4 m-4">
-                        <p className="text-black text-sm md:text-lg font-sans font-semibold leading-snug line-clamp-2">
+                      <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent px-4 pb-4 pt-12 md:px-6 md:pb-6 md:pt-16">
+                        <p className="line-clamp-4 font-sans text-base font-medium leading-relaxed text-white md:text-lg">
                           {post.excerpt}
                         </p>
                       </div>
@@ -105,14 +105,53 @@ export function CenterColumnLanding({
       ))}
 
       {/* MORE TOP HEADLINES */}
-      {/* Mobile spacing normalized; desktop untouched */}
-      <div className="space-y-6 md:space-y-8 mb-8 md:mb-0">
-        {/* Section heading for proper hierarchy (h2 after h1) */}
+      <div className="mb-8 space-y-4 md:mb-0 md:space-y-8">
         <h2 className="sr-only">More Top Headlines</h2>
-        {/* First row: 2 main stories */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8">
+
+        {/* Mobile: 3 stacked rows — thumbnail left, title right */}
+        <div className="flex flex-col gap-5 md:hidden">
+          {moreTopHeadlines.slice(0, 3).map((post) => {
+            const { src, alt, unoptimized } = getCover(post);
+            return (
+              <article key={post._id}>
+                <Link
+                  href={`/post/${post.slug}`}
+                  className="group flex items-start gap-3 hover:text-red-600"
+                >
+                  {src ? (
+                    <div className="relative h-16 w-24 shrink-0 overflow-hidden rounded-sm">
+                      <ImageRenderer
+                        src={src}
+                        alt={alt}
+                        width={96}
+                        height={64}
+                        unoptimized={unoptimized}
+                        quality={55}
+                        sizes="96px"
+                        className="object-cover"
+                        fill
+                      />
+                    </div>
+                  ) : (
+                    <div
+                      className="h-16 w-24 shrink-0 rounded-sm bg-neutral-200"
+                      aria-hidden
+                    />
+                  )}
+                  <h3 className="min-w-0 flex-1 font-sans text-base font-semibold leading-snug tracking-tight text-neutral-900 group-hover:text-red-600">
+                    {post.title}
+                  </h3>
+                </Link>
+              </article>
+            );
+          })}
+        </div>
+
+        {/* md+: 2-column grid + third story */}
+        <div className="hidden md:block md:space-y-8">
+          <div className="grid grid-cols-2 gap-8">
           {moreTopHeadlines.slice(0, 2).map((post) => (
-            <article key={post._id} className="md:block">
+            <article key={post._id}>
               {(() => {
                 const { src, alt, unoptimized, credit } = getCover(post);
                 if (!src) return null;
@@ -146,14 +185,14 @@ export function CenterColumnLanding({
                   href={`/post/${post.slug}`}
                   className="hover:text-red-600"
                 >
-                  <h3 className="text-base md:text-xl font-sans font-semibold text-neutral-900 leading-snug tracking-tight">
+                  <h3 className="font-sans text-xl font-semibold leading-snug tracking-tight text-neutral-900">
                     {post.title}
                   </h3>
                 </Link>
               </div>
             </article>
           ))}
-        </div>
+          </div>
 
         {/* Third story */}
         {moreTopHeadlines[2] && (
@@ -187,13 +226,14 @@ export function CenterColumnLanding({
                 href={`/post/${moreTopHeadlines[2].slug}`}
                 className="hover:text-red-600"
               >
-                <h3 className="text-base md:text-xl font-sans font-semibold text-neutral-900 leading-snug tracking-tight">
+                <h3 className="font-sans text-xl font-semibold leading-snug tracking-tight text-neutral-900">
                   {moreTopHeadlines[2].title}
                 </h3>
               </Link>
             </div>
           </article>
         )}
+        </div>
       </div>
     </div>
   );
