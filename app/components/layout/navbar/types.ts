@@ -1,18 +1,8 @@
-export interface Category {
-  slug: string;
-  name: string;
-  views?: number;
-}
-
-export interface Tag {
-  slug: string;
-  title: string;
-  views?: number;
-}
+export type { Category, Tag } from "../site-shell/types";
+import type { Category, Tag } from "../site-shell/types";
 
 export interface HeaderProps {
   categories: Category[];
   tags: Tag[];
   showsTags: Tag[];
 }
-

@@ -3053,6 +3053,106 @@ export type ArticlesByTagEditorialQueryResult = Array<
 export type EditorialTagArticleCountQueryResult = number;
 
 // Source: sanity/lib/article-family-queries.ts
+// Variable: latestInCategoryForRelatedQuery
+// Query: *[    _type in ["post", "analysis"] &&      status == "published" &&  defined(publishedAt) && publishedAt <= now() &&    defined(slug.current) &&    defined($categorySlug) && $categorySlug != "" &&    category->slug.current == $categorySlug &&    _id != $currentId  ] | order(coalesce(publishedAt, _updatedAt) desc, _updatedAt desc) [0...$limit] {      _id,  _type,  "status": select(_originalId in path("drafts.**") => "draft", "published"),  "title": coalesce(title, "Untitled"),  "tickerTitle": coalesce(tickerTitle, ""),  "slug": slug.current,  excerpt,    cover{    source,    externalUrl,    image,    alt,    epigraph,    creditProvider,    creditAuthor,    creditSourceUrl,    creditLicense  },  publishedAt,  updatedAt,    "author": select(    defined(author->name) => {      "name": coalesce(author->name, "Anonymous"),      "picture": author->picture    }  ),    "category": select(    defined(category->name) && defined(category->slug.current) => {      "title": category->name,      "slug": category->slug.current    }  ),  "tags": tags[]->{    "title": coalesce(title, name),    "slug": slug.current  },    opinionFormat,  disclosure,  analysisFocus,  methodologyNote,  sourcesNote,  sponsorAttribution{    sponsorName,    sponsorUrl,    disclosure  }  }
+export type LatestInCategoryForRelatedQueryResult = Array<
+  | {
+      _id: string;
+      _type: "analysis";
+      status: "draft" | "published";
+      title: string | "Untitled";
+      tickerTitle: string | "";
+      slug: string | null;
+      excerpt: string | null;
+      cover: {
+        source: "asset" | "external" | null;
+        externalUrl: string | null;
+        image: Image1 | null;
+        alt: string | null;
+        epigraph: string | null;
+        creditProvider: string | null;
+        creditAuthor: string | null;
+        creditSourceUrl: string | null;
+        creditLicense: string | null;
+      } | null;
+      publishedAt: string | null;
+      updatedAt: string | null;
+      author: {
+        name: string | "Anonymous";
+        picture: {
+          asset?: SanityImageAssetReference;
+          media?: unknown;
+          hotspot?: SanityImageHotspot;
+          crop?: SanityImageCrop;
+          alt?: string;
+          _type: "image";
+        } | null;
+      };
+      category: {
+        title: string | null;
+        slug: string | null;
+      };
+      tags: Array<{
+        title: string | null;
+        slug: string | null;
+      }> | null;
+      opinionFormat: null;
+      disclosure: null;
+      analysisFocus: string | null;
+      methodologyNote: string | null;
+      sourcesNote: string | null;
+      sponsorAttribution: null;
+    }
+  | {
+      _id: string;
+      _type: "post";
+      status: "draft" | "published";
+      title: string | "Untitled";
+      tickerTitle: string | "";
+      slug: string | null;
+      excerpt: string | null;
+      cover: {
+        source: "asset" | "external" | null;
+        externalUrl: string | null;
+        image: Image1 | null;
+        alt: string | null;
+        epigraph: string | null;
+        creditProvider: string | null;
+        creditAuthor: string | null;
+        creditSourceUrl: string | null;
+        creditLicense: string | null;
+      } | null;
+      publishedAt: string | null;
+      updatedAt: string | null;
+      author: {
+        name: string | "Anonymous";
+        picture: {
+          asset?: SanityImageAssetReference;
+          media?: unknown;
+          hotspot?: SanityImageHotspot;
+          crop?: SanityImageCrop;
+          alt?: string;
+          _type: "image";
+        } | null;
+      };
+      category: {
+        title: string | null;
+        slug: string | null;
+      };
+      tags: Array<{
+        title: string | null;
+        slug: string | null;
+      }> | null;
+      opinionFormat: null;
+      disclosure: null;
+      analysisFocus: null;
+      methodologyNote: null;
+      sourcesNote: null;
+      sponsorAttribution: null;
+    }
+>;
+
+// Source: sanity/lib/article-family-queries.ts
 // Variable: relatedContentForPostQuery
 // Query: *[    _type in ["post", "analysis"] &&      status == "published" &&  defined(publishedAt) && publishedAt <= now() &&    defined(slug.current) &&    slug.current != $slug &&    _id != $currentId  ]{      _id,  _type,  "status": select(_originalId in path("drafts.**") => "draft", "published"),  "title": coalesce(title, "Untitled"),  "tickerTitle": coalesce(tickerTitle, ""),  "slug": slug.current,  excerpt,    cover{    source,    externalUrl,    image,    alt,    epigraph,    creditProvider,    creditAuthor,    creditSourceUrl,    creditLicense  },  publishedAt,  updatedAt,    "author": select(    defined(author->name) => {      "name": coalesce(author->name, "Anonymous"),      "picture": author->picture    }  ),    "category": select(    defined(category->name) && defined(category->slug.current) => {      "title": category->name,      "slug": category->slug.current    }  ),  "tags": tags[]->{    "title": coalesce(title, name),    "slug": slug.current  },    opinionFormat,  disclosure,  analysisFocus,  methodologyNote,  sourcesNote,  sponsorAttribution{    sponsorName,    sponsorUrl,    disclosure  },    "_sortCat": select(      defined($categorySlug) && $categorySlug != "" && category->slug.current == $categorySlug => 1,      0    )  } | order(_sortCat desc, publishedAt desc) [0...$limit]
 export type RelatedContentForPostQueryResult = Array<
@@ -6787,6 +6887,7 @@ declare module "@sanity/client" {
     '\n  *[\n    _type == "post" &&\n    category->slug.current == $categorySlug &&\n    \n  status == "published" &&\n  defined(publishedAt) && publishedAt <= now()\n &&\n    defined(slug.current)\n  ] | order(coalesce(publishedAt, _updatedAt) desc, _updatedAt desc) [0...$limit] {\n    \n  _id,\n  _type,\n  "status": select(_originalId in path("drafts.**") => "draft", "published"),\n  "title": coalesce(title, "Untitled"),\n  "tickerTitle": coalesce(tickerTitle, ""),\n  "slug": slug.current,\n  excerpt,\n  \n  cover{\n    source,\n    externalUrl,\n    image,\n    alt,\n    epigraph,\n    creditProvider,\n    creditAuthor,\n    creditSourceUrl,\n    creditLicense\n  }\n,\n  publishedAt,\n  updatedAt,\n  \n  "author": select(\n    defined(author->name) => {\n      "name": coalesce(author->name, "Anonymous"),\n      "picture": author->picture\n    }\n  )\n,\n  \n  "category": select(\n    defined(category->name) && defined(category->slug.current) => {\n      "title": category->name,\n      "slug": category->slug.current\n    }\n  ),\n  "tags": tags[]->{\n    "title": coalesce(title, name),\n    "slug": slug.current\n  }\n,\n  \n  opinionFormat,\n  disclosure,\n  analysisFocus,\n  methodologyNote,\n  sourcesNote,\n  sponsorAttribution{\n    sponsorName,\n    sponsorUrl,\n    disclosure\n  }\n\n\n  }\n': ArticlesByCategoryStandardPostsLimitedQueryResult;
     '\n  *[\n    _type in ["post", "analysis"] &&\n    $tagSlug in tags[]->slug.current &&\n    \n  status == "published" &&\n  defined(publishedAt) && publishedAt <= now()\n &&\n    defined(slug.current)\n  ] | order(coalesce(publishedAt, _updatedAt) desc, _updatedAt desc) {\n    \n  _id,\n  _type,\n  "status": select(_originalId in path("drafts.**") => "draft", "published"),\n  "title": coalesce(title, "Untitled"),\n  "tickerTitle": coalesce(tickerTitle, ""),\n  "slug": slug.current,\n  excerpt,\n  \n  cover{\n    source,\n    externalUrl,\n    image,\n    alt,\n    epigraph,\n    creditProvider,\n    creditAuthor,\n    creditSourceUrl,\n    creditLicense\n  }\n,\n  publishedAt,\n  updatedAt,\n  \n  "author": select(\n    defined(author->name) => {\n      "name": coalesce(author->name, "Anonymous"),\n      "picture": author->picture\n    }\n  )\n,\n  \n  "category": select(\n    defined(category->name) && defined(category->slug.current) => {\n      "title": category->name,\n      "slug": category->slug.current\n    }\n  ),\n  "tags": tags[]->{\n    "title": coalesce(title, name),\n    "slug": slug.current\n  }\n,\n  \n  opinionFormat,\n  disclosure,\n  analysisFocus,\n  methodologyNote,\n  sourcesNote,\n  sponsorAttribution{\n    sponsorName,\n    sponsorUrl,\n    disclosure\n  }\n\n\n  }\n': ArticlesByTagEditorialQueryResult;
     '\n  count(*[\n    _type in ["post", "analysis"] &&\n    $tagSlug in tags[]->slug.current &&\n    \n  status == "published" &&\n  defined(publishedAt) && publishedAt <= now()\n &&\n    defined(slug.current)\n  ])\n': EditorialTagArticleCountQueryResult;
+    '\n  *[\n    _type in ["post", "analysis"] &&\n    \n  status == "published" &&\n  defined(publishedAt) && publishedAt <= now()\n &&\n    defined(slug.current) &&\n    defined($categorySlug) && $categorySlug != "" &&\n    category->slug.current == $categorySlug &&\n    _id != $currentId\n  ] | order(coalesce(publishedAt, _updatedAt) desc, _updatedAt desc) [0...$limit] {\n    \n  _id,\n  _type,\n  "status": select(_originalId in path("drafts.**") => "draft", "published"),\n  "title": coalesce(title, "Untitled"),\n  "tickerTitle": coalesce(tickerTitle, ""),\n  "slug": slug.current,\n  excerpt,\n  \n  cover{\n    source,\n    externalUrl,\n    image,\n    alt,\n    epigraph,\n    creditProvider,\n    creditAuthor,\n    creditSourceUrl,\n    creditLicense\n  }\n,\n  publishedAt,\n  updatedAt,\n  \n  "author": select(\n    defined(author->name) => {\n      "name": coalesce(author->name, "Anonymous"),\n      "picture": author->picture\n    }\n  )\n,\n  \n  "category": select(\n    defined(category->name) && defined(category->slug.current) => {\n      "title": category->name,\n      "slug": category->slug.current\n    }\n  ),\n  "tags": tags[]->{\n    "title": coalesce(title, name),\n    "slug": slug.current\n  }\n,\n  \n  opinionFormat,\n  disclosure,\n  analysisFocus,\n  methodologyNote,\n  sourcesNote,\n  sponsorAttribution{\n    sponsorName,\n    sponsorUrl,\n    disclosure\n  }\n\n\n  }\n': LatestInCategoryForRelatedQueryResult;
     '\n  *[\n    _type in ["post", "analysis"] &&\n    \n  status == "published" &&\n  defined(publishedAt) && publishedAt <= now()\n &&\n    defined(slug.current) &&\n    slug.current != $slug &&\n    _id != $currentId\n  ]{\n    \n  _id,\n  _type,\n  "status": select(_originalId in path("drafts.**") => "draft", "published"),\n  "title": coalesce(title, "Untitled"),\n  "tickerTitle": coalesce(tickerTitle, ""),\n  "slug": slug.current,\n  excerpt,\n  \n  cover{\n    source,\n    externalUrl,\n    image,\n    alt,\n    epigraph,\n    creditProvider,\n    creditAuthor,\n    creditSourceUrl,\n    creditLicense\n  }\n,\n  publishedAt,\n  updatedAt,\n  \n  "author": select(\n    defined(author->name) => {\n      "name": coalesce(author->name, "Anonymous"),\n      "picture": author->picture\n    }\n  )\n,\n  \n  "category": select(\n    defined(category->name) && defined(category->slug.current) => {\n      "title": category->name,\n      "slug": category->slug.current\n    }\n  ),\n  "tags": tags[]->{\n    "title": coalesce(title, name),\n    "slug": slug.current\n  }\n,\n  \n  opinionFormat,\n  disclosure,\n  analysisFocus,\n  methodologyNote,\n  sourcesNote,\n  sponsorAttribution{\n    sponsorName,\n    sponsorUrl,\n    disclosure\n  }\n\n,\n    "_sortCat": select(\n      defined($categorySlug) && $categorySlug != "" && category->slug.current == $categorySlug => 1,\n      0\n    )\n  } | order(_sortCat desc, publishedAt desc) [0...$limit]\n': RelatedContentForPostQueryResult;
     '\n  *[\n    _type == "opinion" &&\n    \n  status == "published" &&\n  defined(publishedAt) && publishedAt <= now()\n &&\n    defined(slug.current) &&\n    slug.current != $slug &&\n    _id != $currentId\n  ] | order(publishedAt desc) [0...$limit] {\n    \n  _id,\n  _type,\n  "status": select(_originalId in path("drafts.**") => "draft", "published"),\n  "title": coalesce(title, "Untitled"),\n  "tickerTitle": coalesce(tickerTitle, ""),\n  "slug": slug.current,\n  excerpt,\n  \n  cover{\n    source,\n    externalUrl,\n    image,\n    alt,\n    epigraph,\n    creditProvider,\n    creditAuthor,\n    creditSourceUrl,\n    creditLicense\n  }\n,\n  publishedAt,\n  updatedAt,\n  \n  "author": select(\n    defined(author->name) => {\n      "name": coalesce(author->name, "Anonymous"),\n      "picture": author->picture\n    }\n  )\n,\n  \n  "category": select(\n    defined(category->name) && defined(category->slug.current) => {\n      "title": category->name,\n      "slug": category->slug.current\n    }\n  ),\n  "tags": tags[]->{\n    "title": coalesce(title, name),\n    "slug": slug.current\n  }\n,\n  \n  opinionFormat,\n  disclosure,\n  analysisFocus,\n  methodologyNote,\n  sourcesNote,\n  sponsorAttribution{\n    sponsorName,\n    sponsorUrl,\n    disclosure\n  }\n\n\n  }\n': RelatedContentForOpinionQueryResult;
     '\n  *[\n    _type in ["post", "analysis"] &&\n    \n  status == "published" &&\n  defined(publishedAt) && publishedAt <= now()\n &&\n    defined(slug.current) &&\n    slug.current != $slug &&\n    _id != $currentId\n  ]{\n    \n  _id,\n  _type,\n  "status": select(_originalId in path("drafts.**") => "draft", "published"),\n  "title": coalesce(title, "Untitled"),\n  "tickerTitle": coalesce(tickerTitle, ""),\n  "slug": slug.current,\n  excerpt,\n  \n  cover{\n    source,\n    externalUrl,\n    image,\n    alt,\n    epigraph,\n    creditProvider,\n    creditAuthor,\n    creditSourceUrl,\n    creditLicense\n  }\n,\n  publishedAt,\n  updatedAt,\n  \n  "author": select(\n    defined(author->name) => {\n      "name": coalesce(author->name, "Anonymous"),\n      "picture": author->picture\n    }\n  )\n,\n  \n  "category": select(\n    defined(category->name) && defined(category->slug.current) => {\n      "title": category->name,\n      "slug": category->slug.current\n    }\n  ),\n  "tags": tags[]->{\n    "title": coalesce(title, name),\n    "slug": slug.current\n  }\n,\n  \n  opinionFormat,\n  disclosure,\n  analysisFocus,\n  methodologyNote,\n  sourcesNote,\n  sponsorAttribution{\n    sponsorName,\n    sponsorUrl,\n    disclosure\n  }\n\n,\n    "_rank": select(\n      _type == "analysis" && defined($categorySlug) && $categorySlug != "" && category->slug.current == $categorySlug => 4,\n      _type == "post" && defined($categorySlug) && $categorySlug != "" && category->slug.current == $categorySlug => 3,\n      _type == "analysis" => 2,\n      _type == "post" => 1\n    )\n  } | order(_rank desc, publishedAt desc) [0...$limit]\n': RelatedContentForAnalysisQueryResult;

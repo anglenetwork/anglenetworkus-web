@@ -38,7 +38,7 @@ function OpinionCard({ article }: { article: ArticleFamilyCard }) {
 
   return (
     // Outer card: image fills the full background; white panel floats over the lower-left
-    <article className="relative h-[460px] overflow-hidden rounded-2xl bg-neutral-200">
+    <article className="relative h-[460px] overflow-hidden rounded-2xl bg-black">
       {/* Full-bleed background image */}
       {coverData?.src && (
         <ImageRenderer

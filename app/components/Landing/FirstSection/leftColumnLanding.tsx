@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useState, useEffect } from "react";
+import { getWikimediaThumbnail } from "@/lib/image-optimization";
 import { getCoverImage } from "@/sanity/lib/utils";
 import { BreakingNewsLabel } from "../../ui/breaking-news-label";
 import { SectionHeader } from "../../ui/section-header";
@@ -63,7 +64,6 @@ function getGalleryImageData(
       );
       // Use Wikimedia thumbnail API to get optimized sizes
       if (isWikimedia) {
-        const { getWikimediaThumbnail } = require("@/lib/image-optimization");
         const optimizedUrl = getWikimediaThumbnail(externalUrl, 1200);
         return {
           src: optimizedUrl,

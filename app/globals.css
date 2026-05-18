@@ -30,7 +30,7 @@
     --chart-5: 27 87% 67%;
     --radius: 0.5rem;
     /* Editorial / article UI tokens */
-    --section-accent: 0 72% 38%;
+    --section-accent: 356 83% 41%;
     --editorial-kicker: 200 80% 28%;
     --text-link: 221 83% 53%;
   }
@@ -39,6 +39,11 @@
 @layer base {
   * {
     @apply border-border;
+  }
+  img,
+  picture,
+  video {
+    @apply border-0 outline-none;
   }
   body {
     @apply bg-background text-foreground font-sans;

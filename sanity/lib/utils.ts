@@ -2,6 +2,7 @@
 import createImageUrlBuilder from "@sanity/image-url";
 import type { ImageUrlBuilder } from "@sanity/image-url/lib/types/builder";
 import type { SanityImageSource } from "@sanity/image-url/lib/types/types";
+import { getWikimediaThumbnail } from "@/lib/image-optimization";
 import { dataset, projectId } from "@/sanity/lib/api";
 
 const imageBuilder = createImageUrlBuilder({
@@ -123,8 +124,6 @@ export function getCoverImage(
     const isWikimedia = /(^|\.)upload\.wikimedia\.org$/.test(new URL(externalUrl).hostname);
     const altText = cover.alt?.trim() || DEFAULT_ALT_TEXT;
     if (isWikimedia) {
-      // Import dynamically to avoid circular dependencies
-      const { getWikimediaThumbnail } = require("@/lib/image-optimization");
       // Use thumbnail API to get appropriately sized images based on display size
       // This dramatically reduces file size (e.g., 101MB -> ~500KB for 1200px, ~50KB for 200px)
       const optimizedUrl = getWikimediaThumbnail(externalUrl, maxWidth);

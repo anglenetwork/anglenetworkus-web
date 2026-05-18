@@ -19,8 +19,8 @@ export function SitePageWidth({
   return (
     <div
       className={cn(
-        "mx-auto w-full px-4 sm:px-6 lg:px-10",
-        variant === "hub" ? "max-w-[1440px]" : "max-w-5xl",
+        "mx-auto w-full px-4 sm:px-6",
+        variant === "hub" ? "container lg:px-16" : "max-w-5xl lg:px-10",
         className,
       )}
     >

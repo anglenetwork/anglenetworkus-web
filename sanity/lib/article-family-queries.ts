@@ -320,6 +320,23 @@ export const editorialTagArticleCountQuery = defineQuery(`
 `);
 
 /**
+ * Latest editorial articles in a given category, excluding the current article.
+ * Used by the post-page "More in {category}" related-articles module (classic + modern).
+ */
+export const latestInCategoryForRelatedQuery = defineQuery(`
+  *[
+    _type in ["post", "analysis"] &&
+    ${ARTICLE_FAMILY_PUBLISHED} &&
+    defined(slug.current) &&
+    defined($categorySlug) && $categorySlug != "" &&
+    category->slug.current == $categorySlug &&
+    _id != $currentId
+  ] | order(coalesce(publishedAt, _updatedAt) desc, _updatedAt desc) [0...$limit] {
+    ${articleFamilyListFragment}
+  }
+`);
+
+/**
  * Related on `post` pages: post + analysis only; same category first, then recency.
  */
 export const relatedContentForPostQuery = defineQuery(`
