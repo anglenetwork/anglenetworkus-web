@@ -1,5 +1,7 @@
 import { defineField, type FieldDefinition } from "sanity";
 
+import { isUniqueSlugByType } from "@/sanity/lib/isUniqueSlug";
+
 /** Desk / schema field group names (shared across article-family types). */
 export const ARTICLE_FIELD_GROUPS = {
   core: "core",
@@ -49,7 +51,7 @@ export const articleCoreMetadataFields = [
     options: {
       source: "title",
       maxLength: 96,
-      isUnique: (value, context) => context.defaultIsUnique(value, context),
+      isUnique: isUniqueSlugByType,
     },
     validation: (rule) => rule.required(),
   }),

@@ -286,7 +286,7 @@ export default defineType({
       title: "title",
       status: "status",
       publishedAt: "publishedAt",
-      categoryName: "category->name",
+      categoryName: "category.name",
       mainHeadline: "mainHeadline",
       frontline: "frontline",
       rightHeadline: "rightHeadline",
