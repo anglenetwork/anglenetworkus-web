@@ -104,19 +104,20 @@ export default defineConfig({
             },
             resolve: (doc) => {
               const postHref = resolveHref("post", doc?.slug);
-              if (postHref) {
+              if (!postHref) {
                 return {
-                  locations: [
-                    {
-                      title: doc?.title || "Untitled",
-                      href: postHref,
-                    },
-                    homeLocation,
-                  ],
+                  locations: [homeLocation],
                 };
               }
+
               return {
-                locations: [homeLocation],
+                locations: [
+                  {
+                    title: doc?.title || "Untitled",
+                    href: postHref,
+                  },
+                  homeLocation,
+                ],
               };
             },
           }),
@@ -127,16 +128,18 @@ export default defineConfig({
             },
             resolve: (doc) => {
               const opinionHref = resolveHref("opinion", doc?.slug);
+              if (!opinionHref) {
+                return {
+                  locations: [homeLocation],
+                };
+              }
               return {
                 locations: [
                   {
                     title: doc?.title || "Untitled",
-                    href: opinionHref || "#",
+                    href: opinionHref,
                   },
-                  {
-                    title: "Home",
-                    href: "/",
-                  },
+                  homeLocation,
                 ],
               };
             },
@@ -148,16 +151,18 @@ export default defineConfig({
             },
             resolve: (doc) => {
               const analysisHref = resolveHref("analysis", doc?.slug);
+              if (!analysisHref) {
+                return {
+                  locations: [homeLocation],
+                };
+              }
               return {
                 locations: [
                   {
                     title: doc?.title || "Untitled",
-                    href: analysisHref || "#",
+                    href: analysisHref,
                   },
-                  {
-                    title: "Home",
-                    href: "/",
-                  },
+                  homeLocation,
                 ],
               };
             },
@@ -169,23 +174,31 @@ export default defineConfig({
             },
             resolve: (doc) => {
               const sponsoredHref = resolveHref("sponsored", doc?.slug);
+              if (!sponsoredHref) {
+                return {
+                  locations: [homeLocation],
+                };
+              }
               return {
                 locations: [
                   {
                     title: doc?.title || "Untitled",
-                    href: sponsoredHref || "#",
+                    href: sponsoredHref,
                   },
-                  {
-                    title: "Home",
-                    href: "/",
-                  },
+                  homeLocation,
                 ],
               };
             },
           }),
         },
       },
-      previewUrl: { previewMode: { enable: "/api/draft-mode/enable" } },
+      previewUrl: {
+        origin:
+          process.env.SANITY_STUDIO_PREVIEW_URL ||
+          process.env.NEXT_PUBLIC_SITE_URL ||
+          "http://localhost:3000",
+        previewMode: { enable: "/api/draft-mode/enable" },
+      },
     }),
     structureTool({ structure: editorialDeskStructure }),
     // Configures the global "new document" button, and document actions, to suit the Settings document singleton

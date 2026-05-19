@@ -30,6 +30,29 @@ function requireEnv() {
   }
 }
 
+function assertSafeToDeleteArticleContent() {
+  const dataset = process.env.NEXT_PUBLIC_SANITY_DATASET;
+  const unsafeDatasetNames = new Set(['production', 'prod', 'main']);
+  const nodeEnvAllowsReset =
+    process.env.NODE_ENV !== 'production' ||
+    process.env.SANITY_ALLOW_DEV_CONTENT_RESET === 'true';
+
+  if (!nodeEnvAllowsReset) {
+    throw new Error(
+      'Refusing to delete article content while NODE_ENV=production. Set SANITY_ALLOW_DEV_CONTENT_RESET=true to override for development resets.',
+    );
+  }
+
+  if (
+    unsafeDatasetNames.has(String(dataset).toLowerCase()) &&
+    process.env.SANITY_ALLOW_PRODUCTION_CONTENT_RESET !== 'true'
+  ) {
+    throw new Error(
+      `Refusing to delete article content from dataset "${dataset}". Set SANITY_ALLOW_PRODUCTION_CONTENT_RESET=true only for an approved development reset.`,
+    );
+  }
+}
+
 /** Stable direct Unsplash image URLs — one per seeded document (60+), unique photo IDs. */
 const UNSPLASH_IMAGE_URLS = [
   'https://images.unsplash.com/photo-1677442136019-21780ecad995?w=1600&q=80',
@@ -101,6 +124,69 @@ function slugify(input) {
     .replace(/['']/g, '')
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/(^-|-$)/g, '');
+}
+
+function uniqueSlug(baseSlug, usedSlugs) {
+  let slug = baseSlug;
+  let counter = 2;
+
+  while (usedSlugs.has(slug)) {
+    slug = `${baseSlug}-${counter}`;
+    counter += 1;
+  }
+
+  usedSlugs.add(slug);
+  return slug;
+}
+
+function applyUniqueArticleSlugs(docs, existingSlugs = []) {
+  const usedByType = new Map();
+
+  for (const type of ['post', 'opinion', 'analysis', 'sponsored']) {
+    usedByType.set(type, new Set());
+  }
+
+  for (const existing of existingSlugs) {
+    if (existing?._type && existing?.slug && usedByType.has(existing._type)) {
+      usedByType.get(existing._type).add(existing.slug);
+    }
+  }
+
+  for (const doc of docs) {
+    const usedSlugs = usedByType.get(doc._type);
+    if (!usedSlugs) continue;
+
+    const baseSlug = doc.slug?.current || slugify(doc.title);
+    const dedupedSlug = uniqueSlug(baseSlug, usedSlugs);
+    doc.slug = { _type: 'slug', current: dedupedSlug };
+  }
+}
+
+function assertUniqueArticleSlugs(docs) {
+  const seen = new Map();
+  const duplicates = [];
+
+  for (const doc of docs) {
+    const slug = doc.slug?.current;
+    if (!slug) {
+      throw new Error(`Generated [${doc._type}] "${doc.title}" without a slug.`);
+    }
+
+    const key = `${doc._type}:${slug}`;
+    if (seen.has(key)) {
+      duplicates.push({ key, first: seen.get(key), second: doc.title });
+      continue;
+    }
+    seen.set(key, doc.title);
+  }
+
+  if (duplicates.length > 0) {
+    throw new Error(
+      `Generated duplicate article slugs:\n${duplicates
+        .map((dup) => `  ${dup.key} (${dup.first} / ${dup.second})`)
+        .join('\n')}`,
+    );
+  }
 }
 
 /**
@@ -271,6 +357,8 @@ async function deleteExistingArticleFamilyDocs(client) {
     console.log('No article-family documents to delete.');
     return byType;
   }
+
+  assertSafeToDeleteArticleContent();
 
   let deleted = 0;
   for (const doc of docs) {
@@ -1263,6 +1351,18 @@ async function run() {
     );
     docIndex++;
   }
+
+  const existingSlugs = appendMode
+    ? await client.fetch(
+        `*[_type in ["post","opinion","analysis","sponsored"] && defined(slug.current)]{
+          _type,
+          "slug": slug.current
+        }`,
+      )
+    : [];
+
+  applyUniqueArticleSlugs(toCreate, existingSlugs);
+  assertUniqueArticleSlugs(toCreate);
 
   console.log('\nCreating documents...');
   const createdByType = { post: 0, opinion: 0, analysis: 0, sponsored: 0 };
