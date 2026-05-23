@@ -2,7 +2,7 @@
 export const ARTICLE_META_PRIMARY_CLASS =
   "font-sans text-sm sm:text-base font-semibold leading-snug text-neutral-700";
 export const ARTICLE_META_TIMESTAMP_CLASS =
-  "font-sans text-xs sm:text-sm font-semibold leading-snug text-neutral-700";
+  "font-sans text-xs sm:text-sm font-normal leading-snug text-neutral-700";
 export const ARTICLE_META_SECONDARY_CLASS =
   "font-sans text-xs sm:text-sm font-normal italic text-neutral-500";
 
@@ -16,7 +16,7 @@ export const ARTICLE_MEDIA_CLASSES = {
   default: {
     figure: "mb-12 text-left",
     wrapper:
-      "relative w-full h-96 md:h-[500px] overflow-hidden rounded-lg shadow-lg",
+      "relative w-full h-64 md:h-[500px] overflow-hidden rounded-lg shadow-lg",
     image: "object-cover object-center",
     sizes: "(max-width: 768px) 100vw, (max-width: 1280px) 66vw, 800px",
   },

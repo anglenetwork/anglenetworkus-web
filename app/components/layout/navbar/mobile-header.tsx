@@ -8,11 +8,13 @@ import { UserMenu } from "./user-menu";
 interface MobileHeaderProps {
   isMenuOpen: boolean;
   onMenuToggle: () => void;
+  onSearchMenuOpen: () => void;
 }
 
 export function MobileHeader({
   isMenuOpen,
   onMenuToggle,
+  onSearchMenuOpen,
 }: MobileHeaderProps) {
   return (
     <div className="flex items-center justify-between py-3 lg:hidden">
@@ -23,8 +25,8 @@ export function MobileHeader({
       />
       <Logo variant="mobile" />
       <div className="flex items-center gap-2">
-        <UserMenu variant="mobile" />
-        <SearchButton onClick={onMenuToggle} variant="mobile" />
+        <UserMenu variant="mobile" hideSignIn />
+        <SearchButton onClick={onSearchMenuOpen} variant="mobile" />
       </div>
     </div>
   );

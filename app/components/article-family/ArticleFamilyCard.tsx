@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { cn } from "@/lib/utils";
 import { format, parseISO } from "date-fns";
 import { getCoverImage } from "@/sanity/lib/utils";
 import { ImageRenderer } from "../ui/image-renderer";
@@ -46,6 +47,10 @@ export default function ArticleFamilyCard({
   showPostTypeBadge = false,
   showAuthor = false,
   showExcerpt = false,
+  hideExcerptOnMobile = false,
+  hideAuthorOnMobile = false,
+  hidePostTypeBadgeOnMobile = false,
+  enlargeMobileThumb = false,
   showTypeMetadataInCompact = false,
   kickerMode = "card",
   showDate = true,
@@ -57,6 +62,14 @@ export default function ArticleFamilyCard({
   showPostTypeBadge?: boolean;
   showAuthor?: boolean;
   showExcerpt?: boolean;
+  /** When true with showExcerpt, excerpt is hidden below md (search results mobile). */
+  hideExcerptOnMobile?: boolean;
+  /** When true with showAuthor, author line is hidden below md. */
+  hideAuthorOnMobile?: boolean;
+  /** When true, type kicker row is hidden below md (e.g. search shows type in status line). */
+  hidePostTypeBadgeOnMobile?: boolean;
+  /** When true, compact thumb is 20% larger below md. */
+  enlargeMobileThumb?: boolean;
   /** Show opinionFormat / analysisFocus in compact layout (e.g. search). */
   showTypeMetadataInCompact?: boolean;
   /** `editorial` = category title first, then Opinion/Analysis (opinion rail). */
@@ -73,7 +86,7 @@ export default function ArticleFamilyCard({
         ? 180
         : layout === "heroTile"
           ? 400
-          : 200;
+          : 450;
 
   const coverData = getCoverImage(
     article.cover as Parameters<typeof getCoverImage>[0],
@@ -135,13 +148,22 @@ export default function ArticleFamilyCard({
   const thumbWrap =
     layout === "rail"
       ? "relative h-[72px] w-24 flex-shrink-0 overflow-hidden rounded-[4px]"
-      : "relative h-[77px] w-24 flex-shrink-0 overflow-hidden rounded-lg";
-  const thumbH = layout === "rail" ? 72 : 77;
+      : enlargeMobileThumb
+        ? "relative h-[92px] w-[115px] flex-shrink-0 overflow-hidden rounded-lg md:h-[174px] md:w-[216px]"
+        : "relative h-[77px] w-24 flex-shrink-0 overflow-hidden rounded-lg md:h-[174px] md:w-[216px]";
+  const thumbImageWidth = layout === "rail" ? 96 : 216;
+  const thumbImageHeight = layout === "rail" ? 72 : 174;
+  const thumbSizes =
+    layout === "rail"
+      ? "96px"
+      : enlargeMobileThumb
+        ? "(max-width: 768px) 115px, 216px"
+        : "(max-width: 768px) 96px, 216px";
   const linkGap = layout === "rail" ? "gap-3" : "gap-4";
   const titleClass =
     layout === "rail"
       ? "line-clamp-2 font-sans text-sm font-semibold leading-snug tracking-normal text-neutral-900"
-      : "mb-2 font-sans text-sm font-semibold leading-snug tracking-normal text-neutral-900";
+      : "mb-2 font-sans text-base font-semibold leading-snug tracking-normal text-neutral-900 md:text-lg";
 
   const editorialK = editorialKicker(article, label);
 
@@ -159,18 +181,23 @@ export default function ArticleFamilyCard({
                 alt={coverData?.alt || article.title || "Article image"}
                 unoptimized={coverData?.unoptimized}
                 className="object-cover object-center transition-opacity duration-200"
-                width={96}
-                height={thumbH}
+                width={thumbImageWidth}
+                height={thumbImageHeight}
                 quality={50}
-                sizes="96px"
+                sizes={thumbSizes}
                 fill
               />
             </div>
           ) : (
             <div
-              className={`flex w-24 items-center justify-center rounded-lg bg-gray-200/80 font-sans text-[10px] text-gray-500 ${
-                layout === "rail" ? "h-[72px] rounded-[4px]" : "h-[77px]"
-              }`}
+              className={cn(
+                "flex items-center justify-center rounded-lg bg-gray-200/80 font-sans text-[10px] text-gray-500",
+                layout === "rail"
+                  ? "h-[72px] w-24 rounded-[4px]"
+                  : enlargeMobileThumb
+                    ? "h-[92px] w-[115px] md:h-[174px] md:w-[216px]"
+                    : "h-[77px] w-24 md:h-[174px] md:w-[216px]"
+              )}
             >
               No Image
             </div>
@@ -182,7 +209,12 @@ export default function ArticleFamilyCard({
               {editorialK}
             </p>
           ) : (
-            <div className="mb-1 flex flex-wrap items-center gap-2">
+            <div
+              className={cn(
+                "mb-1 flex flex-wrap items-center gap-2",
+                hidePostTypeBadgeOnMobile && "max-md:hidden"
+              )}
+            >
               {label && (
                 <span className="text-[10px] font-bold uppercase tracking-wider text-sectionAccent">
                   {label}
@@ -205,17 +237,32 @@ export default function ArticleFamilyCard({
           )}
           <h3 className={titleClass}>{article.title}</h3>
           {showExcerpt && article.excerpt ? (
-            <p className="mb-2 line-clamp-3 font-sans text-xs leading-relaxed text-neutral-700">
+            <p
+              className={cn(
+                "search-result-excerpt mb-2 line-clamp-3 font-sans text-sm leading-relaxed text-neutral-700 md:text-base",
+                hideExcerptOnMobile && "max-md:hidden"
+              )}
+            >
               {article.excerpt}
             </p>
           ) : null}
           {showAuthor && article.author?.name ? (
-            <p className="mb-1 font-sans text-xs text-neutral-600">
+            <p
+              className={cn(
+                "mb-1 font-sans text-xs text-neutral-600",
+                hideAuthorOnMobile && "max-md:hidden"
+              )}
+            >
               {article.author.name}
             </p>
           ) : null}
           {showAnalysisFocus && (
-            <p className="mb-1 line-clamp-2 text-xs text-neutral-600">
+            <p
+              className={cn(
+                "mb-1 line-clamp-2 text-xs text-neutral-600",
+                hidePostTypeBadgeOnMobile && "max-md:hidden"
+              )}
+            >
               {article.analysisFocus}
             </p>
           )}

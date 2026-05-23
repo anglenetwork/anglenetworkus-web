@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
 interface BookmarkButtonProps {
   articleId: string;
@@ -140,22 +141,22 @@ export default function BookmarkButton({
   };
 
   const isCompact = variant === "compact";
-  const buttonClass = isCompact
-    ? "h-6 w-6 rounded-sm bg-white border border-gray-200 hover:bg-gray-50 shadow-none"
-    : "h-10 w-10 rounded-full bg-white border border-gray-200 hover:bg-gray-50 shadow-sm";
+  const buttonClass = cn(
+    isCompact ? "h-6 w-6 rounded-sm shadow-none" : "h-10 w-10 rounded-full",
+    isBookmarked ? "text-yellow-500" : "text-black",
+    isToggling && "opacity-60",
+  );
   const iconClass = isCompact ? "h-3 w-3" : "h-5 w-5";
 
   return (
     <Button
-      variant="ghost"
+      variant="socialIcon"
       size="icon"
       onClick={handleToggleBookmark}
       disabled={isToggling}
       aria-busy={isToggling || statusLoading}
       title={statusLoading ? "Checking bookmark..." : undefined}
-      className={`${buttonClass} ${
-        isBookmarked ? "text-yellow-500 fill-yellow-500" : "text-black"
-      } ${isToggling ? "opacity-60" : ""}`}
+      className={buttonClass}
       aria-label={isBookmarked ? "Remove bookmark" : "Add bookmark"}
     >
       <Star className={`${iconClass} ${isBookmarked ? "fill-current" : ""}`} />

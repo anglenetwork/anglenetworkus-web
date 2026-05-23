@@ -2,6 +2,7 @@
 
 import { Search } from "lucide-react";
 import { useRouter } from "next/navigation";
+import type { Ref } from "react";
 
 interface SearchBarProps {
   placeholder?: string;
@@ -9,6 +10,8 @@ interface SearchBarProps {
   onSubmit?: (query: string) => void;
   onClose?: () => void;
   className?: string;
+  inputRef?: Ref<HTMLInputElement>;
+  inputId?: string;
 }
 
 export function SearchBar({
@@ -17,6 +20,8 @@ export function SearchBar({
   onSubmit,
   onClose,
   className = "",
+  inputRef,
+  inputId,
 }: SearchBarProps) {
   const router = useRouter();
 
@@ -51,6 +56,8 @@ export function SearchBar({
       onSubmit={handleSubmit}
     >
       <input
+        ref={inputRef}
+        id={inputId}
         type="search"
         name="search"
         placeholder={placeholder}

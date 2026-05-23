@@ -15,6 +15,7 @@ interface DesktopHeaderProps {
   isMenuOpen: boolean;
   categories: Category[];
   onMenuToggle: () => void;
+  onSearchMenuOpen: () => void;
   onCategoryClick: () => void;
 }
 
@@ -22,6 +23,7 @@ export function DesktopHeader({
   isMenuOpen,
   categories,
   onMenuToggle,
+  onSearchMenuOpen,
   onCategoryClick,
 }: DesktopHeaderProps) {
   const supabase = useMemo(() => createClient(), []);
@@ -137,7 +139,7 @@ export function DesktopHeader({
   const shouldShowBecomePro = !loading && (tier === null || tier === "free");
 
   return (
-    <div className="hidden lg:flex items-center justify-between py-4 transition-all duration-500 ease-out mx-16">
+    <div className="hidden lg:flex items-center justify-between py-4 transition-all duration-500 ease-out">
       <div className="flex items-center gap-4">
         <HamburgerButton
           isOpen={isMenuOpen}
@@ -159,7 +161,7 @@ export function DesktopHeader({
             Become Pro
           </Link>
         )}
-        <SearchButton onClick={onMenuToggle} variant="desktop" />
+        <SearchButton onClick={onSearchMenuOpen} variant="desktop" />
         <UserMenu variant="desktop" />
       </div>
     </div>

@@ -59,16 +59,6 @@ export default function PostBody({
 
   return (
     <div className="antialiased text-left mb-8">
-      <div className="mb-6 flex items-start justify-between gap-4 font-sans">
-        <ArticleByline author={author} date={date} updatedAt={updatedAt} />
-        <ArticleActions
-          articleId={articleId}
-          slug={slug}
-          title={title}
-          shareUrl={shareUrl}
-        />
-      </div>
-
       <ArticleMedia cover={cover} imageGallery={imageGallery} title={title} />
 
       <div className="space-y-8 text-left">

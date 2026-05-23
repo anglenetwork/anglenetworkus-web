@@ -1,7 +1,8 @@
 "use client";
 
-import { Facebook, Twitter, Mail, LinkIcon } from "lucide-react";
+import { Facebook, Mail, LinkIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
 interface SocialShareButtonsProps {
   title: string;
@@ -17,16 +18,15 @@ export default function SocialShareButtons({
   const encodedTitle = encodeURIComponent(title);
   const encodedUrl = encodeURIComponent(url);
   const isCompact = variant === "compact";
-  const buttonClass = isCompact
-    ? "h-6 w-6 rounded-sm bg-white border border-gray-200 hover:bg-gray-50 text-black shadow-none"
-    : "h-10 w-10 rounded-full bg-white border border-gray-200 hover:bg-gray-50 text-black shadow-sm";
+  const buttonClass = cn(
+    isCompact ? "h-6 w-6 rounded-sm shadow-none" : "h-10 w-10 rounded-full",
+  );
   const iconClass = isCompact ? "h-3 w-3" : "h-5 w-5";
   const xIconClass = isCompact ? "h-3 w-3 fill-current" : "h-4 w-4 fill-current";
 
   const handleCopyLink = async () => {
     try {
       await navigator.clipboard.writeText(url);
-      // You could add a toast notification here if you want
     } catch (err) {
       console.error("Failed to copy link: ", err);
     }
@@ -35,14 +35,14 @@ export default function SocialShareButtons({
   return (
     <div className="flex items-center gap-2">
       <Button
-        variant="ghost"
+        variant="socialIcon"
         size="icon"
         className={buttonClass}
         aria-label="Share on Facebook"
         onClick={() =>
           window.open(
             `https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}`,
-            "_blank"
+            "_blank",
           )
         }
       >
@@ -50,14 +50,14 @@ export default function SocialShareButtons({
       </Button>
 
       <Button
-        variant="ghost"
+        variant="socialIcon"
         size="icon"
         className={buttonClass}
         aria-label="Share on X"
         onClick={() =>
           window.open(
             `https://twitter.com/intent/tweet?text=${encodedTitle}&url=${encodedUrl}`,
-            "_blank"
+            "_blank",
           )
         }
       >
@@ -67,14 +67,14 @@ export default function SocialShareButtons({
       </Button>
 
       <Button
-        variant="ghost"
+        variant="socialIcon"
         size="icon"
         className={buttonClass}
         aria-label="Share via Email"
         onClick={() =>
           window.open(
             `mailto:?subject=${encodedTitle}&body=${encodedTitle}%20${encodedUrl}`,
-            "_blank"
+            "_blank",
           )
         }
       >
@@ -82,7 +82,7 @@ export default function SocialShareButtons({
       </Button>
 
       <Button
-        variant="ghost"
+        variant="socialIcon"
         size="icon"
         className={buttonClass}
         aria-label="Copy Link"

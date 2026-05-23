@@ -140,6 +140,17 @@ export const articlePublishingFields = [
   defineField({ name: "updatedAt", title: "Updated at", type: "datetime" }),
 ];
 
+export const articleSearchTextField = defineField({
+  name: "searchText",
+  title: "Search text",
+  type: "text",
+  rows: 6,
+  description:
+    "Optional search index text (keywords or phrases, one per line). " +
+    "Leave empty to auto-fill via npm run backfill:article-search-text from title, body, tags, and related fields. " +
+    "The backfill script never overwrites non-empty values.",
+});
+
 export const articleAuthorField = (options?: { required?: boolean }) =>
   defineField({
     name: "author",

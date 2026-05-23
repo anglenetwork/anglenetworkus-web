@@ -559,35 +559,28 @@ export const categoryTickerQuery = defineQuery(`
 `);
 
 /** ---------------------------
- *  SEARCH (editorial: post, opinion, analysis — sponsored excluded)
+ *  SEARCH (post, opinion, analysis, sponsored — `all` is editorial-only)
  *  Relevance: GROQ score() + boost() weights; newest: publishedAt desc only.
  *  --------------------------- */
 const SEARCH_PUBLISHED = `status == "published" && defined(publishedAt) && publishedAt <= now()`;
 
-/** Document must match at least one field (prefix tokens in $term) */
+/** Prefer denormalized searchText; keep local fallbacks while older docs are backfilled. */
 const SEARCH_TEXT_MATCH = `(
+  searchText match $term ||
   title match $term ||
   tickerTitle match $term ||
   excerpt match $term ||
-  cover.epigraph match $term ||
-  pt::text(body) match $term ||
-  category->name match $term ||
-  coalesce(tags[]->title, tags[]->name) match $term ||
-  count(tags[]->aliases[@ match $term]) > 0 ||
-  author->name match $term
+  cover.epigraph match $term
 )`;
 
+/** score()/boost() only allow document-local match expressions (no derefs, pt::text, count). */
 const SEARCH_SCORE_PIPE = `
 | score(
   boost(title match $term, 100),
   boost(tickerTitle match $term, 80),
   boost(excerpt match $term, 65),
   boost(cover.epigraph match $term, 55),
-  boost(pt::text(body) match $term, 40),
-  boost(category->name match $term, 40),
-  boost(coalesce(tags[]->title, tags[]->name) match $term, 40),
-  boost(count(tags[]->aliases[@ match $term]) > 0, 40),
-  boost(author->name match $term, 20)
+  boost(searchText match $term, 20)
 )
 | order(_score desc, publishedAt desc)
 `;
@@ -670,6 +663,24 @@ export const searchEditorialAnalysisNewestQuery = `
 ] ${SEARCH_NEWEST_PIPE} ${SEARCH_SLICE_PROJECT}
 `;
 
+/** Sponsored-only — relevance */
+export const searchEditorialSponsoredRelevanceQuery = `
+*[
+  _type == "sponsored" &&
+  ${SEARCH_PUBLISHED} &&
+  ${SEARCH_TEXT_MATCH}
+] ${SEARCH_SCORE_PIPE} ${SEARCH_SLICE_PROJECT}
+`;
+
+/** Sponsored-only — newest */
+export const searchEditorialSponsoredNewestQuery = `
+*[
+  _type == "sponsored" &&
+  ${SEARCH_PUBLISHED} &&
+  ${SEARCH_TEXT_MATCH}
+] ${SEARCH_NEWEST_PIPE} ${SEARCH_SLICE_PROJECT}
+`;
+
 /** Total matches for current term + type scope (no pagination) */
 export const searchEditorialCountAllQuery = defineQuery(`
   count(*[
@@ -698,6 +709,14 @@ export const searchEditorialCountOpinionQuery = defineQuery(`
 export const searchEditorialCountAnalysisQuery = defineQuery(`
   count(*[
     _type == "analysis" &&
+    ${SEARCH_PUBLISHED} &&
+    ${SEARCH_TEXT_MATCH}
+  ])
+`);
+
+export const searchEditorialCountSponsoredQuery = defineQuery(`
+  count(*[
+    _type == "sponsored" &&
     ${SEARCH_PUBLISHED} &&
     ${SEARCH_TEXT_MATCH}
   ])
