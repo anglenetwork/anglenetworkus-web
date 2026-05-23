@@ -11,11 +11,22 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 import { createClient } from "@/lib/supabase/client";
 import type { User } from "@supabase/supabase-js";
 
+/** `default` = filled sign-in button; `link` = shadcn link style. */
+export type SignInButtonVariant = "default" | "link";
+
 interface UserMenuProps {
   variant?: "mobile" | "desktop";
+  /** Hide Sign in when signed out (e.g. mobile navbar — show in full-screen menu instead). */
+  hideSignIn?: boolean;
+  /** Only render Sign in when signed out (for full-screen menu). */
+  signInOnly?: boolean;
+  /** Sign-in control style when signed out. Defaults to filled slate button. */
+  signInButtonVariant?: SignInButtonVariant;
+  onSignInNavigate?: () => void;
 }
 
 function getUserInitials(
@@ -44,7 +55,13 @@ function getUserInitials(
   return user.email?.[0].toUpperCase() || "U";
 }
 
-export function UserMenu({ variant = "desktop" }: UserMenuProps) {
+export function UserMenu({
+  variant = "desktop",
+  hideSignIn = false,
+  signInOnly = false,
+  signInButtonVariant = "default",
+  onSignInNavigate,
+}: UserMenuProps) {
   const supabase = useMemo(() => createClient(), []);
   const [user, setUser] = useState<User | null>(null);
   const [firstName, setFirstName] = useState<string | null>(null);
@@ -182,15 +199,35 @@ export function UserMenu({ variant = "desktop" }: UserMenuProps) {
 
   if (loading) return null;
 
-  if (!user) {
+  const renderSignIn = () => {
+    const isLink = signInButtonVariant === "link";
+
     return (
       <Button
         asChild
-        className="bg-slate-900 text-white hover:bg-slate-800 font-sans"
+        variant={isLink ? "link" : "signIn"}
+        className={cn(
+          isLink &&
+            "h-auto justify-start p-0 text-xl font-bold hover:text-primary",
+        )}
       >
-        <Link href="/signin">Sign in</Link>
+        <Link href="/signin" onClick={onSignInNavigate}>
+          Sign in
+        </Link>
       </Button>
     );
+  };
+
+  if (signInOnly) {
+    if (user) return null;
+    return (
+      <div className="border-b border-border pb-6">{renderSignIn()}</div>
+    );
+  }
+
+  if (!user) {
+    if (hideSignIn) return null;
+    return renderSignIn();
   }
 
   return (

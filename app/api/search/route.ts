@@ -9,44 +9,26 @@ import {
   searchEditorialOpinionNewestQuery,
   searchEditorialAnalysisRelevanceQuery,
   searchEditorialAnalysisNewestQuery,
+  searchEditorialSponsoredRelevanceQuery,
+  searchEditorialSponsoredNewestQuery,
   searchEditorialCountAllQuery,
   searchEditorialCountPostQuery,
   searchEditorialCountOpinionQuery,
   searchEditorialCountAnalysisQuery,
+  searchEditorialCountSponsoredQuery,
 } from "@/sanity/lib/queries";
 import { normalizeArticleFamilyCard } from "@/app/lib/article-family/normalize";
 import type { ArticleFamilySearchResult } from "@/app/lib/article-family/types";
+import {
+  parsePage,
+  parseSort,
+  parseType,
+  tokenizeTerm,
+  type SortParam,
+  type TypeParam,
+} from "@/app/lib/search/editorial-search";
 
 const PAGE_SIZE = 10;
-
-type SortParam = "relevance" | "newest";
-type TypeParam = "all" | "post" | "opinion" | "analysis";
-
-function parseSort(raw: string | null): SortParam {
-  const s = (raw || "relevance").toLowerCase();
-  if (s === "relevancy") return "relevance";
-  if (s === "newest") return "newest";
-  return "relevance";
-}
-
-function parseType(raw: string | null): TypeParam {
-  const t = (raw || "all").toLowerCase();
-  if (t === "post" || t === "opinion" || t === "analysis") return t;
-  return "all";
-}
-
-function parsePage(raw: string | null): number {
-  const n = parseInt(raw || "1", 10);
-  return Number.isFinite(n) && n >= 1 ? n : 1;
-}
-
-function tokenizeTerm(q: string): string {
-  return q
-    .split(/\s+/)
-    .filter(Boolean)
-    .map((t) => `${t}*`)
-    .join(" ");
-}
 
 function listQueryFor(sort: SortParam, type: TypeParam): string {
   if (sort === "newest") {
@@ -57,6 +39,8 @@ function listQueryFor(sort: SortParam, type: TypeParam): string {
         return searchEditorialOpinionNewestQuery;
       case "analysis":
         return searchEditorialAnalysisNewestQuery;
+      case "sponsored":
+        return searchEditorialSponsoredNewestQuery;
       default:
         return searchEditorialAllNewestQuery;
     }
@@ -68,6 +52,8 @@ function listQueryFor(sort: SortParam, type: TypeParam): string {
       return searchEditorialOpinionRelevanceQuery;
     case "analysis":
       return searchEditorialAnalysisRelevanceQuery;
+    case "sponsored":
+      return searchEditorialSponsoredRelevanceQuery;
     default:
       return searchEditorialAllRelevanceQuery;
   }
@@ -81,13 +67,16 @@ function countQueryFor(type: TypeParam) {
       return searchEditorialCountOpinionQuery;
     case "analysis":
       return searchEditorialCountAnalysisQuery;
+    case "sponsored":
+      return searchEditorialCountSponsoredQuery;
     default:
       return searchEditorialCountAllQuery;
   }
 }
 
 /**
- * Editorial article search: post, opinion, analysis (sponsored excluded).
+ * Article search: post, opinion, analysis, sponsored.
+ * `type=all` returns editorial types only (post, opinion, analysis).
  */
 export async function GET(request: NextRequest) {
   try {

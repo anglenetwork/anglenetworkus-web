@@ -254,6 +254,7 @@ export type Sponsored = {
   status?: "draft" | "scheduled" | "published";
   publishedAt?: string;
   updatedAt?: string;
+  searchText?: string;
   seo?: Seo;
 };
 
@@ -287,6 +288,7 @@ export type Analysis = {
   status?: "draft" | "scheduled" | "published";
   publishedAt?: string;
   updatedAt?: string;
+  searchText?: string;
   seo?: Seo;
 };
 
@@ -313,6 +315,7 @@ export type Opinion = {
   status?: "draft" | "scheduled" | "published";
   publishedAt?: string;
   updatedAt?: string;
+  searchText?: string;
   seo?: Seo;
 };
 
@@ -356,6 +359,7 @@ export type Post = {
   viewsAll?: number;
   views30d?: number;
   views7d?: number;
+  searchText?: string;
   seo?: Seo;
 };
 
@@ -6605,23 +6609,28 @@ export type CategoryTickerQueryResult = Array<{
 
 // Source: sanity/lib/queries.ts
 // Variable: searchEditorialCountAllQuery
-// Query: count(*[    _type in ["post", "opinion", "analysis"] &&    status == "published" && defined(publishedAt) && publishedAt <= now() &&    (  title match $term ||  tickerTitle match $term ||  excerpt match $term ||  cover.epigraph match $term ||  pt::text(body) match $term ||  category->name match $term ||  coalesce(tags[]->title, tags[]->name) match $term ||  count(tags[]->aliases[@ match $term]) > 0 ||  author->name match $term)  ])
+// Query: count(*[    _type in ["post", "opinion", "analysis"] &&    status == "published" && defined(publishedAt) && publishedAt <= now() &&    (  searchText match $term ||  title match $term ||  tickerTitle match $term ||  excerpt match $term ||  cover.epigraph match $term)  ])
 export type SearchEditorialCountAllQueryResult = number;
 
 // Source: sanity/lib/queries.ts
 // Variable: searchEditorialCountPostQuery
-// Query: count(*[    _type == "post" &&    status == "published" && defined(publishedAt) && publishedAt <= now() &&    (  title match $term ||  tickerTitle match $term ||  excerpt match $term ||  cover.epigraph match $term ||  pt::text(body) match $term ||  category->name match $term ||  coalesce(tags[]->title, tags[]->name) match $term ||  count(tags[]->aliases[@ match $term]) > 0 ||  author->name match $term)  ])
+// Query: count(*[    _type == "post" &&    status == "published" && defined(publishedAt) && publishedAt <= now() &&    (  searchText match $term ||  title match $term ||  tickerTitle match $term ||  excerpt match $term ||  cover.epigraph match $term)  ])
 export type SearchEditorialCountPostQueryResult = number;
 
 // Source: sanity/lib/queries.ts
 // Variable: searchEditorialCountOpinionQuery
-// Query: count(*[    _type == "opinion" &&    status == "published" && defined(publishedAt) && publishedAt <= now() &&    (  title match $term ||  tickerTitle match $term ||  excerpt match $term ||  cover.epigraph match $term ||  pt::text(body) match $term ||  category->name match $term ||  coalesce(tags[]->title, tags[]->name) match $term ||  count(tags[]->aliases[@ match $term]) > 0 ||  author->name match $term)  ])
+// Query: count(*[    _type == "opinion" &&    status == "published" && defined(publishedAt) && publishedAt <= now() &&    (  searchText match $term ||  title match $term ||  tickerTitle match $term ||  excerpt match $term ||  cover.epigraph match $term)  ])
 export type SearchEditorialCountOpinionQueryResult = number;
 
 // Source: sanity/lib/queries.ts
 // Variable: searchEditorialCountAnalysisQuery
-// Query: count(*[    _type == "analysis" &&    status == "published" && defined(publishedAt) && publishedAt <= now() &&    (  title match $term ||  tickerTitle match $term ||  excerpt match $term ||  cover.epigraph match $term ||  pt::text(body) match $term ||  category->name match $term ||  coalesce(tags[]->title, tags[]->name) match $term ||  count(tags[]->aliases[@ match $term]) > 0 ||  author->name match $term)  ])
+// Query: count(*[    _type == "analysis" &&    status == "published" && defined(publishedAt) && publishedAt <= now() &&    (  searchText match $term ||  title match $term ||  tickerTitle match $term ||  excerpt match $term ||  cover.epigraph match $term)  ])
 export type SearchEditorialCountAnalysisQueryResult = number;
+
+// Source: sanity/lib/queries.ts
+// Variable: searchEditorialCountSponsoredQuery
+// Query: count(*[    _type == "sponsored" &&    status == "published" && defined(publishedAt) && publishedAt <= now() &&    (  searchText match $term ||  title match $term ||  tickerTitle match $term ||  excerpt match $term ||  cover.epigraph match $term)  ])
+export type SearchEditorialCountSponsoredQueryResult = number;
 
 // Source: sanity/lib/queries.ts
 // Variable: eighthSectionQuery
@@ -6929,10 +6938,11 @@ declare module "@sanity/client" {
     '\n  *[_type == "post" && category->slug.current == $categorySlug] | order(coalesce(publishedAt, _updatedAt) desc, _updatedAt desc) [0...20] {\n    \n  _id,\n  _type,\n  "status": select(_originalId in path("drafts.**") => "draft", "published"),\n  "title": coalesce(title, "Untitled"),\n  "slug": slug.current,\n  excerpt,\n  // New cover (external or asset)\n  cover{\n    source,\n    externalUrl,\n    image,\n    alt,\n    epigraph,\n    creditProvider,\n    creditAuthor,\n    creditSourceUrl,\n    creditLicense\n  },\n  "date": coalesce(publishedAt, _updatedAt),\n  publishedAt,\n  updatedAt,\n  priority,\n  featured,\n  labels,\n  justIn,\n  breakingNews,\n  developingStory,\n  mainHeadline,\n  frontline,\n  rightHeadline,\n\n  "author": select(\n    defined(author->name) => {\n      "name": coalesce(author->name, "Anonymous"),\n      "picture": author->picture\n    }\n  ),\n\n  "category": select(\n    defined(category->name) && defined(category->slug.current) => {\n      "title": category->name,\n      "slug": category->slug.current\n    }\n  ),\n\n  // Support both tag.title and category.name during transition\n  "tags": tags[]->{\n    "title": coalesce(title, name),\n    "slug": slug.current\n  },\n\n  "body": body[]{\n    ...,\n    _type == "editorialImage" => {\n      ...\n    }\n  },\n  "imageGallery": imageGallery[]{\n    source,\n    externalUrl,\n    image,\n    alt,\n    epigraph,\n    creditProvider,\n    creditAuthor,\n    creditSourceUrl,\n    creditLicense\n  },\n  seo{\n    title,\n    description,\n    canonicalUrl,\n    ogImage{\n      asset,\n      hotspot,\n      crop,\n      alt\n    }\n  }\n\n  }\n': SixthSectionQueryResult;
     '\n  *[_type == "post" && defined(slug.current) && defined(tickerTitle)] | order(coalesce(publishedAt, _updatedAt) desc, _updatedAt desc) [0...4] {\n    tickerTitle,\n    "slug": slug.current\n  }\n': NewsTickerQueryResult;
     '\n  *[_type == "post" && category->slug.current == $categorySlug && defined(slug.current) && defined(tickerTitle)] | order(coalesce(publishedAt, _updatedAt) desc, _updatedAt desc) [5...10] {\n    tickerTitle,\n    "slug": slug.current\n  }\n': CategoryTickerQueryResult;
-    '\n  count(*[\n    _type in ["post", "opinion", "analysis"] &&\n    status == "published" && defined(publishedAt) && publishedAt <= now() &&\n    (\n  title match $term ||\n  tickerTitle match $term ||\n  excerpt match $term ||\n  cover.epigraph match $term ||\n  pt::text(body) match $term ||\n  category->name match $term ||\n  coalesce(tags[]->title, tags[]->name) match $term ||\n  count(tags[]->aliases[@ match $term]) > 0 ||\n  author->name match $term\n)\n  ])\n': SearchEditorialCountAllQueryResult;
-    '\n  count(*[\n    _type == "post" &&\n    status == "published" && defined(publishedAt) && publishedAt <= now() &&\n    (\n  title match $term ||\n  tickerTitle match $term ||\n  excerpt match $term ||\n  cover.epigraph match $term ||\n  pt::text(body) match $term ||\n  category->name match $term ||\n  coalesce(tags[]->title, tags[]->name) match $term ||\n  count(tags[]->aliases[@ match $term]) > 0 ||\n  author->name match $term\n)\n  ])\n': SearchEditorialCountPostQueryResult;
-    '\n  count(*[\n    _type == "opinion" &&\n    status == "published" && defined(publishedAt) && publishedAt <= now() &&\n    (\n  title match $term ||\n  tickerTitle match $term ||\n  excerpt match $term ||\n  cover.epigraph match $term ||\n  pt::text(body) match $term ||\n  category->name match $term ||\n  coalesce(tags[]->title, tags[]->name) match $term ||\n  count(tags[]->aliases[@ match $term]) > 0 ||\n  author->name match $term\n)\n  ])\n': SearchEditorialCountOpinionQueryResult;
-    '\n  count(*[\n    _type == "analysis" &&\n    status == "published" && defined(publishedAt) && publishedAt <= now() &&\n    (\n  title match $term ||\n  tickerTitle match $term ||\n  excerpt match $term ||\n  cover.epigraph match $term ||\n  pt::text(body) match $term ||\n  category->name match $term ||\n  coalesce(tags[]->title, tags[]->name) match $term ||\n  count(tags[]->aliases[@ match $term]) > 0 ||\n  author->name match $term\n)\n  ])\n': SearchEditorialCountAnalysisQueryResult;
+    '\n  count(*[\n    _type in ["post", "opinion", "analysis"] &&\n    status == "published" && defined(publishedAt) && publishedAt <= now() &&\n    (\n  searchText match $term ||\n  title match $term ||\n  tickerTitle match $term ||\n  excerpt match $term ||\n  cover.epigraph match $term\n)\n  ])\n': SearchEditorialCountAllQueryResult;
+    '\n  count(*[\n    _type == "post" &&\n    status == "published" && defined(publishedAt) && publishedAt <= now() &&\n    (\n  searchText match $term ||\n  title match $term ||\n  tickerTitle match $term ||\n  excerpt match $term ||\n  cover.epigraph match $term\n)\n  ])\n': SearchEditorialCountPostQueryResult;
+    '\n  count(*[\n    _type == "opinion" &&\n    status == "published" && defined(publishedAt) && publishedAt <= now() &&\n    (\n  searchText match $term ||\n  title match $term ||\n  tickerTitle match $term ||\n  excerpt match $term ||\n  cover.epigraph match $term\n)\n  ])\n': SearchEditorialCountOpinionQueryResult;
+    '\n  count(*[\n    _type == "analysis" &&\n    status == "published" && defined(publishedAt) && publishedAt <= now() &&\n    (\n  searchText match $term ||\n  title match $term ||\n  tickerTitle match $term ||\n  excerpt match $term ||\n  cover.epigraph match $term\n)\n  ])\n': SearchEditorialCountAnalysisQueryResult;
+    '\n  count(*[\n    _type == "sponsored" &&\n    status == "published" && defined(publishedAt) && publishedAt <= now() &&\n    (\n  searchText match $term ||\n  title match $term ||\n  tickerTitle match $term ||\n  excerpt match $term ||\n  cover.epigraph match $term\n)\n  ])\n': SearchEditorialCountSponsoredQueryResult;
     '\n  *[_type == "category" && slug.current in $categorySlugs] {\n    "slug": slug.current,\n    "name": name,\n    "posts": *[_type == "post" && category->slug.current == slug.current] | order(coalesce(publishedAt, _updatedAt) desc, _updatedAt desc) [0...3] {\n      \n  _id,\n  _type,\n  "status": select(_originalId in path("drafts.**") => "draft", "published"),\n  "title": coalesce(title, "Untitled"),\n  "slug": slug.current,\n  excerpt,\n  // New cover (external or asset)\n  cover{\n    source,\n    externalUrl,\n    image,\n    alt,\n    epigraph,\n    creditProvider,\n    creditAuthor,\n    creditSourceUrl,\n    creditLicense\n  },\n  "date": coalesce(publishedAt, _updatedAt),\n  publishedAt,\n  updatedAt,\n  priority,\n  featured,\n  labels,\n  justIn,\n  breakingNews,\n  developingStory,\n  mainHeadline,\n  frontline,\n  rightHeadline,\n\n  "author": select(\n    defined(author->name) => {\n      "name": coalesce(author->name, "Anonymous"),\n      "picture": author->picture\n    }\n  ),\n\n  "category": select(\n    defined(category->name) && defined(category->slug.current) => {\n      "title": category->name,\n      "slug": category->slug.current\n    }\n  ),\n\n  // Support both tag.title and category.name during transition\n  "tags": tags[]->{\n    "title": coalesce(title, name),\n    "slug": slug.current\n  },\n\n  "body": body[]{\n    ...,\n    _type == "editorialImage" => {\n      ...\n    }\n  },\n  "imageGallery": imageGallery[]{\n    source,\n    externalUrl,\n    image,\n    alt,\n    epigraph,\n    creditProvider,\n    creditAuthor,\n    creditSourceUrl,\n    creditLicense\n  },\n  seo{\n    title,\n    description,\n    canonicalUrl,\n    ogImage{\n      asset,\n      hotspot,\n      crop,\n      alt\n    }\n  }\n\n    }\n  }\n': EighthSectionQueryResult;
     '\n  *[_type == "post" && _id in $ids] {\n    _id,\n    title,\n    "slug": slug.current,\n    "date": coalesce(publishedAt, _updatedAt),\n    cover{\n      source,\n      externalUrl,\n      image,\n      alt,\n      epigraph,\n      creditProvider,\n      creditAuthor,\n      creditSourceUrl,\n      creditLicense\n    }\n  }\n': PostsByIdsQueryResult;
     '\n  *[_type == "post" && mainHeadline == true && defined(slug.current)] \n  | order(coalesce(publishedAt, _updatedAt) desc, _updatedAt desc) [0...5] {\n    _id,\n    title,\n    "slug": slug.current,\n    cover{\n      source,\n      externalUrl,\n      image,\n      alt,\n      epigraph,\n      creditProvider,\n      creditAuthor,\n      creditSourceUrl,\n      creditLicense\n    }\n  }\n': MainHeadlinesQueryResult;

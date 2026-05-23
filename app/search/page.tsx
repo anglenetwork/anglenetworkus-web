@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
+import { SitePageWidth } from "@/app/components/layout/site-page-width";
 import SearchResults from "@/app/search/SearchResults";
 import * as demo from "@/sanity/lib/demo";
 import { getCachedSettings } from "@/app/lib/cached-settings";
@@ -17,23 +18,21 @@ export async function generateMetadata({
 
 export default function SearchPage() {
   return (
-    <div className="container mx-auto px-4 py-8">
+    <SitePageWidth className="py-8">
       <Suspense
         fallback={
-          <div className="max-w-4xl mx-auto">
-            <div className="animate-pulse">
-              <div className="h-12 bg-gray-200 rounded-lg mb-8"></div>
-              <div className="space-y-4">
-                <div className="h-6 bg-gray-200 rounded w-1/3"></div>
-                <div className="h-32 bg-gray-200 rounded-lg"></div>
-                <div className="h-32 bg-gray-200 rounded-lg"></div>
-              </div>
+          <div className="animate-pulse">
+            <div className="h-12 bg-gray-200 rounded-lg mb-8"></div>
+            <div className="space-y-4">
+              <div className="h-6 bg-gray-200 rounded w-1/3"></div>
+              <div className="h-32 bg-gray-200 rounded-lg"></div>
+              <div className="h-32 bg-gray-200 rounded-lg"></div>
             </div>
           </div>
         }
       >
         <SearchResults />
       </Suspense>
-    </div>
+    </SitePageWidth>
   );
 }

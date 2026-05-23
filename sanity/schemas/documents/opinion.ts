@@ -7,6 +7,7 @@ import {
   articleCoreMetadataFields,
   articleCoverGalleryFields,
   articlePublishingFields,
+  articleSearchTextField,
   articleSeoField,
   withFieldGroup,
 } from "../helpers/articleBaseFields";
@@ -34,6 +35,7 @@ export default defineType({
     { name: ARTICLE_FIELD_GROUPS.body, title: "Body" },
     { name: ARTICLE_FIELD_GROUPS.publishing, title: "Publishing" },
     { name: ARTICLE_FIELD_GROUPS.seo, title: "SEO" },
+    { name: ARTICLE_FIELD_GROUPS.legacy, title: "Legacy / operational" },
   ],
   fields: [
     ...withFieldGroup(articleCoreMetadataFields, ARTICLE_FIELD_GROUPS.core),
@@ -73,6 +75,10 @@ export default defineType({
     ...withFieldGroup(articleCoverGalleryFields, ARTICLE_FIELD_GROUPS.media),
     ...withFieldGroup(articleBodyFields, ARTICLE_FIELD_GROUPS.body),
     ...withFieldGroup(articlePublishingFields, ARTICLE_FIELD_GROUPS.publishing),
+    defineField({
+      ...articleSearchTextField,
+      group: ARTICLE_FIELD_GROUPS.legacy,
+    } as any),
 
     defineField({
       ...articleSeoField,

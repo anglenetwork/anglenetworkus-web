@@ -4,12 +4,38 @@ import { useSearchParams, useRouter } from "next/navigation";
 import { useEffect, useState, useCallback } from "react";
 import { SearchBar } from "../components/ui/search-bar";
 import { Button } from "../components/ui/button";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+} from "@/components/ui/select";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Label } from "@/components/ui/label";
 import ArticleFamilyCard from "../components/article-family/ArticleFamilyCard";
 import type { ArticleFamilyCard as CardModel } from "@/app/lib/article-family/types";
-import { ChevronLeft, ChevronRight } from "lucide-react";
-
-type SortParam = "relevance" | "newest";
-type TypeParam = "all" | "post" | "opinion" | "analysis";
+import {
+  ArrowDownUp,
+  ChevronLeft,
+  ChevronRight,
+  ListFilter,
+  X,
+} from "lucide-react";
+import {
+  parsePage,
+  parseSort,
+  parseType,
+  type SortParam,
+  type TypeParam,
+} from "@/app/lib/search/editorial-search";
+import { cn } from "@/lib/utils";
 
 type SearchApiResponse = {
   query: string;
@@ -22,19 +48,30 @@ type SearchApiResponse = {
   results: CardModel[];
 };
 
-function parseSort(sp: URLSearchParams): SortParam {
-  return sp.get("sort") === "newest" ? "newest" : "relevance";
-}
+const TYPE_OPTIONS = [
+  ["all", "All"],
+  ["post", "News"],
+  ["opinion", "Opinion"],
+  ["analysis", "Analysis"],
+  ["sponsored", "Sponsored"],
+] as const;
 
-function parseType(sp: URLSearchParams): TypeParam {
-  const t = (sp.get("type") || "all").toLowerCase();
-  if (t === "post" || t === "opinion" || t === "analysis") return t;
-  return "all";
-}
+const TYPE_POSTS_LABEL: Record<TypeParam, string> = {
+  all: "All",
+  post: "News",
+  opinion: "Opinion",
+  analysis: "Analysis",
+  sponsored: "Sponsored",
+};
 
-function parsePage(sp: URLSearchParams): number {
-  const n = parseInt(sp.get("page") || "1", 10);
-  return Number.isFinite(n) && n >= 1 ? n : 1;
+function desktopFilterLinkClass(isActive: boolean) {
+  return cn(
+    "rounded-lg font-sans",
+    "xl:h-auto xl:min-h-0 xl:rounded-none xl:border-0 xl:bg-transparent xl:p-0 xl:shadow-none xl:text-base",
+    isActive
+      ? "xl:font-bold xl:text-red-600 xl:underline xl:underline-offset-4 hover:xl:bg-transparent hover:xl:text-red-600"
+      : "xl:font-normal xl:text-foreground xl:no-underline hover:xl:underline hover:xl:text-foreground xl:underline-offset-4 hover:xl:bg-transparent"
+  );
 }
 
 function buildSearchPath(sp: URLSearchParams, updates: Record<string, string | null>) {
@@ -52,13 +89,25 @@ export default function SearchResults() {
   const router = useRouter();
 
   const q = (searchParams.get("q") || "").trim();
-  const sort = parseSort(searchParams);
-  const type = parseType(searchParams);
-  const page = parsePage(searchParams);
+  const sort = parseSort(searchParams.get("sort"));
+  const type = parseType(searchParams.get("type"));
+  const page = parsePage(searchParams.get("page"));
 
   const [payload, setPayload] = useState<SearchApiResponse | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [typeFilterOpen, setTypeFilterOpen] = useState(false);
+  const [pendingType, setPendingType] = useState<TypeParam>(type);
+
+  const handleTypeFilterOpenChange = (open: boolean) => {
+    setTypeFilterOpen(open);
+    if (open) setPendingType(type);
+  };
+
+  const handleApplyTypeFilter = () => {
+    handleType(pendingType);
+    setTypeFilterOpen(false);
+  };
 
   const navigate = useCallback(
     (updates: Record<string, string | null>) => {
@@ -140,10 +189,10 @@ export default function SearchResults() {
   const pageSize = payload?.pageSize ?? 10;
   const startIdx = total === 0 ? 0 : (page - 1) * pageSize + 1;
   const endIdx = total === 0 ? 0 : Math.min(page * pageSize, total);
+  const typePostsLabel = TYPE_POSTS_LABEL[type];
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="mx-auto max-w-7xl px-4 py-8">
         <div className="mb-8">
           <SearchBar
             placeholder="Search news, opinion, and analysis"
@@ -161,66 +210,164 @@ export default function SearchResults() {
           </div>
         ) : (
           <>
-            <div className="mb-6 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-              <h1 className="text-base text-foreground font-sans">
+            <div className="flex flex-col gap-6">
+              {/* Mobile filters */}
+              <div className="md:hidden flex items-center justify-start gap-3 w-full">
+                <Dialog open={typeFilterOpen} onOpenChange={handleTypeFilterOpenChange}>
+                    <DialogTrigger asChild>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        className="rounded-lg font-sans shrink-0"
+                      >
+                        <ListFilter className="h-4 w-4" />
+                        Filter
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent
+                      className="font-sans fixed inset-0 left-0 top-0 z-50 flex h-[100dvh] w-full max-w-none translate-x-0 translate-y-0 flex-col gap-0 rounded-none border-0 p-0 shadow-lg data-[state=open]:slide-in-from-bottom data-[state=closed]:slide-out-to-bottom [&>button]:hidden"
+                      onOpenAutoFocus={(e) => {
+                        e.preventDefault();
+                        document
+                          .getElementById(`search-type-${pendingType}`)
+                          ?.focus();
+                      }}
+                    >
+                      <div className="flex items-center px-6 py-4">
+                        <div className="h-12 w-12 shrink-0" aria-hidden />
+                        <DialogTitle className="flex-1 text-center text-xl font-semibold leading-none">
+                          Filter by type
+                        </DialogTitle>
+                        <DialogClose className="flex h-12 w-12 shrink-0 items-center justify-center rounded-md opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2">
+                          <X className="h-6 w-6" />
+                          <span className="sr-only">Close</span>
+                        </DialogClose>
+                      </div>
+                      <div className="flex min-h-0 flex-1 flex-col px-6 pt-2">
+                        <RadioGroup
+                          value={pendingType}
+                          onValueChange={(value) =>
+                            setPendingType(value as TypeParam)
+                          }
+                          className="gap-5 px-2"
+                        >
+                          {TYPE_OPTIONS.map(([value, label]) => (
+                            <div
+                              key={value}
+                              className="flex items-center gap-4 py-1"
+                            >
+                              <RadioGroupItem
+                                value={value}
+                                id={`search-type-${value}`}
+                                className="h-5 w-5 border-neutral-300 text-red-600 focus-visible:ring-red-600 data-[state=checked]:border-red-600 [&_svg]:fill-red-600"
+                              />
+                              <Label
+                                htmlFor={`search-type-${value}`}
+                                className={cn(
+                                  "cursor-pointer text-lg font-normal leading-snug",
+                                  pendingType === value && "text-red-600"
+                                )}
+                              >
+                                {label}
+                              </Label>
+                            </div>
+                          ))}
+                        </RadioGroup>
+                      </div>
+                      <div className="px-6 pb-8 pt-6">
+                        <Button
+                          type="button"
+                          className="h-12 w-full rounded-lg font-sans text-base bg-red-600 text-white hover:bg-red-700"
+                          onClick={handleApplyTypeFilter}
+                        >
+                          Apply
+                        </Button>
+                      </div>
+                    </DialogContent>
+                  </Dialog>
+                <Select
+                  value={sort}
+                  onValueChange={(value) => handleSort(value as SortParam)}
+                >
+                  <SelectTrigger
+                    className="h-9 w-auto justify-start gap-2 rounded-lg px-3 font-sans shrink-0 [&>span]:hidden"
+                    aria-label={`Sort, ${sort === "newest" ? "Newest" : "Relevance"} selected`}
+                  >
+                    <ArrowDownUp className="h-4 w-4 shrink-0" />
+                    Sort
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="relevance">Relevance</SelectItem>
+                    <SelectItem value="newest">Newest</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {/* Desktop filters */}
+              <div className="hidden md:flex flex-col gap-4 lg:flex-row lg:flex-wrap lg:items-center lg:justify-end xl:justify-start xl:gap-8">
+                <div className="flex flex-row flex-wrap items-center gap-2">
+                  <span className="text-sm font-semibold text-muted-foreground font-sans">
+                    Type
+                  </span>
+                  {TYPE_OPTIONS.map(([value, label]) => {
+                    const isActive = type === value;
+                    return (
+                      <Button
+                        key={value}
+                        type="button"
+                        variant={isActive ? "default" : "outline"}
+                        className={desktopFilterLinkClass(isActive)}
+                        onClick={() => handleType(value)}
+                      >
+                        {label}
+                      </Button>
+                    );
+                  })}
+                </div>
+                <div className="flex flex-wrap items-center gap-2">
+                  <span className="text-sm font-semibold text-muted-foreground font-sans">
+                    Sort
+                  </span>
+                  <Button
+                    type="button"
+                    variant={sort === "relevance" ? "default" : "outline"}
+                    className={desktopFilterLinkClass(sort === "relevance")}
+                    onClick={() => handleSort("relevance")}
+                  >
+                    Relevance
+                  </Button>
+                  <Button
+                    type="button"
+                    variant={sort === "newest" ? "default" : "outline"}
+                    className={desktopFilterLinkClass(sort === "newest")}
+                    onClick={() => handleSort("newest")}
+                  >
+                    Newest
+                  </Button>
+                </div>
+              </div>
+              <p className="text-sm text-foreground font-sans">
                 {error ? (
                   <span className="text-red-600">Search could not be completed.</span>
                 ) : isLoading ? (
-                  <>Searching…</>
+                  <>
+                    Searching for{" "}
+                    <span className="font-semibold">{q}</span> in{" "}
+                    {typePostsLabel} posts
+                  </>
                 ) : total > 0 ? (
                   <>
                     Displaying {startIdx}–{endIdx} of {total} results for{" "}
-                    <span className="font-semibold">{q}</span>
+                    <span className="font-semibold">{q}</span> in{" "}
+                    {typePostsLabel} posts
                   </>
                 ) : (
-                  <>No editorial results for &ldquo;{q}&rdquo;</>
+                  <>
+                    No results for &ldquo;{q}&rdquo; in {typePostsLabel}{" "}
+                    posts
+                  </>
                 )}
-              </h1>
-              <div className="flex flex-wrap items-center gap-2">
-                <span className="text-sm text-muted-foreground font-sans">
-                  Type
-                </span>
-                {(
-                  [
-                    ["all", "All"],
-                    ["post", "News"],
-                    ["opinion", "Opinion"],
-                    ["analysis", "Analysis"],
-                  ] as const
-                ).map(([value, label]) => (
-                  <Button
-                    key={value}
-                    type="button"
-                    variant={type === value ? "default" : "outline"}
-                    className="rounded-lg font-sans"
-                    onClick={() => handleType(value)}
-                  >
-                    {label}
-                  </Button>
-                ))}
-              </div>
-              <div className="flex flex-wrap items-center gap-2">
-                <span className="text-sm text-muted-foreground font-sans">
-                  Sort
-                </span>
-                <Button
-                  type="button"
-                  variant={sort === "relevance" ? "default" : "outline"}
-                  className="rounded-lg font-sans"
-                  onClick={() => handleSort("relevance")}
-                >
-                  Relevance
-                </Button>
-                <Button
-                  type="button"
-                  variant={sort === "newest" ? "default" : "outline"}
-                  className="rounded-lg font-sans"
-                  onClick={() => handleSort("newest")}
-                >
-                  Newest
-                </Button>
-              </div>
-            </div>
+              </p>
 
             {isLoading ? (
               <div className="space-y-8 animate-pulse">
@@ -261,11 +408,11 @@ export default function SearchResults() {
               </div>
             ) : (
               <>
-                <ul className="space-y-8 list-none p-0 m-0">
+                <ul className="list-none space-y-4 p-0 m-0 md:space-y-6">
                   {results.map((article) => (
                     <li
                       key={article._id}
-                      className="border-t border-neutral-200 pt-8 first:border-t-0 first:pt-0"
+                      className="border-t border-neutral-200 pt-4 first:border-t-0 first:pt-0 max-md:[&_.search-result-excerpt]:hidden md:pt-6"
                     >
                       <ArticleFamilyCard
                         article={article}
@@ -273,6 +420,10 @@ export default function SearchResults() {
                         showPostTypeBadge
                         showAuthor
                         showExcerpt
+                        hideExcerptOnMobile
+                        hideAuthorOnMobile
+                        hidePostTypeBadgeOnMobile
+                        enlargeMobileThumb
                         showTypeMetadataInCompact
                       />
                     </li>
@@ -308,9 +459,9 @@ export default function SearchResults() {
                 ) : null}
               </>
             )}
+            </div>
           </>
         )}
-      </div>
     </div>
   );
 }

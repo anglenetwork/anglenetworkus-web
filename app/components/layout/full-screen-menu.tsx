@@ -3,7 +3,8 @@
 import { Facebook, Twitter, Instagram, Youtube } from "lucide-react";
 import { SearchBar } from "../ui/search-bar";
 import Link from "next/link";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
+import { UserMenu } from "./navbar/user-menu";
 
 interface Category {
   slug: string;
@@ -24,6 +25,8 @@ interface FullScreenMenuProps {
   showsTags: Tag[];
   onClose: () => void;
   headerOffset: number; // <— new prop: pixels to pad from top
+  focusSearchOnOpen?: boolean;
+  onFocusSearchHandled?: () => void;
 }
 
 export function FullScreenMenu({
@@ -33,7 +36,10 @@ export function FullScreenMenu({
   showsTags,
   onClose,
   headerOffset,
+  focusSearchOnOpen = false,
+  onFocusSearchHandled,
 }: FullScreenMenuProps) {
+  const searchInputRef = useRef<HTMLInputElement>(null);
   // ESC + body scroll lock + disable focusable elements when closed
   useEffect(() => {
     const handleEscKey = (event: KeyboardEvent) => {
@@ -72,6 +78,17 @@ export function FullScreenMenu({
     };
   }, [isOpen, onClose]);
 
+  useEffect(() => {
+    if (!isOpen || !focusSearchOnOpen) return;
+
+    const frameId = requestAnimationFrame(() => {
+      searchInputRef.current?.focus();
+      onFocusSearchHandled?.();
+    });
+
+    return () => cancelAnimationFrame(frameId);
+  }, [isOpen, focusSearchOnOpen, onFocusSearchHandled]);
+
   return (
     <div
       className={`fixed inset-0 z-40 bg-background overflow-hidden transition-all duration-500 ease-in-out ${
@@ -108,6 +125,17 @@ export function FullScreenMenu({
                 placeholder="Search news, articles, topics and more"
                 ariaLabel="search bar"
                 onClose={onClose}
+                inputRef={searchInputRef}
+                inputId="menu-search-input"
+              />
+            </div>
+
+            {/* Sign in (mobile menu only; navbar hides it on small screens) */}
+            <div className="lg:hidden">
+              <UserMenu
+                signInOnly
+                signInButtonVariant="link"
+                onSignInNavigate={onClose}
               />
             </div>
 

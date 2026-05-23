@@ -9,6 +9,7 @@ import { HeaderProps } from "./types";
 
 export function HeaderClient({ categories, tags, showsTags }: HeaderProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [focusSearchOnOpen, setFocusSearchOnOpen] = useState(false);
   const [headerOffset, setHeaderOffset] = useState(0);
   const headerRef = useRef<HTMLElement | null>(null);
   const pathname = usePathname();
@@ -38,7 +39,10 @@ export function HeaderClient({ categories, tags, showsTags }: HeaderProps) {
 
   // Close menu on route change
   useEffect(() => {
-    if (isMenuOpen) setIsMenuOpen(false);
+    if (isMenuOpen) {
+      setIsMenuOpen(false);
+      setFocusSearchOnOpen(false);
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pathname]);
 
@@ -51,11 +55,29 @@ export function HeaderClient({ categories, tags, showsTags }: HeaderProps) {
   }, []);
 
   const handleMenuToggle = () => {
-    setIsMenuOpen((v) => !v);
+    setIsMenuOpen((v) => {
+      if (!v) setFocusSearchOnOpen(false);
+      return !v;
+    });
+  };
+
+  const handleSearchMenuOpen = () => {
+    if (isMenuOpen) {
+      setIsMenuOpen(false);
+      setFocusSearchOnOpen(false);
+    } else {
+      setFocusSearchOnOpen(true);
+      setIsMenuOpen(true);
+    }
+  };
+
+  const handleMenuClose = () => {
+    setIsMenuOpen(false);
+    setFocusSearchOnOpen(false);
   };
 
   const handleCategoryClick = () => {
-    setIsMenuOpen(false);
+    handleMenuClose();
   };
 
   return (
@@ -64,15 +86,17 @@ export function HeaderClient({ categories, tags, showsTags }: HeaderProps) {
         ref={headerRef}
         className="sticky top-0 bg-white z-50 transition-all duration-500 ease-out border-b border-neutral-200 shadow-sm"
       >
-        <div className="container mx-auto">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-16">
           <MobileHeader
             isMenuOpen={isMenuOpen}
             onMenuToggle={handleMenuToggle}
+            onSearchMenuOpen={handleSearchMenuOpen}
           />
           <DesktopHeader
             isMenuOpen={isMenuOpen}
             categories={categories}
             onMenuToggle={handleMenuToggle}
+            onSearchMenuOpen={handleSearchMenuOpen}
             onCategoryClick={handleCategoryClick}
           />
         </div>
@@ -83,8 +107,10 @@ export function HeaderClient({ categories, tags, showsTags }: HeaderProps) {
         categories={categories}
         tags={tags}
         showsTags={showsTags}
-        onClose={() => setIsMenuOpen(false)}
+        onClose={handleMenuClose}
         headerOffset={headerOffset}
+        focusSearchOnOpen={focusSearchOnOpen}
+        onFocusSearchHandled={() => setFocusSearchOnOpen(false)}
       />
     </>
   );

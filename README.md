@@ -133,7 +133,7 @@ The homepage features a sophisticated multi-section layout designed for news con
 
 #### **Search Results**
 
-- Editorial search across published `post`, `opinion`, and `analysis` documents (sponsored is excluded)
+- Search across published `post`, `opinion`, `analysis`, and `sponsored` documents (`type=all` is editorial-only)
 - URL-driven filters: `q`, `sort` (`relevance` | `newest`), `type` (`all` | `post` | `opinion` | `analysis`), `page`
 - Server-side pagination via `GET /api/search` (no live tag/topic bucket branches in the UI)
 
@@ -257,7 +257,7 @@ Query parameters:
 | --- | --- | --- |
 | `q` | Free text | (required for results) |
 | `sort` | `relevance`, `newest` | `relevance` |
-| `type` | `all`, `post`, `opinion`, `analysis` | `all` |
+| `type` | `all`, `post`, `opinion`, `analysis`, `sponsored` | `all` |
 | `page` | Integer ≥ 1 | `1` |
 
 JSON response shape:
@@ -275,13 +275,14 @@ JSON response shape:
 }
 ```
 
-Each `results[]` item is a normalized **article-family card** (same shape as editorial rails / listings). **Sponsored** documents are never returned. There are **no** separate tag/topic buckets in the live search UI; taxonomy is reached via `/tag/[slug]` and `/category/[slug]`.
+Each `results[]` item is a normalized **article-family card** (same shape as editorial rails / listings). **`type=all`** returns editorial types only (`post`, `opinion`, `analysis`); use **`type=sponsored`** for sponsored-only results. There are **no** separate tag/topic buckets in the live search UI; taxonomy is reached via `/tag/[slug]` and `/category/[slug]`.
 
 Implementation:
 
 - **UI** — `app/search/SearchResults.tsx` reads `q`, `sort`, `type`, `page` from the URL and calls `/api/search`.
 - **Route** — `app/api/search/route.ts` picks the GROQ list + count queries from `sanity/lib/queries.ts` (`searchEditorial*`).
 - **Tokenization** — Whitespace-split terms; each term gets a prefix wildcard for GROQ `match` filters.
+- **`searchText`** — Optional, editor-editable field on post, opinion, analysis, and sponsored. If filled before publish, those terms are searchable immediately. If left empty, run `npm run backfill:article-search-text` to generate index text from title, body, tags, and related fields (backfill never overwrites non-empty values).
 
 ## 🧭 SEO & publication policy (Stage 7)
 

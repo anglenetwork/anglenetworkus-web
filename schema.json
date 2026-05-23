@@ -1514,6 +1514,13 @@
         },
         "optional": true
       },
+      "searchText": {
+        "type": "objectAttribute",
+        "value": {
+          "type": "string"
+        },
+        "optional": true
+      },
       "seo": {
         "type": "objectAttribute",
         "value": {
@@ -1720,6 +1727,13 @@
         },
         "optional": true
       },
+      "searchText": {
+        "type": "objectAttribute",
+        "value": {
+          "type": "string"
+        },
+        "optional": true
+      },
       "seo": {
         "type": "objectAttribute",
         "value": {
@@ -1901,6 +1915,13 @@
         "optional": true
       },
       "updatedAt": {
+        "type": "objectAttribute",
+        "value": {
+          "type": "string"
+        },
+        "optional": true
+      },
+      "searchText": {
         "type": "objectAttribute",
         "value": {
           "type": "string"
@@ -2183,6 +2204,13 @@
         "type": "objectAttribute",
         "value": {
           "type": "number"
+        },
+        "optional": true
+      },
+      "searchText": {
+        "type": "objectAttribute",
+        "value": {
+          "type": "string"
         },
         "optional": true
       },

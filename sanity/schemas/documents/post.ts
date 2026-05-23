@@ -8,6 +8,7 @@ import {
   articleCoreMetadataFields,
   articleCoverGalleryFields,
   articlePublishingFields,
+  articleSearchTextField,
   articleSeoField,
   LEGACY_SANITY_VIEWS_METRICS_DESCRIPTION,
   transitionalViewMetricsFields,
@@ -275,6 +276,10 @@ export default defineType({
     ...transitionalViewMetricsFields.map((f) =>
       defineField({ ...f, group: ARTICLE_FIELD_GROUPS.legacy } as any),
     ),
+    defineField({
+      ...articleSearchTextField,
+      group: ARTICLE_FIELD_GROUPS.legacy,
+    } as any),
 
     defineField({
       ...articleSeoField,

@@ -15,6 +15,7 @@ import ArticleViewTracker from "@/app/components/article-family/ArticleViewTrack
 import CategoryViewTracker from "@/app/post/[slug]/CategoryViewTracker";
 import { SitePageWidth } from "@/app/components/layout/site-page-width";
 import { articleFamilyCanonicalHref } from "@/app/lib/article-family/routes";
+import { cn } from "@/lib/utils";
 
 function TypeBadge({ children }: { children: ReactNode }) {
   return (
@@ -107,7 +108,14 @@ export default async function ArticleFamilyPage({
                     ? ` / ${article.opinionFormat.replace(/-/g, " ")}`
                     : ""}
                 </p>
-                <h1 className="font-sans text-[36px] font-bold leading-[1.05] tracking-tight text-neutral-950 sm:text-[48px] lg:text-[56px]">
+                <h1
+                  className={cn(
+                    "font-sans font-bold tracking-tight text-neutral-950 sm:text-[48px] lg:text-[56px]",
+                    showOpinionChrome
+                      ? "text-[42px] leading-[1.22] sm:leading-[1.1] lg:leading-[1.05]"
+                      : "text-[36px] leading-[1.05]",
+                  )}
+                >
                   {article.title || "Untitled"}
                 </h1>
                 {article.excerpt && (
@@ -212,8 +220,11 @@ export default async function ArticleFamilyPage({
                   title={article.title || "Untitled"}
                   excerpt={article.excerpt || undefined}
                   date={article.date}
+                  updatedAt={article.updatedAt || null}
                   author={article.author ?? undefined}
                   slug={article.slug || undefined}
+                  articleId={article._id}
+                  sharePath={canonicalArticlePath}
                 />
 
                 {showOpinionChrome && article.opinionFormat && (
