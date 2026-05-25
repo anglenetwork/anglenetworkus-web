@@ -57,8 +57,7 @@ export default function PostBody({
   ) : null;
 
   const coverPresentation =
-    mediaPresentation ??
-    (variant === "editorial" ? "editorial" : "default");
+    mediaPresentation ?? (variant === "editorial" ? "editorial" : "default");
   const bodyComponents =
     variant === "editorial" || coverPresentation === "nonRegularCover"
       ? nonRegularPortableTextComponents
