@@ -324,7 +324,7 @@ export default function FifthSection({
                             article.category?.slug ?? ""
                           }
                         >
-                          <div className="relative h-[100px] w-[160px] shrink-0 overflow-hidden rounded-md xl:h-[150px] xl:w-[240px]">
+                          <div className="relative h-[100px] w-[160px] shrink-0 overflow-hidden rounded-md xl:h-[90px] xl:w-[144px]">
                             {thumb?.src ? (
                               <ImageRenderer
                                 src={thumb.src}
@@ -333,7 +333,7 @@ export default function FifthSection({
                                 height={200}
                                 fill
                                 unoptimized={thumb.unoptimized}
-                                sizes="(min-width: 1280px) 240px, 160px"
+                                sizes="(min-width: 1280px) 144px, 160px"
                                 className="object-cover transition-opacity group-hover:opacity-90"
                               />
                             ) : null}
