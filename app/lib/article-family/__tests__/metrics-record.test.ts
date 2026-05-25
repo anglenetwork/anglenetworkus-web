@@ -25,7 +25,7 @@ describe("recordArticleView", () => {
       expect.objectContaining({
         p_article_id: "doc-1",
         p_article_type: "analysis",
-      })
+      }),
     );
   });
 
@@ -34,7 +34,7 @@ describe("recordArticleView", () => {
       recordArticleView({
         articleId: "x",
         articleType: "not-a-type" as never,
-      })
+      }),
     ).rejects.toThrow(/invalid articleType/i);
     expect(supabaseAdmin.rpc).not.toHaveBeenCalled();
   });
@@ -44,7 +44,9 @@ describe("recordArticleView", () => {
       error: { message: "connection refused" },
     });
     await expect(
-      recordArticleView({ articleId: "a", articleType: "post" })
-    ).rejects.toEqual(expect.objectContaining({ message: "connection refused" }));
+      recordArticleView({ articleId: "a", articleType: "post" }),
+    ).rejects.toEqual(
+      expect.objectContaining({ message: "connection refused" }),
+    );
   });
 });

@@ -36,8 +36,10 @@ function trimDescription(s: string): string {
 
 function articleDescription(article: ArticleFamily): string {
   const seo = article.seo;
-  if (isNonEmpty(seo?.description)) return trimDescription(seo!.description!.trim());
-  if (isNonEmpty(article.excerpt)) return trimDescription(article.excerpt.trim());
+  if (isNonEmpty(seo?.description))
+    return trimDescription(seo!.description!.trim());
+  if (isNonEmpty(article.excerpt))
+    return trimDescription(article.excerpt.trim());
   const blocks = article.body as PortableTextBlock[] | null | undefined;
   if (blocks?.length) {
     const plain = toPlainText(blocks).trim();
@@ -56,7 +58,7 @@ export type SiteSettingsWithDescription = SiteSettingsForSeo & {
 
 export function resolveSiteName(
   settings: SiteSettingsForSeo | null | undefined,
-  demoTitle: string
+  demoTitle: string,
 ): string {
   return (settings?.title && String(settings.title).trim()) || demoTitle;
 }
@@ -64,7 +66,7 @@ export function resolveSiteName(
 export function buildArticlePageMetadata(
   article: ArticleFamily,
   settings: SiteSettingsForSeo | null | undefined,
-  demoTitle: string
+  demoTitle: string,
 ): Metadata {
   const siteUrl = getPublicSiteUrl();
   const siteName = resolveSiteName(settings, demoTitle);
@@ -74,15 +76,15 @@ export function buildArticlePageMetadata(
   const ogTitle = isNonEmpty(seo?.title) ? seo!.title!.trim() : article.title;
   const description = articleDescription(article);
 
-  const ogFromSeo = resolveOpenGraphImage(seo?.ogImage as Parameters<
-    typeof resolveOpenGraphImage
-  >[0]);
+  const ogFromSeo = resolveOpenGraphImage(
+    seo?.ogImage as Parameters<typeof resolveOpenGraphImage>[0],
+  );
   const coverOg = getCoverImage(
     article.cover as Parameters<typeof getCoverImage>[0],
-    article.title
+    article.title,
   );
   const siteFallback = resolveOpenGraphImage(
-    settings?.ogImage as Parameters<typeof resolveOpenGraphImage>[0]
+    settings?.ogImage as Parameters<typeof resolveOpenGraphImage>[0],
   );
 
   const fallbackImageUrl = coverOg?.src;
@@ -104,7 +106,7 @@ export function buildArticlePageMetadata(
       : undefined;
   const canonicalPath = `${siteUrl}${articleFamilyCanonicalHref(
     article._type,
-    article.slug
+    article.slug,
   )}`;
 
   const ogDescription = isNonEmpty(seo?.description)
@@ -112,8 +114,9 @@ export function buildArticlePageMetadata(
     : description;
 
   const ogTitleFinal = ogTitle;
-  const twitterCard: "summary_large_image" | "summary" =
-    ogImages?.length ? "summary_large_image" : "summary";
+  const twitterCard: "summary_large_image" | "summary" = ogImages?.length
+    ? "summary_large_image"
+    : "summary";
 
   return {
     title: { absolute: `${titleBase} | ${siteName}` },
@@ -143,7 +146,7 @@ export function buildArticlePageMetadata(
 export function buildHomepageMetadata(
   settings: SiteSettingsWithDescription | null | undefined,
   demoTitle: string,
-  demoDescriptionPlain: string
+  demoDescriptionPlain: string,
 ): Metadata {
   const siteUrl = getPublicSiteUrl().replace(/\/$/, "");
   const siteName = resolveSiteName(settings, demoTitle);
@@ -154,7 +157,7 @@ export function buildHomepageMetadata(
       if (t) description = t;
     } else {
       const plain = toPlainText(
-        settings.description as PortableTextBlock[]
+        settings.description as PortableTextBlock[],
       ).trim();
       if (plain) description = plain;
     }
@@ -174,7 +177,7 @@ export function buildOpinionIndexMetadata(
   page: number,
   total: number,
   settings: SiteSettingsForSeo | null | undefined,
-  demoTitle: string
+  demoTitle: string,
 ): Metadata {
   const siteName = resolveSiteName(settings, demoTitle);
   const description =
@@ -182,7 +185,7 @@ export function buildOpinionIndexMetadata(
   const pageTitle = `Opinion | ${siteName}`;
   const canonical = buildCanonicalUrl(
     "/opinion",
-    page > 1 ? new URLSearchParams({ page: String(page) }) : undefined
+    page > 1 ? new URLSearchParams({ page: String(page) }) : undefined,
   );
   return {
     title: { absolute: pageTitle },
@@ -210,7 +213,7 @@ export function buildAnalysisIndexMetadata(
   page: number,
   total: number,
   settings: SiteSettingsForSeo | null | undefined,
-  demoTitle: string
+  demoTitle: string,
 ): Metadata {
   const siteName = resolveSiteName(settings, demoTitle);
   const description =
@@ -218,7 +221,7 @@ export function buildAnalysisIndexMetadata(
   const pageTitle = `Analysis | ${siteName}`;
   const canonical = buildCanonicalUrl(
     "/analysis",
-    page > 1 ? new URLSearchParams({ page: String(page) }) : undefined
+    page > 1 ? new URLSearchParams({ page: String(page) }) : undefined,
   );
   return {
     title: { absolute: pageTitle },
@@ -245,7 +248,7 @@ export function buildAnalysisIndexMetadata(
 export function buildLatestPageMetadata(
   page: number,
   settings: SiteSettingsForSeo | null | undefined,
-  demoTitle: string
+  demoTitle: string,
 ): Metadata {
   const siteName = resolveSiteName(settings, demoTitle);
   const description =
@@ -253,7 +256,7 @@ export function buildLatestPageMetadata(
   const pageTitle = `Latest | ${siteName}`;
   const canonical = buildCanonicalUrl(
     "/latest",
-    page > 1 ? new URLSearchParams({ page: String(page) }) : undefined
+    page > 1 ? new URLSearchParams({ page: String(page) }) : undefined,
   );
   return {
     title: { absolute: pageTitle },
@@ -280,11 +283,16 @@ export function buildLatestPageMetadata(
 export function buildSearchPageMetadata(
   searchParams: Record<string, string | string[] | undefined>,
   settings: SiteSettingsForSeo | null | undefined,
-  demoTitle: string
+  demoTitle: string,
 ): Metadata {
   const siteName = resolveSiteName(settings, demoTitle);
   const qRaw = searchParams.q;
-  const q = typeof qRaw === "string" ? qRaw.trim() : Array.isArray(qRaw) ? qRaw[0]?.trim() ?? "" : "";
+  const q =
+    typeof qRaw === "string"
+      ? qRaw.trim()
+      : Array.isArray(qRaw)
+        ? (qRaw[0]?.trim() ?? "")
+        : "";
 
   const sort = (() => {
     const s = searchParams.sort;
@@ -358,7 +366,10 @@ export function buildCategoryPageMetadata(args: {
   return {
     title: { absolute: pageTitle },
     description,
-    robots: robotsListingOrTaxonomy({ page: 1, totalResults: args.resultCount }),
+    robots: robotsListingOrTaxonomy({
+      page: 1,
+      totalResults: args.resultCount,
+    }),
     alternates: {
       canonical,
     },
@@ -392,7 +403,10 @@ export function buildTagPageMetadata(args: {
   return {
     title: { absolute: pageTitle },
     description,
-    robots: robotsListingOrTaxonomy({ page: 1, totalResults: args.resultCount }),
+    robots: robotsListingOrTaxonomy({
+      page: 1,
+      totalResults: args.resultCount,
+    }),
     alternates: {
       canonical,
     },

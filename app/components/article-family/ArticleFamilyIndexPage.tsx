@@ -35,24 +35,24 @@ export default function ArticleFamilyIndexPage({
 
   return (
     <SitePageWidth variant="narrow" className="py-10 md:py-14">
-      <header className="mb-10 border-b border-neutral-200 pb-6">
-        <h1 className="text-3xl font-bold font-sans text-neutral-900 md:text-4xl">
+      <header className="mb-10 border-neutral-200 border-b pb-6">
+        <h1 className="font-bold font-sans text-3xl text-neutral-900 md:text-4xl">
           {title}
         </h1>
         {description ? (
-          <p className="mt-2 text-neutral-600 font-sans text-sm md:text-base">
+          <p className="mt-2 font-sans text-neutral-600 text-sm md:text-base">
             {description}
           </p>
         ) : null}
         {total > 0 ? (
-          <p className="mt-3 text-xs text-neutral-500 font-sans">
+          <p className="mt-3 font-sans text-neutral-500 text-xs">
             Showing {startItem}–{endItem} of {total}
           </p>
         ) : null}
       </header>
 
       {articles.length === 0 ? (
-        <p className="text-center text-neutral-600 py-12 font-sans">
+        <p className="py-12 text-center font-sans text-neutral-600">
           No articles yet.
         </p>
       ) : (
@@ -74,7 +74,7 @@ export default function ArticleFamilyIndexPage({
         >
           <Link
             href={pageHref(basePath, safePage - 1)}
-            className={`rounded-lg border border-neutral-300 px-4 py-2 text-sm font-sans ${
+            className={`rounded-lg border border-neutral-300 px-4 py-2 font-sans text-sm ${
               safePage <= 1
                 ? "pointer-events-none opacity-40"
                 : "hover:bg-neutral-50"
@@ -83,12 +83,12 @@ export default function ArticleFamilyIndexPage({
           >
             Previous
           </Link>
-          <span className="text-sm text-neutral-600 font-sans">
+          <span className="font-sans text-neutral-600 text-sm">
             Page {safePage} of {totalPages}
           </span>
           <Link
             href={pageHref(basePath, safePage + 1)}
-            className={`rounded-lg border border-neutral-300 px-4 py-2 text-sm font-sans ${
+            className={`rounded-lg border border-neutral-300 px-4 py-2 font-sans text-sm ${
               safePage >= totalPages
                 ? "pointer-events-none opacity-40"
                 : "hover:bg-neutral-50"

@@ -39,21 +39,21 @@ export default function MainSeventhSection({
 
   return (
     <div className="min-h-screen">
-      <div className="py-8 px-4">
+      <div className="px-4 py-8">
         {/* Section Header */}
         <div className="mb-6">
-          <div className="flex items-center mb-4">
-            <div className="w-2 h-2 bg-red-500 rounded-full mr-2"></div>
-            <h2 className="text-sm font-semibold text-gray-700 uppercase tracking-wide font-sans">
+          <div className="mb-4 flex items-center">
+            <div className="mr-2 h-2 w-2 rounded-full bg-red-500"></div>
+            <h2 className="font-sans font-semibold text-gray-700 text-sm uppercase tracking-wide">
               <Link
                 href={`/category/${categoryTitle.toLowerCase().replace(/\s+/g, "-")}`}
-                className="hover:text-red-600 transition-colors cursor-pointer"
+                className="cursor-pointer transition-colors hover:text-red-600"
               >
                 More from {categoryTitle}
               </Link>
             </h2>
           </div>
-          <div className="border-t border-black mb-6"></div>
+          <div className="mb-6 border-black border-t"></div>
         </div>
 
         <div className="flex flex-col gap-8 lg:flex-row">
@@ -65,7 +65,10 @@ export default function MainSeventhSection({
               >
                 <div className="relative aspect-[16/10] w-full overflow-hidden rounded-lg">
                   {(() => {
-                    const coverData = getCoverImage(mainArticle.cover, mainArticle.title || "Article image");
+                    const coverData = getCoverImage(
+                      mainArticle.cover,
+                      mainArticle.title || "Article image",
+                    );
                     if (coverData?.src) {
                       return (
                         <Image
@@ -73,7 +76,7 @@ export default function MainSeventhSection({
                           alt={coverData.alt}
                           fill
                           unoptimized={coverData.unoptimized}
-                          className="object-cover rounded-xl transition-opacity group-hover:opacity-90"
+                          className="rounded-xl object-cover transition-opacity group-hover:opacity-90"
                           priority
                         />
                       );
@@ -85,7 +88,7 @@ export default function MainSeventhSection({
                     );
                   })()}
                 </div>
-                <h2 className="mt-6 text-balance text-2xl font-bold leading-tight text-neutral-900 font-sans">
+                <h2 className="mt-6 text-balance font-bold font-sans text-2xl text-neutral-900 leading-tight">
                   {mainArticle.title || "Untitled"}
                 </h2>
               </Link>
@@ -99,12 +102,12 @@ export default function MainSeventhSection({
                   href={`/post/${article.slug || "#"}`}
                   className="block py-4 transition-opacity hover:opacity-70"
                 >
-                  <h3 className="text-base font-normal leading-relaxed text-neutral-900 font-sans">
+                  <h3 className="font-normal font-sans text-base text-neutral-900 leading-relaxed">
                     {article.title || "Untitled"}
                   </h3>
                 </Link>
                 {index < sidebarArticles.length - 1 && (
-                  <div className="border-b border-neutral-200" />
+                  <div className="border-neutral-200 border-b" />
                 )}
               </div>
             ))}

@@ -56,7 +56,7 @@ export function robotsHomepage(): Metadata["robots"] {
 }
 
 export function robotsFromArticleType(
-  t: ArticleFamilyDocType
+  t: ArticleFamilyDocType,
 ): Metadata["robots"] {
   if (t === "sponsored") return robotsSponsoredArticle();
   return robotsIndexableArticle();

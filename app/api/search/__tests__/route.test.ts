@@ -18,7 +18,7 @@ describe("GET /api/search", () => {
 
   it("returns empty payload when q is missing", async () => {
     const res = await GET(
-      new NextRequest("http://localhost/api/search?sort=relevance&type=all")
+      new NextRequest("http://localhost/api/search?sort=relevance&type=all"),
     );
     expect(res.status).toBe(200);
     const body = await res.json();
@@ -46,8 +46,8 @@ describe("GET /api/search", () => {
 
     const res = await GET(
       new NextRequest(
-        "http://localhost/api/search?q=trump&sort=relevance&type=all"
-      )
+        "http://localhost/api/search?q=trump&sort=relevance&type=all",
+      ),
     );
 
     expect(res.status).toBe(200);
@@ -69,23 +69,25 @@ describe("GET /api/search", () => {
 
     const res = await GET(
       new NextRequest(
-        "http://localhost/api/search?q=partner&sort=relevance&type=sponsored"
-      )
+        "http://localhost/api/search?q=partner&sort=relevance&type=sponsored",
+      ),
     );
 
     expect(res.status).toBe(200);
     const body = await res.json();
     expect(body.type).toBe("sponsored");
-    expect(String(fetchMock.mock.calls[0][0])).toContain('_type == "sponsored"');
+    expect(String(fetchMock.mock.calls[0][0])).toContain(
+      '_type == "sponsored"',
+    );
   });
 
   it("does not expose raw Sanity errors", async () => {
     fetchMock.mockRejectedValue(
-      new Error("score() function received unexpected expression")
+      new Error("score() function received unexpected expression"),
     );
 
     const res = await GET(
-      new NextRequest("http://localhost/api/search?q=trump&sort=relevance")
+      new NextRequest("http://localhost/api/search?q=trump&sort=relevance"),
     );
 
     expect(res.status).toBe(500);

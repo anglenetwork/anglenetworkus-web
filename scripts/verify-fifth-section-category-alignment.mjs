@@ -15,7 +15,9 @@ const dataset = process.env.NEXT_PUBLIC_SANITY_DATASET;
 const apiVersion = process.env.NEXT_PUBLIC_SANITY_API_VERSION || "2024-02-28";
 
 if (!projectId || !dataset) {
-  console.error("Missing NEXT_PUBLIC_SANITY_PROJECT_ID or NEXT_PUBLIC_SANITY_DATASET");
+  console.error(
+    "Missing NEXT_PUBLIC_SANITY_PROJECT_ID or NEXT_PUBLIC_SANITY_DATASET",
+  );
   process.exit(1);
 }
 
@@ -40,7 +42,14 @@ function analyze(label, expectedSlug, rows) {
     .map((r, i) =>
       r.categorySlug === expectedSlug
         ? null
-        : { i, _id: r._id, expectedSlug, got: r.categorySlug, title: r.title, categoryTitle: r.categoryTitle },
+        : {
+            i,
+            _id: r._id,
+            expectedSlug,
+            got: r.categorySlug,
+            title: r.title,
+            categoryTitle: r.categoryTitle,
+          },
     )
     .filter(Boolean);
   const ids = list.slice(0, 8).map((r) => r._id);

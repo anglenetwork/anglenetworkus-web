@@ -11,7 +11,9 @@ import type { SiteSettingsForSeo } from "@/app/lib/seo/metadata-builders";
 import { resolveSiteName } from "@/app/lib/seo/metadata-builders";
 import { articleFamilyCanonicalHref } from "./routes";
 
-export function getArticleBreadcrumbItems(article: ArticleFamily): BreadcrumbItem[] {
+export function getArticleBreadcrumbItems(
+  article: ArticleFamily,
+): BreadcrumbItem[] {
   const home: BreadcrumbItem = { name: "Home", path: "/" };
   const articlePath = articleFamilyCanonicalHref(article._type, article.slug);
   switch (article._type) {
@@ -52,12 +54,12 @@ export function getArticleBreadcrumbItems(article: ArticleFamily): BreadcrumbIte
 
 export function buildPublisherForJsonLd(
   settings: SiteSettingsForSeo | null | undefined,
-  demoTitle: string
+  demoTitle: string,
 ) {
   const siteUrl = getPublicSiteUrl();
   const siteName = resolveSiteName(settings, demoTitle);
   const og = resolveOpenGraphImage(
-    settings?.ogImage as Parameters<typeof resolveOpenGraphImage>[0]
+    settings?.ogImage as Parameters<typeof resolveOpenGraphImage>[0],
   );
   return buildPublisherJsonLd({
     siteName,
@@ -78,7 +80,7 @@ export function buildArticlePageJsonLd(args: {
   const publisher = buildPublisherForJsonLd(args.settings, args.demoTitle);
   const articleLd = buildArticleJsonLd(args.article, { publisher });
   const breadcrumbLd = buildBreadcrumbJsonLd(
-    getArticleBreadcrumbItems(args.article)
+    getArticleBreadcrumbItems(args.article),
   );
   return { article: articleLd, breadcrumb: breadcrumbLd };
 }

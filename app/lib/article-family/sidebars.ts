@@ -25,7 +25,7 @@ import { articleFamilyHref } from "./routes";
 export type SidebarArticleLink = ArticleSidebarPost;
 
 function attachPostHref(
-  rows: Array<Record<string, unknown>> | null | undefined
+  rows: Array<Record<string, unknown>> | null | undefined,
 ): SidebarArticleLink[] {
   return (rows || [])
     .filter((r) => typeof r.slug === "string" && r.slug)
@@ -80,7 +80,10 @@ export async function loadArticlePageSidebars(article: ArticleFamily) {
         const hasActivity = ranked.some((r) => r.views7d > 0 || r.viewsAll > 0);
         const filtered = ranked.filter((r) => r.articleId !== article._id);
         if (!filtered.length || !hasActivity) {
-          logDevMetricsFallback("article_sidebar_popular", "empty_or_no_activity");
+          logDevMetricsFallback(
+            "article_sidebar_popular",
+            "empty_or_no_activity",
+          );
           return await client.fetch(popularReadsFallbackQuery, {
             currentPostId: article._id,
           });
@@ -89,12 +92,12 @@ export async function loadArticlePageSidebars(article: ArticleFamily) {
         const raw = await client.fetch(postsByIdsLightweightQuery, {
           ids,
         });
-        const ordered = orderDocumentsByIds(
-          raw as { _id: string }[],
-          ids
-        );
+        const ordered = orderDocumentsByIds(raw as { _id: string }[], ids);
         if (ordered.length === 0) {
-          logDevMetricsFallback("article_sidebar_popular", "empty_or_no_activity");
+          logDevMetricsFallback(
+            "article_sidebar_popular",
+            "empty_or_no_activity",
+          );
           return await client.fetch(popularReadsFallbackQuery, {
             currentPostId: article._id,
           });
@@ -143,7 +146,7 @@ export async function loadArticlePageSidebars(article: ArticleFamily) {
  */
 export async function loadLatestInCategory(
   article: ArticleFamily,
-  limit: number
+  limit: number,
 ): Promise<SidebarArticleLink[]> {
   const categorySlug = article.category?.slug;
   if (!categorySlug) return [];

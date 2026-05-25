@@ -15,10 +15,11 @@ test.describe("Smoke: subscriptions page shell", () => {
       timeout: 20000,
     });
     await expect(
-      page.getByRole("heading", { name: /you're on the starter plan/i })
+      page.getByRole("heading", { name: /you're on the starter plan/i }),
     ).toBeVisible();
 
-    await expect(page.getByRole("heading", { name: /^pro$/i }).first()).toBeVisible();
+    await expect(
+      page.getByRole("heading", { name: /^pro$/i }).first(),
+    ).toBeVisible();
   });
 });
-

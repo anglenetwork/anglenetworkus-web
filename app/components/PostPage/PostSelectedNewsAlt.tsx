@@ -46,9 +46,9 @@ export default function PostSelectedNewsAlt({
   }
 
   return (
-    <div className="w-full max-w-md mx-auto bg-card rounded-lg p-6 shadow-sm bg-neutral-100">
+    <div className="mx-auto w-full max-w-md rounded-lg bg-card bg-neutral-100 p-6 shadow-sm">
       {/* Header */}
-      <h2 className="text-xl font-sans font-bold text-foreground mb-6">
+      <h2 className="mb-6 font-bold font-sans text-foreground text-xl">
         {title}
       </h2>
 
@@ -58,12 +58,15 @@ export default function PostSelectedNewsAlt({
           <Link
             key={post._id}
             href={`/post/${post.slug}`}
-            className="group flex items-start gap-4 p-2 rounded-lg hover:bg-muted/50 transition-colors duration-200 cursor-pointer"
+            className="group flex cursor-pointer items-start gap-4 rounded-lg p-2 transition-colors duration-200 hover:bg-muted/50"
           >
             {/* Article Image */}
             <div className="flex-shrink-0">
               {(() => {
-                const coverData = getCoverImage(post.cover, post.title || "Article image");
+                const coverData = getCoverImage(
+                  post.cover,
+                  post.title || "Article image",
+                );
                 if (coverData?.src) {
                   return (
                     <Image
@@ -87,8 +90,8 @@ export default function PostSelectedNewsAlt({
             </div>
 
             {/* Article Content */}
-            <div className="flex-1 min-w-0">
-              <h3 className="font-sans text-sm font-semibold text-foreground leading-tight group-hover:text-primary transition-colors duration-200 line-clamp-2">
+            <div className="min-w-0 flex-1">
+              <h3 className="line-clamp-2 font-sans font-semibold text-foreground text-sm leading-tight transition-colors duration-200 group-hover:text-primary">
                 {post.title}
               </h3>
             </div>

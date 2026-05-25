@@ -16,15 +16,15 @@ interface BookmarkButtonProps {
 function withTimeout<T>(
   promise: Promise<T>,
   ms: number,
-  label: string
+  label: string,
 ): Promise<T> {
   return Promise.race([
     promise,
     new Promise<T>((_, reject) =>
       setTimeout(
         () => reject(new Error(`${label} timed out after ${ms}ms`)),
-        ms
-      )
+        ms,
+      ),
     ),
   ]);
 }
@@ -61,10 +61,10 @@ export default function BookmarkButton({
             {
               method: "GET",
               cache: "no-store",
-            }
+            },
           ),
           8000,
-          "bookmark status"
+          "bookmark status",
         );
 
         const json = (await res.json().catch(() => ({}))) as any;
@@ -105,7 +105,7 @@ export default function BookmarkButton({
           body: JSON.stringify({ articleId, articleSlug }),
         }),
         12000,
-        "bookmark toggle"
+        "bookmark toggle",
       );
 
       if (res.status === 401) {
@@ -127,7 +127,7 @@ export default function BookmarkButton({
         // fallback: re-check
         const st = await fetch(
           `/api/bookmarks/status?articleId=${encodeURIComponent(articleId)}`,
-          { cache: "no-store" }
+          { cache: "no-store" },
         );
         const sj = (await st.json().catch(() => ({}))) as any;
         setIsBookmarked(Boolean(sj?.bookmarked));

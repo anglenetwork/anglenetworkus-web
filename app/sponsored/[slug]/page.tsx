@@ -1,11 +1,9 @@
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import ArticleFamilyPage from "@/app/components/article-family/ArticleFamilyPage";
-import PostSelectedNews from "@/app/components/PostPage/PostSelectedNews";
 import { SuggestedTags } from "@/app/components/SuggestedTags";
 import { fetchArticleFamilyPage } from "@/app/lib/article-family/fetch";
 import { buildArticleFamilyMetadata } from "@/app/lib/article-family/metadata";
-import { loadArticlePageSidebars } from "@/app/lib/article-family/sidebars";
 import { client } from "@/sanity/lib/client";
 import { sponsoredSlugsQuery } from "@/sanity/lib/article-family-queries";
 
@@ -38,8 +36,6 @@ export default async function SponsoredArticlePage({
   const article = await fetchArticleFamilyPage({ type: "sponsored", slug });
   if (!article) notFound();
 
-  const { newsForYou, popularReads } = await loadArticlePageSidebars(article);
-
   const tagsForSuggested =
     article.tags
       ?.filter((tag) => tag.title && tag.slug)
@@ -51,12 +47,6 @@ export default async function SponsoredArticlePage({
   return (
     <ArticleFamilyPage
       article={article}
-      sidebar={
-        <>
-          <PostSelectedNews latestNews={popularReads} title="Popular Reads" />
-          <PostSelectedNews latestNews={newsForYou} title="News for You" />
-        </>
-      }
       footer={
         tagsForSuggested.length > 0 ? (
           <SuggestedTags tags={tagsForSuggested} />

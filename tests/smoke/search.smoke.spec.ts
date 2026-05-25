@@ -3,7 +3,7 @@ import { test, expect } from "@playwright/test";
 async function waitForSearchApi(page: import("@playwright/test").Page) {
   await page.waitForResponse(
     (res) => res.url().includes("/api/search") && res.status() === 200,
-    { timeout: 20000 }
+    { timeout: 20000 },
   );
 }
 
@@ -11,23 +11,33 @@ test.describe("Smoke: search", () => {
   test("search page shows empty state without query", async ({ page }) => {
     await page.goto("/search", { waitUntil: "domcontentloaded" });
 
-    await expect(page.getByRole("heading", { name: "Search", exact: true })).toBeVisible({
+    await expect(
+      page.getByRole("heading", { name: "Search", exact: true }),
+    ).toBeVisible({
       timeout: 15000,
     });
     await expect(
-      page.getByText("Enter a search term above to find articles.")
+      page.getByText("Enter a search term above to find articles."),
     ).toBeVisible();
     await expect(
-      page.locator("main").getByRole("search", { name: "Search editorial content" })
+      page
+        .locator("main")
+        .getByRole("search", { name: "Search editorial content" }),
     ).toBeVisible();
   });
 
   test("search API returns 200 for editorial and sponsored scopes", async ({
     request,
   }) => {
-    for (const type of ["all", "post", "opinion", "analysis", "sponsored"] as const) {
+    for (const type of [
+      "all",
+      "post",
+      "opinion",
+      "analysis",
+      "sponsored",
+    ] as const) {
       const res = await request.get(
-        `/api/search?q=news&sort=relevance&type=${type}`
+        `/api/search?q=news&sort=relevance&type=${type}`,
       );
       expect(res.status(), `type=${type}`).toBe(200);
       const body = await res.json();
@@ -49,7 +59,9 @@ test.describe("Smoke: search", () => {
     });
     await waitForSearchApi(page);
 
-    await expect(page.getByText("Search could not be completed.")).toHaveCount(0);
+    await expect(page.getByText("Search could not be completed.")).toHaveCount(
+      0,
+    );
 
     const statusLine = page.locator("main p").filter({
       hasText: /Displaying|No results for|Searching for/,
@@ -69,11 +81,16 @@ test.describe("Smoke: search", () => {
     await waitForSearchApi(page);
 
     await main.getByRole("button", { name: "Filter" }).click();
-    await expect(page.getByRole("dialog", { name: "Filter by type" })).toBeVisible();
+    await expect(
+      page.getByRole("dialog", { name: "Filter by type" }),
+    ).toBeVisible();
 
     await page.getByRole("radio", { name: "Sponsored" }).click();
     await Promise.all([
-      page.waitForURL(/type=sponsored/, { timeout: 15000, waitUntil: "commit" }),
+      page.waitForURL(/type=sponsored/, {
+        timeout: 15000,
+        waitUntil: "commit",
+      }),
       page.getByRole("button", { name: "Apply" }).click(),
     ]);
     await waitForSearchApi(page);
@@ -82,7 +99,9 @@ test.describe("Smoke: search", () => {
     await page.getByRole("option", { name: "Newest" }).click();
     await expect(page).toHaveURL(/sort=newest/, { timeout: 15000 });
     await waitForSearchApi(page);
-    await expect(page.getByText("Search could not be completed.")).toHaveCount(0);
+    await expect(page.getByText("Search could not be completed.")).toHaveCount(
+      0,
+    );
   });
 
   test("type filters include Sponsored and sponsored scope loads", async ({
@@ -102,12 +121,17 @@ test.describe("Smoke: search", () => {
     await expect(main.getByRole("button", { name: "Sponsored" })).toBeVisible();
 
     await Promise.all([
-      page.waitForURL(/type=sponsored/, { timeout: 15000, waitUntil: "commit" }),
+      page.waitForURL(/type=sponsored/, {
+        timeout: 15000,
+        waitUntil: "commit",
+      }),
       main.getByRole("button", { name: "Sponsored" }).click(),
     ]);
 
     await waitForSearchApi(page);
-    await expect(page.getByText("Search could not be completed.")).toHaveCount(0);
+    await expect(page.getByText("Search could not be completed.")).toHaveCount(
+      0,
+    );
   });
 
   test("search bar submit navigates with q param", async ({ page }) => {
@@ -127,6 +151,8 @@ test.describe("Smoke: search", () => {
     ]);
 
     await waitForSearchApi(page);
-    await expect(page.getByText("Search could not be completed.")).toHaveCount(0);
+    await expect(page.getByText("Search could not be completed.")).toHaveCount(
+      0,
+    );
   });
 });

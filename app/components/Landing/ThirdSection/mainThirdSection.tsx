@@ -42,13 +42,13 @@ export default function FifthSection({
             />
           </div>
 
-          <div className="col-span-12 flex flex-col lg:grid lg:grid-cols-12 gap-8">
+          <div className="col-span-12 flex flex-col gap-8 lg:grid lg:grid-cols-12">
             {/* Left Column - Full width on mobile, 7 columns on desktop */}
-            <div className="w-full lg:col-span-7 flex flex-col gap-3">
+            <div className="flex w-full flex-col gap-3 lg:col-span-7">
               {mainArticle && (
                 <Link
                   href={`/post/${mainArticle.slug || "#"}`}
-                  className="group block mb-4"
+                  className="group mb-4 block"
                 >
                   <div className="mb-4">
                     <div className="relative aspect-[16/9] overflow-hidden rounded-sm">
@@ -60,7 +60,7 @@ export default function FifthSection({
                             image?: any;
                             alt?: string | null;
                           } | null,
-                          mainArticle.title || "Featured article"
+                          mainArticle.title || "Featured article",
                         );
                         if (!coverData) return null;
                         return (
@@ -72,7 +72,7 @@ export default function FifthSection({
                             fill
                             unoptimized={coverData.unoptimized}
                             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 58vw, 600px"
-                            className="object-cover rounded-sm"
+                            className="rounded-sm object-cover"
                           />
                         );
                       })()}
@@ -83,24 +83,24 @@ export default function FifthSection({
                       </p>
                     )} */}
                   </div>
-                  <h3 className="text-2xl font-sans font-semibold text-neutral-900 leading-snug tracking-tight">
+                  <h3 className="font-sans font-semibold text-2xl text-neutral-900 leading-snug tracking-tight">
                     {mainArticle.title || "Untitled"}
                   </h3>
                 </Link>
               )}
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                 {secondaryArticles[0] && (
                   <Link
                     href={`/post/${secondaryArticles[0].slug || "#"}`}
                     className="group block"
                   >
                     <div>
-                      <div className="relative aspect-[16/9] sm:aspect-[4/3] overflow-hidden rounded-sm">
+                      <div className="relative aspect-[16/9] overflow-hidden rounded-sm sm:aspect-[4/3]">
                         {(() => {
                           const coverData = getImageData(
                             secondaryArticles[0].cover,
-                            secondaryArticles[0].title || "Article image"
+                            secondaryArticles[0].title || "Article image",
                           );
                           if (!coverData) return null;
                           return (
@@ -112,7 +112,7 @@ export default function FifthSection({
                               fill
                               unoptimized={coverData.unoptimized}
                               sizes="(max-width: 640px) 100vw, (max-width: 1200px) 50vw, 300px"
-                              className="object-cover rounded-sm"
+                              className="rounded-sm object-cover"
                             />
                           );
                         })()}
@@ -124,7 +124,7 @@ export default function FifthSection({
                       )} */}
                     </div>
                     <div className="mt-2">
-                      <h3 className="text-xl font-sans font-semibold text-neutral-900 leading-snug tracking-tight">
+                      <h3 className="font-sans font-semibold text-neutral-900 text-xl leading-snug tracking-tight">
                         {secondaryArticles[0].title || "Untitled"}
                       </h3>
                     </div>
@@ -137,11 +137,11 @@ export default function FifthSection({
                     className="group block"
                   >
                     <div>
-                      <div className="relative aspect-[16/9] sm:aspect-[4/3] overflow-hidden rounded-sm">
+                      <div className="relative aspect-[16/9] overflow-hidden rounded-sm sm:aspect-[4/3]">
                         {(() => {
                           const coverData = getImageData(
                             secondaryArticles[1].cover,
-                            secondaryArticles[1].title || "Article image"
+                            secondaryArticles[1].title || "Article image",
                           );
                           if (!coverData) return null;
                           return (
@@ -153,7 +153,7 @@ export default function FifthSection({
                               fill
                               unoptimized={coverData.unoptimized}
                               sizes="(max-width: 640px) 100vw, (max-width: 1200px) 50vw, 300px"
-                              className="object-cover rounded-sm"
+                              className="rounded-sm object-cover"
                             />
                           );
                         })()}
@@ -165,7 +165,7 @@ export default function FifthSection({
                       )} */}
                     </div>
                     <div className="mt-2">
-                      <h3 className="text-xl font-sans font-semibold text-neutral-900 leading-snug tracking-tight">
+                      <h3 className="font-sans font-semibold text-neutral-900 text-xl leading-snug tracking-tight">
                         {secondaryArticles[1].title || "Untitled"}
                       </h3>
                     </div>
@@ -174,11 +174,11 @@ export default function FifthSection({
               </div>
 
               {/* Separator after secondary articles */}
-              <hr className="border-t border-gray-300 my-4 lg:hidden" />
+              <hr className="my-4 border-gray-300 border-t lg:hidden" />
             </div>
 
             {/* Right Column - Full width on mobile (appears after left), 5 columns on desktop */}
-            <div className="w-full lg:col-span-5 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-3">
+            <div className="grid w-full grid-cols-1 gap-3 sm:grid-cols-2 lg:col-span-5 lg:grid-cols-2">
               {/* Left sidebar column */}
               <div className="flex flex-col gap-0">
                 {rightColumnArticles[0] && (
@@ -188,11 +188,11 @@ export default function FifthSection({
                       className="group block"
                     >
                       <div>
-                        <div className="relative aspect-[16/9] lg:aspect-[3/4] overflow-hidden rounded-sm">
+                        <div className="relative aspect-[16/9] overflow-hidden rounded-sm lg:aspect-[3/4]">
                           {(() => {
                             const coverData = getImageData(
                               rightColumnArticles[0].cover,
-                              rightColumnArticles[0].title || "Article image"
+                              rightColumnArticles[0].title || "Article image",
                             );
                             if (!coverData) return null;
                             return (
@@ -204,7 +204,7 @@ export default function FifthSection({
                                 fill
                                 unoptimized={coverData.unoptimized}
                                 sizes="(max-width: 640px) 100vw, (max-width: 1200px) 42vw, 200px"
-                                className="object-cover rounded-sm"
+                                className="rounded-sm object-cover"
                               />
                             );
                           })()}
@@ -216,13 +216,13 @@ export default function FifthSection({
                         )} */}
                       </div>
                       <div className="mt-2">
-                        <h3 className="text-xl font-sans font-semibold text-neutral-900 leading-snug tracking-tight">
+                        <h3 className="font-sans font-semibold text-neutral-900 text-xl leading-snug tracking-tight">
                           {rightColumnArticles[0].title || "Untitled"}
                         </h3>
                       </div>
                     </Link>
                     {/* Separator after featured article */}
-                    <hr className="border-t border-gray-300 my-3" />
+                    <hr className="my-3 border-gray-300 border-t" />
                   </>
                 )}
 
@@ -232,12 +232,12 @@ export default function FifthSection({
                     <div key={article._id}>
                       <Link
                         href={`/post/${article.slug || "#"}`}
-                        className="text-base font-sans font-normal text-neutral-900 leading-snug tracking-normal"
+                        className="font-normal font-sans text-base text-neutral-900 leading-snug tracking-normal"
                       >
                         {article.title || "Untitled"}
                       </Link>
                       {index < 3 && (
-                        <hr className="border-t border-gray-300 mt-4" />
+                        <hr className="mt-4 border-gray-300 border-t" />
                       )}
                     </div>
                   ))}
@@ -255,15 +255,15 @@ export default function FifthSection({
                       className="group block"
                     >
                       <div>
-                        <div className="relative aspect-[16/9] lg:aspect-[3/4] overflow-hidden rounded-sm">
+                        <div className="relative aspect-[16/9] overflow-hidden rounded-sm lg:aspect-[3/4]">
                           {(() => {
                             const midIndex = Math.ceil(
-                              rightColumnArticles.length / 2
+                              rightColumnArticles.length / 2,
                             );
                             const coverData = getImageData(
                               rightColumnArticles[midIndex].cover,
                               rightColumnArticles[midIndex].title ||
-                                "Article image"
+                                "Article image",
                             );
                             if (!coverData) return null;
                             return (
@@ -275,7 +275,7 @@ export default function FifthSection({
                                 fill
                                 unoptimized={coverData.unoptimized}
                                 sizes="(max-width: 640px) 100vw, (max-width: 1200px) 42vw, 200px"
-                                className="object-cover rounded-sm"
+                                className="rounded-sm object-cover"
                               />
                             );
                           })()}
@@ -295,7 +295,7 @@ export default function FifthSection({
                         )} */}
                       </div>
                       <div className="mt-2">
-                        <h3 className="text-xl font-sans font-semibold text-neutral-900 leading-snug tracking-tight">
+                        <h3 className="font-sans font-semibold text-neutral-900 text-xl leading-snug tracking-tight">
                           {rightColumnArticles[
                             Math.ceil(rightColumnArticles.length / 2)
                           ].title || "Untitled"}
@@ -303,7 +303,7 @@ export default function FifthSection({
                       </div>
                     </Link>
                     {/* Separator after featured article */}
-                    <hr className="border-t border-gray-300 my-3" />
+                    <hr className="my-3 border-gray-300 border-t" />
                   </>
                 )}
 
@@ -313,12 +313,12 @@ export default function FifthSection({
                     <div key={article._id}>
                       <Link
                         href={`/post/${article.slug || "#"}`}
-                        className="text-base font-sans font-normal text-neutral-900 leading-snug tracking-normal"
+                        className="font-normal font-sans text-base text-neutral-900 leading-snug tracking-normal"
                       >
                         {article.title || "Untitled"}
                       </Link>
                       {index < 3 && (
-                        <hr className="border-t border-gray-300 mt-4" />
+                        <hr className="mt-4 border-gray-300 border-t" />
                       )}
                     </div>
                   ))}

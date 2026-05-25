@@ -21,7 +21,11 @@ export default defineType({
     "Explanatory or interpretive journalism grounded in reporting and context, distinct from opinion. " +
     "Operational rankings and readership use Supabase metrics, not legacy Sanity view counters.",
   groups: [
-    { name: ARTICLE_FIELD_GROUPS.core, title: "Core editorial identity", default: true },
+    {
+      name: ARTICLE_FIELD_GROUPS.core,
+      title: "Core editorial identity",
+      default: true,
+    },
     { name: ARTICLE_FIELD_GROUPS.typeSpecific, title: "Analysis metadata" },
     { name: ARTICLE_FIELD_GROUPS.taxonomy, title: "Taxonomy & attribution" },
     { name: ARTICLE_FIELD_GROUPS.media, title: "Media" },
@@ -39,7 +43,7 @@ export default defineType({
       type: "string",
       group: ARTICLE_FIELD_GROUPS.typeSpecific,
       description:
-        "One-line statement of what this analysis primarily explains, interprets, or contextualizes for readers (shown in listings and helps distinguish analysis from news and opinion).",
+        "Required: One-line statement of what this analysis primarily explains, interprets, or contextualizes for readers (shown in listings and helps distinguish analysis from news and opinion).",
       validation: (rule) =>
         rule
           .required()
@@ -116,15 +120,21 @@ export default defineType({
       mediaCoverAsset: "cover.image",
     },
     prepare(selection) {
-      const { title, status, authorName, date, analysisFocus, mediaCoverAsset } =
-        selection as {
-          title?: string;
-          status?: string;
-          authorName?: string;
-          date?: string;
-          analysisFocus?: string;
-          mediaCoverAsset?: unknown;
-        };
+      const {
+        title,
+        status,
+        authorName,
+        date,
+        analysisFocus,
+        mediaCoverAsset,
+      } = selection as {
+        title?: string;
+        status?: string;
+        authorName?: string;
+        date?: string;
+        analysisFocus?: string;
+        mediaCoverAsset?: unknown;
+      };
 
       const parts: string[] = ["Analysis"];
       if (authorName) parts.push(`by ${authorName}`);

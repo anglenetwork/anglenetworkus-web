@@ -8,10 +8,7 @@ import { articleFamilyHref } from "./routes";
 
 export function isArticleFamilyDocType(t: string): t is ArticleFamilyDocType {
   return (
-    t === "post" ||
-    t === "opinion" ||
-    t === "analysis" ||
-    t === "sponsored"
+    t === "post" || t === "opinion" || t === "analysis" || t === "sponsored"
   );
 }
 
@@ -38,23 +35,18 @@ export function normalizeArticleFamily(raw: unknown): ArticleFamily | null {
   const _id = typeof r._id === "string" ? r._id : "";
   if (!_id) return null;
 
-  const publishedAt =
-    typeof r.publishedAt === "string" ? r.publishedAt : null;
+  const publishedAt = typeof r.publishedAt === "string" ? r.publishedAt : null;
   const updatedAt = typeof r.updatedAt === "string" ? r.updatedAt : null;
   const dateRaw = r.date;
   const date =
     typeof dateRaw === "string"
       ? dateRaw
-      : publishedAt ?? updatedAt ?? new Date().toISOString();
+      : (publishedAt ?? updatedAt ?? new Date().toISOString());
 
-  const title =
-    typeof r.title === "string" ? r.title : "Untitled";
-  const tickerTitle =
-    typeof r.tickerTitle === "string" ? r.tickerTitle : "";
+  const title = typeof r.title === "string" ? r.title : "Untitled";
+  const tickerTitle = typeof r.tickerTitle === "string" ? r.tickerTitle : "";
   const excerpt =
-    r.excerpt === null || r.excerpt === undefined
-      ? null
-      : String(r.excerpt);
+    r.excerpt === null || r.excerpt === undefined ? null : String(r.excerpt);
 
   const sponsorRaw = r.sponsorAttribution;
   let sponsorAttribution = undefined;
@@ -65,8 +57,7 @@ export function normalizeArticleFamily(raw: unknown): ArticleFamily | null {
     if (name || disc) {
       sponsorAttribution = {
         sponsorName: name || "Sponsor",
-        sponsorUrl:
-          typeof sp.sponsorUrl === "string" ? sp.sponsorUrl : null,
+        sponsorUrl: typeof sp.sponsorUrl === "string" ? sp.sponsorUrl : null,
         disclosure: disc,
       };
     }
@@ -92,10 +83,6 @@ export function normalizeArticleFamily(raw: unknown): ArticleFamily | null {
       : null,
     category: (r.category as ArticleFamily["category"]) ?? null,
     tags: (r.tags as ArticleFamily["tags"]) ?? null,
-    opinionFormat:
-      r.opinionFormat === null || r.opinionFormat === undefined
-        ? null
-        : String(r.opinionFormat),
     disclosure:
       r.disclosure === null || r.disclosure === undefined
         ? null
@@ -116,6 +103,8 @@ export function normalizeArticleFamily(raw: unknown): ArticleFamily | null {
   };
 }
 
-export function normalizeArticleFamilyCard(raw: unknown): ArticleFamilyCard | null {
+export function normalizeArticleFamilyCard(
+  raw: unknown,
+): ArticleFamilyCard | null {
   return normalizeArticleFamily(raw) as ArticleFamilyCard | null;
 }

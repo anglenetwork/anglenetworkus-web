@@ -45,8 +45,7 @@ export function reportFifthSectionCategoryAlignment(
   const mismatches = list
     .map((raw, index) => {
       const slug = rowCategorySlug(raw);
-      const ok =
-        typeof slug === "string" && slug === expectedCategorySlug;
+      const ok = typeof slug === "string" && slug === expectedCategorySlug;
       if (ok) return null;
       return {
         index,
@@ -102,12 +101,15 @@ export function reportFifthSectionLeftRightParity(
       { leftSlug, rightSlug, leftIds, rightIds },
     );
   } else {
-    console.log("[FifthSection-debug][parity] Left vs right top-3 _id differ (expected).", {
-      leftSlug,
-      rightSlug,
-      leftIdsTop3: leftIds.slice(0, 3),
-      rightIdsTop3: rightIds.slice(0, 3),
-    });
+    console.log(
+      "[FifthSection-debug][parity] Left vs right top-3 _id differ (expected).",
+      {
+        leftSlug,
+        rightSlug,
+        leftIdsTop3: leftIds.slice(0, 3),
+        rightIdsTop3: rightIds.slice(0, 3),
+      },
+    );
   }
 }
 
@@ -163,7 +165,8 @@ export function logFifthSectionDataset(
   const everySliceIsAnalysis =
     slice.length > 0 && slice.every((raw) => rowType(raw) === "analysis");
   const everySliceTitleLeadingAnalysis =
-    slice.length > 0 && slice.every((raw) => /^\s*Analysis\b/i.test(rowTitle(raw)));
+    slice.length > 0 &&
+    slice.every((raw) => /^\s*Analysis\b/i.test(rowTitle(raw)));
 
   console.log("[FifthSection-debug]", phase, columnLabel, {
     expectedCategorySlug,
@@ -177,10 +180,7 @@ export function logFifthSectionDataset(
   });
 }
 
-function pickSlot(
-  raw: unknown,
-  expectedCategorySlug: string | null,
-) {
+function pickSlot(raw: unknown, expectedCategorySlug: string | null) {
   if (raw == null) return null;
   const title = rowTitle(raw);
   const catSlug = rowCategorySlug(raw);
@@ -233,7 +233,10 @@ export function logFifthSectionRenderSlots(
     rightHeadlineLinks: slots.rightHeadlineLinks.map(rightPick),
   };
 
-  const badSlots = [...rendered.leftForColumn, ...rendered.rightForColumn].filter(
+  const badSlots = [
+    ...rendered.leftForColumn,
+    ...rendered.rightForColumn,
+  ].filter(
     (x): x is NonNullable<typeof x> =>
       x != null && x.slugMatchesExpectedColumn === false,
   );

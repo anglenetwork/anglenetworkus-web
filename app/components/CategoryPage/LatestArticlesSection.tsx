@@ -47,9 +47,9 @@ function LatestArticleItem({ article }: { article: Article }) {
 
   return (
     <article className="group">
-      <Card className="border-0 shadow-none bg-transparent transition-colors duration-200">
+      <Card className="border-0 bg-transparent shadow-none transition-colors duration-200">
         <CardContent className="p-0">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
             {/* Image (optional) */}
             {article.imageUrl && (
               <div className="md:col-span-1">
@@ -58,7 +58,7 @@ function LatestArticleItem({ article }: { article: Article }) {
                   className="block"
                   aria-label={`View image for article: ${article.title}`}
                 >
-                  <div className="aspect-[4/3] bg-muted overflow-hidden relative rounded-lg">
+                  <div className="relative aspect-[4/3] overflow-hidden rounded-lg bg-muted">
                     <ImageRenderer
                       src={article.imageUrl || "/placeholder.svg"}
                       alt=""
@@ -80,17 +80,17 @@ function LatestArticleItem({ article }: { article: Article }) {
                 article.imageUrl ? "md:col-span-2" : "md:col-span-3"
               } space-y-3`}
             >
-              <div className="flex items-center gap-4 text-sm text-muted-foreground font-sans">
+              <div className="flex items-center gap-4 font-sans text-muted-foreground text-sm">
                 {dateLabel ? (
                   <time dateTime={article.publishedAt}>{dateLabel}</time>
                 ) : null}
-                <div className="flex items-center gap-1 text-neutral-500 font-sans">
-                  <Clock className="w-3 h-3" />
+                <div className="flex items-center gap-1 font-sans text-neutral-500">
+                  <Clock className="h-3 w-3" />
                   <span>{article.readTime}</span>
                 </div>
               </div>
 
-              <h3 className="text-2xl font-sans font-semibold text-neutral-900 leading-snug tracking-tight">
+              <h3 className="font-sans font-semibold text-2xl text-neutral-900 leading-snug tracking-tight">
                 <Link
                   href={article.href ?? `/post/${article.slug}`}
                   className="hover:underline"
@@ -99,7 +99,7 @@ function LatestArticleItem({ article }: { article: Article }) {
                 </Link>
               </h3>
 
-              <p className="text-muted-foreground leading-relaxed text-pretty font-sans text-sm">
+              <p className="text-pretty font-sans text-muted-foreground text-sm leading-relaxed">
                 {article.excerpt}
               </p>
             </div>
@@ -149,7 +149,7 @@ export function LatestArticlesSection({
       </div>
 
       {hasMoreArticles && (
-        <div className="flex justify-center mt-8">
+        <div className="mt-8 flex justify-center">
           <Button
             onClick={handleShowMore}
             variant="outline"

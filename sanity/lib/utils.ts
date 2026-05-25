@@ -12,7 +12,7 @@ const imageBuilder = createImageUrlBuilder({
 
 /** Returns an image builder or null if the source is missing/invalid */
 export function urlForImage(
-  source: SanityImageSource | null | undefined
+  source: SanityImageSource | null | undefined,
 ): ImageUrlBuilder | null {
   // Only build if we have a ref-bearing image object (most common case)
   if (!source || !(source as any)?.asset?._ref) return null;
@@ -22,7 +22,7 @@ export function urlForImage(
 export function resolveOpenGraphImage(
   image: SanityImageSource | null | undefined,
   width = 1200,
-  height = 627
+  height = 627,
 ) {
   const builder = urlForImage(image);
   if (!builder) return;
@@ -33,7 +33,7 @@ export function resolveOpenGraphImage(
 /** Prefer `articleFamilyHref` from `@/app/lib/article-family/routes` in app code. */
 export function resolveHref(
   documentType?: string,
-  slug?: string
+  slug?: string,
 ): string | undefined {
   switch (documentType) {
     case "post":
@@ -59,12 +59,12 @@ export function isWhitelistedDomain(url: string): boolean {
   try {
     const urlObj = new URL(url);
     const whitelistedDomains = [
-      'images.unsplash.com',
-      'cdn.sanity.io',
-      'images.pexels.com', // Allow Next.js to optimize Pexels images
+      "images.unsplash.com",
+      "cdn.sanity.io",
+      "images.pexels.com", // Allow Next.js to optimize Pexels images
       // 'upload.wikimedia.org' - Use thumbnail API instead (handled in getCoverImage)
     ];
-    return whitelistedDomains.some(domain => urlObj.hostname === domain);
+    return whitelistedDomains.some((domain) => urlObj.hostname === domain);
   } catch {
     return false;
   }
@@ -76,26 +76,33 @@ export function isWhitelistedDomain(url: string): boolean {
  * @param fallbackAlt - Fallback alt text if cover.alt is not available
  * @returns Object with src, alt, and unoptimized flag, or null if no image is available
  */
-const DEFAULT_ALT_TEXT = "Catch up on the latest headlines and developing news.";
+const DEFAULT_ALT_TEXT =
+  "Catch up on the latest headlines and developing news.";
 
 export function getCoverImage(
-  cover: {
-    source?: "asset" | "external";
-    externalUrl?: string | null;
-    image?: SanityImageSource | null;
-    alt?: string | null;
-  } | null | undefined,
+  cover:
+    | {
+        source?: "asset" | "external";
+        externalUrl?: string | null;
+        image?: SanityImageSource | null;
+        alt?: string | null;
+      }
+    | null
+    | undefined,
   fallbackAlt: string = "Image",
-  maxWidth: number = 1200
+  maxWidth: number = 1200,
 ): { src: string; alt: string; unoptimized: boolean } | null {
-  if (!cover || (typeof cover === 'object' && Object.keys(cover).length === 0)) {
+  if (
+    !cover ||
+    (typeof cover === "object" && Object.keys(cover).length === 0)
+  ) {
     return null;
   }
 
   // Check if cover has actual image data
   const hasExternalUrl = cover.externalUrl && cover.externalUrl.trim() !== "";
   const hasImageAsset = cover.image && (cover.image as any)?.asset?._ref;
-  
+
   if (!hasExternalUrl && !hasImageAsset) {
     return null;
   }
@@ -103,7 +110,7 @@ export function getCoverImage(
   // 1) External URL takes priority if source is external OR if externalUrl exists (fallback for missing source)
   if (hasExternalUrl && (cover.source === "external" || !cover.source)) {
     let externalUrl = cover.externalUrl!.trim();
-    
+
     // Ensure URL has protocol (fixes //cdn.sanity.io/... issues)
     if (externalUrl.startsWith("//")) {
       externalUrl = `https:${externalUrl}`;
@@ -111,7 +118,7 @@ export function getCoverImage(
       // If no protocol at all, assume https
       externalUrl = `https://${externalUrl}`;
     }
-    
+
     // Validate URL format
     try {
       new URL(externalUrl);
@@ -119,9 +126,11 @@ export function getCoverImage(
       // Invalid URL format, return null
       return null;
     }
-    
+
     // Check if it's Wikimedia Commons - use thumbnail API to get optimized sizes
-    const isWikimedia = /(^|\.)upload\.wikimedia\.org$/.test(new URL(externalUrl).hostname);
+    const isWikimedia = /(^|\.)upload\.wikimedia\.org$/.test(
+      new URL(externalUrl).hostname,
+    );
     const altText = cover.alt?.trim() || DEFAULT_ALT_TEXT;
     if (isWikimedia) {
       // Use thumbnail API to get appropriately sized images based on display size
@@ -133,7 +142,7 @@ export function getCoverImage(
         unoptimized: true, // Always unoptimize Wikimedia to avoid 429 rate limit errors
       };
     }
-    
+
     // Allow optimization for whitelisted domains to enable proper caching
     const canOptimize = isWhitelistedDomain(externalUrl);
     return {
@@ -144,14 +153,24 @@ export function getCoverImage(
   }
 
   // 2) Asset image - check if source is asset OR if image exists (fallback for missing source)
-  if (hasImageAsset && (cover.source === "asset" || !cover.source || !hasExternalUrl)) {
+  if (
+    hasImageAsset &&
+    (cover.source === "asset" || !cover.source || !hasExternalUrl)
+  ) {
     const imageUrl = urlForImage(cover.image);
     if (imageUrl) {
       try {
         const url = imageUrl.quality(70).url();
         // Validate the URL is not empty and looks like a valid Sanity CDN URL
-        if (url && url.length > 0 && (url.includes('cdn.sanity.io') || url.startsWith('/'))) {
-          const altText = cover.alt?.trim() || (cover.image as any)?.alt?.trim() || DEFAULT_ALT_TEXT;
+        if (
+          url &&
+          url.length > 0 &&
+          (url.includes("cdn.sanity.io") || url.startsWith("/"))
+        ) {
+          const altText =
+            cover.alt?.trim() ||
+            (cover.image as any)?.alt?.trim() ||
+            DEFAULT_ALT_TEXT;
           return {
             src: url,
             alt: altText,
@@ -160,7 +179,7 @@ export function getCoverImage(
         }
       } catch (error) {
         // If URL building fails, return null
-        console.warn('Failed to build Sanity image URL:', error);
+        console.warn("Failed to build Sanity image URL:", error);
         return null;
       }
     }
@@ -169,41 +188,45 @@ export function getCoverImage(
   return null;
 }
 
-/**
- * Formats image credit/attribution using minimal structured fields
- */
-export function formatImageCredit(cover: {
-  creditProvider?: string | null;
+export type ImageMetaInput = {
+  caption?: string | null;
+  epigraph?: string | null;
   creditAuthor?: string | null;
-  creditSourceUrl?: string | null;
-  creditLicense?: string | null;
-  [key: string]: any; // Allow additional properties
-} | null | undefined): string | null {
-  if (!cover) return null;
+  creditSource?: string | null;
+  creditProvider?: string | null;
+};
 
-  // Build credit line if we have any attribution data
-  if (cover.creditProvider || cover.creditAuthor || cover.creditLicense) {
-    const parts: string[] = ["Photo"];
+function asImageMetaInput(raw: unknown): ImageMetaInput | null | undefined {
+  if (raw == null || typeof raw !== "object") return undefined;
+  return raw as ImageMetaInput;
+}
 
-    // Author
-    if (cover.creditAuthor) {
-      parts.push(`by ${cover.creditAuthor}`);
-    }
-
-    // Provider/Source
-    if (cover.creditProvider) {
-      parts.push(`via ${cover.creditProvider}`);
-    }
-
-    // License (in parentheses)
-    if (cover.creditLicense) {
-      parts.push(`(${cover.creditLicense})`);
-    }
-
-    if (parts.length > 1) {
-      return parts.join(" ");
-    }
+/** Normalizes image caption/credit fields with legacy Sanity fallbacks. */
+export function normalizeImageMeta(raw: unknown): {
+  caption: string | null;
+  creditAuthor: string | null;
+  creditSource: string | null;
+} {
+  const meta = asImageMetaInput(raw);
+  if (!meta) {
+    return { caption: null, creditAuthor: null, creditSource: null };
   }
 
+  return {
+    caption: meta.caption ?? meta.epigraph ?? null,
+    creditAuthor: meta.creditAuthor ?? null,
+    creditSource: meta.creditSource ?? meta.creditProvider ?? null,
+  };
+}
+
+/** Visible credit line: Author/Source, Source, or Author only. */
+export function formatImageCredit(raw: unknown): string | null {
+  const { creditAuthor, creditSource } = normalizeImageMeta(raw);
+  const author = creditAuthor?.trim();
+  const source = creditSource?.trim();
+
+  if (author && source) return `${author}/${source}`;
+  if (source) return source;
+  if (author) return author;
   return null;
 }

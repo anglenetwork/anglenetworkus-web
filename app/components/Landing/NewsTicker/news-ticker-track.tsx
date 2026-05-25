@@ -1,11 +1,6 @@
 "use client";
 
-import {
-  useRef,
-  useState,
-  useLayoutEffect,
-  type ReactNode,
-} from "react";
+import { useRef, useState, useLayoutEffect, type ReactNode } from "react";
 import { cn } from "@/lib/utils";
 
 type NewsTickerTrackProps = {
@@ -38,7 +33,7 @@ export function NewsTickerTrack({ children }: NewsTickerTrackProps) {
       ref={outerRef}
       id="news-ticker-scroll"
       className={cn(
-        "flex w-full min-w-0 max-w-full items-center gap-0 overflow-x-auto overscroll-x-contain py-4 scrollbar-hide",
+        "scrollbar-hide flex w-full min-w-0 max-w-full items-center gap-0 overflow-x-auto overscroll-x-contain py-4",
         centerWhenFits ? "justify-center" : "justify-start",
       )}
     >

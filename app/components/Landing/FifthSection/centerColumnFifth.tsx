@@ -27,7 +27,7 @@ export function CenterColumnFifth({
   categoryTitle,
 }: CenterColumnThirdProps) {
   return (
-    <div className="border-r border-gray-200 px-6">
+    <div className="border-gray-200 border-r px-6">
       {/* Congress Section */}
       <div className="mb-8">
         <SectionHeader
@@ -53,7 +53,7 @@ export function CenterColumnFifth({
                       height={320}
                       unoptimized={article.imageUnoptimized}
                       sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 800px"
-                      className="w-full h-80 object-cover rounded-sm cursor-pointer"
+                      className="h-80 w-full cursor-pointer rounded-sm object-cover"
                     />
                   </Link>
                   {/* {article.imageSource && (
@@ -63,7 +63,7 @@ export function CenterColumnFifth({
                   )} */}
                 </div>
                 <Link href={`/post/${article.slug}`}>
-                  <h3 className="text-3xl font-sans font-semibold text-neutral-900 leading-snug tracking-tight text-start">
+                  <h3 className="text-start font-sans font-semibold text-3xl text-neutral-900 leading-snug tracking-tight">
                     {article.title}
                   </h3>
                 </Link>
@@ -74,8 +74,8 @@ export function CenterColumnFifth({
 
         {/* Secondary Articles in Row Layout */}
         {centerArticles.filter((article) => !article.isMain).length > 0 && (
-          <div className="border-t border-gray-300 pt-6">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="border-gray-300 border-t pt-6">
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
               {centerArticles
                 .filter((article) => !article.isMain)
                 .map((article, index) => (
@@ -89,12 +89,12 @@ export function CenterColumnFifth({
                           height={160}
                           unoptimized={article.imageUnoptimized}
                           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 33vw, 240px"
-                          className="w-full h-48 object-cover rounded-sm cursor-pointer hover:opacity-90 transition-opacity"
+                          className="h-48 w-full cursor-pointer rounded-sm object-cover transition-opacity hover:opacity-90"
                         />
                       </Link>
                     </div>
                     <Link href={`/post/${article.slug}`}>
-                      <h3 className="text-base font-sans font-normal text-neutral-900 leading-normal tracking-normal">
+                      <h3 className="font-normal font-sans text-base text-neutral-900 leading-normal tracking-normal">
                         {article.title}
                       </h3>
                     </Link>

@@ -33,4 +33,3 @@ export interface CategoryPageProps {
   };
   categoryTickerPosts?: CategoryTickerPost[];
 }
-

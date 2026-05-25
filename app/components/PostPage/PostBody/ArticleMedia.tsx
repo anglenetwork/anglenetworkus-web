@@ -1,6 +1,6 @@
 import ArticleImageFigure from "./ArticleImageFigure";
 import CoverImageCarousel from "./CoverImageCarousel";
-import { ARTICLE_MEDIA_CLASSES, DEFAULT_IMAGE_EPIGRAPH } from "./constants";
+import { ARTICLE_MEDIA_CLASSES, DEFAULT_IMAGE_CAPTION } from "./constants";
 import { buildCoverImageData, buildGalleryImageData } from "./media-utils";
 import type { MediaPresentation, PostBodyProps } from "./types";
 
@@ -58,9 +58,9 @@ export default function ArticleMedia({
       figureClassName={mediaClasses.figure}
       wrapperClassName={mediaClasses.wrapper}
       imageClassName={mediaClasses.image}
-      epigraph={coverImageData.epigraph}
+      caption={coverImageData.caption}
       credit={coverImageData.credit}
-      fallbackEpigraph={DEFAULT_IMAGE_EPIGRAPH}
+      fallbackCaption={DEFAULT_IMAGE_CAPTION}
     />
   );
 }

@@ -1,4 +1,11 @@
 import Link from "next/link";
+import {
+  regularPostCategory,
+  regularPostExcerpt,
+  regularPostTitle,
+} from "@/app/lib/typography/posts";
+import { cn } from "@/lib/utils";
+import { REGULAR_POST_BYLINE_ROW_CLASS } from "./PostBody/constants";
 import ArticleActions from "./PostBody/ArticleActions";
 import ArticleByline from "./PostBody/ArticleByline";
 
@@ -28,12 +35,12 @@ export default function PostHeader({
   const shareUrl = sharePath ?? (slug ? `/post/${slug}` : "");
 
   return (
-    <header className="mb-8 not-prose">
+    <header className="not-prose mb-8">
       {category && (
         <div className="mb-1">
           <Link
             href={`/category/${category.slug}`}
-            className="text-sm font-sans font-medium uppercase tracking-wider text-foreground"
+            className={regularPostCategory}
           >
             {category.title}
           </Link>
@@ -41,17 +48,13 @@ export default function PostHeader({
       )}
 
       {/* Matches Portable Text h1 scale in PostBody */}
-      <h1 className="font-sans font-semibold tracking-tight text-[28px] leading-[1.2] sm:text-[40px] sm:leading-tight md:text-[44px] text-neutral-900 mb-4 text-start">
-        {title}
-      </h1>
+      <h1 className={cn(regularPostTitle, "mb-4 text-start")}>{title}</h1>
 
       {excerpt && (
-        <p className="text-sm md:text-lg text-neutral-500 mb-4 leading-relaxed font-sans font-light tracking-snug">
-          {excerpt}
-        </p>
+        <p className={cn(regularPostExcerpt, "mb-4")}>{excerpt}</p>
       )}
 
-      <div className="space-y-3 font-sans xl:flex xl:items-center xl:justify-between xl:gap-4 xl:space-y-0">
+      <div className={REGULAR_POST_BYLINE_ROW_CLASS}>
         <ArticleByline
           author={author}
           date={date}

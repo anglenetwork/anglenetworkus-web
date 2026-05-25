@@ -3,8 +3,47 @@ import { defineField } from "sanity";
 type ValidationContext = {
   parent?: {
     source?: "asset" | "external";
+    externalUrl?: string;
+    image?: { asset?: { _ref?: string } };
+    creditAuthor?: string;
+    creditSource?: string;
+    licenseOrRights?: string;
   };
 };
+
+type ImageMediaParent = ValidationContext["parent"];
+
+export function hasImageMedia(parent: ImageMediaParent | undefined): boolean {
+  if (!parent) return false;
+  if (parent.source === "external" && parent.externalUrl) return true;
+  if (parent.source === "asset" && parent.image?.asset?._ref) return true;
+  return false;
+}
+
+export function validateImageAttribution(
+  parent: ImageMediaParent | undefined,
+): true | string {
+  if (!hasImageMedia(parent)) return true;
+
+  if (!parent?.licenseOrRights?.trim()) {
+    return "License / rights is required when an image is provided.";
+  }
+
+  const hasAuthor = Boolean(parent?.creditAuthor?.trim());
+  const hasSource = Boolean(parent?.creditSource?.trim());
+  if (!hasAuthor && !hasSource) {
+    return "Credit author or credit source is required when an image is provided.";
+  }
+
+  return true;
+}
+
+// Object-level Sanity validation (rule typed loosely for ObjectRule compatibility).
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const imageAttributionValidation = (rule: any) =>
+  rule.custom((_: unknown, context: { parent?: unknown }) =>
+    validateImageAttribution(context.parent as ImageMediaParent),
+  );
 
 export const imageSourceField = defineField({
   name: "source",
@@ -47,7 +86,10 @@ export const imageAssetField = defineField({
   validation: (rule) =>
     rule.custom((value, ctx) => {
       const parent = ctx.parent as ValidationContext["parent"];
-      if (parent?.source === "asset" && !(value as any)?.asset?._ref) {
+      if (
+        parent?.source === "asset" &&
+        !(value as { asset?: { _ref?: string } })?.asset?._ref
+      ) {
         return "Select or upload an image when source is asset.";
       }
       return true;
@@ -63,9 +105,31 @@ export const mediaAltField = defineField({
 });
 
 export const mediaCaptionAndCreditFields = [
-  defineField({ name: "epigraph", title: "Epigraph", type: "string" }),
-  defineField({ name: "creditProvider", title: "Credit Provider", type: "string" }),
-  defineField({ name: "creditAuthor", title: "Credit Author", type: "string" }),
-  defineField({ name: "creditSourceUrl", title: "Credit Source URL", type: "url" }),
-  defineField({ name: "creditLicense", title: "Credit License", type: "string" }),
+  defineField({
+    name: "caption",
+    title: "Caption",
+    type: "string",
+    description: "Visible image caption shown below the image.",
+  }),
+  defineField({
+    name: "creditAuthor",
+    title: "Credit author",
+    type: "string",
+    description:
+      "Creator/photographer name. Example: Jane Doe, Evan Vucci, Staff.",
+  }),
+  defineField({
+    name: "creditSource",
+    title: "Credit source",
+    type: "string",
+    description:
+      "Provider, agency, or platform. Example: AP, AFP/Getty Images, Unsplash, Company Press Kit.",
+  }),
+  defineField({
+    name: "licenseOrRights",
+    title: "License / rights",
+    type: "string",
+    description:
+      "Internal rights note. Example: Licensed via Getty, Unsplash License, Staff-owned, Creative Commons BY 4.0.",
+  }),
 ];

@@ -15,7 +15,7 @@ export const RANKING_TIEBREAK_RULE =
 export type EditorialRankingType = (typeof EDITORIAL_RANKING_TYPES)[number];
 
 export function isEditorialRankingType(
-  type: string
+  type: string,
 ): type is EditorialRankingType {
   return (EDITORIAL_RANKING_TYPES as readonly string[]).includes(type);
 }

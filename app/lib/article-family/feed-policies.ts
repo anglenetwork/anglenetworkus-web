@@ -6,13 +6,19 @@ import type { ArticleFamilyDocType } from "./types";
  */
 
 /** Standard homepage / news rails: standard reported news only */
-export const FEED_STANDARD_NEWS_TYPES = ["post"] as const satisfies readonly ArticleFamilyDocType[];
+export const FEED_STANDARD_NEWS_TYPES = [
+  "post",
+] as const satisfies readonly ArticleFamilyDocType[];
 
 /** Opinion rail: opinion pieces only */
-export const FEED_OPINION_TYPES = ["opinion"] as const satisfies readonly ArticleFamilyDocType[];
+export const FEED_OPINION_TYPES = [
+  "opinion",
+] as const satisfies readonly ArticleFamilyDocType[];
 
 /** Analysis rail: analysis only */
-export const FEED_ANALYSIS_TYPES = ["analysis"] as const satisfies readonly ArticleFamilyDocType[];
+export const FEED_ANALYSIS_TYPES = [
+  "analysis",
+] as const satisfies readonly ArticleFamilyDocType[];
 
 /** Mixed editorial (“Latest” page): no sponsored */
 export const FEED_MIXED_EDITORIAL_TYPES = [
@@ -48,4 +54,6 @@ export const FEED_RELATED_EDITORIAL_TYPES = [
 ] as const satisfies readonly ArticleFamilyDocType[];
 
 /** Explicit sponsored-only inclusion (use only where product intends sponsored surfaces) */
-export const FEED_SPONSORED_ONLY_TYPES = ["sponsored"] as const satisfies readonly ArticleFamilyDocType[];
+export const FEED_SPONSORED_ONLY_TYPES = [
+  "sponsored",
+] as const satisfies readonly ArticleFamilyDocType[];

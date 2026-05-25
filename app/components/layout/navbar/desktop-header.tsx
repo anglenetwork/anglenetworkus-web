@@ -139,7 +139,7 @@ export function DesktopHeader({
   const shouldShowBecomePro = !loading && (tier === null || tier === "free");
 
   return (
-    <div className="hidden lg:flex items-center justify-between py-4 transition-all duration-500 ease-out">
+    <div className="hidden items-center justify-between py-4 transition-all duration-500 ease-out lg:flex">
       <div className="flex items-center gap-4">
         <HamburgerButton
           isOpen={isMenuOpen}
@@ -156,7 +156,7 @@ export function DesktopHeader({
         {shouldShowBecomePro && (
           <Link
             href="/pricing"
-            className="text-red-600 font-semibold font-sans text-sm hover:underline transition-colors"
+            className="font-sans font-semibold text-red-600 text-sm transition-colors hover:underline"
           >
             Become Pro
           </Link>

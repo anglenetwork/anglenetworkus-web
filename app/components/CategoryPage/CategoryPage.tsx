@@ -34,7 +34,7 @@ export function CategoryPage({
           ) : (
             <>
               {/* Mobile: Most Read + Latest */}
-              <div className="block lg:hidden space-y-12">
+              <div className="block space-y-12 lg:hidden">
                 <MostReadSection articles={mostReadArticles} />
                 <LatestArticlesSection
                   layout="mobile"
@@ -43,7 +43,7 @@ export function CategoryPage({
               </div>
 
               {/* Desktop: Latest (main) + Most Read (sidebar) */}
-              <div className="hidden lg:grid grid-cols-3 gap-12">
+              <div className="hidden grid-cols-3 gap-12 lg:grid">
                 <div className="col-span-2">
                   <LatestArticlesSection
                     layout="desktop"

@@ -155,7 +155,7 @@ export function ProfileEditForm({
       <div>
         <Label
           htmlFor="firstName"
-          className="text-sm font-semibold text-slate-900 mb-3 block font-sans"
+          className="mb-3 block font-sans font-semibold text-slate-900 text-sm"
         >
           First Name {requireNames && <span className="text-red-500">*</span>}
         </Label>
@@ -176,7 +176,7 @@ export function ProfileEditForm({
           }`}
         />
         {fieldErrors.firstName && (
-          <p className="text-sm text-red-500 mt-1 font-sans">
+          <p className="mt-1 font-sans text-red-500 text-sm">
             {fieldErrors.firstName}
           </p>
         )}
@@ -185,7 +185,7 @@ export function ProfileEditForm({
       <div>
         <Label
           htmlFor="lastName"
-          className="text-sm font-semibold text-slate-900 mb-3 block font-sans"
+          className="mb-3 block font-sans font-semibold text-slate-900 text-sm"
         >
           Last Name {requireNames && <span className="text-red-500">*</span>}
         </Label>
@@ -206,7 +206,7 @@ export function ProfileEditForm({
           }`}
         />
         {fieldErrors.lastName && (
-          <p className="text-sm text-red-500 mt-1 font-sans">
+          <p className="mt-1 font-sans text-red-500 text-sm">
             {fieldErrors.lastName}
           </p>
         )}
@@ -216,7 +216,7 @@ export function ProfileEditForm({
         <div>
           <Label
             htmlFor="dateOfBirth"
-            className="text-sm font-semibold text-slate-900 mb-3 block font-sans"
+            className="mb-3 block font-sans font-semibold text-slate-900 text-sm"
           >
             Date of Birth{" "}
             {requireNames && <span className="text-red-500">*</span>}
@@ -238,7 +238,7 @@ export function ProfileEditForm({
             }`}
           />
           {fieldErrors.dateOfBirth && (
-            <p className="text-sm text-red-500 mt-1 font-sans">
+            <p className="mt-1 font-sans text-red-500 text-sm">
               {fieldErrors.dateOfBirth}
             </p>
           )}
@@ -247,7 +247,7 @@ export function ProfileEditForm({
 
       {message && (
         <div
-          className={`text-sm font-sans ${
+          className={`font-sans text-sm ${
             message.type === "error" ? "text-red-600" : "text-green-600"
           }`}
         >
@@ -265,7 +265,7 @@ export function ProfileEditForm({
                 !lastName.trim() ||
                 (!hideDateOfBirth && !dateOfBirth.trim())))
           }
-          className="bg-slate-900 text-white hover:bg-slate-800 font-sans"
+          className="bg-slate-900 font-sans text-white hover:bg-slate-800"
         >
           {loading ? "Saving..." : submitLabel}
         </Button>
@@ -275,7 +275,7 @@ export function ProfileEditForm({
             onClick={onCancel}
             variant="outline"
             disabled={loading}
-            className="border-slate-900 text-slate-900 hover:bg-slate-50 bg-transparent font-sans"
+            className="border-slate-900 bg-transparent font-sans text-slate-900 hover:bg-slate-50"
           >
             Cancel
           </Button>

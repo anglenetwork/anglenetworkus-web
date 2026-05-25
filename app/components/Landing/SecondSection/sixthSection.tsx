@@ -90,9 +90,7 @@ function fallbackCard(): CardModel {
   };
 }
 
-export default function SixthSection({
-  categoriesData,
-}: SixthSectionProps) {
+export default function SixthSection({ categoriesData }: SixthSectionProps) {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
   const rows =
@@ -154,7 +152,7 @@ export default function SixthSection({
           variant="outline"
           size="icon"
           aria-label="Scroll left"
-          className="absolute left-0 top-1/2 z-10 -translate-y-1/2 bg-white shadow-lg hover:bg-gray-50"
+          className="absolute top-1/2 left-0 z-10 -translate-y-1/2 bg-white shadow-lg hover:bg-gray-50"
           onClick={scrollLeft}
         >
           <ChevronLeft className="h-4 w-4" />
@@ -164,7 +162,7 @@ export default function SixthSection({
           variant="outline"
           size="icon"
           aria-label="Scroll right"
-          className="absolute right-0 top-1/2 z-10 -translate-y-1/2 bg-white shadow-lg hover:bg-gray-50"
+          className="absolute top-1/2 right-0 z-10 -translate-y-1/2 bg-white shadow-lg hover:bg-gray-50"
           onClick={scrollRight}
         >
           <ChevronRight className="h-4 w-4" />
@@ -172,7 +170,7 @@ export default function SixthSection({
 
         <div
           ref={scrollContainerRef}
-          className="flex gap-6 overflow-x-auto px-12 scrollbar-hide"
+          className="scrollbar-hide flex gap-6 overflow-x-auto px-12"
         >
           {displayRows.map((row) => {
             const card = row.post

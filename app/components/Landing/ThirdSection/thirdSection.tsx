@@ -3,19 +3,22 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { getCoverImage, urlForImage } from "@/sanity/lib/utils";
+import { cn } from "@/lib/utils";
 import { SectionHeader } from "../../ui/section-header";
 import { ImageRenderer } from "../../ui/image-renderer";
+import {
+  featuredColumnTitle,
+  secondaryRowTitle,
+} from "@/app/lib/typography/third-section";
 
 interface GalleryImage {
   source?: "asset" | "external";
   externalUrl?: string | null;
   image?: any;
   alt?: string | null;
-  epigraph?: string | null;
-  creditProvider?: string | null;
+  caption?: string | null;
   creditAuthor?: string | null;
-  creditSourceUrl?: string | null;
-  creditLicense?: string | null;
+  creditSource?: string | null;
 }
 
 interface Article {
@@ -34,7 +37,7 @@ interface Article {
   } | null;
 }
 
-interface SecondSectionProps {
+interface ThirdSectionProps {
   leftArticle: Article;
   leftSmallArticles: Article[];
   rightArticle: Article;
@@ -112,6 +115,8 @@ function buildGalleryImageData(galleryImage: GalleryImage): {
   return null;
 }
 
+const featuredImageClassName =
+  "relative w-full h-56 md:h-80 rounded-lg overflow-hidden";
 // Carousel component for article images
 function ArticleImageCarousel({
   coverImage,
@@ -140,7 +145,7 @@ function ArticleImageCarousel({
 
   return (
     <Link href={`/post/${postSlug}`}>
-      <div className="relative w-full h-80 rounded-lg overflow-hidden">
+      <div className={featuredImageClassName}>
         {allImages.map((image, idx) => (
           <ImageRenderer
             key={idx}
@@ -151,14 +156,14 @@ function ArticleImageCarousel({
             fill
             unoptimized={image.unoptimized}
             sizes="(max-width: 1024px) 100vw, 50vw"
-            className={`object-cover absolute inset-0 transition-opacity duration-500 ${
-              idx === currentIndex ? "opacity-100 z-10" : "opacity-0 z-0"
+            className={`absolute inset-0 object-cover transition-opacity duration-500 ${
+              idx === currentIndex ? "z-10 opacity-100" : "z-0 opacity-0"
             }`}
           />
         ))}
         {/* Carousel indicators */}
         {allImages.length > 1 && (
-          <div className="absolute bottom-3 right-3 z-20 flex gap-1.5">
+          <div className="absolute right-3 bottom-3 z-20 flex gap-1.5">
             {allImages.map((_, idx) => (
               <button
                 key={idx}
@@ -194,12 +199,12 @@ function SmallArticleGridItem({ article }: { article: Article }) {
   const thumbImage = coverData ?? firstGallery;
 
   return (
-    <div className="pb-4 border-b border-gray-200">
+    <div className="border-gray-200 border-b pb-4">
       <Link
         href={`/post/${article.slug}`}
-        className="flex gap-4 items-start text-neutral-900 group"
+        className="group flex items-start gap-4 text-neutral-900"
       >
-        <div className="relative h-[100px] w-[160px] shrink-0 overflow-hidden rounded-md">
+        <div className="relative h-[100px] w-[160px] shrink-0 overflow-hidden rounded-md xl:h-[90px] xl:w-[144px]">
           {thumbImage?.src ? (
             <ImageRenderer
               src={thumbImage.src}
@@ -208,12 +213,12 @@ function SmallArticleGridItem({ article }: { article: Article }) {
               height={180}
               fill
               unoptimized={thumbImage.unoptimized}
-              sizes="120px"
+              sizes="(min-width: 1280px) 144px, 160px"
               className="object-cover transition-opacity group-hover:opacity-90"
             />
           ) : null}
         </div>
-        <span className="leading-snug font-sans text-lg md:text-xl font-normal tracking-tight flex-1 min-w-0">
+        <span className={cn(secondaryRowTitle, "min-w-0 flex-1")}>
           {article.title}
         </span>
       </Link>
@@ -221,12 +226,12 @@ function SmallArticleGridItem({ article }: { article: Article }) {
   );
 }
 
-export default function SecondSection({
+export default function ThirdSection({
   leftArticle,
   leftSmallArticles,
   rightArticle,
   rightSmallArticles,
-}: SecondSectionProps) {
+}: ThirdSectionProps) {
   // Left article images
   const leftCoverData = getCoverImage(
     leftArticle.cover,
@@ -270,7 +275,7 @@ export default function SecondSection({
   return (
     <main className="bg-background text-foreground">
       {/* Main container */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
         {/* Left Column */}
         <div className="space-y-8">
           {/* Section Header */}
@@ -291,7 +296,7 @@ export default function SecondSection({
               />
             ) : leftCoverData?.src ? (
               <Link href={`/post/${leftArticle.slug}`}>
-                <div className="relative w-full h-80 rounded-lg overflow-hidden">
+                <div className={featuredImageClassName}>
                   <ImageRenderer
                     src={leftCoverData.src}
                     alt={leftCoverData.alt}
@@ -306,15 +311,13 @@ export default function SecondSection({
               </Link>
             ) : null}
             <Link href={`/post/${leftArticle.slug}`}>
-              <h2 className="text-3xl font-sans font-bold leading-tight tracking-tight pt-2">
-                {leftArticle.title}
-              </h2>
+              <h2 className={featuredColumnTitle}>{leftArticle.title}</h2>
             </Link>
           </article>
 
           {/* Two small stories: stacked list (thumb + title) */}
           {leftSmallArticles.length > 0 && (
-            <div className="w-full flex flex-col gap-5">
+            <div className="flex w-full flex-col gap-5">
               {leftSmallArticles.map((article, idx) => (
                 <SmallArticleGridItem
                   key={article.slug || idx}
@@ -345,7 +348,7 @@ export default function SecondSection({
               />
             ) : rightCoverData?.src ? (
               <Link href={`/post/${rightArticle.slug}`}>
-                <div className="relative w-full h-80 rounded-lg overflow-hidden">
+                <div className={featuredImageClassName}>
                   <ImageRenderer
                     src={rightCoverData.src}
                     alt={rightCoverData.alt}
@@ -360,15 +363,13 @@ export default function SecondSection({
               </Link>
             ) : null}
             <Link href={`/post/${rightArticle.slug}`}>
-              <h2 className="text-3xl font-sans font-bold leading-tight tracking-tight pt-2">
-                {rightArticle.title}
-              </h2>
+              <h2 className={featuredColumnTitle}>{rightArticle.title}</h2>
             </Link>
           </article>
 
           {/* Two small stories: stacked list (thumb + title) */}
           {rightSmallArticles.length > 0 && (
-            <div className="w-full flex flex-col gap-5">
+            <div className="flex w-full flex-col gap-5">
               {rightSmallArticles.map((article, idx) => (
                 <SmallArticleGridItem
                   key={article.slug || idx}

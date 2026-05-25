@@ -13,7 +13,7 @@ export async function createSupabaseServerClient(): Promise<SupabaseClient> {
 
   if (!supabaseUrl || !supabaseAnonKey) {
     throw new Error(
-      "Missing Supabase env vars. Add NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY."
+      "Missing Supabase env vars. Add NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY.",
     );
   }
 
@@ -51,4 +51,3 @@ export async function createSupabaseServerClient(): Promise<SupabaseClient> {
 export async function createClient() {
   return await createSupabaseServerClient();
 }
-

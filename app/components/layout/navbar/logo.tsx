@@ -31,7 +31,7 @@ export function Logo({ variant = "mobile" }: LogoProps) {
             height={30}
             className="flex-shrink-0"
           />
-          <h1 className="font-bold text-neutral-900 tracking-tight text-3xl font-sans">
+          <h1 className="font-bold font-sans text-3xl text-neutral-900 tracking-tight">
             The Angle
           </h1>
         </div>
@@ -49,7 +49,7 @@ export function Logo({ variant = "mobile" }: LogoProps) {
           height={24}
           className="flex-shrink-0 transition-all duration-500 ease-out"
         />
-        <h1 className="font-bold text-neutral-900 tracking-tight transition-all duration-500 ease-out font-sans lg:text-xl text-4xl">
+        <h1 className="font-bold font-sans text-4xl text-neutral-900 tracking-tight transition-all duration-500 ease-out lg:text-xl">
           The Angle
         </h1>
       </div>

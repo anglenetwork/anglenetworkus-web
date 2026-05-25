@@ -12,7 +12,7 @@ export function PreloadCoverImage({ imageUrl }: { imageUrl: string | null }) {
 
     // Check if link already exists
     const existingLink = document.querySelector(
-      `link[rel="preload"][as="image"][href="${imageUrl}"]`
+      `link[rel="preload"][as="image"][href="${imageUrl}"]`,
     );
     if (existingLink) return;
 
@@ -27,7 +27,7 @@ export function PreloadCoverImage({ imageUrl }: { imageUrl: string | null }) {
     // Cleanup on unmount
     return () => {
       const linkToRemove = document.querySelector(
-        `link[rel="preload"][as="image"][href="${imageUrl}"]`
+        `link[rel="preload"][as="image"][href="${imageUrl}"]`,
       );
       if (linkToRemove) {
         linkToRemove.remove();

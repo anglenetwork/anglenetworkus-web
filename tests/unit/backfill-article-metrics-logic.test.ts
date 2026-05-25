@@ -8,9 +8,7 @@ describe("initialViewsAllFromDoc", () => {
   });
 
   it("floors legacy viewsAll for posts", () => {
-    expect(
-      initialViewsAllFromDoc({ _type: "post", viewsAll: 12.7 })
-    ).toBe(12);
+    expect(initialViewsAllFromDoc({ _type: "post", viewsAll: 12.7 })).toBe(12);
   });
 
   it("treats invalid views as 0", () => {

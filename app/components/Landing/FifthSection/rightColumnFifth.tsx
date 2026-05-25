@@ -20,7 +20,7 @@ interface RightColumnThirdProps {
 
 export function RightColumnFifth({ mostReadArticles }: RightColumnThirdProps) {
   return (
-    <div className="pl-6 pr-4">
+    <div className="pr-4 pl-6">
       <div className="sticky top-6">
         {/* Most Read Section */}
         <div className="mb-8">
@@ -38,7 +38,7 @@ export function RightColumnFifth({ mostReadArticles }: RightColumnThirdProps) {
                 className={
                   article.hasImage
                     ? "flex gap-3"
-                    : "border-l-2 border-red-500 pl-3"
+                    : "border-red-500 border-l-2 pl-3"
                 }
               >
                 {article.hasImage ? (
@@ -50,12 +50,12 @@ export function RightColumnFifth({ mostReadArticles }: RightColumnThirdProps) {
                         width={64}
                         height={64}
                         unoptimized={article.imageUnoptimized}
-                        className="w-16 h-16 object-cover rounded-sm flex-shrink-0 cursor-pointer hover:opacity-90 transition-opacity"
+                        className="h-16 w-16 flex-shrink-0 cursor-pointer rounded-sm object-cover transition-opacity hover:opacity-90"
                       />
                     </Link>
-                    <div className="flex-1 flex items-start gap-2">
+                    <div className="flex flex-1 items-start gap-2">
                       <Link href={`/post/${article.slug}`} className="flex-1">
-                        <h3 className="text-base font-sans font-normal text-neutral-900 leading-snug tracking-normal mb-2">
+                        <h3 className="mb-2 font-normal font-sans text-base text-neutral-900 leading-snug tracking-normal">
                           {article.title}
                         </h3>
                       </Link>
@@ -63,11 +63,11 @@ export function RightColumnFifth({ mostReadArticles }: RightColumnThirdProps) {
                   </>
                 ) : (
                   <div className="flex items-start gap-2">
-                    <span className="text-blue-500 font-bold text-sm font-sans flex-shrink-0">
+                    <span className="flex-shrink-0 font-bold font-sans text-blue-500 text-sm">
                       {index + 1}
                     </span>
                     <Link href={`/post/${article.slug}`} className="flex-1">
-                      <h3 className="text-neutral-900 leading-normal mb-2 font-sans text-base font-normal tracking-wide">
+                      <h3 className="mb-2 font-normal font-sans text-base text-neutral-900 leading-normal tracking-wide">
                         {article.title}
                       </h3>
                     </Link>
@@ -78,7 +78,7 @@ export function RightColumnFifth({ mostReadArticles }: RightColumnThirdProps) {
           </div>
         </div>
 
-        <div className="border-t border-gray-300 mb-6"></div>
+        <div className="mb-6 border-gray-300 border-t"></div>
       </div>
     </div>
   );

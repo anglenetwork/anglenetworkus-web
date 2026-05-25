@@ -12,7 +12,10 @@ export async function GET() {
   } = await supabase.auth.getUser();
 
   if (userError || !user) {
-    return NextResponse.json({ authenticated: false, user: null }, { status: 200 });
+    return NextResponse.json(
+      { authenticated: false, user: null },
+      { status: 200 },
+    );
   }
 
   return NextResponse.json(
@@ -23,12 +26,6 @@ export async function GET() {
         email: user.email,
       },
     },
-    { status: 200 }
+    { status: 200 },
   );
 }
-
-
-
-
-
-

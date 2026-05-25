@@ -2,6 +2,7 @@ import { LeftColumnLanding } from "./leftColumnLanding";
 import { CenterColumnLanding } from "./centerColumnLanding";
 import { RightColumnLanding } from "./rightColumnLanding";
 import Link from "next/link";
+import { mainHeadlineDesktopTitle } from "@/app/lib/typography/first-section";
 
 interface Post {
   _id: string;
@@ -13,20 +14,18 @@ interface Post {
     externalUrl?: string | null;
     image?: any;
     alt?: string | null;
-    creditProvider?: string | null;
+    caption?: string | null;
     creditAuthor?: string | null;
-    creditSourceUrl?: string | null;
-    creditLicense?: string | null;
+    creditSource?: string | null;
   } | null;
   imageGallery?: Array<{
     source?: "asset" | "external";
     externalUrl?: string | null;
     image?: any;
     alt?: string | null;
-    creditProvider?: string | null;
+    caption?: string | null;
     creditAuthor?: string | null;
-    creditSourceUrl?: string | null;
-    creditLicense?: string | null;
+    creditSource?: string | null;
   }> | null;
   date: string;
   publishedAt?: string | null;
@@ -61,10 +60,9 @@ interface PostForCenterColumn {
     externalUrl?: string;
     image?: any;
     alt?: string;
-    creditProvider?: string | null;
+    caption?: string | null;
     creditAuthor?: string | null;
-    creditSourceUrl?: string | null;
-    creditLicense?: string | null;
+    creditSource?: string | null;
   };
   author?: {
     name: string;
@@ -81,10 +79,9 @@ interface PostForRightColumn {
     externalUrl?: string | null;
     image?: any;
     alt?: string | null;
-    creditProvider?: string | null;
+    caption?: string | null;
     creditAuthor?: string | null;
-    creditSourceUrl?: string | null;
-    creditLicense?: string | null;
+    creditSource?: string | null;
   } | null;
   author?: {
     name: string;
@@ -115,10 +112,9 @@ function toCenterColumnPost(post: Post): PostForCenterColumn | null {
             externalUrl: post.cover.externalUrl ?? undefined,
             image: post.cover.image,
             alt: post.cover.alt ?? undefined,
-            creditProvider: post.cover.creditProvider ?? undefined,
+            caption: post.cover.caption ?? undefined,
             creditAuthor: post.cover.creditAuthor ?? undefined,
-            creditSourceUrl: post.cover.creditSourceUrl ?? undefined,
-            creditLicense: post.cover.creditLicense ?? undefined,
+            creditSource: post.cover.creditSource ?? undefined,
           }
         : undefined,
     author: post.author,
@@ -190,31 +186,29 @@ export function FirstSection({
   return (
     <main className="w-full pt-4">
       {mainStoryPost?.title && mainStoryPost?.slug && (
-        <div className="hidden lg:block mb-6">
+        <div className="mb-6 hidden lg:block">
           <Link
             href={`/post/${mainStoryPost.slug}`}
-            className="hover:text-red-600 block"
+            className="block hover:text-red-600"
           >
-            <h1 className="text-6xl font-bold text-gray-900 !leading-tight tracking-tight text-center font-sans">
-              {mainStoryPost.title}
-            </h1>
+            <h1 className={mainHeadlineDesktopTitle}>{mainStoryPost.title}</h1>
           </Link>
         </div>
       )}
       {/* Mobile order: Center, Left, Right */}
       {/* Desktop order: Left, Center, Right */}
-      <div className="grid grid-cols-1 lg:grid-cols-24 gap-0">
-        <div className="lg:col-span-6 lg:order-1 order-2">
+      <div className="grid grid-cols-1 gap-0 lg:grid-cols-24">
+        <div className="order-2 lg:order-1 lg:col-span-6">
           <LeftColumnLanding justInNews={leftColumnJustIn} />
         </div>
-        <div className="lg:col-span-12 lg:order-2 order-1">
+        <div className="order-1 lg:order-2 lg:col-span-12">
           <CenterColumnLanding
             mainStory={mainStoryPosts}
             relatedCategoryPosts={relatedPosts}
             moreTopHeadlines={moreTopHeadlinePosts}
           />
         </div>
-        <div className="lg:col-span-6 lg:order-3 order-3">
+        <div className="order-3 lg:order-3 lg:col-span-6">
           <RightColumnLanding
             sideStories={rightColumnSideStories}
             mostRead={mostRead}

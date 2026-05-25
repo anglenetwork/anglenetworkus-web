@@ -20,7 +20,7 @@ export function TagFeaturedArticle({
 }: TagFeaturedArticleProps) {
   return (
     <article className="mb-8">
-      <Link href={href ?? `/post/${slug}`} className="block group">
+      <Link href={href ?? `/post/${slug}`} className="group block">
         <div className="relative aspect-video w-full overflow-hidden rounded-xl">
           {image ? (
             <ImageRenderer
@@ -37,13 +37,13 @@ export function TagFeaturedArticle({
               className="object-cover"
             />
           ) : (
-            <div className="w-full h-full bg-gray-200 flex items-center justify-center">
+            <div className="flex h-full w-full items-center justify-center bg-gray-200">
               <span className="text-gray-400">No Image</span>
             </div>
           )}
         </div>
         <div className="mt-4">
-          <h1 className="mt-2 text-2xl md:text-3xl font-sans font-semibold text-neutral-900 leading-snug tracking-tight text-start">
+          <h1 className="mt-2 text-start font-sans font-semibold text-2xl text-neutral-900 leading-snug tracking-tight md:text-3xl">
             {title}
           </h1>
         </div>

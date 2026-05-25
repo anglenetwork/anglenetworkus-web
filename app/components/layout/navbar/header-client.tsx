@@ -20,7 +20,7 @@ export function HeaderClient({ categories, tags, showsTags }: HeaderProps) {
     setHeaderOffset(height);
     document.documentElement.style.setProperty(
       "--header-offset",
-      `${height}px`
+      `${height}px`,
     );
   };
 
@@ -84,7 +84,7 @@ export function HeaderClient({ categories, tags, showsTags }: HeaderProps) {
     <>
       <header
         ref={headerRef}
-        className="sticky top-0 bg-white z-50 transition-all duration-500 ease-out border-b border-neutral-200 shadow-sm"
+        className="sticky top-0 z-50 border-neutral-200 border-b bg-white shadow-sm transition-all duration-500 ease-out"
       >
         <div className="container mx-auto px-4 sm:px-6 lg:px-16">
           <MobileHeader

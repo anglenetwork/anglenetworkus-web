@@ -19,20 +19,20 @@ export async function POST(request: NextRequest) {
     if (!categorySlug) {
       return NextResponse.json(
         { error: "Category slug is required" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     // Find the category by slug
     const category = await writeClient.fetch(
       `*[_type == "category" && slug.current == $categorySlug][0] { _id, views }`,
-      { categorySlug }
+      { categorySlug },
     );
 
     if (!category) {
       return NextResponse.json(
         { error: "Category not found" },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -41,10 +41,7 @@ export async function POST(request: NextRequest) {
     const newViews = currentViews + 1;
 
     // Update the category with the new views count
-    await writeClient
-      .patch(category._id)
-      .set({ views: newViews })
-      .commit();
+    await writeClient.patch(category._id).set({ views: newViews }).commit();
 
     return NextResponse.json({
       success: true,
@@ -54,7 +51,7 @@ export async function POST(request: NextRequest) {
     console.error("Error tracking category view:", error);
     return NextResponse.json(
       { error: "Failed to track category view" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

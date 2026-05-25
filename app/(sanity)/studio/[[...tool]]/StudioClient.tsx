@@ -15,7 +15,7 @@ const NextStudio = dynamic(
         <div className="text-lg">Loading Sanity Studio...</div>
       </div>
     ),
-  }
+  },
 );
 
 export default function StudioClient() {
@@ -31,7 +31,7 @@ export default function StudioClient() {
       {/* Sign Out Button - Fixed position in top right */}
       <button
         onClick={handleSignOut}
-        className="fixed bottom-16 left-4 z-50 px-4 py-2 bg-red-600 hover:bg-red-700 text-white text-sm font-medium rounded-md shadow-lg transition-colors font-sans"
+        className="fixed bottom-16 left-4 z-50 rounded-md bg-red-600 px-4 py-2 font-medium font-sans text-sm text-white shadow-lg transition-colors hover:bg-red-700"
         aria-label="Sign out"
       >
         Sign Out

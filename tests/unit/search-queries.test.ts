@@ -7,14 +7,16 @@ import {
 
 describe("editorial search GROQ", () => {
   it("filters on searchText with local fallbacks", () => {
-    expect(searchEditorialAllRelevanceQuery).toContain("searchText match $term");
+    expect(searchEditorialAllRelevanceQuery).toContain(
+      "searchText match $term",
+    );
     expect(searchEditorialAllRelevanceQuery).toContain("title match $term");
     expect(searchEditorialCountAllQuery).toContain("searchText match $term");
   });
 
   it("keeps all filter editorial-only (excludes sponsored)", () => {
     expect(searchEditorialAllRelevanceQuery).toContain(
-      '_type in ["post", "opinion", "analysis"]'
+      '_type in ["post", "opinion", "analysis"]',
     );
     expect(searchEditorialAllRelevanceQuery).not.toContain('"sponsored"');
     expect(searchEditorialCountAllQuery).not.toContain('_type == "sponsored"');
@@ -22,17 +24,18 @@ describe("editorial search GROQ", () => {
 
   it("provides sponsored-only search queries", () => {
     expect(searchEditorialSponsoredRelevanceQuery).toContain(
-      '_type == "sponsored"'
+      '_type == "sponsored"',
     );
     expect(searchEditorialSponsoredRelevanceQuery).toContain(
-      "searchText match $term"
+      "searchText match $term",
     );
   });
 
   it("scores only document-local fields including searchText", () => {
     const scoreSection =
-      searchEditorialAllRelevanceQuery.match(/\| score\([\s\S]*?\)\s*\| order/)?.[0] ??
-      "";
+      searchEditorialAllRelevanceQuery.match(
+        /\| score\([\s\S]*?\)\s*\| order/,
+      )?.[0] ?? "";
 
     expect(scoreSection).toContain("boost(searchText match $term, 20)");
     expect(scoreSection).toContain("boost(title match $term, 100)");

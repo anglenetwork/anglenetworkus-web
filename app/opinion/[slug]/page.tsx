@@ -1,11 +1,9 @@
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import ArticleFamilyPage from "@/app/components/article-family/ArticleFamilyPage";
-import PostSelectedNews from "@/app/components/PostPage/PostSelectedNews";
 import BottomArticleModule from "@/app/components/PostPage/BottomArticleModule";
 import { fetchArticleFamilyPage } from "@/app/lib/article-family/fetch";
 import { buildArticleFamilyMetadata } from "@/app/lib/article-family/metadata";
-import { loadArticlePageSidebars } from "@/app/lib/article-family/sidebars";
 import { client } from "@/sanity/lib/client";
 import { opinionSlugsQuery } from "@/sanity/lib/article-family-queries";
 
@@ -38,24 +36,16 @@ export default async function OpinionArticlePage({
   const article = await fetchArticleFamilyPage({ type: "opinion", slug });
   if (!article) notFound();
 
-  const { newsForYou, popularReads, relatedArticles } =
-    await loadArticlePageSidebars(article);
-  const bottomSlice = relatedArticles.slice(0, 8);
-
   return (
     <ArticleFamilyPage
       article={article}
-      sidebar={
-        <>
-          <PostSelectedNews latestNews={popularReads} title="Popular Reads" />
-          <PostSelectedNews latestNews={newsForYou} title="News for You" />
-        </>
-      }
-      footer={
-        bottomSlice.length > 0 ? (
+      footer={({ relatedArticles }) => {
+        const bottomSlice = relatedArticles.slice(0, 8);
+
+        return bottomSlice.length > 0 ? (
           <BottomArticleModule posts={bottomSlice} />
-        ) : null
-      }
+        ) : null;
+      }}
     />
   );
 }

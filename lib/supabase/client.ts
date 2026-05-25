@@ -13,10 +13,15 @@ function fetchWithTimeout(input: RequestInfo | URL, init?: RequestInit) {
   if (init?.signal) {
     const external = init.signal;
     if (external.aborted) controller.abort();
-    else external.addEventListener("abort", () => controller.abort(), { once: true });
+    else
+      external.addEventListener("abort", () => controller.abort(), {
+        once: true,
+      });
   }
 
-  return fetch(input, { ...init, signal: controller.signal }).finally(() => clearTimeout(id));
+  return fetch(input, { ...init, signal: controller.signal }).finally(() =>
+    clearTimeout(id),
+  );
 }
 
 export function getSupabaseBrowserClient(): SupabaseClient {
@@ -32,7 +37,7 @@ export function getSupabaseBrowserClient(): SupabaseClient {
 
   if (!supabaseUrl || !supabaseKey) {
     throw new Error(
-      "Missing Supabase env vars. Add NEXT_PUBLIC_SUPABASE_URL (or NEXT_PUBLIC_SUPABASE_PROJECT_URL) and NEXT_PUBLIC_SUPABASE_ANON_KEY (or NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY)."
+      "Missing Supabase env vars. Add NEXT_PUBLIC_SUPABASE_URL (or NEXT_PUBLIC_SUPABASE_PROJECT_URL) and NEXT_PUBLIC_SUPABASE_ANON_KEY (or NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY).",
     );
   }
 

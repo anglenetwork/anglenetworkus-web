@@ -19,7 +19,7 @@ export function ResourceHints() {
     domains.forEach((domain) => {
       // Check if link already exists
       const existingDns = document.querySelector(
-        `link[rel="dns-prefetch"][href="${domain}"]`
+        `link[rel="dns-prefetch"][href="${domain}"]`,
       );
       if (!existingDns) {
         const dnsLink = document.createElement("link");

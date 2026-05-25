@@ -6,9 +6,10 @@ import "server-only";
  */
 export function logDevMetricsFallback(
   surface: string,
-  reason: "infra_error" | "empty_or_no_activity"
+  reason: "infra_error" | "empty_or_no_activity",
 ): void {
   if (process.env.NODE_ENV !== "development") return;
-  const label = reason === "infra_error" ? "metrics_unavailable" : "no_usable_metrics_rows";
+  const label =
+    reason === "infra_error" ? "metrics_unavailable" : "no_usable_metrics_rows";
   console.info(`[metrics-fallback] ${surface} ${label}`);
 }

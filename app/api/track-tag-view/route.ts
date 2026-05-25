@@ -19,21 +19,18 @@ export async function POST(request: NextRequest) {
     if (!slug) {
       return NextResponse.json(
         { error: "Tag slug is required" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     // Find the tag by slug
     const tag = await writeClient.fetch(
       `*[_type == "tag" && slug.current == $slug][0] { _id, views }`,
-      { slug }
+      { slug },
     );
 
     if (!tag) {
-      return NextResponse.json(
-        { error: "Tag not found" },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: "Tag not found" }, { status: 404 });
     }
 
     // Increment the views count
@@ -41,10 +38,7 @@ export async function POST(request: NextRequest) {
     const newViews = currentViews + 1;
 
     // Update the tag with the new views count
-    await writeClient
-      .patch(tag._id)
-      .set({ views: newViews })
-      .commit();
+    await writeClient.patch(tag._id).set({ views: newViews }).commit();
 
     return NextResponse.json({
       success: true,
@@ -54,7 +48,7 @@ export async function POST(request: NextRequest) {
     console.error("Error tracking tag view:", error);
     return NextResponse.json(
       { error: "Failed to track tag view" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

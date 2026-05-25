@@ -24,7 +24,11 @@ export async function GET() {
 
   const [rows, settings] = await Promise.all([
     client.fetch(newsSitemapEntriesQuery, { since }),
-    client.fetch<Record<string, unknown> | null>(settingsQuery, {}, { stega: false }),
+    client.fetch<Record<string, unknown> | null>(
+      settingsQuery,
+      {},
+      { stega: false },
+    ),
   ]);
 
   const publicationName = resolvePublicationName(settings ?? undefined);
@@ -34,15 +38,15 @@ export async function GET() {
 
   const items = list
     .map((row) => {
-        const slug = row.slug ?? undefined;
-        const t = row._type as ArticleFamilyDocType | undefined;
-        if (!slug || (t !== "post" && t !== "analysis")) return "";
-        const loc = `${base}${articleFamilyHref(t, slug)}`;
-        const pub = row.publishedAt
-          ? new Date(row.publishedAt).toISOString()
-          : new Date().toISOString();
-        const headline = row.title?.trim() || "Untitled";
-        return `
+      const slug = row.slug ?? undefined;
+      const t = row._type as ArticleFamilyDocType | undefined;
+      if (!slug || (t !== "post" && t !== "analysis")) return "";
+      const loc = `${base}${articleFamilyHref(t, slug)}`;
+      const pub = row.publishedAt
+        ? new Date(row.publishedAt).toISOString()
+        : new Date().toISOString();
+      const headline = row.title?.trim() || "Untitled";
+      return `
   <url>
     <loc>${escapeXml(loc)}</loc>
     <news:news>

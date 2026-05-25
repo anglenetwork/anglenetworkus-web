@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { ImageRenderer } from "../../ui/image-renderer";
 import ArticleCaption from "./ArticleCaption";
-import { ARTICLE_MEDIA_CLASSES, DEFAULT_IMAGE_EPIGRAPH } from "./constants";
+import { ARTICLE_MEDIA_CLASSES, DEFAULT_IMAGE_CAPTION } from "./constants";
 import type { MediaPresentation, ResolvedArticleImage } from "./types";
 
 interface CoverImageCarouselProps {
@@ -54,13 +54,13 @@ export default function CoverImageCarousel({
             quality={idx === 0 ? 70 : 55}
             sizes={mediaClasses.sizes}
             unoptimized={image.unoptimized}
-            className={`object-cover object-center absolute inset-0 transition-opacity duration-500 ${
-              idx === currentIndex ? "opacity-100 z-10" : "opacity-0 z-0"
+            className={`absolute inset-0 object-cover object-center transition-opacity duration-500 ${
+              idx === currentIndex ? "z-10 opacity-100" : "z-0 opacity-0"
             }`}
           />
         ))}
         {allImages.length > 1 && (
-          <div className="absolute bottom-4 right-4 z-20 flex gap-1.5">
+          <div className="absolute right-4 bottom-4 z-20 flex gap-1.5">
             {allImages.map((image, idx) => (
               <button
                 key={`${image.src}-indicator-${idx}`}
@@ -79,9 +79,9 @@ export default function CoverImageCarousel({
         )}
       </div>
       <ArticleCaption
-        epigraph={currentImage.epigraph}
+        caption={currentImage.caption}
         credit={currentImage.credit}
-        fallbackEpigraph={DEFAULT_IMAGE_EPIGRAPH}
+        fallbackCaption={DEFAULT_IMAGE_CAPTION}
       />
     </figure>
   );

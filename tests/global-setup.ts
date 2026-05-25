@@ -33,30 +33,34 @@ function validateEnv(): {
   if (missing.length) {
     console.error(
       "[Playwright global-setup] Missing required environment variables:",
-      missing.join(", ")
+      missing.join(", "),
     );
     throw new Error(
-      `Missing required env: ${missing.join(", ")}. Set them in .env.local (see README).`
+      `Missing required env: ${missing.join(", ")}. Set them in .env.local (see README).`,
     );
   }
 
   const publishableKey = getPublishableKey();
   if (!publishableKey) {
     console.error(
-      "[Playwright global-setup] Missing NEXT_PUBLIC_SUPABASE_ANON_KEY or NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY (needed for password sign-in after admin provisioning)."
+      "[Playwright global-setup] Missing NEXT_PUBLIC_SUPABASE_ANON_KEY or NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY (needed for password sign-in after admin provisioning).",
     );
     throw new Error(
-      "Missing NEXT_PUBLIC_SUPABASE_ANON_KEY or NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY"
+      "Missing NEXT_PUBLIC_SUPABASE_ANON_KEY or NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY",
     );
   }
 
   const supabaseUrl =
-    process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_PROJECT_URL || "";
+    process.env.NEXT_PUBLIC_SUPABASE_URL ||
+    process.env.NEXT_PUBLIC_SUPABASE_PROJECT_URL ||
+    "";
   const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
   const email = process.env.PLAYWRIGHT_TEST_EMAIL!.trim();
   const password = process.env.PLAYWRIGHT_TEST_PASSWORD!;
 
-  console.log("[Playwright global-setup] Env validation: OK (service role + test user + publishable key present)");
+  console.log(
+    "[Playwright global-setup] Env validation: OK (service role + test user + publishable key present)",
+  );
 
   return { supabaseUrl, serviceRoleKey, email, password, publishableKey };
 }
@@ -66,32 +70,46 @@ function validateEnv(): {
  * inject session into the browser, save storage state for tests.
  */
 export default async function globalSetup(_config: FullConfig) {
-  const baseURL = process.env.PLAYWRIGHT_TEST_BASE_URL ?? "http://localhost:3000";
-  const { supabaseUrl, serviceRoleKey, email, password, publishableKey } = validateEnv();
+  const baseURL =
+    process.env.PLAYWRIGHT_TEST_BASE_URL ?? "http://localhost:3000";
+  const { supabaseUrl, serviceRoleKey, email, password, publishableKey } =
+    validateEnv();
 
-  console.log("[Playwright global-setup] Provisioning test user with Supabase service role (admin API)…");
+  console.log(
+    "[Playwright global-setup] Provisioning test user with Supabase service role (admin API)…",
+  );
 
   const admin = createClient(supabaseUrl, serviceRoleKey, {
     auth: { persistSession: false, autoRefreshToken: false },
   });
 
-  const { userId, action } = await ensurePlaywrightTestUser(admin, email, password);
+  const { userId, action } = await ensurePlaywrightTestUser(
+    admin,
+    email,
+    password,
+  );
   console.log(
-    `[Playwright global-setup] Test user ${action === "created" ? "created" : "updated"}: ${email} (id=${userId})`
+    `[Playwright global-setup] Test user ${action === "created" ? "created" : "updated"}: ${email} (id=${userId})`,
   );
 
   const userClient = createClient(supabaseUrl, publishableKey, {
     auth: { persistSession: false, autoRefreshToken: false },
   });
 
-  console.log("[Playwright global-setup] Obtaining session via signInWithPassword (publishable key)…");
-  const { data: signInData, error: signInError } = await userClient.auth.signInWithPassword({
-    email,
-    password,
-  });
+  console.log(
+    "[Playwright global-setup] Obtaining session via signInWithPassword (publishable key)…",
+  );
+  const { data: signInData, error: signInError } =
+    await userClient.auth.signInWithPassword({
+      email,
+      password,
+    });
 
   if (signInError) {
-    console.error("[Playwright global-setup] signInWithPassword failed:", signInError.message);
+    console.error(
+      "[Playwright global-setup] signInWithPassword failed:",
+      signInError.message,
+    );
     throw signInError;
   }
 
@@ -106,7 +124,9 @@ export default async function globalSetup(_config: FullConfig) {
     throw new Error(`Could not resolve user for ${userId}`);
   }
 
-  const expiresAt = session.expires_at ?? Math.floor(Date.now() / 1000) + (session.expires_in ?? 3600);
+  const expiresAt =
+    session.expires_at ??
+    Math.floor(Date.now() / 1000) + (session.expires_in ?? 3600);
   const sessionPayload = {
     access_token: session.access_token,
     refresh_token: session.refresh_token,
@@ -149,10 +169,10 @@ export default async function globalSetup(_config: FullConfig) {
           key,
           newValue: valueStr,
           storageArea: localStorage,
-        })
+        }),
       );
     },
-    [storageKey, sessionPayloadString]
+    [storageKey, sessionPayloadString],
   );
 
   const url = new URL(baseURL);
@@ -181,19 +201,32 @@ export default async function globalSetup(_config: FullConfig) {
   ]);
 
   console.log("[Playwright global-setup] Verifying auth against /myprofile…");
-  await page.goto(`${baseURL}/myprofile`, { waitUntil: "networkidle", timeout: 30000 });
+  await page.goto(`${baseURL}/myprofile`, {
+    waitUntil: "networkidle",
+    timeout: 30000,
+  });
 
   try {
-    await page.waitForSelector('text=/profile|email|subscriptions|bookmarks/i', { timeout: 15000 });
-    console.log("[Playwright global-setup] Authentication verified (profile content visible).");
+    await page.waitForSelector(
+      "text=/profile|email|subscriptions|bookmarks/i",
+      { timeout: 15000 },
+    );
+    console.log(
+      "[Playwright global-setup] Authentication verified (profile content visible).",
+    );
   } catch {
     const currentUrl = page.url();
     if (currentUrl.includes("/signin")) {
       const body = await page.textContent("body");
-      console.error("[Playwright global-setup] Still on sign-in after session injection:", body?.slice(0, 400));
+      console.error(
+        "[Playwright global-setup] Still on sign-in after session injection:",
+        body?.slice(0, 400),
+      );
       throw new Error("Authentication failed — redirected to sign-in");
     }
-    console.warn("[Playwright global-setup] Profile selector not found; session may still be valid.");
+    console.warn(
+      "[Playwright global-setup] Profile selector not found; session may still be valid.",
+    );
   }
 
   const fs = await import("fs");
@@ -209,15 +242,19 @@ export default async function globalSetup(_config: FullConfig) {
   await context.storageState({ path: statePath });
 
   const savedState = JSON.parse(fs.readFileSync(statePath, "utf-8"));
-  const hasLocalStorage = savedState.origins?.some((origin: { localStorage?: { name: string }[] }) =>
-    origin.localStorage?.some(
-      (item: { name: string }) => item.name.includes("auth-token") || item.name.includes("sb-")
-    )
+  const hasLocalStorage = savedState.origins?.some(
+    (origin: { localStorage?: { name: string }[] }) =>
+      origin.localStorage?.some(
+        (item: { name: string }) =>
+          item.name.includes("auth-token") || item.name.includes("sb-"),
+      ),
   );
 
   console.log("[Playwright global-setup] Storage state saved:", statePath);
   console.log(`   Cookies: ${savedState.cookies?.length ?? 0}`);
-  console.log(`   Auth token in localStorage: ${hasLocalStorage ? "yes" : "no"}`);
+  console.log(
+    `   Auth token in localStorage: ${hasLocalStorage ? "yes" : "no"}`,
+  );
 
   await browser.close();
   console.log("[Playwright global-setup] Complete.");

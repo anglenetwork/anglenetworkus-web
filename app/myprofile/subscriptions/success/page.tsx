@@ -89,19 +89,13 @@ export default function SuccessPage() {
     }, 1000); // Poll every 1 second
 
     return () => clearInterval(interval);
-  }, [
-    polling,
-    authReady,
-    tier,
-    pollAttempts,
-    loadSubscription,
-  ]);
+  }, [polling, authReady, tier, pollAttempts, loadSubscription]);
 
   if (!sessionId) {
     return (
-      <div className="font-sans pt-10">
-        <div className="mb-8 p-6 bg-red-50 border border-red-200 rounded-lg">
-          <h2 className="text-xl font-bold text-red-900 mb-2">Error</h2>
+      <div className="pt-10 font-sans">
+        <div className="mb-8 rounded-lg border border-red-200 bg-red-50 p-6">
+          <h2 className="mb-2 font-bold text-red-900 text-xl">Error</h2>
           <p className="text-red-700">Missing session ID. Please try again.</p>
           <Link href="/myprofile/subscriptions">
             <Button className="mt-4">Back to Subscriptions</Button>
@@ -113,9 +107,9 @@ export default function SuccessPage() {
 
   if (error) {
     return (
-      <div className="font-sans pt-10">
-        <div className="mb-8 p-6 bg-red-50 border border-red-200 rounded-lg">
-          <h2 className="text-xl font-bold text-red-900 mb-2">Error</h2>
+      <div className="pt-10 font-sans">
+        <div className="mb-8 rounded-lg border border-red-200 bg-red-50 p-6">
+          <h2 className="mb-2 font-bold text-red-900 text-xl">Error</h2>
           <p className="text-red-700">{error}</p>
           <Link href="/myprofile/subscriptions">
             <Button className="mt-4">Back to Subscriptions</Button>
@@ -129,13 +123,13 @@ export default function SuccessPage() {
   const timeoutReached = pollAttempts >= maxPollAttempts;
 
   return (
-    <div className="font-sans pt-10">
-      <div className="mb-8 p-6 bg-gray-100 rounded-lg w-full space-y-4">
+    <div className="pt-10 font-sans">
+      <div className="mb-8 w-full space-y-4 rounded-lg bg-gray-100 p-6">
         {loading ? (
           <div className="text-gray-600 text-sm">Loading…</div>
         ) : isUpgraded ? (
           <>
-            <h2 className="text-2xl font-bold text-gray-900 mb-2">
+            <h2 className="mb-2 font-bold text-2xl text-gray-900">
               Payment Successful!
             </h2>
             <p className="text-gray-700">
@@ -148,14 +142,14 @@ export default function SuccessPage() {
           </>
         ) : timeoutReached ? (
           <>
-            <h2 className="text-2xl font-bold text-gray-900 mb-2">
+            <h2 className="mb-2 font-bold text-2xl text-gray-900">
               Payment Received
             </h2>
             <p className="text-gray-700">
               Your payment was successful, but we&apos;re still processing your
               subscription update. This usually takes just a few seconds.
             </p>
-            <p className="text-gray-600 text-sm mt-2">
+            <p className="mt-2 text-gray-600 text-sm">
               Your subscription will be active shortly. You can check your
               subscription status below.
             </p>
@@ -165,15 +159,15 @@ export default function SuccessPage() {
           </>
         ) : (
           <>
-            <h2 className="text-2xl font-bold text-gray-900 mb-2">
+            <h2 className="mb-2 font-bold text-2xl text-gray-900">
               Payment Received
             </h2>
             <p className="text-gray-700">
               Payment received, updating your account...
             </p>
-            <div className="flex items-center gap-2 mt-4">
-              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-indigo-600"></div>
-              <span className="text-sm text-gray-600">
+            <div className="mt-4 flex items-center gap-2">
+              <div className="h-4 w-4 animate-spin rounded-full border-indigo-600 border-b-2"></div>
+              <span className="text-gray-600 text-sm">
                 Please wait while we process your subscription
               </span>
             </div>

@@ -19,7 +19,7 @@ export function CategoriesNav({
           key={category.slug}
           href={`/category/${category.slug}`}
           onClick={onCategoryClick}
-          className="font-medium tracking-normal text-black capitalize transition-all duration-500 ease-out whitespace-nowrap font-sans text-sm"
+          className="whitespace-nowrap font-medium font-sans text-black text-sm capitalize tracking-normal transition-all duration-500 ease-out"
         >
           {category.name}
         </Link>

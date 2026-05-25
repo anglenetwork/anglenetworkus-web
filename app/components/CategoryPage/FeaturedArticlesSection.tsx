@@ -16,7 +16,7 @@ export function FeaturedArticlesSection({
   featuredArticles,
 }: FeaturedArticlesSectionProps) {
   return (
-    <section className="border-b border-border bg-black">
+    <section className="border-border border-b bg-black">
       <SitePageWidth className="py-12">
         <SectionHeader
           title="Featured"
@@ -25,7 +25,7 @@ export function FeaturedArticlesSection({
           size="large"
         />
         {/* Mobile: center hero, then left, then right (stacked) */}
-        <div className="block md:hidden space-y-8">
+        <div className="block space-y-8 md:hidden">
           <div className="mb-12">
             <FeatureHero
               article={featuredArticles.centerArticle}
@@ -48,9 +48,9 @@ export function FeaturedArticlesSection({
 
         {/* Desktop: 20% - 60% - 20% */}
         {/* Reordered DOM: center first for proper heading hierarchy (h2 before h3) */}
-        <div className="hidden md:grid grid-cols-5 gap-8">
+        <div className="hidden grid-cols-5 gap-8 md:grid">
           {/* Center column first in DOM for proper h2 -> h3 hierarchy, visually positioned in center */}
-          <div className="col-span-3 col-start-2 order-2">
+          <div className="order-2 col-span-3 col-start-2">
             <FeatureHero
               article={featuredArticles.centerArticle}
               variant="dark"
@@ -58,14 +58,14 @@ export function FeaturedArticlesSection({
           </div>
 
           {/* Left column - visually first, but appears after center in DOM */}
-          <div className="col-span-1 order-1 space-y-6">
+          <div className="order-1 col-span-1 space-y-6">
             {featuredArticles.leftColumn.map((a) => (
               <FeatureSideItem key={a.id} article={a} variant="dark" />
             ))}
           </div>
 
           {/* Right column - visually last */}
-          <div className="col-span-1 order-3 space-y-6">
+          <div className="order-3 col-span-1 space-y-6">
             {featuredArticles.rightColumn.map((a) => (
               <FeatureSideItem key={a.id} article={a} variant="dark" />
             ))}

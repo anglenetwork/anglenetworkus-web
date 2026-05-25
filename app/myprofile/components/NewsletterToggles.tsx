@@ -95,7 +95,7 @@ export function NewsletterToggles() {
       if (!res.ok) {
         console.error(
           "Error updating preference:",
-          json?.error || res.statusText
+          json?.error || res.statusText,
         );
         setPreferences((prev) => ({ ...prev, [newsletterKey]: !enabled }));
         return;
@@ -133,15 +133,15 @@ export function NewsletterToggles() {
       {AVAILABLE_NEWSLETTERS.map((newsletter) => (
         <div
           key={newsletter.key}
-          className="flex items-center justify-between py-4 px-4 border border-slate-200 rounded-lg hover:border-slate-300 transition-colors"
+          className="flex items-center justify-between rounded-lg border border-slate-200 px-4 py-4 transition-colors hover:border-slate-300"
         >
-          <div className="flex items-start gap-4 flex-1">
-            <Mail className="h-5 w-5 text-slate-600 mt-0.5 flex-shrink-0" />
+          <div className="flex flex-1 items-start gap-4">
+            <Mail className="mt-0.5 h-5 w-5 flex-shrink-0 text-slate-600" />
             <div>
-              <h3 className="font-semibold text-slate-900 font-sans">
+              <h3 className="font-sans font-semibold text-slate-900">
                 {newsletter.label}
               </h3>
-              <p className="text-sm text-slate-600 mt-0.5 font-sans">
+              <p className="mt-0.5 font-sans text-slate-600 text-sm">
                 {getNewsletterDescription(newsletter.key)}
               </p>
             </div>

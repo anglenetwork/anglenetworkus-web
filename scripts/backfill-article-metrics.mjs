@@ -1,31 +1,40 @@
 // One-shot: seed article_metrics_totals from published Sanity article-family docs (no daily history, no Sanity writes).
-import { createClient as createSanityClient } from '@sanity/client';
-import { createClient as createSupabaseClient } from '@supabase/supabase-js';
-import { config } from 'dotenv';
-import { fileURLToPath } from 'url';
-import { dirname, join } from 'path';
-import { checkArticleMetricsReadiness } from './lib/article-metrics-readiness.mjs';
-import { initialViewsAllFromDoc } from './lib/backfill-article-metrics-logic.mjs';
+import { createClient as createSanityClient } from "@sanity/client";
+import { createClient as createSupabaseClient } from "@supabase/supabase-js";
+import { config } from "dotenv";
+import { fileURLToPath } from "url";
+import { dirname, join } from "path";
+import { checkArticleMetricsReadiness } from "./lib/article-metrics-readiness.mjs";
+import { initialViewsAllFromDoc } from "./lib/backfill-article-metrics-logic.mjs";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
-config({ path: join(__dirname, '..', '.env.local') });
+config({ path: join(__dirname, "..", ".env.local") });
 
 function requireEnv() {
   const missing = [];
-  if (!process.env.NEXT_PUBLIC_SANITY_PROJECT_ID) missing.push('NEXT_PUBLIC_SANITY_PROJECT_ID');
-  if (!process.env.NEXT_PUBLIC_SANITY_DATASET) missing.push('NEXT_PUBLIC_SANITY_DATASET');
-  if (!process.env.SANITY_API_READ_TOKEN) missing.push('SANITY_API_READ_TOKEN');
+  if (!process.env.NEXT_PUBLIC_SANITY_PROJECT_ID)
+    missing.push("NEXT_PUBLIC_SANITY_PROJECT_ID");
+  if (!process.env.NEXT_PUBLIC_SANITY_DATASET)
+    missing.push("NEXT_PUBLIC_SANITY_DATASET");
+  if (!process.env.SANITY_API_READ_TOKEN) missing.push("SANITY_API_READ_TOKEN");
   const supabaseUrl =
-    process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_PROJECT_URL;
-  if (!supabaseUrl) missing.push('NEXT_PUBLIC_SUPABASE_URL (or NEXT_PUBLIC_SUPABASE_PROJECT_URL)');
-  if (!process.env.SUPABASE_SERVICE_ROLE_KEY) missing.push('SUPABASE_SERVICE_ROLE_KEY');
+    process.env.NEXT_PUBLIC_SUPABASE_URL ||
+    process.env.NEXT_PUBLIC_SUPABASE_PROJECT_URL;
+  if (!supabaseUrl)
+    missing.push(
+      "NEXT_PUBLIC_SUPABASE_URL (or NEXT_PUBLIC_SUPABASE_PROJECT_URL)",
+    );
+  if (!process.env.SUPABASE_SERVICE_ROLE_KEY)
+    missing.push("SUPABASE_SERVICE_ROLE_KEY");
   if (missing.length) {
-    throw new Error(`Missing required environment variables: ${missing.join(', ')}`);
+    throw new Error(
+      `Missing required environment variables: ${missing.join(", ")}`,
+    );
   }
 }
 
-const ARTICLE_TYPES = ['post', 'opinion', 'analysis', 'sponsored'];
+const ARTICLE_TYPES = ["post", "opinion", "analysis", "sponsored"];
 
 const fetchPublishedArticles = `
 *[
@@ -43,29 +52,36 @@ async function main() {
   requireEnv();
 
   const supabaseUrl =
-    process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_PROJECT_URL;
+    process.env.NEXT_PUBLIC_SUPABASE_URL ||
+    process.env.NEXT_PUBLIC_SUPABASE_PROJECT_URL;
 
   const sanity = createSanityClient({
     projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID,
     dataset: process.env.NEXT_PUBLIC_SANITY_DATASET,
-    apiVersion: '2024-01-01',
+    apiVersion: "2024-01-01",
     useCdn: false,
     token: process.env.SANITY_API_READ_TOKEN,
   });
 
-  const supabase = createSupabaseClient(supabaseUrl, process.env.SUPABASE_SERVICE_ROLE_KEY, {
-    auth: { persistSession: false, autoRefreshToken: false },
-  });
+  const supabase = createSupabaseClient(
+    supabaseUrl,
+    process.env.SUPABASE_SERVICE_ROLE_KEY,
+    {
+      auth: { persistSession: false, autoRefreshToken: false },
+    },
+  );
 
   const readiness = await checkArticleMetricsReadiness(supabase);
   if (!readiness.ready) {
-    console.error('');
-    console.error('Article metrics are not ready yet. Apply the Supabase migration first:');
-    console.error('  supabase-migrations/20260327_article_metrics.sql');
-    console.error('Then run: npm run backfill:article-metrics');
+    console.error("");
+    console.error(
+      "Article metrics are not ready yet. Apply the Supabase migration first:",
+    );
+    console.error("  supabase-migrations/20260327_article_metrics.sql");
+    console.error("Then run: npm run backfill:article-metrics");
     if (readiness.issues.length) {
-      console.error('');
-      console.error('Details:', readiness.issues.join('; '));
+      console.error("");
+      console.error("Details:", readiness.issues.join("; "));
     }
     process.exit(1);
   }
@@ -87,9 +103,9 @@ async function main() {
     if (!ARTICLE_TYPES.includes(type)) continue;
 
     const { data: existing, error: selErr } = await supabase
-      .from('article_metrics_totals')
-      .select('article_id')
-      .eq('article_id', id)
+      .from("article_metrics_totals")
+      .select("article_id")
+      .eq("article_id", id)
       .maybeSingle();
 
     if (selErr) throw selErr;
@@ -99,23 +115,28 @@ async function main() {
     }
 
     const viewsAll = initialViewsAllFromDoc(doc);
-    if (type === 'post' && viewsAll > 0) postsFromLegacyViews += 1;
+    if (type === "post" && viewsAll > 0) postsFromLegacyViews += 1;
 
-    const { error: insErr } = await supabase.from('article_metrics_totals').insert({
-      article_id: id,
-      article_type: type,
-      views_all: viewsAll,
-    });
+    const { error: insErr } = await supabase
+      .from("article_metrics_totals")
+      .insert({
+        article_id: id,
+        article_type: type,
+        views_all: viewsAll,
+      });
 
     if (insErr) throw insErr;
     inserted += 1;
   }
 
-  console.log('--- backfill:article-metrics summary ---');
-  console.log('Published articles by type:', byType);
-  console.log('Totals rows inserted:', inserted);
-  console.log('Totals rows skipped (already present):', skipped);
-  console.log('Posts initialized with non-zero legacy viewsAll:', postsFromLegacyViews);
+  console.log("--- backfill:article-metrics summary ---");
+  console.log("Published articles by type:", byType);
+  console.log("Totals rows inserted:", inserted);
+  console.log("Totals rows skipped (already present):", skipped);
+  console.log(
+    "Posts initialized with non-zero legacy viewsAll:",
+    postsFromLegacyViews,
+  );
 }
 
 main().catch((e) => {

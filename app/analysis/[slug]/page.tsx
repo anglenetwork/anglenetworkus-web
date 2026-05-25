@@ -1,12 +1,10 @@
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import ArticleFamilyPage from "@/app/components/article-family/ArticleFamilyPage";
-import PostSelectedNews from "@/app/components/PostPage/PostSelectedNews";
 import BottomArticleModule from "@/app/components/PostPage/BottomArticleModule";
 import { SuggestedTags } from "@/app/components/SuggestedTags";
 import { fetchArticleFamilyPage } from "@/app/lib/article-family/fetch";
 import { buildArticleFamilyMetadata } from "@/app/lib/article-family/metadata";
-import { loadArticlePageSidebars } from "@/app/lib/article-family/sidebars";
 import { client } from "@/sanity/lib/client";
 import { analysisSlugsQuery } from "@/sanity/lib/article-family-queries";
 
@@ -39,10 +37,6 @@ export default async function AnalysisArticlePage({
   const article = await fetchArticleFamilyPage({ type: "analysis", slug });
   if (!article) notFound();
 
-  const { newsForYou, popularReads, relatedArticles } =
-    await loadArticlePageSidebars(article);
-  const bottomSlice = relatedArticles.slice(0, 8);
-
   const tagsForSuggested =
     article.tags
       ?.filter((tag) => tag.title && tag.slug)
@@ -54,20 +48,18 @@ export default async function AnalysisArticlePage({
   return (
     <ArticleFamilyPage
       article={article}
-      sidebar={
-        <>
-          <PostSelectedNews latestNews={popularReads} title="Popular Reads" />
-          <PostSelectedNews latestNews={newsForYou} title="News for You" />
-        </>
-      }
-      footer={
-        <>
-          <SuggestedTags tags={tagsForSuggested} />
-          {bottomSlice.length > 0 && (
-            <BottomArticleModule posts={bottomSlice} />
-          )}
-        </>
-      }
+      footer={({ relatedArticles }) => {
+        const bottomSlice = relatedArticles.slice(0, 8);
+
+        return (
+          <>
+            <SuggestedTags tags={tagsForSuggested} />
+            {bottomSlice.length > 0 && (
+              <BottomArticleModule posts={bottomSlice} />
+            )}
+          </>
+        );
+      }}
     />
   );
 }

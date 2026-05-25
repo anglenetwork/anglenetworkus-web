@@ -1,10 +1,39 @@
 import type { ReactNode } from "react";
 import type { PortableTextComponents } from "@portabletext/react";
-import { formatImageCredit, urlForImage } from "@/sanity/lib/utils";
+import {
+  NON_REGULAR_POST_BODY_EDITORIAL_IMAGE_FIGURE_CLASS,
+  NON_REGULAR_POST_BODY_EDITORIAL_IMAGE_SIZES,
+  NON_REGULAR_POST_BODY_EDITORIAL_IMAGE_WRAPPER_CLASS,
+} from "./constants";
+import {
+  regularPostBodyBulletList,
+  regularPostBodyH1,
+  regularPostBodyH2,
+  regularPostBodyH3,
+  regularPostBodyH4,
+  regularPostBodyNumberedList,
+  regularPostBodyParagraph,
+  regularPostBodyQuote,
+  regularPostBodyQuoteAttribution,
+  regularPostBodyVideoCaption,
+} from "@/app/lib/typography/posts";
+import {
+  formatImageCredit,
+  normalizeImageMeta,
+  urlForImage,
+} from "@/sanity/lib/utils";
 import ArticleImageFigure from "./ArticleImageFigure";
 import { buildBodyImageData } from "./media-utils";
 import { getVideoEmbedSrc } from "./video-utils";
+import { cn } from "@/lib/utils";
 import type { ArticleImageSource, PortableTextBlockValue } from "./types";
+
+const BODY_PARAGRAPH_LAYOUT = "mb-4 text-left";
+const BODY_H1_LAYOUT = "mt-10 mb-4 text-left";
+const BODY_H2_LAYOUT = "mt-10 mb-4 text-left md:mt-12";
+const BODY_H3_LAYOUT = "mt-8 mb-3 text-left";
+const BODY_H4_LAYOUT = "mt-6 mb-2 text-left";
+const BODY_LIST_LAYOUT = "mb-4 space-y-2 pl-6 text-left";
 
 type PortableTextComponentProps = {
   children?: ReactNode;
@@ -24,6 +53,49 @@ function asString(value: unknown): string | null {
 function hasAssetRef(value: PortableTextBlockValue): boolean {
   const asset = asRecord(value.asset);
   return typeof asset._ref === "string" && asset._ref.length > 0;
+}
+
+function renderEditorialImageBlock(
+  value: unknown,
+  {
+    wrapperClassName,
+    sizes,
+    figureClassName = "my-8 text-left",
+  }: {
+    wrapperClassName: string;
+    sizes: string;
+    figureClassName?: string;
+  },
+) {
+  const imageValue = asRecord(value);
+  const imageData = buildBodyImageData(imageValue as ArticleImageSource);
+  if (!imageData?.src) return null;
+
+  const layout = asString(imageValue.layout);
+  const layoutClass =
+    layout === "full"
+      ? "w-full"
+      : layout === "wide"
+        ? "w-full md:w-[110%] md:-ml-[5%]"
+        : "w-full";
+
+  return (
+    <ArticleImageFigure
+      src={imageData.src}
+      alt={imageData.alt}
+      width={1200}
+      height={900}
+      fill
+      unoptimized={imageData.unoptimized}
+      sizes={sizes}
+      quality={55}
+      figureClassName={`${figureClassName} ${layoutClass}`}
+      wrapperClassName={wrapperClassName}
+      imageClassName="object-cover"
+      caption={imageData.caption}
+      credit={imageData.credit}
+    />
+  );
 }
 
 /** Portable Text: `font-body` for paragraphs/lists; `font-sans` for headings, block quotes, captions, and meta. */
@@ -57,43 +129,18 @@ export const portableTextComponents: PortableTextComponents = {
           figureClassName="my-8 text-left"
           wrapperClassName="relative w-full aspect-[3/2] overflow-hidden rounded-lg shadow-lg"
           imageClassName="object-cover"
-          epigraph={asString(imageValue.epigraph)}
+          caption={normalizeImageMeta(imageValue).caption}
           credit={formatImageCredit(imageValue)}
           showAltAsCaption
         />
       );
     },
-    editorialImage: ({ value }: PortableTextComponentProps) => {
-      const imageValue = asRecord(value);
-      const imageData = buildBodyImageData(imageValue as ArticleImageSource);
-      if (!imageData?.src) return null;
-
-      const layout = asString(imageValue.layout);
-      const layoutClass =
-        layout === "full"
-          ? "w-full"
-          : layout === "wide"
-            ? "w-full md:w-[110%] md:-ml-[5%]"
-            : "w-full";
-
-      return (
-        <ArticleImageFigure
-          src={imageData.src}
-          alt={imageData.alt}
-          width={1200}
-          height={900}
-          fill
-          unoptimized={imageData.unoptimized}
-          sizes="(max-width: 768px) 100vw, (max-width: 1280px) 66vw, 900px"
-          quality={55}
-          figureClassName={`my-8 text-left ${layoutClass}`}
-          wrapperClassName="relative w-full aspect-[4/3] max-h-[700px] overflow-hidden rounded-lg shadow-lg"
-          imageClassName="object-cover"
-          epigraph={imageData.epigraph}
-          credit={imageData.credit}
-        />
-      );
-    },
+    editorialImage: ({ value }: PortableTextComponentProps) =>
+      renderEditorialImageBlock(value, {
+        wrapperClassName:
+          "relative w-full aspect-[4/3] max-h-[700px] overflow-hidden rounded-lg shadow-lg",
+        sizes: "(max-width: 768px) 100vw, (max-width: 1280px) 66vw, 900px",
+      }),
     pullQuote: ({ value }: PortableTextComponentProps) => {
       const quoteValue = asRecord(value);
       const quote = asString(quoteValue.quote);
@@ -103,12 +150,10 @@ export const portableTextComponents: PortableTextComponents = {
       const sourceLabel = asString(quoteValue.sourceLabel);
 
       return (
-        <blockquote className="my-10 md:my-12 border-l-2 border-neutral-300 pl-4 md:pl-6 text-left">
-          <p className="font-sans text-2xl md:text-3xl leading-tight text-neutral-900">
-            {quote}
-          </p>
+        <blockquote className="my-10 border-neutral-300 border-l-2 pl-4 text-left md:my-12 md:pl-6">
+          <p className={regularPostBodyQuote}>{quote}</p>
           {(attribution || sourceLabel) && (
-            <footer className="mt-3 font-sans text-xs text-neutral-500">
+            <footer className={`mt-3 ${regularPostBodyQuoteAttribution}`}>
               {attribution || ""}
               {attribution && sourceLabel ? " • " : ""}
               {sourceLabel || ""}
@@ -146,7 +191,7 @@ export const portableTextComponents: PortableTextComponents = {
             </div>
           </div>
           {title && (
-            <figcaption className="mt-2 font-sans text-xs text-neutral-500">
+            <figcaption className={`mt-2 ${regularPostBodyVideoCaption}`}>
               {title}
             </figcaption>
           )}
@@ -165,7 +210,7 @@ export const portableTextComponents: PortableTextComponents = {
           href={href}
           target={target}
           rel={target === "_blank" ? "noopener noreferrer" : undefined}
-          className="underline decoration-neutral-300 underline-offset-[3px] hover:decoration-neutral-700 transition-colors"
+          className="underline decoration-neutral-300 underline-offset-[3px] transition-colors hover:decoration-neutral-700"
         >
           {children}
         </a>
@@ -174,48 +219,64 @@ export const portableTextComponents: PortableTextComponents = {
   },
   block: {
     h1: ({ children }: PortableTextComponentProps) => (
-      <h1 className="font-sans font-semibold tracking-tight text-[34px] sm:text-[40px] md:text-[44px] text-neutral-900 mt-10 mb-4 leading-tight text-left">
-        {children}
-      </h1>
+      <h1 className={cn(regularPostBodyH1, BODY_H1_LAYOUT)}>{children}</h1>
     ),
     h2: ({ children }: PortableTextComponentProps) => (
-      <h2 className="font-sans font-semibold tracking-tight text-2xl sm:text-[28px] md:text-[32px] lg:text-[36px] text-neutral-900 mt-10 md:mt-12 mb-4 leading-snug text-left">
-        {children}
-      </h2>
+      <h2 className={cn(regularPostBodyH2, BODY_H2_LAYOUT)}>{children}</h2>
     ),
     h3: ({ children }: PortableTextComponentProps) => (
-      <h3 className="font-sans font-semibold text-[20px] sm:text-[22px] md:text-[24px] text-neutral-900 mt-8 mb-3 leading-snug text-left">
-        {children}
-      </h3>
+      <h3 className={cn(regularPostBodyH3, BODY_H3_LAYOUT)}>{children}</h3>
     ),
     h4: ({ children }: PortableTextComponentProps) => (
-      <h4 className="font-sans font-medium text-lg text-neutral-900 mt-6 mb-2 leading-snug text-left">
-        {children}
-      </h4>
+      <h4 className={cn(regularPostBodyH4, BODY_H4_LAYOUT)}>{children}</h4>
     ),
     normal: ({ children }: PortableTextComponentProps) => (
-      <p className="font-body text-xl !leading-relaxed sm:text-xl text-neutral-900 mb-4 text-left">
+      <p className={cn(regularPostBodyParagraph, BODY_PARAGRAPH_LAYOUT)}>
         {children}
       </p>
     ),
     blockquote: ({ children }: PortableTextComponentProps) => (
-      <blockquote className="my-10 md:my-12 border-l-2 border-neutral-200 pl-4 md:pl-6 text-left">
-        <div className="font-sans text-2xl md:text-3xl leading-tight text-neutral-900">
-          {children}
-        </div>
+      <blockquote className="my-10 border-neutral-200 border-l-2 pl-4 text-left md:my-12 md:pl-6">
+        <div className={regularPostBodyQuote}>{children}</div>
       </blockquote>
     ),
   },
   list: {
     bullet: ({ children }: PortableTextComponentProps) => (
-      <ul className="font-body list-disc pl-6 space-y-2 text-neutral-900 mb-4 text-left">
+      <ul
+        className={cn(
+          regularPostBodyBulletList,
+          BODY_LIST_LAYOUT,
+          "list-disc",
+        )}
+      >
         {children}
       </ul>
     ),
     number: ({ children }: PortableTextComponentProps) => (
-      <ol className="font-body list-decimal pl-6 space-y-2 text-neutral-900 mb-4 text-left">
+      <ol
+        className={cn(
+          regularPostBodyNumberedList,
+          BODY_LIST_LAYOUT,
+          "list-decimal",
+        )}
+      >
         {children}
       </ol>
     ),
+  },
+};
+
+/** Non-regular article body — smaller in-body editorial images */
+export const nonRegularPortableTextComponents: PortableTextComponents = {
+  ...portableTextComponents,
+  types: {
+    ...portableTextComponents.types,
+    editorialImage: ({ value }: PortableTextComponentProps) =>
+      renderEditorialImageBlock(value, {
+        figureClassName: NON_REGULAR_POST_BODY_EDITORIAL_IMAGE_FIGURE_CLASS,
+        wrapperClassName: NON_REGULAR_POST_BODY_EDITORIAL_IMAGE_WRAPPER_CLASS,
+        sizes: NON_REGULAR_POST_BODY_EDITORIAL_IMAGE_SIZES,
+      }),
   },
 };

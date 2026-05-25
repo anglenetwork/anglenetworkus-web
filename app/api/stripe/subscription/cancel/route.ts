@@ -15,7 +15,7 @@ function toIsoFromUnixSeconds(sec: number) {
 
 async function must<T>(
   promise: Promise<{ data: T; error: any }>,
-  label: string
+  label: string,
 ): Promise<T> {
   const { data, error } = await promise;
   if (error) {
@@ -49,14 +49,14 @@ export async function POST(req: Request) {
         .eq("user_id", user.id)
         .order("created_at", { ascending: false })
         .limit(1) as unknown as Promise<{ data: any[]; error: any }>,
-      "load stripe_subscriptions"
+      "load stripe_subscriptions",
     );
 
     const subRow = (rows as any[])[0];
     if (!subRow?.stripe_subscription_id) {
       return NextResponse.json(
         { error: "No Stripe subscription found for this user" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -74,23 +74,23 @@ export async function POST(req: Request) {
     }
 
     // Update local stripe_subscriptions row for instant UI (webhook will also update)
-    const currentPeriodEndIso = toIsoFromUnixSeconds(updatedSub.current_period_end);
+    const currentPeriodEndIso = toIsoFromUnixSeconds(
+      updatedSub.current_period_end,
+    );
 
     await must(
-      supabaseAdmin
-        .from("stripe_subscriptions")
-        .upsert(
-          {
-            user_id: user.id,
-            stripe_subscription_id: updatedSub.id,
-            status: updatedSub.status,
-            price_id: updatedSub.items.data?.[0]?.price?.id ?? null,
-            current_period_end: currentPeriodEndIso,
-            cancel_at_period_end: updatedSub.cancel_at_period_end,
-          },
-          { onConflict: "stripe_subscription_id" }
-        ) as unknown as Promise<{ data: unknown; error: any }>,
-      "upsert stripe_subscriptions"
+      supabaseAdmin.from("stripe_subscriptions").upsert(
+        {
+          user_id: user.id,
+          stripe_subscription_id: updatedSub.id,
+          status: updatedSub.status,
+          price_id: updatedSub.items.data?.[0]?.price?.id ?? null,
+          current_period_end: currentPeriodEndIso,
+          cancel_at_period_end: updatedSub.cancel_at_period_end,
+        },
+        { onConflict: "stripe_subscription_id" },
+      ) as unknown as Promise<{ data: unknown; error: any }>,
+      "upsert stripe_subscriptions",
     );
 
     // Optional: update your public.subscriptions table immediately.
@@ -99,36 +99,32 @@ export async function POST(req: Request) {
     // - If canceled now: downgrade to free immediately
     if (body.when === "period_end") {
       await must(
-        supabaseAdmin
-          .from("subscriptions")
-          .upsert(
-            {
-              user_id: user.id,
-              tier: "pro",
-              status: "canceling",
-              valid_until: currentPeriodEndIso,
-              source: "stripe",
-            } as any,
-            { onConflict: "user_id" }
-          ) as unknown as Promise<{ data: unknown; error: any }>,
-        "update subscriptions canceling"
+        supabaseAdmin.from("subscriptions").upsert(
+          {
+            user_id: user.id,
+            tier: "pro",
+            status: "canceling",
+            valid_until: currentPeriodEndIso,
+            source: "stripe",
+          } as any,
+          { onConflict: "user_id" },
+        ) as unknown as Promise<{ data: unknown; error: any }>,
+        "update subscriptions canceling",
       );
     } else {
       await must(
-        supabaseAdmin
-          .from("subscriptions")
-          .upsert(
-            {
-              user_id: user.id,
-              tier: "free",
-              status: "active",
-              billing_cycle: null,
-              valid_until: null,
-              source: "stripe",
-            } as any,
-            { onConflict: "user_id" }
-          ) as unknown as Promise<{ data: unknown; error: any }>,
-        "downgrade subscriptions to free"
+        supabaseAdmin.from("subscriptions").upsert(
+          {
+            user_id: user.id,
+            tier: "free",
+            status: "active",
+            billing_cycle: null,
+            valid_until: null,
+            source: "stripe",
+          } as any,
+          { onConflict: "user_id" },
+        ) as unknown as Promise<{ data: unknown; error: any }>,
+        "downgrade subscriptions to free",
       );
     }
 
@@ -143,7 +139,7 @@ export async function POST(req: Request) {
     console.error("[cancel-subscription] error:", err);
     return NextResponse.json(
       { error: err?.message ?? "Cancel subscription failed" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

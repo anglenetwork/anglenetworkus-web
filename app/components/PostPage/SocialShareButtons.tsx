@@ -22,7 +22,9 @@ export default function SocialShareButtons({
     isCompact ? "h-6 w-6 rounded-sm shadow-none" : "h-10 w-10 rounded-full",
   );
   const iconClass = isCompact ? "h-3 w-3" : "h-5 w-5";
-  const xIconClass = isCompact ? "h-3 w-3 fill-current" : "h-4 w-4 fill-current";
+  const xIconClass = isCompact
+    ? "h-3 w-3 fill-current"
+    : "h-4 w-4 fill-current";
 
   const handleCopyLink = async () => {
     try {

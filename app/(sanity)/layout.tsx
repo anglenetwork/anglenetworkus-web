@@ -17,7 +17,9 @@ export default function SanityStudioLayout({
       </head>
       <body className="min-h-screen" suppressHydrationWarning>
         {children}
-        {(process.env.NEXT_PUBLIC_VERCEL_ENV || process.env.VERCEL) && <SpeedInsights />}
+        {(process.env.NEXT_PUBLIC_VERCEL_ENV || process.env.VERCEL) && (
+          <SpeedInsights />
+        )}
       </body>
     </html>
   );

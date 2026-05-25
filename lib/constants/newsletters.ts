@@ -5,4 +5,3 @@ export const AVAILABLE_NEWSLETTERS = [
 ] as const;
 
 export type NewsletterKey = (typeof AVAILABLE_NEWSLETTERS)[number]["key"];
-

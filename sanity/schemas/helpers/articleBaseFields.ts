@@ -18,7 +18,9 @@ export function withFieldGroup(
   fields: FieldDefinition[],
   group: string,
 ): FieldDefinition[] {
-  return fields.map((field) => defineField({ ...field, group } as FieldDefinition));
+  return fields.map((field) =>
+    defineField({ ...field, group } as FieldDefinition),
+  );
 }
 
 export const articleCoreMetadataFields = [
@@ -32,7 +34,8 @@ export const articleCoreMetadataFields = [
     name: "tickerTitle",
     title: "Ticker title (short)",
     type: "string",
-    description: "Very short version for the top news ticker (max 40 characters).",
+    description:
+      "Very short version for the top news ticker (max 40 characters).",
     validation: (rule) => rule.required().max(40),
   }),
   defineField({
@@ -70,8 +73,10 @@ export const articleCoverGalleryFields = [
         const doc = ctx.document as any;
         if (doc?.status !== "published") return true;
 
-        const usingExternal = cover?.source === "external" && !!cover?.externalUrl;
-        const usingAsset = cover?.source === "asset" && !!cover?.image?.asset?._ref;
+        const usingExternal =
+          cover?.source === "external" && !!cover?.externalUrl;
+        const usingAsset =
+          cover?.source === "asset" && !!cover?.image?.asset?._ref;
         if (!usingExternal && !usingAsset) {
           return "Published articles require a valid cover source (asset or external URL).";
         }
@@ -85,7 +90,8 @@ export const articleCoverGalleryFields = [
     name: "imageGallery",
     title: "Image Gallery",
     type: "array",
-    description: "Optional gallery/carousel images separate from the article body.",
+    description:
+      "Optional gallery/carousel images separate from the article body.",
     options: {
       modal: {
         type: "dialog",
@@ -115,7 +121,10 @@ export const articleBodyFields = [
 ];
 
 /** @deprecated Prefer `articleCoverGalleryFields` + `articleBodyFields` for ordering; kept for compatibility. */
-export const articleMediaFields = [...articleCoverGalleryFields, ...articleBodyFields];
+export const articleMediaFields = [
+  ...articleCoverGalleryFields,
+  ...articleBodyFields,
+];
 
 export const articlePublishingFields = [
   defineField({
@@ -134,7 +143,7 @@ export const articlePublishingFields = [
       rule.custom((value, ctx) =>
         (ctx.document as any)?.status === "published" && !value
           ? "publishedAt is required when status is published."
-          : true
+          : true,
       ),
   }),
   defineField({ name: "updatedAt", title: "Updated at", type: "datetime" }),

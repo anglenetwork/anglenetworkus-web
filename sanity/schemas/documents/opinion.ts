@@ -12,24 +12,21 @@ import {
   withFieldGroup,
 } from "../helpers/articleBaseFields";
 
-const OPINION_FORMAT_LABELS: Record<string, string> = {
-  "op-ed": "Op-Ed",
-  editorial: "Editorial",
-  column: "Column",
-  commentary: "Commentary",
-};
-
 export default defineType({
   name: "opinion",
   title: "Opinion",
   icon: CommentIcon,
   type: "document",
   description:
-    "Viewpoint or commentary content with a clearly attributable author and opinion format. " +
+    "Viewpoint or commentary content with a clearly attributable author. " +
     "Rankings and “most read” on the live site use Supabase article metrics—not Studio fields on other types.",
   groups: [
-    { name: ARTICLE_FIELD_GROUPS.core, title: "Core editorial identity", default: true },
-    { name: ARTICLE_FIELD_GROUPS.typeSpecific, title: "Opinion format & disclosure" },
+    {
+      name: ARTICLE_FIELD_GROUPS.core,
+      title: "Core editorial identity",
+      default: true,
+    },
+    { name: ARTICLE_FIELD_GROUPS.typeSpecific, title: "Disclosure" },
     { name: ARTICLE_FIELD_GROUPS.taxonomy, title: "Taxonomy & attribution" },
     { name: ARTICLE_FIELD_GROUPS.media, title: "Media" },
     { name: ARTICLE_FIELD_GROUPS.body, title: "Body" },
@@ -40,23 +37,6 @@ export default defineType({
   fields: [
     ...withFieldGroup(articleCoreMetadataFields, ARTICLE_FIELD_GROUPS.core),
 
-    defineField({
-      name: "opinionFormat",
-      title: "Opinion Format",
-      type: "string",
-      group: ARTICLE_FIELD_GROUPS.typeSpecific,
-      description: "Editorial format for this opinion piece.",
-      options: {
-        list: [
-          { title: "Op-Ed", value: "op-ed" },
-          { title: "Editorial", value: "editorial" },
-          { title: "Column", value: "column" },
-          { title: "Commentary", value: "commentary" },
-        ],
-        layout: "radio",
-        direction: "horizontal",
-      },
-    }),
     defineField({
       name: "disclosure",
       title: "Disclosure",
@@ -91,17 +71,15 @@ export default defineType({
       status: "status",
       authorName: "author.name",
       date: "publishedAt",
-      opinionFormat: "opinionFormat",
       mediaCoverAsset: "cover.image",
     },
     prepare(selection) {
-      const { title, status, authorName, date, opinionFormat, mediaCoverAsset } =
+      const { title, status, authorName, date, mediaCoverAsset } =
         selection as {
           title?: string;
           status?: string;
           authorName?: string;
           date?: string;
-          opinionFormat?: string;
           mediaCoverAsset?: unknown;
         };
 
@@ -110,9 +88,6 @@ export default defineType({
       if (date) {
         const d = new Date(date);
         if (!isNaN(d.getTime())) parts.push(d.toLocaleDateString());
-      }
-      if (opinionFormat) {
-        parts.push(OPINION_FORMAT_LABELS[opinionFormat] ?? opinionFormat);
       }
       if (status === "draft") parts.push("Draft");
       else if (status === "scheduled") parts.push("Scheduled");

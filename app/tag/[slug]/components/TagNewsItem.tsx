@@ -23,11 +23,11 @@ export function TagNewsItem({
     <article className="flex gap-4 py-6">
       <div className="flex-1">
         <Link href={to} className="block">
-          <h2 className="text-base font-sans font-normal text-white leading-normal tracking-normal">
+          <h2 className="font-normal font-sans text-base text-white leading-normal tracking-normal">
             {title}
           </h2>
         </Link>
-        <p className="mt-2 text-xs font-sans font-semibold capitalize tracking-wide text-neutral-400">
+        <p className="mt-2 font-sans font-semibold text-neutral-400 text-xs capitalize tracking-wide">
           {readTime}
         </p>
       </div>

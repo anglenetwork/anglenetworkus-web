@@ -16,7 +16,7 @@ export function MostReadSection({ articles }: MostReadSectionProps) {
         accentStyle="geometric-square"
         size="large"
       />
-      <div className="space-y-6 bg-neutral-100 p-8 rounded-lg">
+      <div className="space-y-6 rounded-lg bg-neutral-100 p-8">
         {articles.map((article, index) => (
           <div key={article.id}>
             <MostReadItem

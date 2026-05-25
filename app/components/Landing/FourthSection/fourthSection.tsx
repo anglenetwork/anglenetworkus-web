@@ -2,6 +2,10 @@ import Link from "next/link";
 import { getCoverImage, formatImageCredit } from "@/sanity/lib/utils";
 import { SectionHeader } from "../../ui/section-header";
 import { ImageRenderer } from "../../ui/image-renderer";
+import {
+  categoryFeaturedTitle,
+  categorySecondaryRowTitle,
+} from "@/app/lib/typography/second-section";
 
 interface Post {
   _id: string;
@@ -13,10 +17,9 @@ interface Post {
     externalUrl?: string | null;
     image?: any;
     alt?: string | null;
-    creditProvider?: string | null;
+    caption?: string | null;
     creditAuthor?: string | null;
-    creditSourceUrl?: string | null;
-    creditLicense?: string | null;
+    creditSource?: string | null;
   } | null;
   date: string;
   author?: {
@@ -50,16 +53,10 @@ function FourthSectionSecondaryRow({
   if (!post.slug) return null;
 
   const coverData = getCoverImage(post.cover, post.title || "Article image");
-  const titleClass =
-    variant === "dark"
-      ? "text-white"
-      : "text-neutral-900";
+  const titleClass = categorySecondaryRowTitle[variant];
 
   return (
-    <Link
-      href={`/post/${post.slug}`}
-      className="flex gap-3 items-start group"
-    >
+    <Link href={`/post/${post.slug}`} className="group flex items-start gap-3">
       {coverData?.src ? (
         <div className="relative h-20 w-28 flex-shrink-0 overflow-hidden rounded-sm bg-black">
           <ImageRenderer
@@ -69,16 +66,12 @@ function FourthSectionSecondaryRow({
             height={80}
             unoptimized={coverData.unoptimized}
             sizes="112px"
-            className="object-cover object-center rounded-sm"
+            className="rounded-sm object-cover object-center"
             fill
           />
         </div>
       ) : null}
-      <h3
-        className={`flex-1 min-w-0 text-base font-sans font-normal leading-snug ${titleClass}`}
-      >
-        {post.title}
-      </h3>
+      <h3 className={titleClass}>{post.title}</h3>
     </Link>
   );
 }
@@ -90,7 +83,7 @@ export default function FourthSection({
   // Filter out categories without required data and limit to 3 posts per category
   const validCategories = categoriesData
     .filter(
-      (category) => category.slug && category.name && category.posts.length > 0
+      (category) => category.slug && category.name && category.posts.length > 0,
     )
     .map((category) => ({
       ...category,
@@ -99,7 +92,9 @@ export default function FourthSection({
 
   return (
     <main
-      className={`p-10 rounded-lg ${variant === "dark" ? "bg-black" : "bg-background"}`}
+      className={`rounded-lg md:p-10 ${
+        variant === "dark" ? "bg-black px-3 py-8 sm:px-4" : "bg-background p-10"
+      }`}
     >
       <div className="">
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
@@ -125,7 +120,7 @@ export default function FourthSection({
                   {(() => {
                     const coverData = getCoverImage(
                       mainPost?.cover,
-                      mainPost?.title || "Article image"
+                      mainPost?.title || "Article image",
                     );
                     if (coverData?.src) {
                       return (
@@ -135,7 +130,7 @@ export default function FourthSection({
                             className="block"
                             aria-label={`Read article: ${mainPost?.title || "Featured article"}`}
                           >
-                            <div className="w-full h-[300px] overflow-hidden rounded-sm bg-black relative">
+                            <div className="relative h-[300px] w-full overflow-hidden rounded-sm bg-black">
                               <ImageRenderer
                                 src={coverData.src}
                                 alt={coverData.alt}
@@ -143,7 +138,7 @@ export default function FourthSection({
                                 height={300}
                                 unoptimized={coverData.unoptimized}
                                 sizes="(max-width: 768px) 100vw, (max-width: 1200px) 25vw, 400px"
-                                className="object-cover object-center rounded-sm"
+                                className="rounded-sm object-cover object-center"
                                 fill
                               />
                             </div>
@@ -166,9 +161,7 @@ export default function FourthSection({
                 {mainPost && mainPost.slug && (
                   <div className="space-y-2">
                     <Link href={`/post/${mainPost.slug}`}>
-                      <h3
-                        className={`text-xl font-sans font-semibold leading-snug tracking-tight ${variant === "dark" ? "text-white" : "text-neutral-900"}`}
-                      >
+                      <h3 className={categoryFeaturedTitle[variant]}>
                         {mainPost.title}
                       </h3>
                     </Link>
@@ -183,14 +176,20 @@ export default function FourthSection({
                 {/* Related Articles — image left, title right */}
                 <div className="space-y-4">
                   {secondPost && secondPost.slug && (
-                    <FourthSectionSecondaryRow post={secondPost} variant={variant} />
+                    <FourthSectionSecondaryRow
+                      post={secondPost}
+                      variant={variant}
+                    />
                   )}
                   {thirdPost && thirdPost.slug && (
                     <>
                       <hr
-                        className={`border-t my-2 ${variant === "dark" ? "border-white" : "border-neutral-200"}`}
+                        className={`my-2 border-t ${variant === "dark" ? "border-white" : "border-neutral-200"}`}
                       />
-                      <FourthSectionSecondaryRow post={thirdPost} variant={variant} />
+                      <FourthSectionSecondaryRow
+                        post={thirdPost}
+                        variant={variant}
+                      />
                     </>
                   )}
                 </div>

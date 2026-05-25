@@ -1,3 +1,4 @@
+import { regularPostAvatarInitial } from "@/app/lib/typography/posts";
 import { ImageRenderer } from "../../ui/image-renderer";
 import {
   ARTICLE_META_PRIMARY_CLASS,
@@ -28,8 +29,7 @@ export default function ArticleByline({
   const avatarUrl = authorAvatarUrl(author?.picture);
   const authorInitial = authorName.charAt(0).toUpperCase();
   const displayDate = updatedAt || date;
-  const dateLabel =
-    updatedAt && updatedAt !== date ? "Updated" : "Published";
+  const dateLabel = updatedAt && updatedAt !== date ? "Updated" : "Published";
   const avatarClassName = cn(
     "h-9 w-9 shrink-0 overflow-hidden rounded-full",
     showAvatar === "xl" && "hidden xl:block",
@@ -52,7 +52,8 @@ export default function ArticleByline({
       ) : (
         <span
           className={cn(
-            "flex items-center justify-center bg-neutral-900 font-sans text-xs font-semibold text-white",
+            "flex items-center justify-center bg-neutral-900",
+            regularPostAvatarInitial,
             avatarClassName,
             "hidden xl:flex",
           )}

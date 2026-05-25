@@ -26,7 +26,7 @@ export function ExcerptCreditCaption({
   return (
     <p
       className={cn(
-        "mt-3 text-sm font-sans leading-relaxed text-neutral-600 md:text-base",
+        "mt-3 font-sans text-neutral-600 text-sm leading-relaxed md:text-base",
         className,
       )}
     >
@@ -37,7 +37,7 @@ export function ExcerptCreditCaption({
         <span className="text-neutral-500"> - </span>
       ) : null}
       {creditText ? (
-        <span className="text-sm text-gray-500">{creditText}</span>
+        <span className="text-gray-500 text-sm">{creditText}</span>
       ) : null}
     </p>
   );

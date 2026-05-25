@@ -23,11 +23,11 @@ export default function ArticleCard({
   isDecorative = false,
 }: ArticleCardProps) {
   return (
-    <Card className="border-0 shadow-none bg-gray-100 overflow-hidden h-[550px] w-80 min-w-[320px] flex-shrink-0 rounded-none p-0">
-      <div className="w-full h-60 bg-gray-200 flex-shrink-0">
+    <Card className="h-[550px] w-80 min-w-[320px] flex-shrink-0 overflow-hidden rounded-none border-0 bg-gray-100 p-0 shadow-none">
+      <div className="h-60 w-full flex-shrink-0 bg-gray-200">
         {isDecorative ? (
-          <div className="w-full h-full bg-gray-200 flex items-center justify-center">
-            <div className="w-20 h-10 bg-red-600 transform -skew-x-12"></div>
+          <div className="flex h-full w-full items-center justify-center bg-gray-200">
+            <div className="h-10 w-20 -skew-x-12 transform bg-red-600"></div>
           </div>
         ) : (
           <ImageRenderer
@@ -36,19 +36,19 @@ export default function ArticleCard({
             width={400}
             height={240}
             unoptimized={imageUnoptimized}
-            className="w-full h-60 object-cover object-center rounded-sm"
+            className="h-60 w-full rounded-sm object-cover object-center"
           />
         )}
       </div>
 
-      <div className="p-2 flex flex-col text-center bg-gray-100 flex-1">
-        <div className="text-red-600 text-sm font-light tracking-wider mb-3 font-sans">
+      <div className="flex flex-1 flex-col bg-gray-100 p-2 text-center">
+        <div className="mb-3 font-light font-sans text-red-600 text-sm tracking-wider">
           {category}
         </div>
-        <h2 className="text-black font-bold text-2xl leading-tight mb-3 font-sans">
+        <h2 className="mb-3 font-bold font-sans text-2xl text-black leading-tight">
           {title}
         </h2>
-        <p className="text-gray-600 font-normal text-xs leading-relaxed mb-4 font-sans">
+        <p className="mb-4 font-normal font-sans text-gray-600 text-xs leading-relaxed">
           {description}
         </p>
       </div>

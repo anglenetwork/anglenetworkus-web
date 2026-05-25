@@ -21,7 +21,11 @@ export default defineType({
     "Paid or partner-published article content that must include clear sponsor attribution and disclosure. " +
     "Live-site rankings use Supabase metrics; keep sponsor fields accurate for readers and compliance.",
   groups: [
-    { name: ARTICLE_FIELD_GROUPS.core, title: "Core editorial identity", default: true },
+    {
+      name: ARTICLE_FIELD_GROUPS.core,
+      title: "Core editorial identity",
+      default: true,
+    },
     { name: ARTICLE_FIELD_GROUPS.typeSpecific, title: "Sponsor attribution" },
     { name: ARTICLE_FIELD_GROUPS.taxonomy, title: "Taxonomy & attribution" },
     { name: ARTICLE_FIELD_GROUPS.media, title: "Media" },

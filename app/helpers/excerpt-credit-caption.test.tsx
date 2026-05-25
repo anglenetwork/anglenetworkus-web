@@ -23,7 +23,10 @@ describe("ExcerptCreditCaption", () => {
 
   it("shows excerpt and credit on one line with a hyphen between them", () => {
     render(
-      <ExcerptCreditCaption excerpt="  Dek text.  " credit="  Photo credit  " />,
+      <ExcerptCreditCaption
+        excerpt="  Dek text.  "
+        credit="  Photo credit  "
+      />,
     );
     const line = screen.getByRole("paragraph");
     expect(line).toHaveTextContent("Dek text. - Photo credit");

@@ -32,7 +32,7 @@ interface UserMenuProps {
 function getUserInitials(
   user: User | null,
   firstName?: string | null,
-  lastName?: string | null
+  lastName?: string | null,
 ) {
   if (!user) return "U";
 
@@ -98,7 +98,7 @@ export function UserMenu({
         setAvatarUrl(
           session.user.user_metadata?.avatar_url ||
             session.user.user_metadata?.picture ||
-            null
+            null,
         );
       }
 
@@ -125,7 +125,7 @@ export function UserMenu({
         setAvatarUrl(
           session.user.user_metadata?.avatar_url ||
             session.user.user_metadata?.picture ||
-            null
+            null,
         );
       } else {
         setFirstName(null);
@@ -208,7 +208,7 @@ export function UserMenu({
         variant={isLink ? "link" : "signIn"}
         className={cn(
           isLink &&
-            "h-auto justify-start p-0 text-xl font-bold hover:text-primary",
+            "h-auto justify-start p-0 font-bold text-xl hover:text-primary",
         )}
       >
         <Link href="/signin" onClick={onSignInNavigate}>
@@ -220,9 +220,7 @@ export function UserMenu({
 
   if (signInOnly) {
     if (user) return null;
-    return (
-      <div className="border-b border-border pb-6">{renderSignIn()}</div>
-    );
+    return <div className="border-border border-b pb-6">{renderSignIn()}</div>;
   }
 
   if (!user) {
@@ -237,13 +235,13 @@ export function UserMenu({
           variant="outline"
           size="sm"
           aria-label="User menu"
-          className={`rounded-full bg-white p-0 flex items-center justify-center hover:bg-gray-100 ${buttonSize}`}
+          className={`flex items-center justify-center rounded-full bg-white p-0 hover:bg-gray-100 ${buttonSize}`}
         >
           <Avatar className={avatarSize}>
             {avatarUrl && (
               <AvatarImage src={avatarUrl} alt={user?.email || "User"} />
             )}
-            <AvatarFallback className="bg-white text-neutral-700 text-xs font-sans">
+            <AvatarFallback className="bg-white font-sans text-neutral-700 text-xs">
               {userInitials}
             </AvatarFallback>
           </Avatar>
@@ -252,7 +250,7 @@ export function UserMenu({
 
       <DropdownMenuContent align="end" className="bg-white">
         <DropdownMenuItem asChild>
-          <Link href="/myprofile" className="font-sans cursor-pointer w-full">
+          <Link href="/myprofile" className="w-full cursor-pointer font-sans">
             My Profile
           </Link>
         </DropdownMenuItem>
@@ -260,7 +258,7 @@ export function UserMenu({
         <DropdownMenuItem asChild>
           <Link
             href="/myprofile/subscriptions"
-            className="font-sans cursor-pointer w-full"
+            className="w-full cursor-pointer font-sans"
           >
             Subscriptions
           </Link>
@@ -269,7 +267,7 @@ export function UserMenu({
         <DropdownMenuItem asChild>
           <Link
             href="/myprofile/bookmarks"
-            className="font-sans cursor-pointer w-full"
+            className="w-full cursor-pointer font-sans"
           >
             Bookmarks
           </Link>
@@ -278,14 +276,14 @@ export function UserMenu({
         <DropdownMenuItem asChild>
           <Link
             href="/myprofile/newsletters"
-            className="font-sans cursor-pointer w-full"
+            className="w-full cursor-pointer font-sans"
           >
             Newsletters
           </Link>
         </DropdownMenuItem>
 
         <DropdownMenuItem
-          className="font-sans cursor-pointer"
+          className="cursor-pointer font-sans"
           onClick={handleSignOut}
           disabled={signingOut}
         >

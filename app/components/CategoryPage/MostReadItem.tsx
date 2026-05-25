@@ -16,8 +16,11 @@ export function MostReadItem({
   return (
     <article className="group">
       {isFirst && article.imageUrl && (
-        <Link href={article.href ?? `/post/${article.slug}`} className="block mb-4">
-          <div className="relative w-full aspect-video overflow-hidden rounded-sm">
+        <Link
+          href={article.href ?? `/post/${article.slug}`}
+          className="mb-4 block"
+        >
+          <div className="relative aspect-video w-full overflow-hidden rounded-sm">
             <ImageRenderer
               src={article.imageUrl}
               alt={article.title}
@@ -32,12 +35,15 @@ export function MostReadItem({
         </Link>
       )}
       <div className="flex gap-4">
-        <div className="flex-shrink-0 w-8 h-8 font-sans bg-blue-100 text-blue-700 rounded-full flex items-center justify-center text-sm font-semibold">
+        <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-blue-100 font-sans font-semibold text-blue-700 text-sm">
           {index + 1}
         </div>
         <div className="flex-1 space-y-2">
-          <h3 className="text-base font-sans font-medium text-neutral-900 leading-snug tracking-normal">
-            <Link href={article.href ?? `/post/${article.slug}`} className="hover:underline">
+          <h3 className="font-medium font-sans text-base text-neutral-900 leading-snug tracking-normal">
+            <Link
+              href={article.href ?? `/post/${article.slug}`}
+              className="hover:underline"
+            >
               {article.title}
             </Link>
           </h3>

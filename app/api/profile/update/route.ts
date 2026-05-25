@@ -25,7 +25,8 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Invalid JSON body" }, { status: 400 });
   }
 
-  const firstNameRaw = typeof body?.firstName === "string" ? body.firstName : "";
+  const firstNameRaw =
+    typeof body?.firstName === "string" ? body.firstName : "";
   const lastNameRaw = typeof body?.lastName === "string" ? body.lastName : "";
   const dobRaw =
     body?.dateOfBirth === null || body?.dateOfBirth === undefined
@@ -40,7 +41,7 @@ export async function POST(req: Request) {
     if (!isValidDateYYYYMMDD(dobRaw)) {
       return NextResponse.json(
         { error: "Invalid dateOfBirth format. Expected YYYY-MM-DD." },
-        { status: 400 }
+        { status: 400 },
       );
     }
     date_of_birth = dobRaw;
@@ -56,7 +57,7 @@ export async function POST(req: Request) {
         date_of_birth,
         updated_at: new Date().toISOString(),
       },
-      { onConflict: "id" }
+      { onConflict: "id" },
     )
     .select("first_name,last_name,date_of_birth")
     .maybeSingle();
@@ -69,7 +70,7 @@ export async function POST(req: Request) {
         headers: {
           "Cache-Control": "no-store, no-cache, must-revalidate",
         },
-      }
+      },
     );
   }
 
@@ -80,8 +81,6 @@ export async function POST(req: Request) {
       headers: {
         "Cache-Control": "no-store, no-cache, must-revalidate",
       },
-    }
+    },
   );
 }
-
-

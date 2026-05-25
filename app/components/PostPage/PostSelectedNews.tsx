@@ -16,9 +16,9 @@ export default function PostSelectedNews({
   if (!latestNews || latestNews.length === 0) return null;
 
   return (
-    <div className="w-full max-w-md mx-auto bg-white rounded-lg">
+    <div className="mx-auto w-full max-w-md rounded-lg bg-white">
       {/* Header */}
-      <h2 className="text-xl font-sans font-bold text-foreground mb-6">
+      <h2 className="mb-6 font-bold font-sans text-foreground text-xl">
         {title}
       </h2>
 
@@ -29,7 +29,7 @@ export default function PostSelectedNews({
           const coverData = getCoverImage(
             post.cover as Parameters<typeof getCoverImage>[0],
             post.title || "Article image",
-            200
+            200,
           );
           const imgUrl = coverData?.src ?? null;
 
@@ -37,12 +37,12 @@ export default function PostSelectedNews({
             <article key={post._id} className="group">
               <Link
                 href={post.href}
-                className="flex items-start gap-4 rounded-lg transition-colors duration-200 cursor-pointer"
+                className="flex cursor-pointer items-start gap-4 rounded-lg transition-colors duration-200"
               >
                 {/* Article Image */}
                 <div className="flex-shrink-0">
                   {imgUrl ? (
-                    <div className="relative w-24 h-[77px] overflow-hidden rounded-lg">
+                    <div className="relative h-[77px] w-24 overflow-hidden rounded-lg">
                       <ImageRenderer
                         src={imgUrl}
                         alt={coverData?.alt || post.title || "Article image"}
@@ -57,19 +57,19 @@ export default function PostSelectedNews({
                       />
                     </div>
                   ) : (
-                    <div className="w-24 h-[77px] rounded-lg bg-gray-200/80 flex items-center justify-center text-[10px] text-gray-500 font-sans">
+                    <div className="flex h-[77px] w-24 items-center justify-center rounded-lg bg-gray-200/80 font-sans text-[10px] text-gray-500">
                       No Image
                     </div>
                   )}
                 </div>
 
                 {/* Article Content */}
-                <div className="flex-1 min-w-0">
-                  <h3 className="text-[15px] font-sans font-semibold text-neutral-900 leading-snug tracking-normal mb-2">
+                <div className="min-w-0 flex-1">
+                  <h3 className="mb-2 font-sans font-semibold text-[15px] text-neutral-900 leading-snug tracking-normal">
                     {post.title}
                   </h3>
                   {post.date && (
-                    <p className="text-xs text-neutral-500 mt-1 font-sans">
+                    <p className="mt-1 font-sans text-neutral-500 text-xs">
                       {(() => {
                         try {
                           return format(parseISO(post.date), "MMM dd, h:mm a");

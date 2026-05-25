@@ -110,11 +110,11 @@ export default async function CategoryPageRoute({
   const postList = Array.isArray(posts) ? posts : [];
 
   const metricsMap = await fetchRankingRowsForArticleIds(
-    postList.map((p: { _id: string }) => p._id)
+    postList.map((p: { _id: string }) => p._id),
   );
   const mostViewedSorted = sortIdsByRankingThenPublishedAt(
     postList as { _id: string; publishedAt?: string | null }[],
-    metricsMap
+    metricsMap,
   );
   const mostViewed = mostViewedSorted.slice(0, 5);
 

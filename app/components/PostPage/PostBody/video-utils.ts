@@ -8,7 +8,9 @@ function safeParseUrl(url: string | null | undefined): URL | null {
   }
 }
 
-export function getVideoEmbedSrc(url: string | null | undefined): string | null {
+export function getVideoEmbedSrc(
+  url: string | null | undefined,
+): string | null {
   const parsed = safeParseUrl(url);
   if (!parsed) return null;
 

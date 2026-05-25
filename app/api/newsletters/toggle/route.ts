@@ -1,10 +1,13 @@
 import { NextResponse } from "next/server";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
-import { AVAILABLE_NEWSLETTERS, NewsletterKey } from "@/lib/constants/newsletters";
+import {
+  AVAILABLE_NEWSLETTERS,
+  NewsletterKey,
+} from "@/lib/constants/newsletters";
 
 // Server-side allowlist
 const ALLOWED_KEYS = new Set<NewsletterKey>(
-  AVAILABLE_NEWSLETTERS.map((newsletter) => newsletter.key)
+  AVAILABLE_NEWSLETTERS.map((newsletter) => newsletter.key),
 );
 
 export const dynamic = "force-dynamic";
@@ -32,14 +35,14 @@ export async function POST(req: Request) {
   if (!newsletterKey) {
     return NextResponse.json(
       { error: "Missing newsletterKey" },
-      { status: 400 }
+      { status: 400 },
     );
   }
 
   if (!ALLOWED_KEYS.has(newsletterKey as NewsletterKey)) {
     return NextResponse.json(
       { error: "Invalid newsletter key" },
-      { status: 400 }
+      { status: 400 },
     );
   }
 
@@ -66,10 +69,7 @@ export async function POST(req: Request) {
       .eq("id", existing.id);
 
     if (updateError) {
-      return NextResponse.json(
-        { error: updateError.message },
-        { status: 500 }
-      );
+      return NextResponse.json({ error: updateError.message }, { status: 500 });
     }
 
     return NextResponse.json({ ok: true }, { status: 200 });
@@ -86,13 +86,8 @@ export async function POST(req: Request) {
     });
 
   if (insertError) {
-    return NextResponse.json(
-      { error: insertError.message },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: insertError.message }, { status: 500 });
   }
 
   return NextResponse.json({ ok: true }, { status: 200 });
 }
-
-

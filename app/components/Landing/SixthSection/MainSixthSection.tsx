@@ -206,10 +206,10 @@ export function VideoPlayer() {
   };
 
   return (
-    <div className="flex flex-col lg:flex-row bg-slate-900 text-white lg:h-[60vh]">
+    <div className="flex flex-col bg-slate-900 text-white lg:h-[60vh] lg:flex-row">
       {/* Main Video Player - Mobile First */}
-      <div className="flex-1 relative p-4 lg:p-8 order-2 lg:order-2 aspect-video lg:aspect-auto bg-slate-900">
-        <div className="relative w-full h-full flex items-center justify-center">
+      <div className="relative order-2 aspect-video flex-1 bg-slate-900 p-4 lg:order-2 lg:aspect-auto lg:p-8">
+        <div className="relative flex h-full w-full items-center justify-center">
           <Image
             src={selectedVideo.videoUrl || "/placeholder.svg"}
             alt={selectedVideo.title}
@@ -221,28 +221,28 @@ export function VideoPlayer() {
           <div className="absolute inset-0 flex items-center justify-center">
             <Button
               size="lg"
-              className="w-20 h-20 rounded-full bg-black/50 hover:bg-black/70 border-2 border-white/20"
+              className="h-20 w-20 rounded-full border-2 border-white/20 bg-black/50 hover:bg-black/70"
             >
-              <Play className="w-8 h-8 text-white ml-1" />
+              <Play className="ml-1 h-8 w-8 text-white" />
             </Button>
           </div>
 
           {/* Video Info Overlay */}
-          <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 via-black/60 to-transparent p-4 lg:p-8">
+          <div className="absolute right-0 bottom-0 left-0 bg-gradient-to-t from-black/90 via-black/60 to-transparent p-4 lg:p-8">
             <div
-              className="text-sm text-blue-400 mb-2 font-sans drop-shadow-lg"
+              className="mb-2 font-sans text-blue-400 text-sm drop-shadow-lg"
               style={{ textShadow: "2px 2px 4px rgba(0,0,0,0.8)" }}
             >
               {selectedVideo.category}
             </div>
             <h1
-              className="text-xl lg:text-2xl font-bold text-white mb-2 font-sans drop-shadow-lg"
+              className="mb-2 font-bold font-sans text-white text-xl drop-shadow-lg lg:text-2xl"
               style={{ textShadow: "2px 2px 4px rgba(0,0,0,0.8)" }}
             >
               {selectedVideo.title}
             </h1>
             <div
-              className="text-sm text-slate-300 font-sans drop-shadow-lg"
+              className="font-sans text-slate-300 text-sm drop-shadow-lg"
               style={{ textShadow: "2px 2px 4px rgba(0,0,0,0.8)" }}
             >
               Duration: {selectedVideo.duration}
@@ -252,9 +252,9 @@ export function VideoPlayer() {
       </div>
 
       {/* Left Sidebar - Video List */}
-      <div className="w-full lg:w-96 bg-slate-800/50 p-4 lg:p-6 flex flex-col order-1 lg:order-1 max-h-[60vh] lg:max-h-none">
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="text-xl font-semibold text-white font-sans">
+      <div className="order-1 flex max-h-[60vh] w-full flex-col bg-slate-800/50 p-4 lg:order-1 lg:max-h-none lg:w-96 lg:p-6">
+        <div className="mb-6 flex items-center justify-between">
+          <h2 className="font-sans font-semibold text-white text-xl">
             Trending Videos
           </h2>
           {canScrollUp && (
@@ -262,43 +262,43 @@ export function VideoPlayer() {
               variant="ghost"
               size="sm"
               onClick={handleScrollUp}
-              className="text-white hover:bg-slate-700 hover:text-blue-400 transition-all duration-200 rounded-full p-2"
+              className="rounded-full p-2 text-white transition-all duration-200 hover:bg-slate-700 hover:text-blue-400"
             >
-              <ChevronUp className="w-5 h-5" />
+              <ChevronUp className="h-5 w-5" />
             </Button>
           )}
         </div>
 
         <div
           ref={scrollContainerRef}
-          className="flex-1 overflow-y-auto space-y-4 scrollbar-hide max-h-[calc(60vh-140px)] lg:max-h-[calc(100vh-200px)]"
+          className="scrollbar-hide max-h-[calc(60vh-140px)] flex-1 space-y-4 overflow-y-auto lg:max-h-[calc(100vh-200px)]"
         >
           {mockVideos.map((video) => (
             <div
               key={video.id}
               onClick={() => handleVideoSelect(video)}
               className={cn(
-                "flex gap-3 p-2 rounded-lg cursor-pointer transition-all hover:bg-slate-700/50",
-                selectedVideo.id === video.id && "bg-slate-700/70"
+                "flex cursor-pointer gap-3 rounded-lg p-2 transition-all hover:bg-slate-700/50",
+                selectedVideo.id === video.id && "bg-slate-700/70",
               )}
             >
-              <div className="relative flex-shrink-0 w-20 h-14">
+              <div className="relative h-14 w-20 flex-shrink-0">
                 <Image
                   src={video.thumbnail || "/placeholder.svg"}
                   alt={video.title}
                   fill
-                  className="object-cover rounded-xl"
+                  className="rounded-xl object-cover"
                 />
-                <div className="absolute bottom-1 right-1 bg-black/80 text-white text-xs px-1 rounded">
-                  <Play className="w-2 h-2 inline mr-1" />
+                <div className="absolute right-1 bottom-1 rounded bg-black/80 px-1 text-white text-xs">
+                  <Play className="mr-1 inline h-2 w-2" />
                   {video.duration}
                 </div>
               </div>
-              <div className="flex-1 min-w-0">
-                <div className="text-xs text-blue-400 mb-1 font-sans">
+              <div className="min-w-0 flex-1">
+                <div className="mb-1 font-sans text-blue-400 text-xs">
                   {video.category}
                 </div>
-                <h3 className="text-sm font-medium text-white leading-tight line-clamp-2 font-sans">
+                <h3 className="line-clamp-2 font-medium font-sans text-sm text-white leading-tight">
                   {video.title}
                 </h3>
               </div>
@@ -306,8 +306,8 @@ export function VideoPlayer() {
           ))}
         </div>
 
-        <div className="mt-4 pt-4 border-t border-slate-700">
-          <div className="flex items-center justify-between text-sm text-slate-400">
+        <div className="mt-4 border-slate-700 border-t pt-4">
+          <div className="flex items-center justify-between text-slate-400 text-sm">
             <span className="font-sans">
               Playlist - {mockVideos.length} Videos
             </span>
@@ -315,9 +315,9 @@ export function VideoPlayer() {
               variant="ghost"
               size="sm"
               onClick={handleScrollDown}
-              className="text-slate-400 hover:bg-slate-700 hover:text-blue-400 transition-all duration-200 rounded-full p-1"
+              className="rounded-full p-1 text-slate-400 transition-all duration-200 hover:bg-slate-700 hover:text-blue-400"
             >
-              <ChevronDown className="w-4 h-4" />
+              <ChevronDown className="h-4 w-4" />
             </Button>
           </div>
         </div>

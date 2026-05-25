@@ -6,7 +6,7 @@ test.describe("Integration: auth provider flows", () => {
   test.beforeEach(async ({ page }) => {
     await page.goto("/signin", { waitUntil: "domcontentloaded" });
     await expect(
-      page.getByRole("heading", { name: /sign in to continue/i })
+      page.getByRole("heading", { name: /sign in to continue/i }),
     ).toBeVisible({ timeout: 15000 });
   });
 
@@ -23,7 +23,7 @@ test.describe("Integration: auth provider flows", () => {
           resp.url().includes("supabase") ||
           resp.url().includes("google") ||
           resp.status() === 200,
-        { timeout: 15000 }
+        { timeout: 15000 },
       ),
       googleButton.click(),
     ]);
@@ -32,8 +32,7 @@ test.describe("Integration: auth provider flows", () => {
     expect(
       currentUrl.includes("google") ||
         currentUrl.includes("supabase") ||
-        currentUrl.includes("accounts.google.com")
+        currentUrl.includes("accounts.google.com"),
     ).toBeTruthy();
   });
 });
-

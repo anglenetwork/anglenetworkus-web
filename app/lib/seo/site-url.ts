@@ -10,7 +10,7 @@ export function getPublicSiteUrl(): string {
     if (process.env.NODE_ENV === "development" && !missingEnvWarned) {
       missingEnvWarned = true;
       console.warn(
-        "[seo] NEXT_PUBLIC_SITE_URL is not set; using http://localhost:3000 for absolute URLs."
+        "[seo] NEXT_PUBLIC_SITE_URL is not set; using http://localhost:3000 for absolute URLs.",
       );
     }
     return "http://localhost:3000";
