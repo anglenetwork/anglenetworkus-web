@@ -60,23 +60,23 @@ const PricingCard: React.FC<PricingCardProps> = ({
 
   return (
     <Card
-      className={`font-sans w-full lg:flex-1 rounded-2xl p-8 flex flex-col min-w-0 ${cardClass} ${textClass}`}
+      className={`flex w-full min-w-0 flex-col rounded-2xl p-8 font-sans lg:flex-1 ${cardClass} ${textClass}`}
     >
       {/* Header */}
       <div className="mb-6">
         {(recommended || hasCustomBackground) && (
-          <div className="inline-block bg-white/20 text-white px-4 py-1 rounded-full text-sm font-semibold mb-4">
+          <div className="mb-4 inline-block rounded-full bg-white/20 px-4 py-1 font-semibold text-sm text-white">
             RECOMMENDED
           </div>
         )}
-        <h3 className="text-3xl font-bold mb-2">{plan}</h3>
+        <h3 className="mb-2 font-bold text-3xl">{plan}</h3>
 
         {/* Pricing */}
         <div>
           {price !== null && (
             <div>
               <div className="flex items-baseline gap-2">
-                <span className="text-6xl font-bold">${price}</span>
+                <span className="font-bold text-6xl">${price}</span>
                 {periodLabel && (
                   <span
                     className={`text-xl opacity-90 ${secondaryTextClass} inline-block min-w-[85px]`}
@@ -87,7 +87,7 @@ const PricingCard: React.FC<PricingCardProps> = ({
               </div>
               {discountText && (
                 <div
-                  className={`text-2xl font-semibold mt-1 ${hasCustomBackground || recommended ? "text-red-200" : "text-emerald-600"}`}
+                  className={`mt-1 font-semibold text-2xl ${hasCustomBackground || recommended ? "text-red-200" : "text-emerald-600"}`}
                 >
                   {discountText}
                 </div>
@@ -97,7 +97,7 @@ const PricingCard: React.FC<PricingCardProps> = ({
           {pricingLabel && (
             <div>
               <div className="flex items-baseline gap-2">
-                <span className="text-6xl font-bold">{pricingLabel}</span>
+                <span className="font-bold text-6xl">{pricingLabel}</span>
                 {periodLabel && (
                   <span
                     className={`text-xl opacity-90 ${secondaryTextClass} inline-block min-w-[85px]`}
@@ -108,7 +108,7 @@ const PricingCard: React.FC<PricingCardProps> = ({
               </div>
               {discountText && (
                 <div
-                  className={`text-sm font-semibold mt-1 ${hasCustomBackground || recommended ? "text-red-200" : "text-emerald-600"}`}
+                  className={`mt-1 font-semibold text-sm ${hasCustomBackground || recommended ? "text-red-200" : "text-emerald-600"}`}
                 >
                   {discountText}
                 </div>
@@ -119,11 +119,11 @@ const PricingCard: React.FC<PricingCardProps> = ({
       </div>
 
       {/* Features */}
-      <div className="space-y-4 flex-1">
+      <div className="flex-1 space-y-4">
         {features.map((feature, index) => (
           <div key={index} className="flex items-start gap-3">
             <Check
-              className={`w-5 h-5 flex-shrink-0 ${hasCustomBackground || recommended ? "text-red-200" : "text-emerald-600"} mt-0.5`}
+              className={`h-5 w-5 flex-shrink-0 ${hasCustomBackground || recommended ? "text-red-200" : "text-emerald-600"} mt-0.5`}
             />
             <span className={`text-base ${secondaryTextClass}`}>{feature}</span>
           </div>
@@ -132,7 +132,7 @@ const PricingCard: React.FC<PricingCardProps> = ({
 
       {buttonText && (
         <Button
-          className={`w-full py-3 rounded-full font-semibold mt-8 transition-all ${getButtonClass()}`}
+          className={`mt-8 w-full rounded-full py-3 font-semibold transition-all ${getButtonClass()}`}
           disabled={disabled}
           onClick={onClick}
         >

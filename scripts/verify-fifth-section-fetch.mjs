@@ -15,7 +15,9 @@ const dataset = process.env.NEXT_PUBLIC_SANITY_DATASET;
 const apiVersion = process.env.NEXT_PUBLIC_SANITY_API_VERSION || "2024-02-28";
 
 if (!projectId || !dataset) {
-  console.error("Missing NEXT_PUBLIC_SANITY_PROJECT_ID or NEXT_PUBLIC_SANITY_DATASET");
+  console.error(
+    "Missing NEXT_PUBLIC_SANITY_PROJECT_ID or NEXT_PUBLIC_SANITY_DATASET",
+  );
   process.exit(1);
 }
 
@@ -75,4 +77,10 @@ const [left, right] = await Promise.all([
   client.fetch(query, { categorySlug: rightSlug }),
 ]);
 
-console.log(JSON.stringify({ left: summarize(leftSlug, left), right: summarize(rightSlug, right) }, null, 2));
+console.log(
+  JSON.stringify(
+    { left: summarize(leftSlug, left), right: summarize(rightSlug, right) },
+    null,
+    2,
+  ),
+);

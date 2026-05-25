@@ -36,7 +36,7 @@ export function FeatureHero({ article, variant = "light" }: FeatureHeroProps) {
           />
         </div>
         <h2
-          className={`text-2xl md:text-3xl lg:text-3xl font-sans font-semibold ${textColor} leading-snug tracking-tight text-start`}
+          className={`font-sans font-semibold text-2xl md:text-3xl lg:text-3xl ${textColor} text-start leading-snug tracking-tight`}
         >
           {article.title}
         </h2>

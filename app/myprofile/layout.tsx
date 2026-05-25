@@ -33,7 +33,7 @@ export default async function MyProfileLayout({
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-8 md:py-12">
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+      <div className="grid grid-cols-1 gap-8 md:grid-cols-4">
         <div className="md:col-span-1">
           <ProfileSidebar />
         </div>

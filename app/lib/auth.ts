@@ -39,7 +39,7 @@ export const authOptions: NextAuthOptions = {
           canAccessStudio == true &&
           cmsRole in ["admin", "editor", "author"]
         ][0]{ cmsRole }`,
-        { email }
+        { email },
       );
 
       if (!author) {
@@ -58,7 +58,7 @@ export const authOptions: NextAuthOptions = {
             lower(email) == $email &&
             canAccessStudio == true
           ][0]{ cmsRole }`,
-          { email }
+          { email },
         );
 
         (session as any).cmsRole = author?.cmsRole || null;
@@ -68,4 +68,3 @@ export const authOptions: NextAuthOptions = {
     },
   },
 };
-

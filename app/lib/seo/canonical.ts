@@ -24,8 +24,10 @@ function isTrackingParam(key: string): boolean {
  */
 export function buildCanonicalUrl(
   pathname: string,
-  searchParams?: URLSearchParams | Record<string, string | string[] | undefined>,
-  options?: { allowedKeys?: string[] }
+  searchParams?:
+    | URLSearchParams
+    | Record<string, string | string[] | undefined>,
+  options?: { allowedKeys?: string[] },
 ): string {
   const base = getPublicSiteUrl();
   const path = pathname.startsWith("/") ? pathname : `/${pathname}`;
@@ -35,9 +37,7 @@ export function buildCanonicalUrl(
     return url.toString();
   }
 
-  const allowed = options?.allowedKeys
-    ? new Set(options.allowedKeys)
-    : null;
+  const allowed = options?.allowedKeys ? new Set(options.allowedKeys) : null;
 
   const sp =
     searchParams instanceof URLSearchParams

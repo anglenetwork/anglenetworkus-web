@@ -8,7 +8,7 @@ import { buildArticlePageMetadata } from "@/app/lib/seo/metadata-builders";
 import type { ArticleFamily } from "./types";
 
 export async function buildArticleFamilyMetadata(
-  article: ArticleFamily
+  article: ArticleFamily,
 ): Promise<Metadata> {
   const settings = await sanityFetch({
     query: settingsQuery,

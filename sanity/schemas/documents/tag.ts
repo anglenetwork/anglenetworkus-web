@@ -14,11 +14,14 @@ export default defineType({
       title: "Title",
       type: "string",
       validation: (rule) =>
-        rule.required().min(2).custom((val: string | undefined) => {
-          if (!val || typeof val !== "string") return true;
-          if (val.trim() !== val) return "Remove leading/trailing spaces";
-          return true;
-        }),
+        rule
+          .required()
+          .min(2)
+          .custom((val: string | undefined) => {
+            if (!val || typeof val !== "string") return true;
+            if (val.trim() !== val) return "Remove leading/trailing spaces";
+            return true;
+          }),
     }),
     defineField({
       name: "slug",
@@ -27,7 +30,8 @@ export default defineType({
       options: {
         source: "title",
         maxLength: 96,
-        isUnique: (value: string, context: any) => context.defaultIsUnique(value, context),
+        isUnique: (value: string, context: any) =>
+          context.defaultIsUnique(value, context),
       },
       validation: (rule) => rule.required(),
     }),
@@ -87,8 +91,7 @@ export default defineType({
       title: "Hidden",
       type: "boolean",
       initialValue: false,
-      description:
-        "Hide from public tag indexes (still usable for editorial).",
+      description: "Hide from public tag indexes (still usable for editorial).",
     }),
 
     // Lifecycle / analytics
@@ -107,7 +110,8 @@ export default defineType({
       to: [{ type: "tag" }],
       description:
         "If deprecated, point to the canonical tag you want to consolidate into.",
-      hidden: ({ parent }: { parent?: { deprecated?: boolean } }) => !parent?.deprecated,
+      hidden: ({ parent }: { parent?: { deprecated?: boolean } }) =>
+        !parent?.deprecated,
     } as any),
     defineField({
       name: "analyticsKey",

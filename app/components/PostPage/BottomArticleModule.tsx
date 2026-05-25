@@ -51,7 +51,7 @@ export default function BottomArticleModule({
 function ClassicRelatedArticles({ posts }: { posts: ArticleSidebarPost[] }) {
   return (
     <div className="">
-      <div className="py-12 px-0">
+      <div className="px-0 py-12">
         <SectionHeader
           title="Related Articles"
           variant="light"
@@ -94,7 +94,7 @@ function ClassicRelatedArticles({ posts }: { posts: ArticleSidebarPost[] }) {
                     );
                   })()}
                 </div>
-                <h2 className="text-2xl md:text-3xl font-sans font-semibold text-neutral-900 leading-snug tracking-tight text-start mt-4">
+                <h2 className="mt-4 text-start font-sans font-semibold text-2xl text-neutral-900 leading-snug tracking-tight md:text-3xl">
                   {posts[0].title || "Untitled"}
                 </h2>
               </Link>
@@ -102,21 +102,23 @@ function ClassicRelatedArticles({ posts }: { posts: ArticleSidebarPost[] }) {
           </div>
 
           <div className="flex flex-col lg:w-[40%]">
-            {posts.slice(1, RELATED_MODULE_CLASSIC_TOTAL).map((post, index, arr) => (
-              <div key={post._id}>
-                <Link
-                  href={post.href}
-                  className="block py-4 transition-opacity"
-                >
-                  <h3 className="text-lg font-sans font-normal text-neutral-900 leading-normal tracking-normal mb-2">
-                    {post.title || "Untitled"}
-                  </h3>
-                </Link>
-                {index < arr.length - 1 && (
-                  <div className="border-b border-neutral-200" />
-                )}
-              </div>
-            ))}
+            {posts
+              .slice(1, RELATED_MODULE_CLASSIC_TOTAL)
+              .map((post, index, arr) => (
+                <div key={post._id}>
+                  <Link
+                    href={post.href}
+                    className="block py-4 transition-opacity"
+                  >
+                    <h3 className="mb-2 font-normal font-sans text-lg text-neutral-900 leading-normal tracking-normal">
+                      {post.title || "Untitled"}
+                    </h3>
+                  </Link>
+                  {index < arr.length - 1 && (
+                    <div className="border-neutral-200 border-b" />
+                  )}
+                </div>
+              ))}
           </div>
         </div>
       </div>
@@ -147,7 +149,7 @@ function ModernRelatedArticles({
         <div className="mx-auto max-w-[1440px] px-8 py-10 sm:px-10 sm:py-12 md:px-12 lg:px-16 lg:py-16">
           <div className="flex flex-col gap-10 md:gap-12 lg:flex-row lg:gap-16">
             <div className="min-w-0 lg:flex-[2]">
-              <h2 className="font-sans text-sm font-semibold uppercase tracking-wide text-white sm:text-base">
+              <h2 className="font-sans font-semibold text-sm text-white uppercase tracking-wide sm:text-base">
                 {trimmedCategory ? (
                   <>
                     More in{" "}
@@ -177,8 +179,8 @@ function ModernRelatedArticles({
             </div>
 
             {sidePosts.length > 0 && (
-              <aside className="min-w-0 border-t border-white/30 pt-10 lg:flex-1 lg:max-w-[360px] lg:border-l lg:border-t-0 lg:pt-0 lg:pl-12">
-                <h2 className="font-sans text-sm font-semibold uppercase tracking-wide text-sectionAccent">
+              <aside className="min-w-0 border-white/30 border-t pt-10 lg:max-w-[360px] lg:flex-1 lg:border-t-0 lg:border-l lg:pt-0 lg:pl-12">
+                <h2 className="font-sans font-semibold text-sectionAccent text-sm uppercase tracking-wide">
                   Top Stories
                 </h2>
 
@@ -200,10 +202,10 @@ function ModernSideItem({ post }: { post: ArticleSidebarPost }) {
   return (
     <li className="py-4 first:pt-0 last:pb-0">
       <Link href={post.href} className="group block min-w-0">
-        <p className="font-sans text-[11px] font-semibold uppercase tracking-wide text-sectionAccent">
+        <p className="font-sans font-semibold text-[11px] text-sectionAccent uppercase tracking-wide">
           {formatTopStoryTimestamp(post.date)}
         </p>
-        <h3 className="mt-2 break-words font-sans text-sm font-medium leading-snug text-white sm:text-base group-hover:underline">
+        <h3 className="mt-2 break-words font-medium font-sans text-sm text-white leading-snug group-hover:underline sm:text-base">
           {post.title || "Untitled"}
         </h3>
       </Link>
@@ -220,7 +222,9 @@ function ModernGridCard({ post }: { post: ArticleSidebarPost }) {
 
   return (
     <Link href={post.href} className="group flex h-full min-w-0 flex-col">
-      <div className={`relative aspect-[4/3] w-full shrink-0 ${ARTICLE_IMAGE_FRAME_CLASS}`}>
+      <div
+        className={`relative aspect-[4/3] w-full shrink-0 ${ARTICLE_IMAGE_FRAME_CLASS}`}
+      >
         {coverData?.src ? (
           <ImageRenderer
             src={coverData.src}
@@ -239,7 +243,7 @@ function ModernGridCard({ post }: { post: ArticleSidebarPost }) {
           </div>
         )}
       </div>
-      <h3 className="mt-3 break-words font-sans text-sm font-medium leading-snug text-white sm:text-base group-hover:underline">
+      <h3 className="mt-3 break-words font-medium font-sans text-sm text-white leading-snug group-hover:underline sm:text-base">
         {post.title || "Untitled"}
       </h3>
     </Link>

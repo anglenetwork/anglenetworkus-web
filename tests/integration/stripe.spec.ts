@@ -21,7 +21,9 @@ test.describe("Stripe Integration", () => {
     });
   });
 
-  test("upgrade section shows default monthly Pro pricing", async ({ page }) => {
+  test("upgrade section shows default monthly Pro pricing", async ({
+    page,
+  }) => {
     await expect(page.getByText("$9.99").first()).toBeVisible();
     await expect(page.getByText("/month").first()).toBeVisible();
   });
@@ -32,7 +34,7 @@ test.describe("Stripe Integration", () => {
     const checkoutPromise = page.waitForResponse(
       (response) =>
         response.url().includes("/api/stripe/checkout") &&
-        response.request().method() === "POST"
+        response.request().method() === "POST",
     );
 
     const upgradeButton = page
@@ -58,12 +60,12 @@ test.describe("Stripe Integration", () => {
 
   test.skip(
     true,
-    "Yearly Pro checkout: subscriptions UI does not expose billingYearly toggle (state exists but no Switch)."
+    "Yearly Pro checkout: subscriptions UI does not expose billingYearly toggle (state exists but no Switch).",
   );
 
   test.skip(
     true,
-    "Lifetime checkout session: requires Pro tier to show Lifetime upgrade; Playwright user is Starter."
+    "Lifetime checkout session: requires Pro tier to show Lifetime upgrade; Playwright user is Starter.",
   );
 
   test("webhook updates pro subscription entitlements", async ({ request }) => {
@@ -228,7 +230,7 @@ test.describe("Stripe Integration", () => {
   }) => {
     await expect(page.getByText("Current Plan").first()).toBeVisible();
     await expect(
-      page.getByRole("button", { name: /upgrade now/i }).first()
+      page.getByRole("button", { name: /upgrade now/i }).first(),
     ).toBeVisible();
   });
 

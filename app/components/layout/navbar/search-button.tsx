@@ -19,9 +19,9 @@ export function SearchButton({
         size="sm"
         onClick={onClick}
         aria-label="Open search menu"
-        className="rounded-full bg-transparent p-0 flex items-center justify-center hover:bg-gray-100 h-10 w-10"
+        className="flex h-10 w-10 items-center justify-center rounded-full bg-transparent p-0 hover:bg-gray-100"
       >
-        <Search className="text-black h-5 w-5" />
+        <Search className="h-5 w-5 text-black" />
       </Button>
     );
   }
@@ -32,10 +32,9 @@ export function SearchButton({
       size="sm"
       onClick={onClick}
       aria-label="Open search menu"
-      className="rounded-full bg-transparent p-0 flex items-center justify-center hover:bg-gray-100 transition-all duration-500 ease-out lg:h-8 lg:w-8 h-10 w-10"
+      className="flex h-10 w-10 items-center justify-center rounded-full bg-transparent p-0 transition-all duration-500 ease-out hover:bg-gray-100 lg:h-8 lg:w-8"
     >
-      <Search className="text-black transition-all duration-500 ease-out lg:h-4 lg:w-4 h-5 w-5" />
+      <Search className="h-5 w-5 text-black transition-all duration-500 ease-out lg:h-4 lg:w-4" />
     </Button>
   );
 }
-

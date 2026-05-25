@@ -18,12 +18,13 @@ test.describe("Integration: subscriptions details", () => {
   test("upgrade card shows monthly Pro pricing for Starter users", async ({
     page,
   }) => {
-    await expect(page.getByRole("heading", { name: /^pro$/i }).first()).toBeVisible();
+    await expect(
+      page.getByRole("heading", { name: /^pro$/i }).first(),
+    ).toBeVisible();
     await expect(page.getByText("$9.99").first()).toBeVisible();
     await expect(page.getByText("/month").first()).toBeVisible();
     await expect(
-      page.getByRole("button", { name: /upgrade now/i }).first()
+      page.getByRole("button", { name: /upgrade now/i }).first(),
     ).toBeVisible();
   });
 });
-

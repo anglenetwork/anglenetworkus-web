@@ -49,13 +49,13 @@ export default function AlertBanner() {
                       if (router && typeof router.refresh === "function") {
                         router.refresh();
                       }
-                    })
+                    }),
                   );
                 } catch (err) {
                   console.error("Failed to disable draft mode:", err);
                 }
               }}
-              className="hover:text-cyan underline transition-colors duration-200"
+              className="underline transition-colors duration-200 hover:text-cyan"
             >
               Back to published
             </button>

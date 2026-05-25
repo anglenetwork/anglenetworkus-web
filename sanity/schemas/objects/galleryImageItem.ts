@@ -3,6 +3,7 @@ import { GalleryImageInput } from "../components/GalleryImageInput";
 import {
   externalUrlField,
   imageAssetField,
+  imageAttributionValidation,
   imageSourceField,
   mediaAltField,
   mediaCaptionAndCreditFields,
@@ -12,6 +13,7 @@ export default defineType({
   name: "galleryImageItem",
   title: "Gallery Image",
   type: "object",
+  validation: imageAttributionValidation,
   options: {
     modal: {
       type: "dialog",
@@ -21,21 +23,31 @@ export default defineType({
   components: {
     input: GalleryImageInput,
   },
-  fields: [imageSourceField, externalUrlField, imageAssetField, mediaAltField, ...mediaCaptionAndCreditFields],
+  fields: [
+    imageSourceField,
+    externalUrlField,
+    imageAssetField,
+    mediaAltField,
+    ...mediaCaptionAndCreditFields,
+  ],
   preview: {
     select: {
       media: "image",
       externalUrl: "externalUrl",
-      epigraph: "epigraph",
+      caption: "caption",
       alt: "alt",
       source: "source",
     },
     prepare(selection: any, context: any) {
-      const { media, externalUrl, epigraph, alt, source } = selection;
+      const { media, externalUrl, caption, alt, source } = selection;
 
       let imageNumber: number | null = null;
       const path = context?.path;
-      if (Array.isArray(path) && path.length >= 2 && typeof path[1] === "number") {
+      if (
+        Array.isArray(path) &&
+        path.length >= 2 &&
+        typeof path[1] === "number"
+      ) {
         imageNumber = path[1] + 1;
       }
 
@@ -55,16 +67,20 @@ export default defineType({
         }
       }
 
-      const title = imageNumber !== null ? `Image ${imageNumber}` : epigraph || alt || "Gallery Image";
+      const title =
+        imageNumber !== null
+          ? `Image ${imageNumber}`
+          : caption || alt || "Gallery Image";
       const subtitleParts = [
         source === "external" ? "External URL" : "Uploaded Asset",
-        imageNumber !== null && epigraph ? epigraph : null,
+        imageNumber !== null && caption ? caption : null,
       ].filter(Boolean);
 
       return {
         title,
         media,
-        subtitle: subtitleParts.length > 0 ? subtitleParts.join(" • ") : undefined,
+        subtitle:
+          subtitleParts.length > 0 ? subtitleParts.join(" • ") : undefined,
       };
     },
   },

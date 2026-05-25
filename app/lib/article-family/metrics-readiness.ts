@@ -29,7 +29,7 @@ async function probeIncrementFunction(issues: string[]): Promise<boolean> {
   if (!error) {
     pushIssue(
       issues,
-      "increment_article_view: expected validation error for empty article_id, got success"
+      "increment_article_view: expected validation error for empty article_id, got success",
     );
     return false;
   }
@@ -57,17 +57,23 @@ async function probeIncrementFunction(issues: string[]): Promise<boolean> {
 
   pushIssue(
     issues,
-    `increment_article_view: unexpected error (${code ?? "unknown"}): ${error.message}`
+    `increment_article_view: unexpected error (${code ?? "unknown"}): ${error.message}`,
   );
   return false;
 }
 
 async function probeRelation(
-  name: "article_metrics_daily" | "article_metrics_totals" | "article_metrics_rankings",
+  name:
+    | "article_metrics_daily"
+    | "article_metrics_totals"
+    | "article_metrics_rankings",
   issues: string[],
-  label: string
+  label: string,
 ): Promise<boolean> {
-  const { error } = await supabaseAdmin.from(name).select("article_id").limit(1);
+  const { error } = await supabaseAdmin
+    .from(name)
+    .select("article_id")
+    .limit(1);
   if (!error) return true;
 
   const text = `${error.message ?? ""} ${error.details ?? ""}`.toLowerCase();
@@ -81,10 +87,7 @@ async function probeRelation(
     return false;
   }
 
-  pushIssue(
-    issues,
-    `${label} (${name}): ${error.message ?? "unknown error"}`
-  );
+  pushIssue(issues, `${label} (${name}): ${error.message ?? "unknown error"}`);
   return false;
 }
 
@@ -94,25 +97,22 @@ export async function checkArticleMetricsReadiness(): Promise<ArticleMetricsRead
   const hasDailyTable = await probeRelation(
     "article_metrics_daily",
     issues,
-    "Daily metrics table"
+    "Daily metrics table",
   );
   const hasTotalsTable = await probeRelation(
     "article_metrics_totals",
     issues,
-    "Totals table"
+    "Totals table",
   );
   const hasRankingsView = await probeRelation(
     "article_metrics_rankings",
     issues,
-    "Rankings view"
+    "Rankings view",
   );
   const hasIncrementFunction = await probeIncrementFunction(issues);
 
   const ready =
-    hasDailyTable &&
-    hasTotalsTable &&
-    hasRankingsView &&
-    hasIncrementFunction;
+    hasDailyTable && hasTotalsTable && hasRankingsView && hasIncrementFunction;
 
   return {
     ready,
@@ -131,7 +131,7 @@ export async function assertArticleMetricsReady(): Promise<void> {
       "Article metrics infrastructure is not ready. Apply the SQL migration " +
         "`supabase-migrations/20260327_article_metrics.sql` to your Supabase project, " +
         "then run `npm run backfill:article-metrics`, then `npm run verify:article-metrics`. " +
-        `Issues: ${r.issues.join("; ") || "see checkArticleMetricsReadiness"}`
+        `Issues: ${r.issues.join("; ") || "see checkArticleMetricsReadiness"}`,
     );
   }
 }

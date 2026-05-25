@@ -13,7 +13,7 @@ function toIsoFromUnixSeconds(sec: number) {
 // Throw on any Supabase error so we don't silently return 200 while doing nothing.
 async function must<T>(
   promise: Promise<{ data: T; error: any }>,
-  label: string
+  label: string,
 ): Promise<T> {
   const { data, error } = await promise;
   if (error) {
@@ -56,9 +56,9 @@ async function upsertSubscription(params: {
         status: params.status,
         source: params.source,
       },
-      { onConflict: "user_id" }
+      { onConflict: "user_id" },
     ) as unknown as Promise<{ data: unknown; error: any }>,
-    `subscriptions upsert ${params.tier}`
+    `subscriptions upsert ${params.tier}`,
   );
 }
 
@@ -80,9 +80,9 @@ async function upsertStripeSubscriptionRow(params: {
         current_period_end: params.currentPeriodEndIso ?? null,
         cancel_at_period_end: params.cancelAtPeriodEnd ?? null,
       },
-      { onConflict: "stripe_subscription_id" }
+      { onConflict: "stripe_subscription_id" },
     ) as unknown as Promise<{ data: unknown; error: any }>,
-    "stripe_subscriptions upsert"
+    "stripe_subscriptions upsert",
   );
 }
 
@@ -91,7 +91,7 @@ export async function POST(req: Request) {
   if (!sig) {
     return NextResponse.json(
       { error: "Missing Stripe-Signature" },
-      { status: 400 }
+      { status: 400 },
     );
   }
 
@@ -100,7 +100,7 @@ export async function POST(req: Request) {
     console.error("[stripe-webhook] Missing STRIPE_WEBHOOK_SECRET");
     return NextResponse.json(
       { error: "Server misconfigured (missing webhook secret)" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 
@@ -111,10 +111,13 @@ export async function POST(req: Request) {
   try {
     event = stripe.webhooks.constructEvent(rawBody, sig, endpointSecret);
   } catch (err: any) {
-    console.error("[stripe-webhook] Signature verification failed:", err?.message);
+    console.error(
+      "[stripe-webhook] Signature verification failed:",
+      err?.message,
+    );
     return NextResponse.json(
       { error: `Webhook signature verification failed: ${err.message}` },
-      { status: 400 }
+      { status: 400 },
     );
   }
 
@@ -135,17 +138,26 @@ export async function POST(req: Request) {
           (session.metadata?.supabase_user_id as string | undefined) ??
           (session.client_reference_id as string | undefined);
 
-        console.log("[stripe-webhook] checkout.session.completed userId:", userId);
+        console.log(
+          "[stripe-webhook] checkout.session.completed userId:",
+          userId,
+        );
         console.log("[stripe-webhook] session.mode:", session.mode);
-        console.log("[stripe-webhook] session.payment_status:", session.payment_status);
-        console.log("[stripe-webhook] session.subscription:", session.subscription);
+        console.log(
+          "[stripe-webhook] session.payment_status:",
+          session.payment_status,
+        );
+        console.log(
+          "[stripe-webhook] session.subscription:",
+          session.subscription,
+        );
 
         if (!userId) break;
 
         // One-time lifetime
         if (session.mode === "payment" && session.payment_status === "paid") {
           const validUntilIso = new Date(
-            Date.now() + 99 * 365 * 24 * 60 * 60 * 1000
+            Date.now() + 99 * 365 * 24 * 60 * 60 * 1000,
           ).toISOString();
 
           await upsertSubscription({
@@ -175,7 +187,9 @@ export async function POST(req: Request) {
             });
           }
 
-          const currentPeriodEndIso = toIsoFromUnixSeconds(sub.current_period_end);
+          const currentPeriodEndIso = toIsoFromUnixSeconds(
+            sub.current_period_end,
+          );
           const priceId = sub.items.data?.[0]?.price?.id ?? null;
 
           // Derive billing cycle from price ID
@@ -211,7 +225,9 @@ export async function POST(req: Request) {
       case "invoice.payment_succeeded": {
         // Renewals (and often initial invoice)
         const invoice = event.data.object as Stripe.Invoice;
-        const subId = invoice.subscription ? String(invoice.subscription) : null;
+        const subId = invoice.subscription
+          ? String(invoice.subscription)
+          : null;
         if (!subId) break;
 
         const sub = await stripe.subscriptions.retrieve(subId);
@@ -227,11 +243,16 @@ export async function POST(req: Request) {
           }
         }
 
-        console.log("[stripe-webhook] invoice.payment_succeeded userId:", userId);
+        console.log(
+          "[stripe-webhook] invoice.payment_succeeded userId:",
+          userId,
+        );
 
         if (!userId) break;
 
-        const currentPeriodEndIso = toIsoFromUnixSeconds(sub.current_period_end);
+        const currentPeriodEndIso = toIsoFromUnixSeconds(
+          sub.current_period_end,
+        );
         const priceId = sub.items.data?.[0]?.price?.id ?? null;
 
         // Derive billing cycle from price ID
@@ -264,7 +285,9 @@ export async function POST(req: Request) {
 
       case "invoice.payment_failed": {
         const invoice = event.data.object as Stripe.Invoice;
-        const subId = invoice.subscription ? String(invoice.subscription) : null;
+        const subId = invoice.subscription
+          ? String(invoice.subscription)
+          : null;
         if (!subId) break;
 
         const sub = await stripe.subscriptions.retrieve(subId);
@@ -284,7 +307,9 @@ export async function POST(req: Request) {
 
         if (!userId) break;
 
-        const currentPeriodEndIso = toIsoFromUnixSeconds(sub.current_period_end);
+        const currentPeriodEndIso = toIsoFromUnixSeconds(
+          sub.current_period_end,
+        );
 
         await upsertStripeSubscriptionRow({
           userId,
@@ -301,8 +326,11 @@ export async function POST(req: Request) {
           supabaseAdmin
             .from("subscriptions")
             .update({ status: sub.status })
-            .eq("user_id", userId) as unknown as Promise<{ data: unknown; error: any }>,
-          "subscriptions update status (payment failed)"
+            .eq("user_id", userId) as unknown as Promise<{
+            data: unknown;
+            error: any;
+          }>,
+          "subscriptions update status (payment failed)",
         );
 
         break;
@@ -325,7 +353,9 @@ export async function POST(req: Request) {
 
         if (!userId) break;
 
-        const currentPeriodEndIso = toIsoFromUnixSeconds(sub.current_period_end);
+        const currentPeriodEndIso = toIsoFromUnixSeconds(
+          sub.current_period_end,
+        );
         const priceId = sub.items.data?.[0]?.price?.id ?? null;
 
         // Derive billing cycle from price ID
@@ -363,8 +393,11 @@ export async function POST(req: Request) {
               tier: "pro",
               billing_cycle: billingCycle,
             })
-            .eq("user_id", userId) as unknown as Promise<{ data: unknown; error: any }>,
-          "subscriptions update (subscription updated)"
+            .eq("user_id", userId) as unknown as Promise<{
+            data: unknown;
+            error: any;
+          }>,
+          "subscriptions update (subscription updated)",
         );
 
         break;
@@ -384,11 +417,16 @@ export async function POST(req: Request) {
           }
         }
 
-        console.log("[stripe-webhook] customer.subscription.deleted userId:", userId);
+        console.log(
+          "[stripe-webhook] customer.subscription.deleted userId:",
+          userId,
+        );
 
         if (!userId) break;
 
-        const currentPeriodEndIso = toIsoFromUnixSeconds(sub.current_period_end);
+        const currentPeriodEndIso = toIsoFromUnixSeconds(
+          sub.current_period_end,
+        );
 
         await upsertStripeSubscriptionRow({
           userId,
@@ -405,8 +443,11 @@ export async function POST(req: Request) {
           supabaseAdmin
             .from("subscriptions")
             .update({ status: "canceled" })
-            .eq("user_id", userId) as unknown as Promise<{ data: unknown; error: any }>,
-          "subscriptions set canceled (subscription deleted)"
+            .eq("user_id", userId) as unknown as Promise<{
+            data: unknown;
+            error: any;
+          }>,
+          "subscriptions set canceled (subscription deleted)",
         );
 
         break;
@@ -423,7 +464,7 @@ export async function POST(req: Request) {
     console.error("[stripe-webhook] handler error:", err);
     return NextResponse.json(
       { error: err.message ?? "Webhook handler error" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

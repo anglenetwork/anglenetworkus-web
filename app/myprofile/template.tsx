@@ -10,4 +10,3 @@ export default function MyProfileTemplate({
   const pathname = usePathname();
   return <div key={pathname}>{children}</div>;
 }
-

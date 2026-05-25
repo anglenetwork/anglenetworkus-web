@@ -29,11 +29,11 @@ test.describe("Smoke: logout (runs last)", () => {
       const onDedicatedSignIn = page.url().includes("/signin");
       if (onDedicatedSignIn) {
         await expect(
-          page.getByRole("heading", { name: /sign in to continue/i })
+          page.getByRole("heading", { name: /sign in to continue/i }),
         ).toBeVisible({ timeout: 15000 });
       } else {
         await expect(
-          page.getByText("Sign In", { exact: true }).first()
+          page.getByText("Sign In", { exact: true }).first(),
         ).toBeVisible({ timeout: 15000 });
       }
 
@@ -41,7 +41,7 @@ test.describe("Smoke: logout (runs last)", () => {
         waitUntil: "domcontentloaded",
       });
       await expect(
-        page.getByText("Sign In", { exact: true }).first()
+        page.getByText("Sign In", { exact: true }).first(),
       ).toBeVisible({ timeout: 15000 });
       await expect(page.getByLabel(/email/i)).toBeVisible();
     }

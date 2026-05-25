@@ -11,7 +11,7 @@ function isNonEmptyString(v: unknown): v is string {
  * Google News sitemap language (ISO 639-1). Prefer settings when present; otherwise "en".
  */
 export function resolvePublicationLanguage(
-  settings: SiteSettingsForSeo | Record<string, unknown> | null | undefined
+  settings: SiteSettingsForSeo | Record<string, unknown> | null | undefined,
 ): string {
   const s = settings as Record<string, unknown> | null | undefined;
   const raw = s?.locale ?? s?.language;
@@ -27,7 +27,7 @@ export function resolvePublicationLanguage(
  * Publication / site name for Google News — same rules as sitewide metadata.
  */
 export function resolvePublicationName(
-  settings: SiteSettingsForSeo | null | undefined
+  settings: SiteSettingsForSeo | null | undefined,
 ): string {
   return resolveSiteName(settings, demo.title);
 }

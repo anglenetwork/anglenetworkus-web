@@ -62,11 +62,11 @@ export default function CategoryContent({
 
   if (!posts || posts.length === 0) {
     return (
-      <div className="text-center py-12">
-        <h2 className="text-2xl font-bold text-gray-900 mb-4">
+      <div className="py-12 text-center">
+        <h2 className="mb-4 font-bold text-2xl text-gray-900">
           No articles found
         </h2>
-        <p className="text-gray-600 mb-6">
+        <p className="mb-6 text-gray-600">
           There are no articles in the {categoryName} category yet.
         </p>
         <Link
@@ -90,18 +90,22 @@ export default function CategoryContent({
     <div className="bg-white">
       <div className="container mx-auto px-4 py-8">
         {/* Main Grid Layout */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
           {/* Left Column - Main and Secondary Articles */}
-          <div className="lg:col-span-2 space-y-8">
+          <div className="space-y-8 lg:col-span-2">
             {/* Main Featured Article */}
             {mainArticle && (
-              <article className="border-b border-gray-200 pb-8">
+              <article className="border-gray-200 border-b pb-8">
                 <div className="relative mb-4">
-                  <Link href={mainArticle.href ?? `/post/${mainArticle.slug || "#"}`}>
+                  <Link
+                    href={
+                      mainArticle.href ?? `/post/${mainArticle.slug || "#"}`
+                    }
+                  >
                     {(() => {
                       const imageData = getImageData(
                         mainArticle.cover,
-                        mainArticle.title || "Article image"
+                        mainArticle.title || "Article image",
                       );
                       return (
                         <ImageRenderer
@@ -110,25 +114,29 @@ export default function CategoryContent({
                           width={800}
                           height={400}
                           unoptimized={imageData.unoptimized}
-                          className="w-full h-64 md:h-80 object-cover cursor-pointer hover:opacity-90 transition-opacity rounded-lg"
+                          className="h-64 w-full cursor-pointer rounded-lg object-cover transition-opacity hover:opacity-90 md:h-80"
                         />
                       );
                     })()}
                   </Link>
-                  <div className="absolute bottom-4 right-4 bg-black/70 text-white text-sm px-3 py-1 rounded">
+                  <div className="absolute right-4 bottom-4 rounded bg-black/70 px-3 py-1 text-sm text-white">
                     {mainArticle.author?.name || "Anonymous"}
                   </div>
                 </div>
 
                 <div className="space-y-3">
-                  <div className="flex items-center gap-4 text-sm text-gray-500">
+                  <div className="flex items-center gap-4 text-gray-500 text-sm">
                     <span>{formatDate(mainArticle.date)}</span>
                     <span>•</span>
                     <span>{mainArticle.author?.name || "Anonymous"}</span>
                   </div>
 
-                  <Link href={mainArticle.href ?? `/post/${mainArticle.slug || "#"}`}>
-                    <h2 className="text-2xl md:text-3xl font-bold text-gray-900 leading-tight cursor-pointer hover:text-blue-600 transition-colors">
+                  <Link
+                    href={
+                      mainArticle.href ?? `/post/${mainArticle.slug || "#"}`
+                    }
+                  >
+                    <h2 className="cursor-pointer font-bold text-2xl text-gray-900 leading-tight transition-colors hover:text-blue-600 md:text-3xl">
                       {mainArticle.title || "Untitled"}
                     </h2>
                   </Link>
@@ -144,18 +152,20 @@ export default function CategoryContent({
 
             {/* Secondary Articles Row */}
             {secondaryArticles.length > 0 && (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                 {secondaryArticles.map((article) => (
                   <article
                     key={article._id}
-                    className="border-b border-gray-200 pb-6"
+                    className="border-gray-200 border-b pb-6"
                   >
                     <div className="relative mb-4">
-                      <Link href={article.href ?? `/post/${article.slug || "#"}`}>
+                      <Link
+                        href={article.href ?? `/post/${article.slug || "#"}`}
+                      >
                         {(() => {
                           const imageData = getImageData(
                             article.cover,
-                            article.title || "Article image"
+                            article.title || "Article image",
                           );
                           return (
                             <ImageRenderer
@@ -164,31 +174,33 @@ export default function CategoryContent({
                               width={400}
                               height={250}
                               unoptimized={imageData.unoptimized}
-                              className="w-full h-48 object-cover cursor-pointer hover:opacity-90 transition-opacity rounded-lg"
+                              className="h-48 w-full cursor-pointer rounded-lg object-cover transition-opacity hover:opacity-90"
                             />
                           );
                         })()}
                       </Link>
-                      <div className="absolute bottom-2 right-2 bg-black/70 text-white text-xs px-2 py-1 rounded">
+                      <div className="absolute right-2 bottom-2 rounded bg-black/70 px-2 py-1 text-white text-xs">
                         {article.author?.name || "Anonymous"}
                       </div>
                     </div>
 
                     <div className="space-y-2">
-                      <div className="flex items-center gap-3 text-xs text-gray-500">
+                      <div className="flex items-center gap-3 text-gray-500 text-xs">
                         <span>{formatDate(article.date)}</span>
                         <span>•</span>
                         <span>{article.author?.name || "Anonymous"}</span>
                       </div>
 
-                      <Link href={article.href ?? `/post/${article.slug || "#"}`}>
-                        <h3 className="text-lg font-bold text-gray-900 leading-tight cursor-pointer hover:text-blue-600 transition-colors">
+                      <Link
+                        href={article.href ?? `/post/${article.slug || "#"}`}
+                      >
+                        <h3 className="cursor-pointer font-bold text-gray-900 text-lg leading-tight transition-colors hover:text-blue-600">
                           {article.title || "Untitled"}
                         </h3>
                       </Link>
 
                       {article.excerpt && (
-                        <p className="text-sm text-gray-600 leading-relaxed line-clamp-3">
+                        <p className="line-clamp-3 text-gray-600 text-sm leading-relaxed">
                           {article.excerpt}
                         </p>
                       )}
@@ -200,18 +212,20 @@ export default function CategoryContent({
 
             {/* Remaining Articles Grid */}
             {remainingArticles.length > 0 && (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
                 {remainingArticles.map((article) => (
                   <article
                     key={article._id}
-                    className="border-b border-gray-200 pb-4"
+                    className="border-gray-200 border-b pb-4"
                   >
                     <div className="relative mb-3">
-                      <Link href={article.href ?? `/post/${article.slug || "#"}`}>
+                      <Link
+                        href={article.href ?? `/post/${article.slug || "#"}`}
+                      >
                         {(() => {
                           const imageData = getImageData(
                             article.cover,
-                            article.title || "Article image"
+                            article.title || "Article image",
                           );
                           return (
                             <ImageRenderer
@@ -220,25 +234,27 @@ export default function CategoryContent({
                               width={300}
                               height={200}
                               unoptimized={imageData.unoptimized}
-                              className="w-full h-40 object-cover cursor-pointer hover:opacity-90 transition-opacity rounded-lg"
+                              className="h-40 w-full cursor-pointer rounded-lg object-cover transition-opacity hover:opacity-90"
                             />
                           );
                         })()}
                       </Link>
-                      <div className="absolute bottom-1 right-1 bg-black/70 text-white text-xs px-1 py-0.5 rounded">
+                      <div className="absolute right-1 bottom-1 rounded bg-black/70 px-1 py-0.5 text-white text-xs">
                         {article.author?.name || "Anonymous"}
                       </div>
                     </div>
 
                     <div className="space-y-2">
-                      <div className="flex items-center gap-2 text-xs text-gray-500">
+                      <div className="flex items-center gap-2 text-gray-500 text-xs">
                         <span>{formatDate(article.date)}</span>
                         <span>•</span>
                         <span>{article.author?.name || "Anonymous"}</span>
                       </div>
 
-                      <Link href={article.href ?? `/post/${article.slug || "#"}`}>
-                        <h4 className="text-sm font-bold text-gray-900 leading-tight cursor-pointer hover:text-blue-600 transition-colors line-clamp-2">
+                      <Link
+                        href={article.href ?? `/post/${article.slug || "#"}`}
+                      >
+                        <h4 className="line-clamp-2 cursor-pointer font-bold text-gray-900 text-sm leading-tight transition-colors hover:text-blue-600">
                           {article.title || "Untitled"}
                         </h4>
                       </Link>

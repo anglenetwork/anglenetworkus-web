@@ -6,5 +6,5 @@ export const getCachedSettings = cache(async () =>
   sanityFetch({
     query: settingsQuery,
     stega: false,
-  })
+  }),
 );

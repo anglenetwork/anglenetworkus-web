@@ -28,7 +28,11 @@ export default defineType({
     "Standard reported news article for the main editorial news flow. " +
     "Rankings and “most read” on the live site use Supabase article metrics, not legacy Sanity view fields below.",
   groups: [
-    { name: ARTICLE_FIELD_GROUPS.core, title: "Core editorial identity", default: true },
+    {
+      name: ARTICLE_FIELD_GROUPS.core,
+      title: "Core editorial identity",
+      default: true,
+    },
     { name: ARTICLE_FIELD_GROUPS.typeSpecific, title: "Homepage & curation" },
     { name: ARTICLE_FIELD_GROUPS.taxonomy, title: "Taxonomy & attribution" },
     { name: ARTICLE_FIELD_GROUPS.media, title: "Media" },
@@ -170,7 +174,8 @@ export default defineType({
       group: ARTICLE_FIELD_GROUPS.typeSpecific,
       fieldset: "homepage",
       initialValue: false,
-      description: "Breaking label for this item in Just In (mutually exclusive with Developing).",
+      description:
+        "Breaking label for this item in Just In (mutually exclusive with Developing).",
       hidden: ({ parent }) => !parent?.justIn,
       validation: (rule) =>
         rule.custom((value, ctx) => {
@@ -188,7 +193,8 @@ export default defineType({
       group: ARTICLE_FIELD_GROUPS.typeSpecific,
       fieldset: "homepage",
       initialValue: false,
-      description: "Developing label for this item in Just In (mutually exclusive with Breaking).",
+      description:
+        "Developing label for this item in Just In (mutually exclusive with Breaking).",
       hidden: ({ parent }) => !parent?.justIn,
       validation: (rule) =>
         rule.custom((value, ctx) => {
@@ -226,7 +232,8 @@ export default defineType({
       type: "number",
       group: ARTICLE_FIELD_GROUPS.typeSpecific,
       fieldset: "homepage",
-      description: "Optional editorial estimate. Can be auto-derived from body content in a later stage.",
+      description:
+        "Optional editorial estimate. Can be auto-derived from body content in a later stage.",
     }),
 
     defineField({
@@ -244,7 +251,8 @@ export default defineType({
           { title: "live", value: "live" },
         ],
       },
-      description: "Internal curation or badge flags only. Not a content-type system.",
+      description:
+        "Internal curation or badge flags only. Not a content-type system.",
     } as any),
 
     defineField({
@@ -316,7 +324,8 @@ export default defineType({
       } = selection as Record<string, unknown>;
 
       const parts: string[] = ["Post"];
-      if (categoryName && typeof categoryName === "string") parts.push(categoryName);
+      if (categoryName && typeof categoryName === "string")
+        parts.push(categoryName);
       if (publishedAt && typeof publishedAt === "string") {
         const d = new Date(publishedAt);
         if (!isNaN(d.getTime())) parts.push(d.toLocaleDateString());

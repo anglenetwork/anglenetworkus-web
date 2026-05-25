@@ -110,20 +110,20 @@ export default function ProfileDetailsClient({
 
       <div>
         <div className="mb-12">
-          <h1 className="text-3xl font-semibold text-slate-900 mb-2 font-sans">
+          <h1 className="mb-2 font-sans font-semibold text-3xl text-slate-900">
             Profile
           </h1>
-          <p className="text-slate-600 font-sans">
+          <p className="font-sans text-slate-600">
             Manage your personal information
           </p>
         </div>
 
         <div className="space-y-8">
           <div>
-            <label className="block text-sm font-semibold text-slate-900 mb-3 font-sans">
+            <label className="mb-3 block font-sans font-semibold text-slate-900 text-sm">
               First Name
             </label>
-            <p className="text-slate-900 font-sans">
+            <p className="font-sans text-slate-900">
               {profile?.first_name && profile.first_name.trim()
                 ? profile.first_name
                 : "Not set"}
@@ -131,10 +131,10 @@ export default function ProfileDetailsClient({
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-slate-900 mb-3 font-sans">
+            <label className="mb-3 block font-sans font-semibold text-slate-900 text-sm">
               Last Name
             </label>
-            <p className="text-slate-900 font-sans">
+            <p className="font-sans text-slate-900">
               {profile?.last_name && profile.last_name.trim()
                 ? profile.last_name
                 : "Not set"}
@@ -142,10 +142,10 @@ export default function ProfileDetailsClient({
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-slate-900 mb-3 font-sans">
+            <label className="mb-3 block font-sans font-semibold text-slate-900 text-sm">
               Date of Birth
             </label>
-            <p className="text-slate-900 font-sans">
+            <p className="font-sans text-slate-900">
               {profile?.date_of_birth
                 ? formatDateOfBirth(profile.date_of_birth)
                 : "Not set"}
@@ -153,17 +153,17 @@ export default function ProfileDetailsClient({
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-slate-900 mb-3 font-sans">
+            <label className="mb-3 block font-sans font-semibold text-slate-900 text-sm">
               Email Address
             </label>
-            <p className="text-slate-900 font-sans">
+            <p className="font-sans text-slate-900">
               {email ?? "Not available"}
             </p>
           </div>
 
           <div className="pt-4">
             <Button
-              className="bg-slate-900 text-white hover:bg-slate-800 font-sans"
+              className="bg-slate-900 font-sans text-white hover:bg-slate-800"
               onClick={() => setShowEditModal(true)}
             >
               Edit

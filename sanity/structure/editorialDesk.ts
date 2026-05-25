@@ -39,11 +39,11 @@ function coverInvalid(): string {
 
 function coreArticleQaClauses(): string {
   return [
-    "!defined(title) || title == \"\"",
-    "!defined(slug.current) || slug.current == \"\"",
-    "!defined(excerpt) || excerpt == \"\"",
+    '!defined(title) || title == ""',
+    '!defined(slug.current) || slug.current == ""',
+    '!defined(excerpt) || excerpt == ""',
     coverInvalid(),
-    "!defined(cover.alt) || cover.alt == \"\"",
+    '!defined(cover.alt) || cover.alt == ""',
     "!defined(body) || count(body) == 0",
     '(status == "published" && !defined(publishedAt))',
   ].join(" || ");
@@ -51,7 +51,7 @@ function coreArticleQaClauses(): string {
 
 export const postNeedsEditorialQaFilter = `_type == "post" && (${coreArticleQaClauses()} || !defined(category))`;
 
-export const opinionNeedsEditorialQaFilter = `_type == "opinion" && (${coreArticleQaClauses()} || !defined(author) || !defined(opinionFormat) || opinionFormat == "")`;
+export const opinionNeedsEditorialQaFilter = `_type == "opinion" && (${coreArticleQaClauses()} || !defined(author))`;
 
 export const analysisNeedsEditorialQaFilter = `_type == "analysis" && (${coreArticleQaClauses()} || !defined(category) || !defined(author) || !defined(analysisFocus) || analysisFocus == "")`;
 
@@ -98,7 +98,7 @@ export const editorialDeskStructure: StructureResolver = (S) => {
                     .title("Scheduled / Future Posts")
                     .filter(
                       '_type == "post" && (status == "scheduled" || (defined(publishedAt) && publishedAt > now()))',
-                    )
+                    ),
                 ),
               S.listItem()
                 .title("Published Posts")
@@ -107,7 +107,7 @@ export const editorialDeskStructure: StructureResolver = (S) => {
                     .apiVersion(apiVersion)
                     .schemaType("post")
                     .title("Published Posts")
-                    .filter('_type == "post" && status == "published"')
+                    .filter('_type == "post" && status == "published"'),
                 ),
               S.divider(),
               S.listItem()
@@ -117,7 +117,7 @@ export const editorialDeskStructure: StructureResolver = (S) => {
                     .apiVersion(apiVersion)
                     .schemaType("post")
                     .title("Homepage Main Headlines")
-                    .filter('_type == "post" && mainHeadline == true')
+                    .filter('_type == "post" && mainHeadline == true'),
                 ),
               S.listItem()
                 .title("Homepage Frontline")
@@ -126,7 +126,7 @@ export const editorialDeskStructure: StructureResolver = (S) => {
                     .apiVersion(apiVersion)
                     .schemaType("post")
                     .title("Homepage Frontline")
-                    .filter('_type == "post" && frontline == true')
+                    .filter('_type == "post" && frontline == true'),
                 ),
               S.listItem()
                 .title("Homepage Right Rail")
@@ -135,7 +135,7 @@ export const editorialDeskStructure: StructureResolver = (S) => {
                     .apiVersion(apiVersion)
                     .schemaType("post")
                     .title("Homepage Right Rail")
-                    .filter('_type == "post" && rightHeadline == true')
+                    .filter('_type == "post" && rightHeadline == true'),
                 ),
               S.listItem()
                 .title("Homepage Just In")
@@ -144,7 +144,7 @@ export const editorialDeskStructure: StructureResolver = (S) => {
                     .apiVersion(apiVersion)
                     .schemaType("post")
                     .title("Homepage Just In")
-                    .filter('_type == "post" && justIn == true')
+                    .filter('_type == "post" && justIn == true'),
                 ),
               S.listItem()
                 .title("Breaking / Developing")
@@ -155,7 +155,7 @@ export const editorialDeskStructure: StructureResolver = (S) => {
                     .title("Breaking / Developing")
                     .filter(
                       '_type == "post" && (breakingNews == true || developingStory == true)',
-                    )
+                    ),
                 ),
               S.listItem()
                 .title("Featured Posts")
@@ -164,7 +164,7 @@ export const editorialDeskStructure: StructureResolver = (S) => {
                     .apiVersion(apiVersion)
                     .schemaType("post")
                     .title("Featured Posts")
-                    .filter('_type == "post" && featured == true')
+                    .filter('_type == "post" && featured == true'),
                 ),
               S.listItem()
                 .title("Needs Editorial QA")
@@ -173,7 +173,7 @@ export const editorialDeskStructure: StructureResolver = (S) => {
                     .apiVersion(apiVersion)
                     .schemaType("post")
                     .title("Needs Editorial QA")
-                    .filter(postNeedsEditorialQaFilter)
+                    .filter(postNeedsEditorialQaFilter),
                 ),
             ]),
         ),
@@ -193,7 +193,7 @@ export const editorialDeskStructure: StructureResolver = (S) => {
                     .apiVersion(apiVersion)
                     .schemaType("opinion")
                     .title("Draft Opinion")
-                    .filter('_type == "opinion" && status == "draft"')
+                    .filter('_type == "opinion" && status == "draft"'),
                 ),
               S.listItem()
                 .title("Published Opinion")
@@ -202,51 +202,7 @@ export const editorialDeskStructure: StructureResolver = (S) => {
                     .apiVersion(apiVersion)
                     .schemaType("opinion")
                     .title("Published Opinion")
-                    .filter('_type == "opinion" && status == "published"')
-                ),
-              S.listItem()
-                .title("By Format")
-                .child(
-                  S.list()
-                    .title("By Format")
-                    .items([
-                      S.listItem()
-                        .title("Op-Ed")
-                        .child(
-                          S.documentList()
-                            .apiVersion(apiVersion)
-                            .schemaType("opinion")
-                            .title("Op-Ed")
-                            .filter('_type == "opinion" && opinionFormat == "op-ed"')
-                        ),
-                      S.listItem()
-                        .title("Editorial")
-                        .child(
-                          S.documentList()
-                            .apiVersion(apiVersion)
-                            .schemaType("opinion")
-                            .title("Editorial")
-                            .filter('_type == "opinion" && opinionFormat == "editorial"')
-                        ),
-                      S.listItem()
-                        .title("Column")
-                        .child(
-                          S.documentList()
-                            .apiVersion(apiVersion)
-                            .schemaType("opinion")
-                            .title("Column")
-                            .filter('_type == "opinion" && opinionFormat == "column"')
-                        ),
-                      S.listItem()
-                        .title("Commentary")
-                        .child(
-                          S.documentList()
-                            .apiVersion(apiVersion)
-                            .schemaType("opinion")
-                            .title("Commentary")
-                            .filter('_type == "opinion" && opinionFormat == "commentary"')
-                        ),
-                    ]),
+                    .filter('_type == "opinion" && status == "published"'),
                 ),
               S.listItem()
                 .title("Needs Editorial QA")
@@ -255,7 +211,7 @@ export const editorialDeskStructure: StructureResolver = (S) => {
                     .apiVersion(apiVersion)
                     .schemaType("opinion")
                     .title("Needs Editorial QA")
-                    .filter(opinionNeedsEditorialQaFilter)
+                    .filter(opinionNeedsEditorialQaFilter),
                 ),
             ]),
         ),
@@ -275,7 +231,7 @@ export const editorialDeskStructure: StructureResolver = (S) => {
                     .apiVersion(apiVersion)
                     .schemaType("analysis")
                     .title("Draft Analysis")
-                    .filter('_type == "analysis" && status == "draft"')
+                    .filter('_type == "analysis" && status == "draft"'),
                 ),
               S.listItem()
                 .title("Published Analysis")
@@ -284,7 +240,7 @@ export const editorialDeskStructure: StructureResolver = (S) => {
                     .apiVersion(apiVersion)
                     .schemaType("analysis")
                     .title("Published Analysis")
-                    .filter('_type == "analysis" && status == "published"')
+                    .filter('_type == "analysis" && status == "published"'),
                 ),
               S.listItem()
                 .title("Needs Editorial QA")
@@ -293,7 +249,7 @@ export const editorialDeskStructure: StructureResolver = (S) => {
                     .apiVersion(apiVersion)
                     .schemaType("analysis")
                     .title("Needs Editorial QA")
-                    .filter(analysisNeedsEditorialQaFilter)
+                    .filter(analysisNeedsEditorialQaFilter),
                 ),
             ]),
         ),
@@ -313,7 +269,7 @@ export const editorialDeskStructure: StructureResolver = (S) => {
                     .apiVersion(apiVersion)
                     .schemaType("sponsored")
                     .title("Draft Sponsored")
-                    .filter('_type == "sponsored" && status == "draft"')
+                    .filter('_type == "sponsored" && status == "draft"'),
                 ),
               S.listItem()
                 .title("Published Sponsored")
@@ -322,7 +278,7 @@ export const editorialDeskStructure: StructureResolver = (S) => {
                     .apiVersion(apiVersion)
                     .schemaType("sponsored")
                     .title("Published Sponsored")
-                    .filter('_type == "sponsored" && status == "published"')
+                    .filter('_type == "sponsored" && status == "published"'),
                 ),
               S.listItem()
                 .title("Needs Sponsor Disclosure Review")
@@ -331,7 +287,7 @@ export const editorialDeskStructure: StructureResolver = (S) => {
                     .apiVersion(apiVersion)
                     .schemaType("sponsored")
                     .title("Needs Sponsor Disclosure Review")
-                    .filter(sponsoredNeedsDisclosureReviewFilter)
+                    .filter(sponsoredNeedsDisclosureReviewFilter),
                 ),
             ]),
         ),
@@ -365,7 +321,9 @@ export const editorialDeskStructure: StructureResolver = (S) => {
         .child(
           S.list()
             .title("Legacy / Utilities")
-            .items([S.documentTypeListItem("topic").title("Topics / Entities")]),
+            .items([
+              S.documentTypeListItem("topic").title("Topics / Entities"),
+            ]),
         ),
 
       ...(remainingTypes.length > 0 ? [S.divider(), ...remainingTypes] : []),

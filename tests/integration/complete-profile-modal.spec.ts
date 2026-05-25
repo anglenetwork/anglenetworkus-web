@@ -1,7 +1,9 @@
 import { test, expect } from "@playwright/test";
 
 test.describe("Complete Profile Modal After Login", () => {
-  test("modal appears after login when profile is incomplete", async ({ page }) => {
+  test("modal appears after login when profile is incomplete", async ({
+    page,
+  }) => {
     // Skip if no test email (authentication is handled by global setup)
     test.skip(!process.env.PLAYWRIGHT_TEST_EMAIL, "Test email not provided");
 
@@ -25,8 +27,8 @@ test.describe("Complete Profile Modal After Login", () => {
       await expect(modalTitle).toBeVisible();
       await expect(
         page.getByText(
-          /Please provide your first name, last name, and date of birth/i
-        )
+          /Please provide your first name, last name, and date of birth/i,
+        ),
       ).toBeVisible();
 
       // Verify form fields
@@ -136,7 +138,9 @@ test.describe("Complete Profile Modal After Login", () => {
     }
   });
 
-  test("modal does not show if profile is already complete", async ({ page }) => {
+  test("modal does not show if profile is already complete", async ({
+    page,
+  }) => {
     // Skip if no test email (authentication is handled by global setup)
     test.skip(!process.env.PLAYWRIGHT_TEST_EMAIL, "Test email not provided");
 
@@ -166,4 +170,3 @@ test.describe("Complete Profile Modal After Login", () => {
     expect(isModalVisible).toBe(false);
   });
 });
-

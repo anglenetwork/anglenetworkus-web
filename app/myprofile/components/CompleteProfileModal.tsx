@@ -81,10 +81,10 @@ export function CompleteProfileModal({
         }}
       >
         <DialogHeader>
-          <DialogTitle className="text-2xl font-semibold text-slate-900 font-sans">
+          <DialogTitle className="font-sans font-semibold text-2xl text-slate-900">
             {title}
           </DialogTitle>
-          <DialogDescription className="text-slate-600 font-sans">
+          <DialogDescription className="font-sans text-slate-600">
             {description}
           </DialogDescription>
         </DialogHeader>
@@ -108,4 +108,3 @@ export function CompleteProfileModal({
     </Dialog>
   );
 }
-

@@ -23,11 +23,20 @@ export async function POST(req: NextRequest) {
     };
 
     if (typeof articleId !== "string" || !articleId.trim()) {
-      return NextResponse.json({ error: "articleId required" }, { status: 400 });
+      return NextResponse.json(
+        { error: "articleId required" },
+        { status: 400 },
+      );
     }
 
-    if (typeof articleType !== "string" || !isArticleMetricTypeString(articleType)) {
-      return NextResponse.json({ error: "invalid articleType" }, { status: 400 });
+    if (
+      typeof articleType !== "string" ||
+      !isArticleMetricTypeString(articleType)
+    ) {
+      return NextResponse.json(
+        { error: "invalid articleType" },
+        { status: 400 },
+      );
     }
 
     await recordArticleView({

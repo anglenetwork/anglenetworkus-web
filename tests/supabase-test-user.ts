@@ -9,7 +9,7 @@ function normalizeEmail(email: string): string {
  */
 export async function findUserByEmail(
   admin: SupabaseClient,
-  email: string
+  email: string,
 ): Promise<User | null> {
   const target = normalizeEmail(email);
   const perPage = 200;
@@ -34,7 +34,7 @@ export type EnsureTestUserResult = {
 export async function ensurePlaywrightTestUser(
   admin: SupabaseClient,
   email: string,
-  password: string
+  password: string,
 ): Promise<EnsureTestUserResult> {
   const existing = await findUserByEmail(admin, email);
   if (existing) {
@@ -62,10 +62,13 @@ export async function ensurePlaywrightTestUser(
     if (maybeExists) {
       const again = await findUserByEmail(admin, email);
       if (again) {
-        const { error: uerr } = await admin.auth.admin.updateUserById(again.id, {
-          password,
-          email_confirm: true,
-        });
+        const { error: uerr } = await admin.auth.admin.updateUserById(
+          again.id,
+          {
+            password,
+            email_confirm: true,
+          },
+        );
         if (uerr) throw uerr;
         return { userId: again.id, action: "updated" };
       }

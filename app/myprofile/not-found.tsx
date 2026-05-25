@@ -10,7 +10,7 @@ export default function NotFound() {
           <CardTitle className="font-sans text-2xl">Page not found</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-          <p className="text-muted-foreground font-sans">
+          <p className="font-sans text-muted-foreground">
             This profile section doesn&apos;t exist.
           </p>
           <Button asChild className="font-sans">
@@ -21,4 +21,3 @@ export default function NotFound() {
     </div>
   );
 }
-

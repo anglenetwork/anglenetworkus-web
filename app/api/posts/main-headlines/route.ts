@@ -31,15 +31,24 @@ export async function GET() {
           description: "", // Optional, can be empty
         };
       })
-      .filter((item): item is { id: string; title: string; slug: string | null; image: string; description: string } => item !== null);
+      .filter(
+        (
+          item,
+        ): item is {
+          id: string;
+          title: string;
+          slug: string | null;
+          image: string;
+          description: string;
+        } => item !== null,
+      );
 
     return NextResponse.json({ items: galleryItems }, { status: 200 });
   } catch (error) {
     console.error("Error fetching main headline posts:", error);
     return NextResponse.json(
       { error: "Failed to fetch main headline posts", items: [] },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
-

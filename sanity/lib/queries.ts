@@ -1,6 +1,10 @@
 // /sanity/lib/queries.ts
 import { defineQuery } from "next-sanity";
 import { articleFamilyListFragment } from "./article-family-queries";
+import {
+  imageFieldsProjection,
+  imageGalleryFieldsProjection,
+} from "./image-fields-projection";
 
 /** ---------------------------
  *  Shared post field projection
@@ -14,15 +18,7 @@ const postFields = `
   excerpt,
   // New cover (external or asset)
   cover{
-    source,
-    externalUrl,
-    image,
-    alt,
-    epigraph,
-    creditProvider,
-    creditAuthor,
-    creditSourceUrl,
-    creditLicense
+    ${imageFieldsProjection}
   },
   "date": coalesce(publishedAt, _updatedAt),
   publishedAt,
@@ -60,20 +56,11 @@ const postFields = `
   "body": body[]{
     ...,
     _type == "editorialImage" => {
-      ...
+      ${imageFieldsProjection},
+      layout
     }
   },
-  "imageGallery": imageGallery[]{
-    source,
-    externalUrl,
-    image,
-    alt,
-    epigraph,
-    creditProvider,
-    creditAuthor,
-    creditSourceUrl,
-    creditLicense
-  },
+  ${imageGalleryFieldsProjection},
   seo{
     title,
     description,
@@ -93,27 +80,9 @@ const postFieldsHighlightedStories = `
   "title": coalesce(title, "Untitled"),
   "slug": slug.current,
   cover{
-    source,
-    externalUrl,
-    image,
-    alt,
-    epigraph,
-    creditProvider,
-    creditAuthor,
-    creditSourceUrl,
-    creditLicense
+    ${imageFieldsProjection}
   },
-  "imageGallery": imageGallery[]{
-    source,
-    externalUrl,
-    image,
-    alt,
-    epigraph,
-    creditProvider,
-    creditAuthor,
-    creditSourceUrl,
-    creditLicense
-  },
+  ${imageGalleryFieldsProjection},
   "category": select(
     defined(category->name) && defined(category->slug.current) => {
       "title": category->name,
@@ -155,15 +124,7 @@ const postFieldsLightweight = `
   excerpt,
   // New cover (external or asset)
   cover{
-    source,
-    externalUrl,
-    image,
-    alt,
-    epigraph,
-    creditProvider,
-    creditAuthor,
-    creditSourceUrl,
-    creditLicense
+    ${imageFieldsProjection}
   },
   "date": coalesce(publishedAt, _updatedAt),
   publishedAt,
@@ -198,18 +159,7 @@ const postFieldsLightweight = `
     "slug": slug.current
   },
 
-  // Only include imageGallery in lightweight payloads.
-  "imageGallery": imageGallery[]{
-    source,
-    externalUrl,
-    image,
-    alt,
-    epigraph,
-    creditProvider,
-    creditAuthor,
-    creditSourceUrl,
-    creditLicense
-  }
+  ${imageGalleryFieldsProjection}
 `;
 
 export const indexQuery = defineQuery(`
@@ -343,7 +293,9 @@ export const latestNews4Query = `
     externalUrl,
     image,
     alt,
-    epigraph,
+    "caption": coalesce(caption, epigraph),
+    creditAuthor,
+    "creditSource": coalesce(creditSource, creditProvider),
   },
   publishedAt,
   "date": coalesce(publishedAt, _updatedAt)
@@ -364,7 +316,9 @@ export const popularReadsFallbackQuery = `
     externalUrl,
     image,
     alt,
-    epigraph,
+    "caption": coalesce(caption, epigraph),
+    creditAuthor,
+    "creditSource": coalesce(creditSource, creditProvider),
   },
   publishedAt,
   priority, featured,
@@ -389,7 +343,9 @@ export const homepageMostReadFallbackQuery = `
     externalUrl,
     image,
     alt,
-    epigraph,
+    "caption": coalesce(caption, epigraph),
+    creditAuthor,
+    "creditSource": coalesce(creditSource, creditProvider),
   },
   publishedAt,
   priority, featured,
@@ -570,7 +526,7 @@ const SEARCH_TEXT_MATCH = `(
   title match $term ||
   tickerTitle match $term ||
   excerpt match $term ||
-  cover.epigraph match $term
+  coalesce(cover.caption, cover.epigraph) match $term
 )`;
 
 /** score()/boost() only allow document-local match expressions (no derefs, pt::text, count). */
@@ -579,7 +535,7 @@ const SEARCH_SCORE_PIPE = `
   boost(title match $term, 100),
   boost(tickerTitle match $term, 80),
   boost(excerpt match $term, 65),
-  boost(cover.epigraph match $term, 55),
+  boost(coalesce(cover.caption, cover.epigraph) match $term, 55),
   boost(searchText match $term, 20)
 )
 | order(_score desc, publishedAt desc)
@@ -740,15 +696,7 @@ export const postsByIdsQuery = defineQuery(`
     "slug": slug.current,
     "date": coalesce(publishedAt, _updatedAt),
     cover{
-      source,
-      externalUrl,
-      image,
-      alt,
-      epigraph,
-      creditProvider,
-      creditAuthor,
-      creditSourceUrl,
-      creditLicense
+      ${imageFieldsProjection}
     }
   }
 `);
@@ -760,15 +708,7 @@ export const mainHeadlinesQuery = defineQuery(`
     title,
     "slug": slug.current,
     cover{
-      source,
-      externalUrl,
-      image,
-      alt,
-      epigraph,
-      creditProvider,
-      creditAuthor,
-      creditSourceUrl,
-      creditLicense
+      ${imageFieldsProjection}
     }
   }
 `);
@@ -780,10 +720,7 @@ export const secondSectionQuery = defineQuery(`
     "thirdMostViewed": *[_type == "post" && category->slug.current == slug.current] | order(publishedAt desc, _updatedAt desc) [0...5] {
       _id, title, "slug": slug.current, excerpt, 
       cover{
-        source,
-        externalUrl,
-        image,
-        alt
+        ${imageFieldsProjection}
       },
       "date": coalesce(publishedAt, _updatedAt), publishedAt,
       "author": select(
@@ -802,10 +739,7 @@ export const secondSectionQuery = defineQuery(`
     "thirdLatest": *[_type == "post" && category->slug.current == slug.current] | order(publishedAt desc, _updatedAt desc) [0...5] {
       _id, title, "slug": slug.current, excerpt, 
       cover{
-        source,
-        externalUrl,
-        image,
-        alt
+        ${imageFieldsProjection}
       },
       "date": coalesce(publishedAt, _updatedAt), publishedAt,
       "author": select(

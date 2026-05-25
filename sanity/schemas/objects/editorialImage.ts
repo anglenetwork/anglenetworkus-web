@@ -2,6 +2,7 @@ import { defineField, defineType } from "sanity";
 import {
   externalUrlField,
   imageAssetField,
+  imageAttributionValidation,
   imageSourceField,
   mediaAltField,
   mediaCaptionAndCreditFields,
@@ -11,6 +12,7 @@ export default defineType({
   name: "editorialImage",
   title: "Editorial Image",
   type: "object",
+  validation: imageAttributionValidation,
   fields: [
     imageSourceField,
     externalUrlField,
@@ -38,12 +40,12 @@ export default defineType({
     select: {
       source: "source",
       media: "image",
-      epigraph: "epigraph",
+      caption: "caption",
       alt: "alt",
     },
-    prepare({ source, media, epigraph, alt }: any) {
+    prepare({ source, media, caption, alt }: any) {
       return {
-        title: epigraph || alt || "Editorial Image",
+        title: caption || alt || "Editorial Image",
         subtitle: source === "external" ? "External image" : "Uploaded asset",
         media,
       };

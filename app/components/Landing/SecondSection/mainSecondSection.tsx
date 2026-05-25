@@ -18,7 +18,9 @@ interface Post {
     externalUrl?: string | null;
     image?: any;
     alt?: string | null;
-    imageSource?: string | null;
+    caption?: string | null;
+    creditAuthor?: string | null;
+    creditSource?: string | null;
   } | null;
   date: string;
   author?: {
@@ -42,9 +44,7 @@ interface SixthSectionProps {
   categoriesData?: CategoryData[];
 }
 
-export default function SixthSection({
-  categoriesData,
-}: SixthSectionProps) {
+export default function SixthSection({ categoriesData }: SixthSectionProps) {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
   // Transform the data into the format expected by ArticleCard
@@ -65,13 +65,13 @@ export default function SixthSection({
           image: category.thirdArticle.cover
             ? getCoverImage(
                 category.thirdArticle.cover,
-                category.thirdArticle.title || "Article image"
+                category.thirdArticle.title || "Article image",
               )?.src
             : undefined,
           imageAlt: category.thirdArticle.cover
             ? getCoverImage(
                 category.thirdArticle.cover,
-                category.thirdArticle.title || "Article image"
+                category.thirdArticle.title || "Article image",
               )?.alt ||
               category.thirdArticle.title ||
               "Article image"
@@ -79,7 +79,7 @@ export default function SixthSection({
           imageUnoptimized: category.thirdArticle.cover
             ? getCoverImage(
                 category.thirdArticle.cover,
-                category.thirdArticle.title || "Article image"
+                category.thirdArticle.title || "Article image",
               )?.unoptimized || false
             : false,
           imageSource:
@@ -148,7 +148,7 @@ export default function SixthSection({
             variant="outline"
             size="icon"
             aria-label="Scroll left"
-            className="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-white shadow-lg hover:bg-gray-50"
+            className="absolute top-1/2 left-0 z-10 -translate-y-1/2 bg-white shadow-lg hover:bg-gray-50"
             onClick={scrollLeft}
           >
             <ChevronLeft className="h-4 w-4" />
@@ -159,7 +159,7 @@ export default function SixthSection({
             variant="outline"
             size="icon"
             aria-label="Scroll right"
-            className="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-white shadow-lg hover:bg-gray-50"
+            className="absolute top-1/2 right-0 z-10 -translate-y-1/2 bg-white shadow-lg hover:bg-gray-50"
             onClick={scrollRight}
           >
             <ChevronRight className="h-4 w-4" />
@@ -168,10 +168,10 @@ export default function SixthSection({
           {/* Horizontal Scrolling Container */}
           <div
             ref={scrollContainerRef}
-            className="flex gap-6 overflow-x-auto scrollbar-hide px-12"
+            className="scrollbar-hide flex gap-6 overflow-x-auto px-12"
           >
             {displayStories.map((story) => (
-              <div key={story.id} className="flex-shrink-0 w-[300px]">
+              <div key={story.id} className="w-[300px] flex-shrink-0">
                 <ArticleCardAlternative
                   category={story.category}
                   title={story.title}

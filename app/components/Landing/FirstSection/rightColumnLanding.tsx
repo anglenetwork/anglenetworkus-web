@@ -2,6 +2,11 @@ import Link from "next/link";
 import { getCoverImage } from "@/sanity/lib/utils";
 import { SectionHeader } from "../../ui/section-header";
 import { ImageRenderer } from "../../ui/image-renderer";
+import {
+  mostReadItemTitle,
+  mostReadRankNumber,
+  sideStoryTitle,
+} from "@/app/lib/typography/first-section";
 
 interface Post {
   _id: string;
@@ -30,7 +35,7 @@ export function RightColumnLanding({
   mostRead,
 }: RightColumnLandingProps) {
   return (
-    <div className="text-left px-0 md:px-4">
+    <div className="px-0 text-left md:px-4">
       {sideStories.map((post, index) => (
         <article key={post._id} className="mb-4">
           {(() => {
@@ -39,7 +44,7 @@ export function RightColumnLanding({
             return (
               <div className="mb-4">
                 <Link href={`/post/${post.slug}`}>
-                  <div className="w-full h-48 overflow-hidden rounded-sm relative">
+                  <div className="relative h-48 w-full overflow-hidden rounded-sm">
                     <ImageRenderer
                       src={coverData.src}
                       alt={coverData.alt}
@@ -48,7 +53,7 @@ export function RightColumnLanding({
                       unoptimized={coverData.unoptimized}
                       quality={55}
                       sizes="(max-width: 640px) 100vw, (max-width: 1024px) 100vw, 500px"
-                      className="object-cover rounded-sm"
+                      className="rounded-sm object-cover"
                       fill
                     />
                   </div>
@@ -57,15 +62,13 @@ export function RightColumnLanding({
             );
           })()}
           <Link href={`/post/${post.slug}`} className="hover:text-red-600">
-            <h3 className="text-xl font-sans font-semibold text-neutral-900 leading-snug tracking-tight">
-              {post.title}
-            </h3>
+            <h3 className={sideStoryTitle}>{post.title}</h3>
           </Link>
         </article>
       ))}
 
       {/* What Matters section */}
-      <div className="p-8 bg-neutral-200 rounded-xl">
+      <div className="rounded-xl bg-neutral-200 p-8">
         <SectionHeader
           title="What Matters"
           variant="light"
@@ -79,18 +82,14 @@ export function RightColumnLanding({
             {mostRead.map((post, index) => (
               <article
                 key={post._id}
-                className="flex items-start justify-start lg:justify-start space-x-3 pb-2"
+                className="flex items-start justify-start space-x-3 pb-2 lg:justify-start"
               >
-                <span className="text-lg font-bold text-blue-600 flex-shrink-0 font-sans">
-                  {index + 1}
-                </span>
+                <span className={mostReadRankNumber}>{index + 1}</span>
                 <Link
                   href={`/post/${post.slug}`}
                   className="hover:text-red-600"
                 >
-                  <h3 className="text-neutral-900 leading-tight font-sans text-lg sm:text-base font-normal tracking-normal">
-                    {post.title}
-                  </h3>
+                  <h3 className={mostReadItemTitle}>{post.title}</h3>
                 </Link>
               </article>
             ))}

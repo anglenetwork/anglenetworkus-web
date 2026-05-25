@@ -1,4 +1,9 @@
 import { defineQuery } from "next-sanity";
+import {
+  coverFieldsProjection,
+  imageFieldsProjection,
+  imageGalleryFieldsProjection,
+} from "./image-fields-projection";
 
 /**
  * Shared GROQ projections for article-family documents.
@@ -9,38 +14,15 @@ const articleFamilyBody = `
   "body": body[]{
     ...,
     _type == "editorialImage" => {
-      ...
+      ${imageFieldsProjection},
+      layout
     }
   }
 `;
 
-const articleFamilyImageGallery = `
-  "imageGallery": imageGallery[]{
-    source,
-    externalUrl,
-    image,
-    alt,
-    epigraph,
-    creditProvider,
-    creditAuthor,
-    creditSourceUrl,
-    creditLicense
-  }
-`;
+const articleFamilyImageGallery = imageGalleryFieldsProjection;
 
-const articleFamilyCover = `
-  cover{
-    source,
-    externalUrl,
-    image,
-    alt,
-    epigraph,
-    creditProvider,
-    creditAuthor,
-    creditSourceUrl,
-    creditLicense
-  }
-`;
+const articleFamilyCover = coverFieldsProjection;
 
 const articleFamilyAuthor = `
   "author": select(
@@ -65,7 +47,6 @@ const articleFamilyCategoryTags = `
 `;
 
 const articleFamilyTypeSpecific = `
-  opinionFormat,
   disclosure,
   analysisFocus,
   methodologyNote,

@@ -1,25 +1,30 @@
 import {
-  ARTICLE_META_PRIMARY_CLASS,
-  ARTICLE_META_SECONDARY_CLASS,
+  ARTICLE_IMAGE_EPIGRAPH_CLASS,
+  ARTICLE_IMAGE_EPIGRAPH_CREDIT_CLASS,
 } from "./constants";
 
 interface ArticleCaptionProps {
-  epigraph?: string | null;
+  caption?: string | null;
   credit?: string | null;
   alt?: string | null;
   showAltAsCaption?: boolean;
-  fallbackEpigraph?: string;
+  fallbackCaption?: string;
+}
+
+function captionCreditSeparator(caption: string): string {
+  return /[.!?]$/.test(caption) ? " " : ". ";
 }
 
 export default function ArticleCaption({
-  epigraph,
+  caption,
   credit,
   alt,
   showAltAsCaption = false,
-  fallbackEpigraph,
+  fallbackCaption,
 }: ArticleCaptionProps) {
-  const displayEpigraph = epigraph || fallbackEpigraph;
-  const showPrimaryLine = Boolean(displayEpigraph || credit);
+  const displayCaption = (caption || fallbackCaption)?.trim() || null;
+  const displayCredit = credit?.trim() || null;
+  const showPrimaryLine = Boolean(displayCaption || displayCredit);
   const showAltLine = Boolean(showAltAsCaption && alt);
 
   if (!showPrimaryLine && !showAltLine) return null;
@@ -28,20 +33,24 @@ export default function ArticleCaption({
     <figcaption className="mt-2 text-left">
       {showPrimaryLine && (
         <p className="leading-snug">
-          {displayEpigraph && (
-            <span className={ARTICLE_META_PRIMARY_CLASS}>{displayEpigraph}</span>
+          {displayCaption && (
+            <span className={ARTICLE_IMAGE_EPIGRAPH_CLASS}>{displayCaption}</span>
           )}
-          {displayEpigraph && credit && (
-            <span className="text-neutral-400"> • </span>
+          {displayCaption && displayCredit && (
+            <span className={ARTICLE_IMAGE_EPIGRAPH_CLASS}>
+              {captionCreditSeparator(displayCaption)}
+            </span>
           )}
-          {credit && (
-            <span className={ARTICLE_META_SECONDARY_CLASS}>{credit}</span>
+          {displayCredit && (
+            <span className={ARTICLE_IMAGE_EPIGRAPH_CREDIT_CLASS}>
+              {displayCredit}
+            </span>
           )}
         </p>
       )}
       {showAltLine && (
         <p
-          className="font-sans text-[12px] sm:text-xs text-neutral-400"
+          className="font-sans text-[12px] text-neutral-400 sm:text-xs"
           aria-hidden="true"
         >
           {alt}

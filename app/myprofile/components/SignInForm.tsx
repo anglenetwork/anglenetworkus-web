@@ -53,7 +53,7 @@ export function SignInForm() {
       <div className="space-y-2">
         <label
           htmlFor="email"
-          className="text-sm font-medium text-foreground font-sans"
+          className="font-medium font-sans text-foreground text-sm"
         >
           Email
         </label>
@@ -72,7 +72,7 @@ export function SignInForm() {
       {/* Message Display */}
       {message && (
         <div
-          className={`text-sm font-sans ${
+          className={`font-sans text-sm ${
             message.type === "error" ? "text-red-600" : "text-green-600"
           }`}
         >
@@ -84,7 +84,7 @@ export function SignInForm() {
       <Button
         type="submit"
         disabled={loading}
-        className="w-full bg-foreground text-background hover:bg-foreground/90 h-11 font-sans"
+        className="h-11 w-full bg-foreground font-sans text-background hover:bg-foreground/90"
       >
         {loading ? "Sending..." : "Send magic link"}
       </Button>

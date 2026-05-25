@@ -24,14 +24,14 @@ export function CenterColumnSixthSection({
   categoryTitle,
 }: NewsSectionProps) {
   return (
-    <div className="border-r border-gray-200 px-6 mb-8">
-      <div className="flex items-center mb-4">
-        <div className="w-2 h-2 bg-red-500 rounded-full mr-2"></div>
-        <h2 className="text-xs font-medium text-neutral-900 uppercase tracking-wider font-sans">
+    <div className="mb-8 border-gray-200 border-r px-6">
+      <div className="mb-4 flex items-center">
+        <div className="mr-2 h-2 w-2 rounded-full bg-red-500"></div>
+        <h2 className="font-medium font-sans text-neutral-900 text-xs uppercase tracking-wider">
           {categoryTitle}
         </h2>
       </div>
-      <div className="border-t border-black mb-6"></div>
+      <div className="mb-6 border-black border-t"></div>
 
       {/* Main Article */}
       <div className="mb-6">
@@ -41,15 +41,15 @@ export function CenterColumnSixthSection({
             alt={data.mainStory.title}
             width={800}
             height={320}
-            className="w-full h-80 object-cover rounded-sm mb-4 cursor-pointer hover:opacity-90 transition-opacity"
+            className="mb-4 h-80 w-full cursor-pointer rounded-sm object-cover transition-opacity hover:opacity-90"
           />
         </Link>
         <Link href={`/post/${data.mainStory.slug}`}>
-          <h1 className="text-3xl font-semibold text-gray-900 mb-3 font-sans cursor-pointer hover:text-gray-700 transition-colors">
+          <h1 className="mb-3 cursor-pointer font-sans font-semibold text-3xl text-gray-900 transition-colors hover:text-gray-700">
             {data.mainStory.title}
           </h1>
         </Link>
-        <p className="text-sm font-light text-neutral-400 mb-4 font-sans">
+        <p className="mb-4 font-light font-sans text-neutral-400 text-sm">
           By{" "}
           {data.mainStory.authors.map((author, index) => (
             <span key={author}>
@@ -62,7 +62,7 @@ export function CenterColumnSixthSection({
 
       {/* Extra Stories */}
       {data.extraStories.map((story, index) => (
-        <div key={index} className="border-t border-gray-300 pt-6 mb-6">
+        <div key={index} className="mb-6 border-gray-300 border-t pt-6">
           <div className="flex gap-4">
             <Link href={`/post/${story.slug}`}>
               <Image
@@ -70,20 +70,20 @@ export function CenterColumnSixthSection({
                 alt={story.title}
                 width={160}
                 height={112}
-                className="w-40 h-28 object-cover rounded-sm flex-shrink-0 cursor-pointer hover:opacity-90 transition-opacity"
+                className="h-28 w-40 flex-shrink-0 cursor-pointer rounded-sm object-cover transition-opacity hover:opacity-90"
               />
             </Link>
             <div className="flex-1">
               <Link href={`/post/${story.slug}`}>
-                <h3 className="text-base font-semibold text-neutral-900 mb-2 font-sans cursor-pointer hover:text-gray-700 transition-colors">
+                <h3 className="mb-2 cursor-pointer font-sans font-semibold text-base text-neutral-900 transition-colors hover:text-gray-700">
                   {story.title}
                 </h3>
               </Link>
-              <p className="text-xs text-neutral-400 font-sans">
+              <p className="font-sans text-neutral-400 text-xs">
                 By{" "}
                 {story.authors.map((author, index) => (
                   <span key={author}>
-                    <span className="font-medium capitalize text-neutral-500">
+                    <span className="font-medium text-neutral-500 capitalize">
                       {author}
                     </span>
                     {index < story.authors.length - 1 && ", "}

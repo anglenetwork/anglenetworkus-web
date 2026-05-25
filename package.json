@@ -11,11 +11,13 @@
   "scripts": {
     "predev": "npm run typegen",
     "dev": "next --turbo",
-    "prebuild": "npm run typegen",
+    "prebuild": "npm run typegen && npm run format",
     "build": "next build",
     "start": "next start",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
+    "format": "biome format --write . && biome lint --write --unsafe --only=nursery/useSortedClasses .",
+    "format:check": "biome format . && biome lint --only=nursery/useSortedClasses .",
     "presetup": "echo 'about to setup env variables, follow the guide here: https://github.com/vercel/next.js/tree/canary/examples/cms-sanity#using-the-sanity-cli'",
     "setup": "npx sanity@latest init --env .env.local",
     "postsetup": "echo 'create the read token by following the rest of the guide: https://github.com/vercel/next.js/tree/canary/examples/cms-sanity#creating-a-read-token'",
@@ -81,6 +83,7 @@
     "tailwindcss-animate": "^1.0.7"
   },
   "devDependencies": {
+    "@biomejs/biome": "2.4.15",
     "@eslint/eslintrc": "^3.2.0",
     "@playwright/test": "^1.57.0",
     "@testing-library/jest-dom": "^6.6.3",

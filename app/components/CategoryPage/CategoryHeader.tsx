@@ -14,10 +14,10 @@ export function CategoryHeader({
   categoryTickerPosts,
 }: CategoryHeaderProps) {
   return (
-    <header className="border-b border-border bg-card">
+    <header className="border-border border-b bg-card">
       <SitePageWidth className="py-4">
         <div className="">
-          <h1 className="font-sans text-4xl md:text-5xl lg:text-6xl font-bold capitalize text-center">
+          <h1 className="text-center font-bold font-sans text-4xl capitalize md:text-5xl lg:text-6xl">
             {categoryName}
           </h1>
         </div>

@@ -9,17 +9,45 @@ import { sanityFetch } from "@/sanity/lib/fetch";
 import { settingsQuery } from "@/sanity/lib/queries";
 import PostHeader from "@/app/components/PostPage/PostHeader";
 import PostBody from "@/app/components/PostPage/PostBody";
+import PostSelectedNews from "@/app/components/PostPage/PostSelectedNews";
 import { PreloadCoverImage } from "@/app/components/PostPage/PreloadCoverImage";
 import { getCoverImage } from "@/sanity/lib/utils";
 import ArticleViewTracker from "@/app/components/article-family/ArticleViewTracker";
 import CategoryViewTracker from "@/app/post/[slug]/CategoryViewTracker";
 import { SitePageWidth } from "@/app/components/layout/site-page-width";
 import { articleFamilyCanonicalHref } from "@/app/lib/article-family/routes";
+import { loadArticlePageSidebars } from "@/app/lib/article-family/sidebars";
+import { NON_REGULAR_POST_CONTENT_MAX_WIDTH_CLASS } from "@/app/components/PostPage/PostBody/constants";
+import {
+  nonRegularPostAnalysisFocus,
+  nonRegularPostDisclosure,
+  nonRegularPostExcerpt,
+  nonRegularPostPresenterName,
+  nonRegularPostTitle,
+  nonRegularPostTransparencyBody,
+  nonRegularPostTransparencyHeading,
+  nonRegularPostTransparencySubheading,
+  nonRegularPostTypeBadge,
+  nonRegularPostTypeLabel,
+} from "@/app/lib/typography/posts";
 import { cn } from "@/lib/utils";
+
+type ArticleFamilySidebarData = Awaited<
+  ReturnType<typeof loadArticlePageSidebars>
+>;
+
+type ArticleFamilyFooter =
+  | ReactNode
+  | ((sidebarData: ArticleFamilySidebarData) => ReactNode);
 
 function TypeBadge({ children }: { children: ReactNode }) {
   return (
-    <span className="inline-block mb-2 rounded-sm border border-neutral-300 bg-neutral-100 px-2 py-0.5 text-xs font-semibold uppercase tracking-wider text-neutral-800">
+    <span
+      className={cn(
+        "mb-2 inline-block rounded-sm border border-neutral-300 bg-neutral-100 px-2 py-0.5 text-neutral-800",
+        nonRegularPostTypeBadge,
+      )}
+    >
       {children}
     </span>
   );
@@ -27,28 +55,32 @@ function TypeBadge({ children }: { children: ReactNode }) {
 
 export default async function ArticleFamilyPage({
   article,
-  sidebar,
   footer,
 }: {
   article: ArticleFamily;
-  sidebar?: ReactNode;
   /** Suggested tags + bottom module */
-  footer?: ReactNode;
+  footer?: ArticleFamilyFooter;
 }) {
-  const settings = await sanityFetch({
-    query: settingsQuery,
-    stega: false,
-  });
+  const [settings, sidebarData] = await Promise.all([
+    sanityFetch({
+      query: settingsQuery,
+      stega: false,
+    }),
+    loadArticlePageSidebars(article),
+  ]);
   const { article: articleLd, breadcrumb: breadcrumbLd } =
     buildArticlePageJsonLd({
       article,
       settings,
       demoTitle: demo.title,
     });
+  const { newsForYou, popularReads } = sidebarData;
+  const footerContent =
+    typeof footer === "function" ? footer(sidebarData) : footer;
 
   const coverData = getCoverImage(
     article.cover as Parameters<typeof getCoverImage>[0],
-    article.title || "Article"
+    article.title || "Article",
   );
   const coverImageUrl = coverData?.src || null;
 
@@ -58,20 +90,22 @@ export default async function ArticleFamilyPage({
   const showEditorialChrome = showOpinionChrome || showAnalysisChrome;
   const canonicalArticlePath = articleFamilyCanonicalHref(
     article._type,
-    article.slug
+    article.slug,
   );
   const postBodyProps: ComponentProps<typeof PostBody> = {
     sharePath: canonicalArticlePath,
     body: article.body,
     cover: article.cover as ComponentProps<typeof PostBody>["cover"],
-    imageGallery:
-      article.imageGallery as ComponentProps<typeof PostBody>["imageGallery"],
+    imageGallery: article.imageGallery as ComponentProps<
+      typeof PostBody
+    >["imageGallery"],
     title: article.title || "Untitled",
     author: article.author ?? undefined,
     date: article.date,
     updatedAt: article.updatedAt || null,
     slug: article.slug || undefined,
     articleId: article._id,
+    insetPopularReads: popularReads,
   };
 
   return (
@@ -100,39 +134,44 @@ export default async function ArticleFamilyPage({
       <SitePageWidth className="py-4">
         {showEditorialChrome ? (
           <article className="mt-4 lg:mt-8">
-            <header className="mx-auto mb-8 max-w-[860px] not-prose">
+            <header
+              className={cn(
+                "not-prose mb-2",
+                NON_REGULAR_POST_CONTENT_MAX_WIDTH_CLASS,
+              )}
+            >
               <div>
-                <p className="mb-2 font-sans text-xs font-bold uppercase tracking-[0.18em] text-red-700">
+                <p className={cn("mb-2", nonRegularPostTypeLabel)}>
                   {showOpinionChrome ? "Opinion" : "Analysis"}
-                  {showOpinionChrome && article.opinionFormat
-                    ? ` / ${article.opinionFormat.replace(/-/g, " ")}`
-                    : ""}
                 </p>
-                <h1
-                  className={cn(
-                    "font-sans font-bold tracking-tight text-neutral-950 sm:text-[48px] lg:text-[56px]",
-                    showOpinionChrome
-                      ? "text-[42px] leading-[1.22] sm:leading-[1.1] lg:leading-[1.05]"
-                      : "text-[36px] leading-[1.05]",
-                  )}
-                >
+                <h1 className={nonRegularPostTitle}>
                   {article.title || "Untitled"}
                 </h1>
                 {article.excerpt && (
-                  <p className="mt-4 max-w-3xl font-sans text-base font-light leading-relaxed text-neutral-600 md:text-lg">
+                  <p className={cn("mt-4 max-w-3xl", nonRegularPostExcerpt)}>
                     {article.excerpt}
                   </p>
                 )}
               </div>
 
               {showAnalysisChrome && article.analysisFocus && (
-                <p className="mt-5 max-w-3xl border-l-4 border-neutral-300 pl-4 font-sans text-sm font-medium text-neutral-700">
+                <p
+                  className={cn(
+                    "mt-3 max-w-3xl border-neutral-300 border-l-4 bg-neutral-100 py-2 pl-4",
+                    nonRegularPostAnalysisFocus,
+                  )}
+                >
                   {article.analysisFocus}
                 </p>
               )}
 
               {showOpinionChrome && article.disclosure && (
-                <aside className="mt-5 max-w-3xl rounded-md bg-neutral-100 px-4 py-3 font-sans text-sm text-neutral-800">
+                <aside
+                  className={cn(
+                    "mt-3 max-w-3xl border-neutral-300 border-l-4 bg-neutral-100 py-2 pl-4",
+                    nonRegularPostDisclosure,
+                  )}
+                >
                   {article.disclosure}
                 </aside>
               )}
@@ -143,31 +182,54 @@ export default async function ArticleFamilyPage({
             {showAnalysisChrome &&
               (article.methodologyNote || article.sourcesNote) && (
                 <section
-                  className="mx-auto mt-10 max-w-[860px] border-t border-neutral-200 pt-8 not-prose"
+                  className={cn(
+                    "not-prose mt-10 border-neutral-200 border-t pt-8",
+                    NON_REGULAR_POST_CONTENT_MAX_WIDTH_CLASS,
+                  )}
                   aria-labelledby="transparency-heading"
                 >
                   <h2
                     id="transparency-heading"
-                    className="mb-4 font-sans text-lg font-bold text-neutral-900"
+                    className={cn("mb-4", nonRegularPostTransparencyHeading)}
                   >
                     Context and transparency
                   </h2>
                   {article.methodologyNote && (
                     <div className="mb-4">
-                      <h3 className="mb-1 font-sans text-sm font-semibold text-neutral-800">
+                      <h3
+                        className={cn(
+                          "mb-1",
+                          nonRegularPostTransparencySubheading,
+                        )}
+                      >
                         Methodology
                       </h3>
-                      <p className="whitespace-pre-wrap font-sans text-sm text-neutral-700">
+                      <p
+                        className={cn(
+                          "whitespace-pre-wrap",
+                          nonRegularPostTransparencyBody,
+                        )}
+                      >
                         {article.methodologyNote}
                       </p>
                     </div>
                   )}
                   {article.sourcesNote && (
                     <div>
-                      <h3 className="mb-1 font-sans text-sm font-semibold text-neutral-800">
+                      <h3
+                        className={cn(
+                          "mb-1",
+                          nonRegularPostTransparencySubheading,
+                        )}
+                      >
                         Sources
                       </h3>
-                      <p className="whitespace-pre-wrap font-sans text-sm text-neutral-700">
+                      <p
+                        className={cn(
+                          "whitespace-pre-wrap",
+                          nonRegularPostTransparencyBody,
+                        )}
+                      >
                         {article.sourcesNote}
                       </p>
                     </div>
@@ -177,123 +239,167 @@ export default async function ArticleFamilyPage({
           </article>
         ) : (
           <article className="mt-4 lg:mt-8">
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-0 lg:gap-16">
+            <div className="grid grid-cols-1 gap-0 lg:grid-cols-12 lg:gap-16">
               <div className="col-span-1 lg:col-span-8">
-                <header className="mb-6 not-prose space-y-3">
-                {showSponsoredChrome && (
-                  <TypeBadge>Sponsored</TypeBadge>
-                )}
+                <header className="not-prose mb-6 space-y-3">
+                  {showSponsoredChrome && <TypeBadge>Sponsored</TypeBadge>}
 
-                {showSponsoredChrome && article.sponsorAttribution && (
-                  <div className="rounded-md border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-950">
-                    <p className="font-semibold">
-                      Presented by {article.sponsorAttribution.sponsorName}
-                    </p>
-                    {article.sponsorAttribution.sponsorUrl && (
-                      <a
-                        href={article.sponsorAttribution.sponsorUrl}
-                        className="text-amber-900 underline underline-offset-2"
-                        target="_blank"
-                        rel="noopener noreferrer sponsored"
-                      >
-                        Learn more about this partner
-                      </a>
+                  {showSponsoredChrome && article.sponsorAttribution && (
+                    <div className="rounded-md border border-amber-200 bg-amber-50 px-4 py-3 text-amber-950 text-sm">
+                      <p className={nonRegularPostPresenterName}>
+                        Presented by {article.sponsorAttribution.sponsorName}
+                      </p>
+                      {article.sponsorAttribution.sponsorUrl && (
+                        <a
+                          href={article.sponsorAttribution.sponsorUrl}
+                          className="text-amber-900 underline underline-offset-2"
+                          target="_blank"
+                          rel="noopener noreferrer sponsored"
+                        >
+                          Learn more about this partner
+                        </a>
+                      )}
+                    </div>
+                  )}
+
+                  {showSponsoredChrome &&
+                    article.sponsorAttribution?.disclosure && (
+                      <div className="rounded-md border border-neutral-300 bg-neutral-50 p-4 text-neutral-800 text-sm leading-relaxed">
+                        {article.sponsorAttribution.disclosure}
+                      </div>
                     )}
-                  </div>
-                )}
 
-                {showSponsoredChrome && article.sponsorAttribution?.disclosure && (
-                  <div className="rounded-md border border-neutral-300 bg-neutral-50 p-4 text-sm leading-relaxed text-neutral-800">
-                    {article.sponsorAttribution.disclosure}
-                  </div>
-                )}
+                  <PostHeader
+                    category={
+                      article.category?.title && article.category?.slug
+                        ? {
+                            title: article.category.title,
+                            slug: article.category.slug,
+                          }
+                        : undefined
+                    }
+                    title={article.title || "Untitled"}
+                    excerpt={article.excerpt || undefined}
+                    date={article.date}
+                    updatedAt={article.updatedAt || null}
+                    author={article.author ?? undefined}
+                    slug={article.slug || undefined}
+                    articleId={article._id}
+                    sharePath={canonicalArticlePath}
+                  />
 
-                <PostHeader
-                  category={
-                    article.category?.title && article.category?.slug
-                      ? {
-                          title: article.category.title,
-                          slug: article.category.slug,
-                        }
-                      : undefined
-                  }
-                  title={article.title || "Untitled"}
-                  excerpt={article.excerpt || undefined}
-                  date={article.date}
-                  updatedAt={article.updatedAt || null}
-                  author={article.author ?? undefined}
-                  slug={article.slug || undefined}
-                  articleId={article._id}
-                  sharePath={canonicalArticlePath}
-                />
+                  {showAnalysisChrome && article.analysisFocus && (
+                    <p
+                      className={cn(
+                        "mt-3 border-neutral-400 border-l-4 pl-3",
+                        nonRegularPostAnalysisFocus,
+                      )}
+                    >
+                      {article.analysisFocus}
+                    </p>
+                  )}
 
-                {showOpinionChrome && article.opinionFormat && (
-                  <p className="text-xs font-semibold uppercase tracking-wide text-neutral-600">
-                    {article.opinionFormat.replace(/-/g, " ")}
-                  </p>
-                )}
-
-                {showAnalysisChrome && article.analysisFocus && (
-                  <p className="text-sm font-medium text-neutral-700 border-l-4 border-neutral-400 pl-3">
-                    {article.analysisFocus}
-                  </p>
-                )}
-
-                {showOpinionChrome && article.disclosure && (
-                  <aside className="rounded-md bg-neutral-100 px-4 py-3 text-sm text-neutral-800">
-                    {article.disclosure}
-                  </aside>
-                )}
+                  {showOpinionChrome && article.disclosure && (
+                    <aside className="rounded-md bg-neutral-100 px-4 py-3">
+                      <p className={nonRegularPostDisclosure}>
+                        {article.disclosure}
+                      </p>
+                    </aside>
+                  )}
                 </header>
 
-                <PostBody {...postBodyProps} />
+                <PostBody
+                  {...postBodyProps}
+                  mediaPresentation={
+                    showSponsoredChrome ? "nonRegularCover" : "default"
+                  }
+                />
 
-              {showAnalysisChrome &&
-                (article.methodologyNote || article.sourcesNote) && (
-                  <section
-                    className="mt-10 border-t border-neutral-200 pt-8 not-prose"
-                    aria-labelledby="transparency-heading"
-                  >
-                    <h2
-                      id="transparency-heading"
-                      className="text-lg font-bold text-neutral-900 mb-4"
+                {showAnalysisChrome &&
+                  (article.methodologyNote || article.sourcesNote) && (
+                    <section
+                      className="not-prose mt-10 border-neutral-200 border-t pt-8"
+                      aria-labelledby="transparency-heading"
                     >
-                      Context and transparency
-                    </h2>
-                    {article.methodologyNote && (
-                      <div className="mb-4">
-                        <h3 className="text-sm font-semibold text-neutral-800 mb-1">
-                          Methodology
-                        </h3>
-                        <p className="text-sm text-neutral-700 whitespace-pre-wrap">
-                          {article.methodologyNote}
-                        </p>
-                      </div>
-                    )}
-                    {article.sourcesNote && (
-                      <div>
-                        <h3 className="text-sm font-semibold text-neutral-800 mb-1">
-                          Sources
-                        </h3>
-                        <p className="text-sm text-neutral-700 whitespace-pre-wrap">
-                          {article.sourcesNote}
-                        </p>
-                      </div>
-                    )}
-                  </section>
-                )}
+                      <h2
+                        id="transparency-heading"
+                        className={cn(
+                          "mb-4",
+                          nonRegularPostTransparencyHeading,
+                        )}
+                      >
+                        Context and transparency
+                      </h2>
+                      {article.methodologyNote && (
+                        <div className="mb-4">
+                          <h3
+                            className={cn(
+                              "mb-1",
+                              nonRegularPostTransparencySubheading,
+                            )}
+                          >
+                            Methodology
+                          </h3>
+                          <p
+                            className={cn(
+                              "whitespace-pre-wrap",
+                              nonRegularPostTransparencyBody,
+                            )}
+                          >
+                            {article.methodologyNote}
+                          </p>
+                        </div>
+                      )}
+                      {article.sourcesNote && (
+                        <div>
+                          <h3
+                            className={cn(
+                              "mb-1",
+                              nonRegularPostTransparencySubheading,
+                            )}
+                          >
+                            Sources
+                          </h3>
+                          <p
+                            className={cn(
+                              "whitespace-pre-wrap",
+                              nonRegularPostTransparencyBody,
+                            )}
+                          >
+                            {article.sourcesNote}
+                          </p>
+                        </div>
+                      )}
+                    </section>
+                  )}
               </div>
 
-              {sidebar && (
-                <div className="flex flex-col col-span-1 lg:col-span-4 gap-8">
-                  {sidebar}
+              {(popularReads.length > 0 || newsForYou.length > 0) && (
+                <div className="col-span-1 flex flex-col gap-8 lg:col-span-4">
+                  {popularReads.length > 0 && (
+                    <div
+                      className="hidden lg:block"
+                      data-testid="sidebar-popular-reads"
+                    >
+                      <PostSelectedNews
+                        latestNews={popularReads}
+                        title="Popular Reads"
+                      />
+                    </div>
+                  )}
+                  {newsForYou.length > 0 && (
+                    <PostSelectedNews
+                      latestNews={newsForYou}
+                      title="News for You"
+                    />
+                  )}
                 </div>
               )}
             </div>
           </article>
         )}
 
-        {footer}
+        {footerContent}
       </SitePageWidth>
     </div>
   );

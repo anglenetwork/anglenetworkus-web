@@ -69,7 +69,7 @@ export default function ShowMoreSection({
         {visiblePosts.map((post) => {
           const coverData = getCoverImage(
             post.cover,
-            post.title || "Article image"
+            post.title || "Article image",
           );
           return (
             <FullWidthArticle
@@ -149,14 +149,14 @@ function FullWidthArticle({
       </div>
       <div className="flex-1">
         <Link href={to} className="block">
-          <h2 className="text-2xl font-sans font-semibold text-neutral-900 leading-snug tracking-tight">
+          <h2 className="font-sans font-semibold text-2xl text-neutral-900 leading-snug tracking-tight">
             {title}
           </h2>
         </Link>
-        <p className="text-muted-foreground leading-relaxed text-pretty font-sans text-base mt-2">
+        <p className="mt-2 text-pretty font-sans text-base text-muted-foreground leading-relaxed">
           {description}
         </p>
-        <p className="mt-3 text-xs font-semibold capitalize tracking-wide text-muted-foreground font-sans">
+        <p className="mt-3 font-sans font-semibold text-muted-foreground text-xs capitalize tracking-wide">
           {readTime}
         </p>
       </div>

@@ -67,7 +67,7 @@ describe("checkArticleMetricsReadiness", () => {
     expect(r.ready).toBe(false);
     expect(r.hasIncrementFunction).toBe(false);
     expect(r.issues.some((i) => i.includes("increment_article_view"))).toBe(
-      true
+      true,
     );
   });
 });
@@ -96,7 +96,7 @@ describe("assertArticleMetricsReady", () => {
     }));
 
     await expect(assertArticleMetricsReady()).rejects.toThrow(
-      /20260327_article_metrics\.sql/
+      /20260327_article_metrics\.sql/,
     );
   });
 });

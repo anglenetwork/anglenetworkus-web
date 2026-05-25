@@ -5,12 +5,21 @@ export default defineType({
   title: "Topic / Entity",
   type: "document",
   fields: [
-    defineField({ name: "title", title: "Title", type: "string", validation: (r: any) => r.required() }),
+    defineField({
+      name: "title",
+      title: "Title",
+      type: "string",
+      validation: (r: any) => r.required(),
+    }),
     defineField({
       name: "slug",
       title: "Slug",
       type: "slug",
-      options: { source: "title", maxLength: 96, isUnique: (v: string, c: any) => c.defaultIsUnique(v, c) },
+      options: {
+        source: "title",
+        maxLength: 96,
+        isUnique: (v: string, c: any) => c.defaultIsUnique(v, c),
+      },
       validation: (r: any) => r.required(),
     }),
     defineField({

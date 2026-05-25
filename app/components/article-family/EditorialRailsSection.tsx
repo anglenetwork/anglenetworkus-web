@@ -55,7 +55,7 @@ function OpinionCard({ article }: { article: ArticleFamilyCard }) {
       <div className="absolute bottom-5 left-5 flex w-[72%] min-w-0 max-w-[320px] flex-col justify-start gap-4 rounded-2xl border-2 border-neutral-900 bg-white p-4 sm:gap-5 sm:p-5 md:w-[65%] md:max-w-[280px] md:gap-5 lg:w-[57%] lg:max-w-[320px] lg:gap-6 lg:p-6">
         {/* Headline */}
         <Link href={article.href} className="group min-w-0">
-          <h3 className="break-words font-sans text-xl font-bold leading-[1.08] tracking-tight text-neutral-900 group-hover:underline sm:text-2xl md:text-2xl lg:text-4xl">
+          <h3 className="break-words font-bold font-sans text-neutral-900 text-xl leading-[1.08] tracking-tight group-hover:underline sm:text-2xl md:text-2xl lg:text-4xl">
             {article.title}
           </h3>
         </Link>
@@ -76,11 +76,11 @@ function OpinionCard({ article }: { article: ArticleFamilyCard }) {
               />
             </div>
           ) : (
-            <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-neutral-900 text-[11px] font-bold text-white">
+            <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-neutral-900 font-bold text-[11px] text-white">
               {authorInitial}
             </div>
           )}
-          <span className="font-sans text-sm font-semibold text-neutral-900 leading-none">
+          <span className="font-sans font-semibold text-neutral-900 text-sm leading-none">
             by {authorName}
           </span>
           {/* {timeAgo && (
@@ -112,10 +112,10 @@ export default async function EditorialRailsSection() {
 
   return (
     <section>
-      <h2 className="mb-4 font-sans text-base font-bold uppercase tracking-wide text-foreground">
+      <h2 className="mb-4 font-bold font-sans text-base text-foreground uppercase tracking-wide">
         Opinion
       </h2>
-      <div className="grid gap-6 grid-cols-1 md:grid-cols-2">
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
         {articles.map((article) => (
           <OpinionCard key={article._id} article={article} />
         ))}

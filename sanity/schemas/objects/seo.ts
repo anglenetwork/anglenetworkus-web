@@ -6,7 +6,12 @@ export default defineType({
   type: "object",
   fields: [
     defineField({ name: "title", title: "Title", type: "string" }),
-    defineField({ name: "description", title: "Description", type: "text", rows: 3 }),
+    defineField({
+      name: "description",
+      title: "Description",
+      type: "text",
+      rows: 3,
+    }),
     defineField({
       name: "ogImage",
       title: "OpenGraph Image",

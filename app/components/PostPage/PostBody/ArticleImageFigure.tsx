@@ -15,10 +15,10 @@ interface ArticleImageFigureProps {
   figureClassName: string;
   wrapperClassName: string;
   imageClassName: string;
-  epigraph?: string | null;
+  caption?: string | null;
   credit?: string | null;
   showAltAsCaption?: boolean;
-  fallbackEpigraph?: string;
+  fallbackCaption?: string;
 }
 
 export default function ArticleImageFigure({
@@ -35,10 +35,10 @@ export default function ArticleImageFigure({
   figureClassName,
   wrapperClassName,
   imageClassName,
-  epigraph,
+  caption,
   credit,
   showAltAsCaption,
-  fallbackEpigraph,
+  fallbackCaption,
 }: ArticleImageFigureProps) {
   return (
     <figure className={figureClassName}>
@@ -58,11 +58,11 @@ export default function ArticleImageFigure({
         />
       </div>
       <ArticleCaption
-        epigraph={epigraph}
+        caption={caption}
         credit={credit}
         alt={alt}
         showAltAsCaption={showAltAsCaption}
-        fallbackEpigraph={fallbackEpigraph}
+        fallbackCaption={fallbackCaption}
       />
     </figure>
   );

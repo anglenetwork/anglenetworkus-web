@@ -40,8 +40,10 @@ export async function POST(req: Request) {
 
   if (existingCustomerError) {
     return NextResponse.json(
-      { error: `Failed to load stripe customer: ${existingCustomerError.message}` },
-      { status: 500 }
+      {
+        error: `Failed to load stripe customer: ${existingCustomerError.message}`,
+      },
+      { status: 500 },
     );
   }
 
@@ -64,8 +66,10 @@ export async function POST(req: Request) {
 
     if (insertCustomerError) {
       return NextResponse.json(
-        { error: `Failed to persist stripe customer: ${insertCustomerError.message}` },
-        { status: 500 }
+        {
+          error: `Failed to persist stripe customer: ${insertCustomerError.message}`,
+        },
+        { status: 500 },
       );
     }
   }

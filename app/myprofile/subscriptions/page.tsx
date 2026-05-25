@@ -139,7 +139,7 @@ export default function SubscriptionsPage() {
   useEffect(() => {
     if (searchParams?.get("canceled") === "1") {
       setError(
-        "Checkout was canceled. Please try again if you'd like to upgrade."
+        "Checkout was canceled. Please try again if you'd like to upgrade.",
       );
       // Remove the parameter from URL
       router.replace("/myprofile/subscriptions", { scroll: false });
@@ -148,7 +148,7 @@ export default function SubscriptionsPage() {
 
   async function handleCheckout(
     tier: "pro" | "lifetime",
-    cycle?: "month" | "year"
+    cycle?: "month" | "year",
   ) {
     try {
       setCheckoutLoading(tier);
@@ -334,11 +334,11 @@ export default function SubscriptionsPage() {
   }
 
   return (
-    <div className="font-sans min-h-screen bg-gradient-to-br from-background via-background to-secondary/10">
+    <div className="min-h-screen bg-gradient-to-br from-background via-background to-secondary/10 font-sans">
       {/* Main Content */}
-      <div className="max-w-7xl mx-auto px-2">
+      <div className="mx-auto max-w-7xl px-2">
         {loading ? (
-          <div className="text-center py-16">
+          <div className="py-16 text-center">
             <div className="text-muted-foreground">
               Loading subscription data…
             </div>
@@ -348,56 +348,56 @@ export default function SubscriptionsPage() {
             {/* Current Plan Section */}
             <div className="mb-16">
               <div className="mb-8">
-                <span className="inline-block px-3 py-1 rounded-full bg-primary/10 text-primary text-sm font-medium mb-4">
+                <span className="mb-4 inline-block rounded-full bg-primary/10 px-3 py-1 font-medium text-primary text-sm">
                   Current Plan
                 </span>
-                <h2 className="text-4xl font-bold mb-2">
+                <h2 className="mb-2 font-bold text-4xl">
                   You&apos;re on the{" "}
                   <span className="text-red-500">
                     {getTierDisplayName(originalTier)}
                   </span>{" "}
                   Plan
                 </h2>
-                <p className="text-muted-foreground text-lg">
+                <p className="text-lg text-muted-foreground">
                   Manage your subscription and explore upgrade options
                 </p>
               </div>
 
               {/* Current Plan Card */}
-              <Card className="border border-primary/20 bg-gradient-to-br from-primary/5 to-transparent p-8 mb-8">
-                <div className="grid md:grid-cols-3 gap-12">
+              <Card className="mb-8 border border-primary/20 bg-gradient-to-br from-primary/5 to-transparent p-8">
+                <div className="grid gap-12 md:grid-cols-3">
                   {/* Left: Plan Info */}
                   <div>
                     <div className="mb-8">
-                      <p className="text-muted-foreground text-sm uppercase tracking-wide mb-2">
+                      <p className="mb-2 text-muted-foreground text-sm uppercase tracking-wide">
                         Current Plan
                       </p>
-                      <h3 className="text-5xl font-bold mb-2">
+                      <h3 className="mb-2 font-bold text-5xl">
                         {getTierDisplayName(originalTier)}
                       </h3>
-                      <div className="flex items-baseline gap-1 mb-4">
-                        <span className="text-3xl font-semibold">
+                      <div className="mb-4 flex items-baseline gap-1">
+                        <span className="font-semibold text-3xl">
                           {getCurrentPlanPrice()}
                         </span>
                         <span className="text-muted-foreground">
                           {getCurrentPlanPeriod()}
                         </span>
                       </div>
-                      <p className="text-sm text-muted-foreground mb-6">
+                      <p className="mb-6 text-muted-foreground text-sm">
                         Valid until{" "}
                         <span className="font-semibold text-foreground">
                           {getValidUntilText()}
                         </span>
                       </p>
                       {status === "canceling" && validUntil && (
-                        <p className="text-sm text-orange-600 mb-4">
+                        <p className="mb-4 text-orange-600 text-sm">
                           Your subscription will end on {getValidUntilText()}.
                         </p>
                       )}
                       {error && (
-                        <p className="text-sm text-red-600 mb-4">{error}</p>
+                        <p className="mb-4 text-red-600 text-sm">{error}</p>
                       )}
-                      <div className="flex gap-3 flex-col sm:flex-row">
+                      <div className="flex flex-col gap-3 sm:flex-row">
                         {originalTier === "pro" && status !== "canceling" && (
                           <AlertDialog>
                             <AlertDialogTrigger asChild>
@@ -417,8 +417,8 @@ export default function SubscriptionsPage() {
                                 <AlertDialogDescription>
                                   Your subscription will remain active until the
                                   end of your current billing period (
-                                  {getValidUntilText()}). You&apos;ll continue to
-                                  have access to Pro features until then.
+                                  {getValidUntilText()}). You&apos;ll continue
+                                  to have access to Pro features until then.
                                 </AlertDialogDescription>
                               </AlertDialogHeader>
                               <AlertDialogFooter>
@@ -441,14 +441,14 @@ export default function SubscriptionsPage() {
 
                   {/* Right: Features Grid */}
                   <div className="md:col-span-2">
-                    <p className="text-sm font-semibold uppercase tracking-wide text-muted-foreground mb-6">
+                    <p className="mb-6 font-semibold text-muted-foreground text-sm uppercase tracking-wide">
                       What&apos;s Included
                     </p>
-                    <div className="grid sm:grid-cols-2 gap-4">
+                    <div className="grid gap-4 sm:grid-cols-2">
                       {getCurrentPlanFeatures().map((feature, idx) => (
                         <div key={idx} className="flex items-start gap-3">
-                          <CheckCircle2 className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
-                          <span className="text-sm text-foreground">
+                          <CheckCircle2 className="mt-0.5 h-5 w-5 flex-shrink-0 text-primary" />
+                          <span className="text-foreground text-sm">
                             {feature}
                           </span>
                         </div>
@@ -460,44 +460,44 @@ export default function SubscriptionsPage() {
 
               {/* Stats Cards - Only show for Pro tier */}
               {originalTier === "pro" && (
-                <div className="grid sm:grid-cols-3 gap-4">
-                  <Card className="p-6 border border-border/60 bg-card/50">
-                    <div className="flex items-start justify-between mb-4">
+                <div className="grid gap-4 sm:grid-cols-3">
+                  <Card className="border border-border/60 bg-card/50 p-6">
+                    <div className="mb-4 flex items-start justify-between">
                       <div>
-                        <p className="text-sm text-muted-foreground mb-1">
+                        <p className="mb-1 text-muted-foreground text-sm">
                           Billing Cycle
                         </p>
-                        <p className="text-2xl font-bold">
+                        <p className="font-bold text-2xl">
                           {billingYearly ? "Yearly" : "Monthly"}
                         </p>
                       </div>
-                      <Zap className="w-5 h-5 text-primary/60" />
+                      <Zap className="h-5 w-5 text-primary/60" />
                     </div>
                   </Card>
 
-                  <Card className="p-6 border border-border/60 bg-card/50">
-                    <div className="flex items-start justify-between mb-2">
+                  <Card className="border border-border/60 bg-card/50 p-6">
+                    <div className="mb-2 flex items-start justify-between">
                       <div>
-                        <p className="text-sm text-muted-foreground mb-1">
+                        <p className="mb-1 text-muted-foreground text-sm">
                           Status
                         </p>
-                        <p className="text-2xl font-bold capitalize">
+                        <p className="font-bold text-2xl capitalize">
                           {status === "canceling" ? "Canceling" : "Active"}
                         </p>
                       </div>
-                      <Users className="w-5 h-5 text-primary/60" />
+                      <Users className="h-5 w-5 text-primary/60" />
                     </div>
                   </Card>
 
-                  <Card className="p-6 border border-border/60 bg-card/50">
-                    <div className="flex items-start justify-between mb-2">
+                  <Card className="border border-border/60 bg-card/50 p-6">
+                    <div className="mb-2 flex items-start justify-between">
                       <div>
-                        <p className="text-sm text-muted-foreground mb-1">
+                        <p className="mb-1 text-muted-foreground text-sm">
                           Plan Type
                         </p>
-                        <p className="text-2xl font-bold">Pro</p>
+                        <p className="font-bold text-2xl">Pro</p>
                       </div>
-                      <Lock className="w-5 h-5 text-primary/60" />
+                      <Lock className="h-5 w-5 text-primary/60" />
                     </div>
                   </Card>
                 </div>
@@ -508,45 +508,45 @@ export default function SubscriptionsPage() {
             {effectiveTier !== "lifetime" && nextTierInfo && (
               <div className="mb-16">
                 <div className="mb-8">
-                  <h2 className="text-3xl font-bold mb-2">Ready for more?</h2>
+                  <h2 className="mb-2 font-bold text-3xl">Ready for more?</h2>
                   <p className="text-muted-foreground">
                     Unlock advanced features and scale your operations
                   </p>
                 </div>
 
                 {/* Upgrade Card */}
-                <Card className="border-2 border-primary/40 bg-gradient-to-br from-primary/10 to-transparent p-8 relative overflow-hidden">
-                  <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full blur-3xl -z-10" />
+                <Card className="relative overflow-hidden border-2 border-primary/40 bg-gradient-to-br from-primary/10 to-transparent p-8">
+                  <div className="absolute top-0 right-0 -z-10 h-64 w-64 rounded-full bg-primary/5 blur-3xl" />
 
-                  <div className="grid md:grid-cols-3 gap-12">
+                  <div className="grid gap-12 md:grid-cols-3">
                     {/* Left: Plan Info */}
                     <div>
-                      <div className="inline-block px-3 py-1 rounded-full bg-primary text-primary-foreground text-xs font-semibold mb-4">
+                      <div className="mb-4 inline-block rounded-full bg-primary px-3 py-1 font-semibold text-primary-foreground text-xs">
                         {effectiveTier === "free" ? "Most Popular" : "Upgrade"}
                       </div>
-                      <h3 className="text-4xl font-bold mb-2">
+                      <h3 className="mb-2 font-bold text-4xl">
                         {nextTierInfo.name}
                       </h3>
-                      <div className="flex items-baseline gap-1 mb-2">
-                        <span className="text-3xl font-semibold">
+                      <div className="mb-2 flex items-baseline gap-1">
+                        <span className="font-semibold text-3xl">
                           {nextTierInfo.price}
                         </span>
                         <span className="text-muted-foreground">
                           {nextTierInfo.period}
                         </span>
                       </div>
-                      <p className="text-muted-foreground mb-6 text-sm">
+                      <p className="mb-6 text-muted-foreground text-sm">
                         {nextTierInfo.description}
                       </p>
                       <Button
                         size="lg"
-                        className="w-full gap-2 group"
+                        className="group w-full gap-2"
                         onClick={() => {
                           const nextTier = getNextTier();
                           if (nextTier === "pro") {
                             handleCheckout(
                               "pro",
-                              billingYearly ? "year" : "month"
+                              billingYearly ? "year" : "month",
                             );
                           } else {
                             handleCheckout("lifetime");
@@ -555,20 +555,20 @@ export default function SubscriptionsPage() {
                         disabled={checkoutLoading !== null}
                       >
                         {checkoutLoading ? "Loading..." : "Upgrade Now"}
-                        <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                        <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
                       </Button>
                     </div>
 
                     {/* Right: Features */}
                     <div className="md:col-span-2">
-                      <p className="text-sm font-semibold uppercase tracking-wide text-muted-foreground mb-6">
+                      <p className="mb-6 font-semibold text-muted-foreground text-sm uppercase tracking-wide">
                         {nextTierInfo.name} Benefits
                       </p>
-                      <div className="grid sm:grid-cols-2 gap-4">
+                      <div className="grid gap-4 sm:grid-cols-2">
                         {nextTierInfo.features.map((feature, idx) => (
                           <div key={idx} className="flex items-start gap-3">
-                            <CheckCircle2 className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
-                            <span className="text-sm text-foreground">
+                            <CheckCircle2 className="mt-0.5 h-5 w-5 flex-shrink-0 text-primary" />
+                            <span className="text-foreground text-sm">
                               {feature}
                             </span>
                           </div>
@@ -582,7 +582,7 @@ export default function SubscriptionsPage() {
 
             {/* FAQ Section */}
             <div className="max-w-3xl">
-              <h2 className="text-2xl font-bold mb-8">Common Questions</h2>
+              <h2 className="mb-8 font-bold text-2xl">Common Questions</h2>
               <div className="space-y-4">
                 {[
                   {
@@ -600,10 +600,10 @@ export default function SubscriptionsPage() {
                 ].map((faq, idx) => (
                   <Card
                     key={idx}
-                    className="p-6 border border-border/60 hover:border-primary/40 transition-colors"
+                    className="border border-border/60 p-6 transition-colors hover:border-primary/40"
                   >
-                    <h3 className="font-semibold mb-2">{faq.q}</h3>
-                    <p className="text-sm text-muted-foreground">{faq.a}</p>
+                    <h3 className="mb-2 font-semibold">{faq.q}</h3>
+                    <p className="text-muted-foreground text-sm">{faq.a}</p>
                   </Card>
                 ))}
               </div>

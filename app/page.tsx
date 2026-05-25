@@ -1,10 +1,6 @@
-import {
-  FirstSection,
-  NewsTicker,
-  SecondSection,
-} from "./components/Landing/index";
+import { FirstSection, NewsTicker } from "./components/Landing/index";
 import EditorialRailsSection from "./components/article-family/EditorialRailsSection";
-import { ThirdSection } from "./components/ui/thirdSection";
+import { ThirdSection as FifthSection } from "./components/ui/thirdSection";
 import dynamic from "next/dynamic";
 import { toPlainText } from "next-sanity";
 import { sanityFetchStatic } from "@/sanity/lib/fetch";
@@ -53,7 +49,7 @@ type HeroPostWithCategory = {
   category?: { slug?: string | null } | null;
 };
 
-function fifthSectionCardsForCategory(
+function fourthSectionCardsForCategory(
   raw: unknown,
   categorySlug: string,
   maxRows: number,
@@ -100,23 +96,23 @@ async function loadHomepageMostReadPosts() {
 }
 
 // Dynamically import below-the-fold sections to reduce initial bundle size
-const SixthSection = dynamic(
-  () => import("./components/Landing/SecondSection/sixthSection"),
-  { ssr: true },
-);
-
-const FifthSection = dynamic(
-  () => import("./components/Landing/ThirdSection/fifthSection"),
-  { ssr: true },
-);
-
-const FourthSection = dynamic(
+const SecondSection = dynamic(
   () => import("./components/Landing/FourthSection/fourthSection"),
   { ssr: true },
 );
 
-const SeventhSection = dynamic(
-  () => import("./components/Landing/FourthSection/seventhSection"),
+const ThirdSection = dynamic(
+  () => import("./components/Landing/ThirdSection/thirdSection"),
+  { ssr: true },
+);
+
+const FourthSection = dynamic(
+  () => import("./components/Landing/ThirdSection/fifthSection"),
+  { ssr: true },
+);
+
+const SixthSection = dynamic(
+  () => import("./components/Landing/SecondSection/sixthSection"),
   { ssr: true },
 );
 
@@ -182,8 +178,8 @@ export default async function Page() {
         })
       : [];
 
-  // 3) Fetch posts for SecondSection (1 featured + 2 small per column)
-  const [secondSectionLeftPosts, secondSectionRightPosts] = await Promise.all([
+  // 3) Fetch posts for ThirdSection (1 featured + 2 small per column)
+  const [thirdSectionLeftPosts, thirdSectionRightPosts] = await Promise.all([
     sanityFetchStatic({
       query: highlightedStoriesByCategoryQuery,
       params: { categorySlug: "us" },
@@ -199,9 +195,9 @@ export default async function Page() {
     query: newsTickerQuery,
   });
 
-  // 5) Below-the-fold: fourth + sixth sections (fifth fetched separately so category
+  // 5) Below-the-fold: second + sixth sections (fourth fetched separately so category
   //    params cannot be mixed with other parallel Sanity calls).
-  const [fourthSectionData, sixthSectionData] = await Promise.all([
+  const [secondSectionData, sixthSectionData] = await Promise.all([
     getFourthSectionData(
       ["tech", "business", "entertainment", "lifestyle"],
       ["Tech", "Business", "Entertainment", "Lifestyle"],
@@ -210,7 +206,7 @@ export default async function Page() {
   ]);
 
   // Newest `post` only per category (no analysis) — `/category/[slug]` still uses post+analysis.
-  const [fifthSectionLeftRaw, fifthSectionRightRaw] = await Promise.all([
+  const [fourthSectionLeftRaw, fourthSectionRightRaw] = await Promise.all([
     sanityFetchStatic({
       query: postsByCategoryStandardPostsLimitedQuery,
       params: {
@@ -229,13 +225,13 @@ export default async function Page() {
     }),
   ]);
 
-  const fifthSectionLeftCards = fifthSectionCardsForCategory(
-    fifthSectionLeftRaw,
+  const fourthSectionLeftCards = fourthSectionCardsForCategory(
+    fourthSectionLeftRaw,
     HOMEPAGE_FIFTH_SECTION_CATEGORIES.left.slug,
     HOMEPAGE_FIFTH_SECTION_LEFT_FETCH_LIMIT,
   );
-  const fifthSectionRightCards = fifthSectionCardsForCategory(
-    fifthSectionRightRaw,
+  const fourthSectionRightCards = fourthSectionCardsForCategory(
+    fourthSectionRightRaw,
     HOMEPAGE_FIFTH_SECTION_CATEGORIES.right.slug,
     HOMEPAGE_FIFTH_SECTION_RIGHT_FETCH_LIMIT,
   );
@@ -259,36 +255,35 @@ export default async function Page() {
             sideStories={rightHeadlinePosts as any}
             mostReadPosts={mostReadPosts as any}
           />
-                    <FourthSection
+          <SecondSection
             variant="dark"
-            categoriesData={fourthSectionData as any}
+            categoriesData={secondSectionData as any}
           />
-          {secondSectionLeftPosts?.length > 0 &&
-            secondSectionRightPosts?.length > 0 && (
-              <SecondSection
-                leftArticle={secondSectionLeftPosts[0] as any}
+          {thirdSectionLeftPosts?.length > 0 &&
+            thirdSectionRightPosts?.length > 0 && (
+              <ThirdSection
+                leftArticle={thirdSectionLeftPosts[0] as any}
                 leftSmallArticles={(
-                  secondSectionLeftPosts.slice(1, 3) as any[]
+                  thirdSectionLeftPosts.slice(1, 3) as any[]
                 ).filter((p) => p.slug)}
-                rightArticle={secondSectionRightPosts[0] as any}
+                rightArticle={thirdSectionRightPosts[0] as any}
                 rightSmallArticles={(
-                  secondSectionRightPosts.slice(1, 3) as any[]
+                  thirdSectionRightPosts.slice(1, 3) as any[]
                 ).filter((p) => p.slug)}
               />
             )}
           <EditorialRailsSection />
-          <ThirdSection />
-          <FifthSection
-            leftColumnPosts={fifthSectionLeftCards}
-            rightColumnPosts={fifthSectionRightCards}
+          <FourthSection
+            leftColumnPosts={fourthSectionLeftCards}
+            rightColumnPosts={fourthSectionRightCards}
             leftCategory={HOMEPAGE_FIFTH_SECTION_CATEGORIES.left}
             rightCategory={HOMEPAGE_FIFTH_SECTION_CATEGORIES.right}
           />
+          <FifthSection />
           <SixthSection categoriesData={sixthSectionData as any} />
-          {/* <SeventhSection
-            variant="light"
-            categoriesData={fourthSectionData as any}
-          /> */}
+          {/* Light variant duplicate (FourthSection/seventhSection.tsx), not wired:
+          <SecondSection variant="light" categoriesData={secondSectionData as any} />
+          */}
         </div>
       </SitePageWidth>
     </>

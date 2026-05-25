@@ -66,8 +66,8 @@ export default function CategorySidebar({
   return (
     <div className="space-y-8">
       {/* Recent Articles */}
-      <div className="bg-gray-50 rounded-lg p-6">
-        <h3 className="text-lg font-bold text-gray-900 mb-4">
+      <div className="rounded-lg bg-gray-50 p-6">
+        <h3 className="mb-4 font-bold text-gray-900 text-lg">
           Recent in {categoryName}
         </h3>
         <div className="space-y-4">
@@ -78,7 +78,7 @@ export default function CategorySidebar({
                   {(() => {
                     const imageData = getImageData(
                       post.cover,
-                      post.title || "Article image"
+                      post.title || "Article image",
                     );
                     return (
                       <ImageRenderer
@@ -87,22 +87,22 @@ export default function CategorySidebar({
                         width={80}
                         height={60}
                         unoptimized={imageData.unoptimized}
-                        className="w-20 h-15 object-cover cursor-pointer hover:opacity-90 transition-opacity rounded"
+                        className="h-15 w-20 cursor-pointer rounded object-cover transition-opacity hover:opacity-90"
                       />
                     );
                   })()}
                 </Link>
               </div>
-              <div className="flex-1 min-w-0">
-                <div className="text-xs text-gray-500 mb-1">
+              <div className="min-w-0 flex-1">
+                <div className="mb-1 text-gray-500 text-xs">
                   {formatDate(post.date)}
                 </div>
                 <Link href={post.href ?? `/post/${post.slug || "#"}`}>
-                  <h4 className="text-sm font-semibold text-gray-900 leading-tight cursor-pointer hover:text-blue-600 transition-colors line-clamp-2">
+                  <h4 className="line-clamp-2 cursor-pointer font-semibold text-gray-900 text-sm leading-tight transition-colors hover:text-blue-600">
                     {post.title || "Untitled"}
                   </h4>
                 </Link>
-                <div className="text-xs text-gray-500 mt-1">
+                <div className="mt-1 text-gray-500 text-xs">
                   {post.author?.name || "Anonymous"}
                 </div>
               </div>
@@ -112,23 +112,23 @@ export default function CategorySidebar({
       </div>
 
       {/* Trending Articles */}
-      <div className="bg-gray-50 rounded-lg p-6">
-        <h3 className="text-lg font-bold text-gray-900 mb-4">
+      <div className="rounded-lg bg-gray-50 p-6">
+        <h3 className="mb-4 font-bold text-gray-900 text-lg">
           Trending in {categoryName}
         </h3>
         <div className="space-y-4">
           {trendingPosts.map((post, index) => (
             <div key={post._id} className="flex items-start gap-3">
-              <div className="flex-shrink-0 w-6 h-6 bg-blue-600 text-white text-xs font-bold rounded-full flex items-center justify-center">
+              <div className="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-blue-600 font-bold text-white text-xs">
                 {index + 1}
               </div>
-              <div className="flex-1 min-w-0">
+              <div className="min-w-0 flex-1">
                 <Link href={post.href ?? `/post/${post.slug || "#"}`}>
-                  <h4 className="text-sm font-semibold text-gray-900 leading-tight cursor-pointer hover:text-blue-600 transition-colors line-clamp-2">
+                  <h4 className="line-clamp-2 cursor-pointer font-semibold text-gray-900 text-sm leading-tight transition-colors hover:text-blue-600">
                     {post.title || "Untitled"}
                   </h4>
                 </Link>
-                <div className="text-xs text-gray-500 mt-1">
+                <div className="mt-1 text-gray-500 text-xs">
                   {post.author?.name || "Anonymous"} • {formatDate(post.date)}
                 </div>
               </div>
@@ -138,11 +138,11 @@ export default function CategorySidebar({
       </div>
 
       {/* Category Info */}
-      <div className="bg-blue-50 rounded-lg p-6">
-        <h3 className="text-lg font-bold text-gray-900 mb-3">
+      <div className="rounded-lg bg-blue-50 p-6">
+        <h3 className="mb-3 font-bold text-gray-900 text-lg">
           About {categoryName}
         </h3>
-        <p className="text-sm text-gray-600 leading-relaxed">
+        <p className="text-gray-600 text-sm leading-relaxed">
           Stay updated with the latest news and insights in the {categoryName}{" "}
           category. Our team brings you comprehensive coverage and analysis of
           the most important stories.
@@ -156,18 +156,18 @@ export default function CategorySidebar({
       </div>
 
       {/* Newsletter Signup */}
-      <div className="bg-gray-900 rounded-lg p-6 text-white">
-        <h3 className="text-lg font-bold mb-3">Stay Updated</h3>
-        <p className="text-sm text-gray-300 mb-4">
+      <div className="rounded-lg bg-gray-900 p-6 text-white">
+        <h3 className="mb-3 font-bold text-lg">Stay Updated</h3>
+        <p className="mb-4 text-gray-300 text-sm">
           Get the latest {categoryName} news delivered to your inbox.
         </p>
         <div className="space-y-3">
           <input
             type="email"
             placeholder="Enter your email"
-            className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full rounded border border-gray-700 bg-gray-800 px-3 py-2 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
-          <button className="w-full bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 transition-colors text-sm font-medium">
+          <button className="w-full rounded bg-blue-600 px-4 py-2 font-medium text-sm text-white transition-colors hover:bg-blue-700">
             Subscribe
           </button>
         </div>

@@ -53,7 +53,7 @@ export function NewsTickerScrollControls({ itemCount }: { itemCount: number }) {
       {showLeftArrow && (
         <button
           onClick={scrollToPrev}
-          className="absolute left-2 top-1/2 -translate-y-1/2 rounded-full bg-white p-1 shadow-md md:hidden"
+          className="absolute top-1/2 left-2 -translate-y-1/2 rounded-full bg-white p-1 shadow-md md:hidden"
           aria-label="Scroll to previous article"
         >
           <ChevronLeft className="h-5 w-5" />
@@ -62,7 +62,7 @@ export function NewsTickerScrollControls({ itemCount }: { itemCount: number }) {
       {showRightArrow && (
         <button
           onClick={scrollToNext}
-          className="absolute right-2 top-1/2 -translate-y-1/2 rounded-full bg-white p-1 shadow-md md:hidden"
+          className="absolute top-1/2 right-2 -translate-y-1/2 rounded-full bg-white p-1 shadow-md md:hidden"
           aria-label="Scroll to next article"
         >
           <ChevronRight className="h-5 w-5" />

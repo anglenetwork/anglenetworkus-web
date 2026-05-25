@@ -10,9 +10,8 @@ export async function gotoSubscriptionsShell(page: Page): Promise<void> {
   await page.goto("/", { waitUntil: "domcontentloaded" });
   await page
     .waitForResponse(
-      (r) =>
-        r.url().includes("/api/auth/session") && r.status() === 200,
-      { timeout: 20000 }
+      (r) => r.url().includes("/api/auth/session") && r.status() === 200,
+      { timeout: 20000 },
     )
     .catch(() => {});
 

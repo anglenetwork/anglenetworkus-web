@@ -12,24 +12,24 @@ interface RightColumnSixthProps {
 
 export function RightColumnSixth({ videosData }: RightColumnSixthProps) {
   return (
-    <div className="pl-6 pr-4">
+    <div className="pr-4 pl-6">
       <div className="sticky top-6">
         {/* Videos Section (replacing Most Read) */}
         <div className="mb-8">
-          <div className="flex items-center mb-4">
-            <div className="w-2 h-2 bg-red-500 rounded-full mr-2"></div>
-            <h2 className="text-xs font-medium text-neutral-900 uppercase tracking-wider font-sans">
+          <div className="mb-4 flex items-center">
+            <div className="mr-2 h-2 w-2 rounded-full bg-red-500"></div>
+            <h2 className="font-medium font-sans text-neutral-900 text-xs uppercase tracking-wider">
               Videos
             </h2>
           </div>
-          <div className="border-t border-black mb-4"></div>
+          <div className="mb-4 border-black border-t"></div>
 
           <div className="space-y-4">
             {videosData.map((video, index) => (
               <div
                 key={index}
                 className={
-                  index === 0 ? "flex gap-3" : "border-l-2 border-red-500 pl-3"
+                  index === 0 ? "flex gap-3" : "border-red-500 border-l-2 pl-3"
                 }
               >
                 {index === 0 && (
@@ -38,14 +38,14 @@ export function RightColumnSixth({ videosData }: RightColumnSixthProps) {
                     alt={`Video thumbnail ${video.number}`}
                     width={64}
                     height={64}
-                    className="w-16 h-16 object-cover rounded-sm flex-shrink-0"
+                    className="h-16 w-16 flex-shrink-0 rounded-sm object-cover"
                   />
                 )}
                 <div className="flex-1">
-                  <span className="text-red-500 font-bold text-sm mr-2 font-sans">
+                  <span className="mr-2 font-bold font-sans text-red-500 text-sm">
                     {video.number}
                   </span>
-                  <h3 className="text-sm font-semibold text-gray-900 leading-tight font-sans">
+                  <h3 className="font-sans font-semibold text-gray-900 text-sm leading-tight">
                     {video.title}
                   </h3>
                 </div>

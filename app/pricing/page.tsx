@@ -88,7 +88,7 @@ export default function PricingPage() {
 
   async function handleCheckout(
     tier: "pro" | "lifetime",
-    cycle?: "month" | "year"
+    cycle?: "month" | "year",
   ) {
     try {
       setCheckoutLoading(tier);
@@ -120,29 +120,29 @@ export default function PricingPage() {
   }
 
   return (
-    <div className="font-sans pt-10 pb-20">
+    <div className="pt-10 pb-20 font-sans">
       {/* Header Section */}
-      <div className="text-center mb-12 px-4">
-        <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
+      <div className="mb-12 px-4 text-center">
+        <h1 className="mb-4 font-bold text-4xl text-gray-900 md:text-5xl">
           Choose Your Plan
         </h1>
-        <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+        <p className="mx-auto max-w-2xl text-gray-600 text-lg">
           Select the perfect plan for your needs. Upgrade or downgrade at any
           time.
         </p>
       </div>
 
       {/* Billing Toggle */}
-      <div className="flex justify-center mb-12">
-        <div className="flex items-center justify-center gap-4 px-4 py-2 rounded-full border border-gray-300 bg-transparent">
+      <div className="mb-12 flex justify-center">
+        <div className="flex items-center justify-center gap-4 rounded-full border border-gray-300 bg-transparent px-4 py-2">
           <span
-            className={`text-lg font-semibold ${!billingYearly ? "text-gray-900" : "text-gray-500"}`}
+            className={`font-semibold text-lg ${!billingYearly ? "text-gray-900" : "text-gray-500"}`}
           >
             Billed monthly
           </span>
           <Switch checked={billingYearly} onCheckedChange={setBillingYearly} />
           <span
-            className={`text-lg font-semibold ${billingYearly ? "text-gray-900" : "text-gray-500"}`}
+            className={`font-semibold text-lg ${billingYearly ? "text-gray-900" : "text-gray-500"}`}
           >
             Billed yearly
           </span>
@@ -159,7 +159,7 @@ export default function PricingPage() {
       )} */}
 
       {/* Pricing Cards */}
-      <div className="max-w-6xl mx-auto px-4">
+      <div className="mx-auto max-w-6xl px-4">
         <div className="flex flex-col items-center gap-8 lg:flex-row lg:items-stretch lg:justify-center">
           {/* Starter Plan - Free */}
           <PricingCard
@@ -251,14 +251,14 @@ export default function PricingPage() {
       </div>
 
       {/* FAQ or Additional Info Section */}
-      <div className="max-w-4xl mx-auto px-4 mt-16">
+      <div className="mx-auto mt-16 max-w-4xl px-4">
         <div className="text-center">
-          <h2 className="text-2xl font-bold text-gray-900 mb-6">
+          <h2 className="mb-6 font-bold text-2xl text-gray-900">
             Frequently Asked Questions
           </h2>
-          <div className="grid md:grid-cols-2 gap-6 text-left">
+          <div className="grid gap-6 text-left md:grid-cols-2">
             <div>
-              <h3 className="font-semibold text-gray-900 mb-2">
+              <h3 className="mb-2 font-semibold text-gray-900">
                 Can I change plans later?
               </h3>
               <p className="text-gray-600 text-sm">
@@ -267,7 +267,7 @@ export default function PricingPage() {
               </p>
             </div>
             <div>
-              <h3 className="font-semibold text-gray-900 mb-2">
+              <h3 className="mb-2 font-semibold text-gray-900">
                 What payment methods do you accept?
               </h3>
               <p className="text-gray-600 text-sm">
@@ -276,7 +276,7 @@ export default function PricingPage() {
               </p>
             </div>
             <div>
-              <h3 className="font-semibold text-gray-900 mb-2">
+              <h3 className="mb-2 font-semibold text-gray-900">
                 Is there a free trial?
               </h3>
               <p className="text-gray-600 text-sm">
@@ -285,7 +285,7 @@ export default function PricingPage() {
               </p>
             </div>
             <div>
-              <h3 className="font-semibold text-gray-900 mb-2">
+              <h3 className="mb-2 font-semibold text-gray-900">
                 Can I cancel anytime?
               </h3>
               <p className="text-gray-600 text-sm">

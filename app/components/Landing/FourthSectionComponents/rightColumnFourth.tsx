@@ -13,7 +13,7 @@ interface RightColumnFourthProps {
 
 export function RightColumnFourth({ videosData }: RightColumnFourthProps) {
   return (
-    <div className="pl-6 pr-4">
+    <div className="pr-4 pl-6">
       <div className="sticky top-6">
         {/* Videos Section (replacing Most Read) */}
         <div className="mb-8">
@@ -29,7 +29,7 @@ export function RightColumnFourth({ videosData }: RightColumnFourthProps) {
               <div
                 key={index}
                 className={
-                  index === 0 ? "flex gap-3" : "border-l-2 border-red-500 pl-3"
+                  index === 0 ? "flex gap-3" : "border-red-500 border-l-2 pl-3"
                 }
               >
                 {index === 0 && (
@@ -38,14 +38,14 @@ export function RightColumnFourth({ videosData }: RightColumnFourthProps) {
                     alt={`Video thumbnail ${video.number}`}
                     width={64}
                     height={64}
-                    className="w-16 h-16 object-cover rounded-sm flex-shrink-0"
+                    className="h-16 w-16 flex-shrink-0 rounded-sm object-cover"
                   />
                 )}
                 <div className="flex-1">
-                  <span className="text-red-500 font-bold text-sm mr-2 font-sans">
+                  <span className="mr-2 font-bold font-sans text-red-500 text-sm">
                     {video.number}
                   </span>
-                  <h3 className="text-sm font-semibold text-gray-900 leading-tight font-sans">
+                  <h3 className="font-sans font-semibold text-gray-900 text-sm leading-tight">
                     {video.title}
                   </h3>
                 </div>
@@ -54,7 +54,7 @@ export function RightColumnFourth({ videosData }: RightColumnFourthProps) {
           </div>
         </div>
 
-        <div className="border-t border-gray-300 mb-6"></div>
+        <div className="mb-6 border-gray-300 border-t"></div>
 
         {/* Additional Section */}
         <div>
@@ -64,8 +64,8 @@ export function RightColumnFourth({ videosData }: RightColumnFourthProps) {
             accentStyle="geometric-square"
             size="large"
           />
-          <div className="p-2 border border-gray-200 rounded">
-            <div className="text-sm text-gray-600 text-center font-sans">
+          <div className="rounded border border-gray-200 p-2">
+            <div className="text-center font-sans text-gray-600 text-sm">
               Trending content placeholder
             </div>
           </div>

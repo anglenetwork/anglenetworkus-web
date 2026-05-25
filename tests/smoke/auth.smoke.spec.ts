@@ -10,7 +10,7 @@ test.describe("Smoke: auth shells & redirects", () => {
 
     // Sign-in page returns null until session check finishes; wait for shell first.
     await expect(
-      page.getByRole("heading", { name: /sign in to continue/i })
+      page.getByRole("heading", { name: /sign in to continue/i }),
     ).toBeVisible({ timeout: 15000 });
 
     // Some browsers may expose this CTA as a link instead of a button.
@@ -35,7 +35,9 @@ test.describe("Smoke: auth shells & redirects", () => {
   }) => {
     await context.clearCookies();
     // `/myprofile` client-redirects to profile-details; use the leaf route so the gate is deterministic.
-    await page.goto("/myprofile/profile-details", { waitUntil: "domcontentloaded" });
+    await page.goto("/myprofile/profile-details", {
+      waitUntil: "domcontentloaded",
+    });
 
     // Unauthenticated users see either the dedicated /signin page or the myprofile layout gate.
     // CardTitle is a div (not a heading), so match copy instead of role=heading.
@@ -48,9 +50,7 @@ test.describe("Smoke: auth shells & redirects", () => {
     });
     await expect(page.getByLabel(/email/i)).toBeVisible();
     await expect(
-      page
-        .getByRole("button", { name: /send magic link|send sign-in link/i })
+      page.getByRole("button", { name: /send magic link|send sign-in link/i }),
     ).toBeVisible();
   });
 });
-

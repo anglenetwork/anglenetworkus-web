@@ -1,21 +1,21 @@
 /**
  * Terms of Service Configuration
- * 
+ *
  * This file contains all the variables and placeholders used in the terms of service.
  * Update these values to customize the terms of service content.
- * 
+ *
  * HOW TO MODIFY THE TERMS OF SERVICE:
- * 
+ *
  * 1. Update variables in this file (terms-of-service-config.ts):
  *    - Company information (name, address, email, phone)
  *    - Legal information (governing law, jurisdiction, arbitration provider)
  *    - Contact information for legal notices
  *    - Links and URLs
- * 
+ *
  * 2. Modify content in terms-of-service-content.tsx:
  *    - Edit the TermsOfServiceContent component to change text, structure, or sections
  *    - All placeholders are replaced with values from this config file
- * 
+ *
  * 3. The terms of service page automatically uses these values:
  *    - app/company/terms-of-service/page.tsx imports and renders TermsOfServiceContent
  */

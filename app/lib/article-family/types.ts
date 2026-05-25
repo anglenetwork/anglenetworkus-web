@@ -55,7 +55,6 @@ export type ArticleFamily = {
   imageGallery?: unknown[] | null;
   category?: ArticleFamilyCategory | null;
   tags?: ArticleFamilyTag[] | null;
-  opinionFormat?: string | null;
   disclosure?: string | null;
   analysisFocus?: string | null;
   methodologyNote?: string | null;

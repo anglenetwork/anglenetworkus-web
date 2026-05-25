@@ -6,16 +6,16 @@ export function CategoryArticlesEmptyState({
   categoryName: string;
 }) {
   return (
-    <div className="text-center py-12">
-      <h2 className="text-2xl font-semibold font-sans text-foreground mb-3">
+    <div className="py-12 text-center">
+      <h2 className="mb-3 font-sans font-semibold text-2xl text-foreground">
         No articles yet
       </h2>
-      <p className="text-muted-foreground font-sans mb-8 max-w-md mx-auto">
+      <p className="mx-auto mb-8 max-w-md font-sans text-muted-foreground">
         There are no articles in the {categoryName} category yet.
       </p>
       <Link
         href="/"
-        className="inline-flex items-center rounded-lg bg-primary px-4 py-2 text-primary-foreground font-sans text-sm transition-colors hover:bg-primary/90"
+        className="inline-flex items-center rounded-lg bg-primary px-4 py-2 font-sans text-primary-foreground text-sm transition-colors hover:bg-primary/90"
       >
         Browse all articles
       </Link>

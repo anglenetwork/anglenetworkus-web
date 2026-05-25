@@ -30,17 +30,17 @@ export async function SiteShell({ children }: SiteShellProps) {
   const showsTags = mapTags(showsTagsData);
 
   return (
-    <SiteShellFrame
-      categories={categories}
-      tags={tags}
-      showsTags={showsTags}
-    >
+    <SiteShellFrame categories={categories} tags={tags} showsTags={showsTags}>
       {children}
     </SiteShellFrame>
   );
 }
 
-type TagRow = { slug: string | null; title: string | null; views: number | null };
+type TagRow = {
+  slug: string | null;
+  title: string | null;
+  views: number | null;
+};
 
 function mapTags(rows: TagRow[]): Tag[] {
   return rows

@@ -32,7 +32,7 @@ export function NewsTicker({ posts }: NewsTickerProps) {
             >
               <Link
                 href={`/post/${item.slug}`}
-                className="block whitespace-nowrap px-4 text-base font-normal tracking-normal font-sans hover:opacity-60"
+                className="block whitespace-nowrap px-4 font-normal font-sans text-base tracking-normal hover:opacity-60"
               >
                 {item.tickerTitle}
               </Link>

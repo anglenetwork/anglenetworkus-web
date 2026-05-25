@@ -73,7 +73,7 @@ export async function recordArticleView({
 }
 
 export async function getArticleMetrics(
-  articleId: string
+  articleId: string,
 ): Promise<ArticleMetricsSnapshot | null> {
   try {
     const { data, error } = await supabaseAdmin
@@ -105,7 +105,7 @@ export async function getMostReadEditorial({
     const { data, error } = await supabaseAdmin
       .from("article_metrics_rankings")
       .select(
-        "article_id, article_type, views_all, views_7d, views_30d, last_viewed_at"
+        "article_id, article_type, views_all, views_7d, views_30d, last_viewed_at",
       )
       .in("article_type", [...EDITORIAL_RANKING_TYPES])
       .order("views_7d", { ascending: false })
@@ -128,7 +128,7 @@ export async function getMostReadPosts({
     const { data, error } = await supabaseAdmin
       .from("article_metrics_rankings")
       .select(
-        "article_id, article_type, views_all, views_7d, views_30d, last_viewed_at"
+        "article_id, article_type, views_all, views_7d, views_30d, last_viewed_at",
       )
       .eq("article_type", "post")
       .order("views_7d", { ascending: false })
@@ -153,7 +153,7 @@ export async function getMostReadByType({
     const { data, error } = await supabaseAdmin
       .from("article_metrics_rankings")
       .select(
-        "article_id, article_type, views_all, views_7d, views_30d, last_viewed_at"
+        "article_id, article_type, views_all, views_7d, views_30d, last_viewed_at",
       )
       .eq("article_type", type)
       .order("views_7d", { ascending: false })
@@ -169,7 +169,7 @@ export async function getMostReadByType({
 
 /** Batch metrics for membership-filtered ranking (category / tag). */
 export async function fetchRankingRowsForArticleIds(
-  articleIds: string[]
+  articleIds: string[],
 ): Promise<Map<string, ArticleRankingRow>> {
   if (articleIds.length === 0) return new Map();
 
@@ -177,7 +177,7 @@ export async function fetchRankingRowsForArticleIds(
     const { data, error } = await supabaseAdmin
       .from("article_metrics_rankings")
       .select(
-        "article_id, article_type, views_all, views_7d, views_30d, last_viewed_at"
+        "article_id, article_type, views_all, views_7d, views_30d, last_viewed_at",
       )
       .in("article_id", articleIds);
 
@@ -196,7 +196,7 @@ export async function fetchRankingRowsForArticleIds(
 
 export function orderDocumentsByIds<T extends { _id: string }>(
   docs: T[],
-  ids: string[]
+  ids: string[],
 ): T[] {
   const byId = new Map(docs.map((d) => [d._id, d]));
   return ids.map((id) => byId.get(id)).filter((d): d is T => d != null);
@@ -220,8 +220,6 @@ export function sortIdsByRankingThenPublishedAt<
   });
 }
 
-export function isArticleMetricTypeString(
-  s: string
-): s is ArticleMetricType {
+export function isArticleMetricTypeString(s: string): s is ArticleMetricType {
   return isArticleMetricType(s);
 }

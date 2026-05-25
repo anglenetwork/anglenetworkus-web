@@ -3,13 +3,13 @@ import { termsOfServiceConfig } from "@/lib/terms-of-service-setup/terms-of-serv
 
 export default function TermsOfServicePage() {
   return (
-    <div className="container mx-auto px-4 py-16 max-w-4xl">
-      <h1 className="text-3xl font-bold mb-6 font-sans">Terms of Service</h1>
+    <div className="container mx-auto max-w-4xl px-4 py-16">
+      <h1 className="mb-6 font-bold font-sans text-3xl">Terms of Service</h1>
       <div className="prose prose-sm max-w-none font-sans text-sm">
-        <p className="mb-4 text-sm text-gray-600">
+        <p className="mb-4 text-gray-600 text-sm">
           Effective Date: {termsOfServiceConfig.effectiveDate}
         </p>
-        <p className="mb-4 text-sm text-gray-600">
+        <p className="mb-4 text-gray-600 text-sm">
           Last updated: {termsOfServiceConfig.lastUpdated}
         </p>
         <TermsOfServiceContent />

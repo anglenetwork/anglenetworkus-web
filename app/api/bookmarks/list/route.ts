@@ -25,7 +25,7 @@ export async function GET(req: Request) {
   if (error) {
     return NextResponse.json(
       { error: error.message, bookmarks: [] },
-      { status: 500 }
+      { status: 500 },
     );
   }
 
@@ -83,7 +83,6 @@ export async function GET(req: Request) {
 
   return NextResponse.json(
     { bookmarks: bookmarksWithArticles },
-    { status: 200 }
+    { status: 200 },
   );
 }
-

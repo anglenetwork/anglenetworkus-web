@@ -27,7 +27,7 @@ describe("resolveSearchTextBackfill", () => {
       resolveSearchTextBackfill({
         title: "Ignored for build",
         searchText: "editor keywords",
-      })
+      }),
     ).toEqual({ action: "preserve" });
   });
 
@@ -81,11 +81,9 @@ describe("buildSearchText", () => {
   it("includes opinion and analysis type-specific fields", () => {
     const opinion = buildSearchText({
       title: "Why reform matters",
-      opinionFormat: "op-ed",
       disclosure: "Author serves on an advisory board.",
       authorName: "Alex Columnist",
     });
-    expect(opinion).toContain("op-ed");
     expect(opinion).toContain("advisory board");
 
     const analysis = buildSearchText({

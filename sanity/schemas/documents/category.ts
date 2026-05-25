@@ -21,7 +21,8 @@ export default defineType({
       options: {
         source: "name",
         maxLength: 96,
-        isUnique: (value: string, context: any) => context.defaultIsUnique(value, context),
+        isUnique: (value: string, context: any) =>
+          context.defaultIsUnique(value, context),
       },
       validation: (rule: any) => rule.required(),
     }),
@@ -32,7 +33,8 @@ export default defineType({
       title: "Parent (optional)",
       type: "reference",
       to: [{ type: "category" }],
-      description: "Use to build hierarchical sections (e.g., Sports → Football).",
+      description:
+        "Use to build hierarchical sections (e.g., Sports → Football).",
     } as any),
     defineField({
       name: "description",

@@ -143,9 +143,9 @@ export function BookmarksList({}: BookmarksListProps) {
     return (
       <div>
         {/* Sort Dropdown Skeleton */}
-        <div className="mb-8 flex flex-col sm:flex-row sm:items-center gap-3">
+        <div className="mb-8 flex flex-col gap-3 sm:flex-row sm:items-center">
           <Skeleton className="h-5 w-16 bg-slate-200" />
-          <Skeleton className="h-10 w-full sm:w-48 bg-slate-200 rounded-lg" />
+          <Skeleton className="h-10 w-full rounded-lg bg-slate-200 sm:w-48" />
         </div>
 
         {/* Bookmarks List Skeleton */}
@@ -153,21 +153,21 @@ export function BookmarksList({}: BookmarksListProps) {
           {[1, 2, 3, 4, 5].map((i) => (
             <article
               key={i}
-              className="flex flex-col sm:flex-row gap-4 sm:gap-6 pb-6 border-b border-slate-200 last:border-b-0"
+              className="flex flex-col gap-4 border-slate-200 border-b pb-6 last:border-b-0 sm:flex-row sm:gap-6"
             >
               {/* Cover Image Skeleton */}
-              <div className="flex-shrink-0 w-full sm:w-48">
-                <Skeleton className="w-full h-40 sm:h-32 rounded-lg bg-slate-200" />
+              <div className="w-full flex-shrink-0 sm:w-48">
+                <Skeleton className="h-40 w-full rounded-lg bg-slate-200 sm:h-32" />
               </div>
 
               {/* Article Info Skeleton */}
-              <div className="flex-1 flex flex-col justify-between">
+              <div className="flex flex-1 flex-col justify-between">
                 <div>
-                  <Skeleton className="h-6 w-full mb-2 bg-slate-200" />
-                  <Skeleton className="h-4 w-3/4 mb-1 bg-slate-200" />
+                  <Skeleton className="mb-2 h-6 w-full bg-slate-200" />
+                  <Skeleton className="mb-1 h-4 w-3/4 bg-slate-200" />
                   <Skeleton className="h-3 w-1/2 bg-slate-200" />
                 </div>
-                <Skeleton className="h-8 w-20 mt-3 sm:mt-0 bg-slate-200 rounded" />
+                <Skeleton className="mt-3 h-8 w-20 rounded bg-slate-200 sm:mt-0" />
               </div>
             </article>
           ))}
@@ -185,10 +185,10 @@ export function BookmarksList({}: BookmarksListProps) {
   return (
     <div>
       {/* Sort Dropdown */}
-      <div className="mb-8 flex flex-col sm:flex-row sm:items-center gap-3">
+      <div className="mb-8 flex flex-col gap-3 sm:flex-row sm:items-center">
         <label
           htmlFor="sort"
-          className="text-sm font-medium text-slate-700 whitespace-nowrap font-sans"
+          className="whitespace-nowrap font-medium font-sans text-slate-700 text-sm"
         >
           Sort by:
         </label>
@@ -201,16 +201,16 @@ export function BookmarksList({}: BookmarksListProps) {
                 e.target.value as
                   | "saved-recently"
                   | "latest-articles"
-                  | "oldest-articles"
+                  | "oldest-articles",
               )
             }
-            className="appearance-none w-full sm:w-auto bg-white border border-slate-200 rounded-lg px-4 py-2 pr-8 text-sm font-medium text-slate-900 cursor-pointer hover:border-slate-300 transition-colors focus:outline-none focus:ring-2 focus:ring-slate-900 focus:ring-offset-2 font-sans"
+            className="w-full cursor-pointer appearance-none rounded-lg border border-slate-200 bg-white px-4 py-2 pr-8 font-medium font-sans text-slate-900 text-sm transition-colors hover:border-slate-300 focus:outline-none focus:ring-2 focus:ring-slate-900 focus:ring-offset-2 sm:w-auto"
           >
             <option value="saved-recently">Saved Recently</option>
             <option value="latest-articles">Latest Articles</option>
             <option value="oldest-articles">Oldest Articles</option>
           </select>
-          <ChevronDown className="absolute right-2.5 top-1/2 transform -translate-y-1/2 h-4 w-4 text-slate-600 pointer-events-none" />
+          <ChevronDown className="pointer-events-none absolute top-1/2 right-2.5 h-4 w-4 -translate-y-1/2 transform text-slate-600" />
         </div>
       </div>
 
@@ -220,10 +220,10 @@ export function BookmarksList({}: BookmarksListProps) {
           displayedBookmarks.map((bookmark) => (
             <article
               key={bookmark.id}
-              className="flex flex-col sm:flex-row gap-4 sm:gap-6 pb-6 border-b border-slate-200 last:border-b-0"
+              className="flex flex-col gap-4 border-slate-200 border-b pb-6 last:border-b-0 sm:flex-row sm:gap-6"
             >
               {/* Cover Image */}
-              <div className="flex-shrink-0 w-full sm:w-48">
+              <div className="w-full flex-shrink-0 sm:w-48">
                 {bookmark.article_cover ? (
                   <Link
                     href={
@@ -240,12 +240,12 @@ export function BookmarksList({}: BookmarksListProps) {
                     />
                   </Link>
                 ) : (
-                  <div className="w-full h-40 sm:h-32 rounded-lg bg-slate-100" />
+                  <div className="h-40 w-full rounded-lg bg-slate-100 sm:h-32" />
                 )}
               </div>
 
               {/* Article Info */}
-              <div className="flex-1 flex flex-col justify-between">
+              <div className="flex flex-1 flex-col justify-between">
                 <div>
                   <Link
                     href={
@@ -253,24 +253,24 @@ export function BookmarksList({}: BookmarksListProps) {
                         ? `/post/${bookmark.article_slug}`
                         : "#"
                     }
-                    className="block hover:opacity-70 transition-opacity"
+                    className="block transition-opacity hover:opacity-70"
                   >
-                    <h3 className="text-base sm:text-lg font-semibold text-slate-900 line-clamp-2 mb-2 font-sans">
+                    <h3 className="mb-2 line-clamp-2 font-sans font-semibold text-base text-slate-900 sm:text-lg">
                       {bookmark.article_title || "Untitled Article"}
                     </h3>
                     {bookmark.article_date && (
-                      <p className="text-xs sm:text-sm text-slate-500 font-sans mb-1">
+                      <p className="mb-1 font-sans text-slate-500 text-xs sm:text-sm">
                         {new Date(bookmark.article_date).toLocaleDateString(
                           "en-US",
                           {
                             year: "numeric",
                             month: "long",
                             day: "numeric",
-                          }
+                          },
                         )}
                       </p>
                     )}
-                    <p className="text-xs text-slate-500 font-sans">
+                    <p className="font-sans text-slate-500 text-xs">
                       Bookmarked on{" "}
                       {new Date(bookmark.created_at).toLocaleDateString(
                         "en-US",
@@ -278,14 +278,14 @@ export function BookmarksList({}: BookmarksListProps) {
                           year: "numeric",
                           month: "long",
                           day: "numeric",
-                        }
+                        },
                       )}
                     </p>
                   </Link>
                 </div>
                 <button
                   onClick={() => handleRemoveBookmark(bookmark.id)}
-                  className="flex items-center gap-2 text-red-600 hover:text-red-700 transition-colors w-fit text-xs sm:text-sm font-medium mt-3 sm:mt-0 font-sans"
+                  className="mt-3 flex w-fit items-center gap-2 font-medium font-sans text-red-600 text-xs transition-colors hover:text-red-700 sm:mt-0 sm:text-sm"
                 >
                   <Trash2 className="h-4 w-4" />
                   Remove
@@ -294,8 +294,8 @@ export function BookmarksList({}: BookmarksListProps) {
             </article>
           ))
         ) : (
-          <div className="text-center py-12">
-            <p className="text-slate-600 font-sans">
+          <div className="py-12 text-center">
+            <p className="font-sans text-slate-600">
               {bookmarks.length === 0
                 ? "You haven't saved any bookmarks yet."
                 : "No bookmarked articles yet"}

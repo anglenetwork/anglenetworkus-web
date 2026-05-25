@@ -25,17 +25,31 @@ test.describe("Homepage Fifth Section category DOM", () => {
     const leftCount = await leftPostLinks.count();
     const rightCount = await rightPostLinks.count();
 
-    expect(leftCount, "left column should render at least one post link").toBeGreaterThan(0);
-    expect(rightCount, "right column should render at least one post link").toBeGreaterThan(0);
+    expect(
+      leftCount,
+      "left column should render at least one post link",
+    ).toBeGreaterThan(0);
+    expect(
+      rightCount,
+      "right column should render at least one post link",
+    ).toBeGreaterThan(0);
 
     for (let i = 0; i < leftCount; i++) {
-      const slug = await leftPostLinks.nth(i).getAttribute("data-article-category-slug");
-      expect(slug, `left post link ${i} data-article-category-slug`).toBe("world");
+      const slug = await leftPostLinks
+        .nth(i)
+        .getAttribute("data-article-category-slug");
+      expect(slug, `left post link ${i} data-article-category-slug`).toBe(
+        "world",
+      );
     }
 
     for (let i = 0; i < rightCount; i++) {
-      const slug = await rightPostLinks.nth(i).getAttribute("data-article-category-slug");
-      expect(slug, `right post link ${i} data-article-category-slug`).toBe("politics");
+      const slug = await rightPostLinks
+        .nth(i)
+        .getAttribute("data-article-category-slug");
+      expect(slug, `right post link ${i} data-article-category-slug`).toBe(
+        "politics",
+      );
     }
   });
 });

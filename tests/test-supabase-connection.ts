@@ -10,23 +10,35 @@ async function testSupabaseConnection() {
 
   // Test 1: Check if environment variables exist
   console.log("1️⃣ Checking Environment Variables:");
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_PROJECT_URL;
+  const supabaseUrl =
+    process.env.NEXT_PUBLIC_SUPABASE_URL ||
+    process.env.NEXT_PUBLIC_SUPABASE_PROJECT_URL;
   const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-  const publishableKey = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+  const publishableKey =
+    process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY ||
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
-  console.log(`   NEXT_PUBLIC_SUPABASE_URL: ${supabaseUrl ? "✅ Set" : "❌ Missing"}`);
+  console.log(
+    `   NEXT_PUBLIC_SUPABASE_URL: ${supabaseUrl ? "✅ Set" : "❌ Missing"}`,
+  );
   if (supabaseUrl) {
     console.log(`   Value: ${supabaseUrl.substring(0, 30)}...`);
   }
 
-  console.log(`   SUPABASE_SERVICE_ROLE_KEY: ${serviceRoleKey ? "✅ Set" : "❌ Missing"}`);
+  console.log(
+    `   SUPABASE_SERVICE_ROLE_KEY: ${serviceRoleKey ? "✅ Set" : "❌ Missing"}`,
+  );
   if (serviceRoleKey) {
-    console.log(`   Value: ${serviceRoleKey.substring(0, 20)}...${serviceRoleKey.substring(serviceRoleKey.length - 10)}`);
+    console.log(
+      `   Value: ${serviceRoleKey.substring(0, 20)}...${serviceRoleKey.substring(serviceRoleKey.length - 10)}`,
+    );
     console.log(`   Length: ${serviceRoleKey.length} characters`);
     console.log(`   Starts with: ${serviceRoleKey.substring(0, 10)}`);
   }
 
-  console.log(`   NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: ${publishableKey ? "✅ Set" : "❌ Missing"}`);
+  console.log(
+    `   NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: ${publishableKey ? "✅ Set" : "❌ Missing"}`,
+  );
   if (publishableKey) {
     console.log(`   Value: ${publishableKey.substring(0, 20)}...`);
   }
@@ -47,7 +59,9 @@ async function testSupabaseConnection() {
     }
     console.log();
   } else {
-    console.log("2️⃣ ❌ Cannot validate URL - NEXT_PUBLIC_SUPABASE_URL is missing\n");
+    console.log(
+      "2️⃣ ❌ Cannot validate URL - NEXT_PUBLIC_SUPABASE_URL is missing\n",
+    );
     return;
   }
 
@@ -60,8 +74,11 @@ async function testSupabaseConnection() {
       });
 
       // Try a simple query that doesn't require auth
-      const { data, error } = await client.from("profiles").select("count").limit(0);
-      
+      const { data, error } = await client
+        .from("profiles")
+        .select("count")
+        .limit(0);
+
       if (error) {
         console.log(`   ❌ Connection failed: ${error.message}`);
         console.log(`   Error code: ${error.code}`);
@@ -88,10 +105,11 @@ async function testSupabaseConnection() {
 
       // Test admin API access
       console.log("   Testing admin API access...");
-      const { data: users, error: usersError } = await admin.auth.admin.listUsers({
-        page: 1,
-        perPage: 1,
-      });
+      const { data: users, error: usersError } =
+        await admin.auth.admin.listUsers({
+          page: 1,
+          perPage: 1,
+        });
 
       if (usersError) {
         console.log(`   ❌ Admin API access failed: ${usersError.message}`);
@@ -123,10 +141,11 @@ async function testSupabaseConnection() {
 
       // First, ensure user exists
       console.log("   Creating/checking test user...");
-      const { data: userData, error: createError } = await admin.auth.admin.createUser({
-        email: testEmail,
-        email_confirm: true,
-      });
+      const { data: userData, error: createError } =
+        await admin.auth.admin.createUser({
+          email: testEmail,
+          email_confirm: true,
+        });
 
       if (createError) {
         const msg = String(createError.message || "").toLowerCase();
@@ -148,21 +167,26 @@ async function testSupabaseConnection() {
 
       // Now test generating magic link
       console.log("   Generating magic link...");
-      const { data: linkData, error: linkError } = await admin.auth.admin.generateLink({
-        type: "magiclink",
-        email: testEmail,
-        options: {
-          redirectTo: "http://localhost:3000/auth/callback",
-        },
-      });
+      const { data: linkData, error: linkError } =
+        await admin.auth.admin.generateLink({
+          type: "magiclink",
+          email: testEmail,
+          options: {
+            redirectTo: "http://localhost:3000/auth/callback",
+          },
+        });
 
       if (linkError) {
-        console.log(`   ❌ Failed to generate magic link: ${linkError.message}`);
+        console.log(
+          `   ❌ Failed to generate magic link: ${linkError.message}`,
+        );
         console.log(`   Error code: ${linkError.status}`);
         console.log(`   Error details: ${JSON.stringify(linkError, null, 2)}`);
       } else {
         console.log(`   ✅ Magic link generated successfully!`);
-        console.log(`   Action link: ${linkData?.properties?.action_link?.substring(0, 80)}...`);
+        console.log(
+          `   Action link: ${linkData?.properties?.action_link?.substring(0, 80)}...`,
+        );
       }
     } catch (error: any) {
       console.log(`   ❌ Exception: ${error.message}`);
@@ -177,4 +201,3 @@ async function testSupabaseConnection() {
 }
 
 testSupabaseConnection().catch(console.error);
-

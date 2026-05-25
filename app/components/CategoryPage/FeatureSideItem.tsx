@@ -7,14 +7,18 @@ interface FeatureSideItemProps {
   variant?: "light" | "dark";
 }
 
-export function FeatureSideItem({ article, variant = "light" }: FeatureSideItemProps) {
+export function FeatureSideItem({
+  article,
+  variant = "light",
+}: FeatureSideItemProps) {
   const textColor = variant === "dark" ? "text-white" : "";
-  const desktopTextColor = variant === "dark" ? "text-white" : "text-neutral-900";
+  const desktopTextColor =
+    variant === "dark" ? "text-white" : "text-neutral-900";
   const imageFrameClass =
     variant === "dark"
       ? "overflow-hidden rounded-lg bg-black"
       : "overflow-hidden rounded-lg bg-muted";
-  
+
   return (
     <article className="group">
       <Link
@@ -23,7 +27,7 @@ export function FeatureSideItem({ article, variant = "light" }: FeatureSideItemP
         aria-label={`Read article: ${article.title}`}
       >
         {/* Mobile row style */}
-        <div className="md:hidden flex gap-4">
+        <div className="flex gap-4 md:hidden">
           <div className={`relative h-16 w-24 shrink-0 ${imageFrameClass}`}>
             <ImageRenderer
               src={
@@ -40,7 +44,9 @@ export function FeatureSideItem({ article, variant = "light" }: FeatureSideItemP
             />
           </div>
           <div className="flex-1">
-            <h3 className={`font-sans text-lg sm:text-base font-normal tracking-wide leading-normal ${textColor}`}>
+            <h3
+              className={`font-normal font-sans text-lg leading-normal tracking-wide sm:text-base ${textColor}`}
+            >
               {article.title}
             </h3>
           </div>
@@ -63,7 +69,9 @@ export function FeatureSideItem({ article, variant = "light" }: FeatureSideItemP
               className="object-cover"
             />
           </div>
-          <h3 className={`text-lg font-sans font-normal ${desktopTextColor} leading-snug tracking-normal mb-2`}>
+          <h3
+            className={`font-normal font-sans text-lg ${desktopTextColor} mb-2 leading-snug tracking-normal`}
+          >
             {article.title}
           </h3>
         </div>

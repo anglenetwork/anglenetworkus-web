@@ -24,7 +24,7 @@ function withTimeout<T>(p: Promise<T>, ms: number, label: string): Promise<T> {
   return Promise.race([
     p,
     new Promise<T>((_, rej) =>
-      setTimeout(() => rej(new Error(`${label} timed out`)), ms)
+      setTimeout(() => rej(new Error(`${label} timed out`)), ms),
     ),
   ]);
 }
@@ -61,7 +61,7 @@ export function SupabaseAuthProvider({
         const { data } = await withTimeout(
           supabase.auth.getSession(),
           3000,
-          "auth.getSession"
+          "auth.getSession",
         );
         if (!mounted.current) return;
         setUserId(data.session?.user?.id ?? null);

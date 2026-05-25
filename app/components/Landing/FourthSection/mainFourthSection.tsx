@@ -14,10 +14,9 @@ interface Post {
     externalUrl?: string | null;
     image?: any;
     alt?: string | null;
-    creditProvider?: string | null;
+    caption?: string | null;
     creditAuthor?: string | null;
-    creditSourceUrl?: string | null;
-    creditLicense?: string | null;
+    creditSource?: string | null;
   } | null;
   date: string;
   author?: {
@@ -48,7 +47,7 @@ export default function FourthSection({
   // Filter out categories without required data and limit to 3 posts per category
   const validCategories = categoriesData
     .filter(
-      (category) => category.slug && category.name && category.posts.length > 0
+      (category) => category.slug && category.name && category.posts.length > 0,
     )
     .map((category) => ({
       ...category,
@@ -57,7 +56,7 @@ export default function FourthSection({
 
   return (
     <main
-      className={`p-10 rounded-lg ${variant === "dark" ? "bg-black" : "bg-background"}`}
+      className={`rounded-lg p-10 ${variant === "dark" ? "bg-black" : "bg-background"}`}
     >
       <div className="">
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
@@ -83,7 +82,7 @@ export default function FourthSection({
                   {(() => {
                     const coverData = getCoverImage(
                       mainPost?.cover,
-                      mainPost?.title || "Article image"
+                      mainPost?.title || "Article image",
                     );
                     if (coverData?.src) {
                       return (
@@ -101,7 +100,7 @@ export default function FourthSection({
                                 height={300}
                                 unoptimized={coverData.unoptimized}
                                 sizes="(max-width: 768px) 100vw, (max-width: 1200px) 25vw, 800px"
-                                className="h-[300px] w-full object-cover rounded-sm"
+                                className="h-[300px] w-full rounded-sm object-cover"
                               />
                             </div>
                           </Link>
@@ -124,7 +123,7 @@ export default function FourthSection({
                   <div className="space-y-2">
                     <Link href={`/post/${mainPost.slug}`}>
                       <h3
-                        className={`text-xl font-sans font-semibold leading-snug tracking-tight ${variant === "dark" ? "text-white" : "text-neutral-900"}`}
+                        className={`font-sans font-semibold text-xl leading-snug tracking-tight ${variant === "dark" ? "text-white" : "text-neutral-900"}`}
                       >
                         {mainPost.title}
                       </h3>
@@ -143,7 +142,7 @@ export default function FourthSection({
                     <>
                       <Link href={`/post/${secondPost.slug}`}>
                         <h3
-                          className={`text-base font-sans font-normal leading-snug mb-4 ${variant === "dark" ? "text-white" : "text-neutral-900"}`}
+                          className={`mb-4 font-normal font-sans text-base leading-snug ${variant === "dark" ? "text-white" : "text-neutral-900"}`}
                         >
                           {secondPost.title}
                         </h3>
@@ -153,10 +152,10 @@ export default function FourthSection({
                   {thirdPost && thirdPost.slug && (
                     <Link href={`/post/${thirdPost.slug}`}>
                       <hr
-                        className={`border-1 my-4 ${variant === "dark" ? "border-white" : "border-neutral-200"}`}
+                        className={`my-4 border-1 ${variant === "dark" ? "border-white" : "border-neutral-200"}`}
                       />
                       <h3
-                        className={`leading-snug mb-2 font-sans text-base font-normal ${variant === "dark" ? "text-white" : "text-neutral-900"}`}
+                        className={`mb-2 font-normal font-sans text-base leading-snug ${variant === "dark" ? "text-white" : "text-neutral-900"}`}
                       >
                         {thirdPost.title}
                       </h3>

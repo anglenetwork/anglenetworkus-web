@@ -5,15 +5,11 @@ import { getCoverImage } from "@/sanity/lib/utils";
 import { ImageRenderer } from "../ui/image-renderer";
 import type { ArticleFamilyCard as CardModel } from "@/app/lib/article-family/types";
 
-export type ArticleFamilyCardLayout =
-  | "compact"
-  | "large"
-  | "rail"
-  | "heroTile";
+export type ArticleFamilyCardLayout = "compact" | "large" | "rail" | "heroTile";
 
 function typeLabel(
   t: CardModel["_type"],
-  showPostAsNews: boolean
+  showPostAsNews: boolean,
 ): string | null {
   switch (t) {
     case "post":
@@ -32,7 +28,7 @@ function typeLabel(
 /** Category-first kicker (homepage opinion rail). */
 function editorialKicker(
   article: CardModel,
-  fallbackTypeLabel: string | null
+  fallbackTypeLabel: string | null,
 ): string {
   const cat = article.category?.title?.trim();
   if (cat) return cat;
@@ -70,7 +66,7 @@ export default function ArticleFamilyCard({
   hidePostTypeBadgeOnMobile?: boolean;
   /** When true, compact thumb is 20% larger below md. */
   enlargeMobileThumb?: boolean;
-  /** Show opinionFormat / analysisFocus in compact layout (e.g. search). */
+  /** Show analysisFocus in compact layout (e.g. search). */
   showTypeMetadataInCompact?: boolean;
   /** `editorial` = category title first, then Opinion/Analysis (opinion rail). */
   kickerMode?: "card" | "editorial";
@@ -91,13 +87,12 @@ export default function ArticleFamilyCard({
   const coverData = getCoverImage(
     article.cover as Parameters<typeof getCoverImage>[0],
     article.title || "Article",
-    imgMaxW
+    imgMaxW,
   );
   const imgUrl = coverData?.src ?? null;
   const showAnalysisFocus =
     article.analysisFocus &&
-    (layout === "large" ||
-      (showTypeMetadataInCompact && layout === "compact"));
+    (layout === "large" || (showTypeMetadataInCompact && layout === "compact"));
   const sponsorName = article.sponsorAttribution?.sponsorName;
 
   let dateStr = "";
@@ -125,16 +120,16 @@ export default function ArticleFamilyCard({
                 fill
                 unoptimized={coverData?.unoptimized}
                 sizes="(max-width: 768px) 100vw, 300px"
-                className="object-cover rounded-sm"
+                className="rounded-sm object-cover"
               />
             </div>
             <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent" />
-            <div className="absolute bottom-0 left-0 right-0 p-4 text-white">
-              <h3 className="mb-2 font-sans text-xl font-semibold leading-snug tracking-tight text-white">
+            <div className="absolute right-0 bottom-0 left-0 p-4 text-white">
+              <h3 className="mb-2 font-sans font-semibold text-white text-xl leading-snug tracking-tight">
                 {article.title}
               </h3>
               <div className="flex items-center gap-2">
-                <span className="font-sans text-xs font-light">
+                <span className="font-light font-sans text-xs">
                   {readMins} min read
                 </span>
               </div>
@@ -196,7 +191,7 @@ export default function ArticleFamilyCard({
                   ? "h-[72px] w-24 rounded-[4px]"
                   : enlargeMobileThumb
                     ? "h-[92px] w-[115px] md:h-[174px] md:w-[216px]"
-                    : "h-[77px] w-24 md:h-[174px] md:w-[216px]"
+                    : "h-[77px] w-24 md:h-[174px] md:w-[216px]",
               )}
             >
               No Image
@@ -205,42 +200,34 @@ export default function ArticleFamilyCard({
         </div>
         <div className="min-w-0 flex-1">
           {kickerMode === "editorial" ? (
-            <p className="mb-1 font-sans text-[10px] font-bold uppercase tracking-wide text-editorialKicker">
+            <p className="mb-1 font-bold font-sans text-[10px] text-editorialKicker uppercase tracking-wide">
               {editorialK}
             </p>
           ) : (
             <div
               className={cn(
                 "mb-1 flex flex-wrap items-center gap-2",
-                hidePostTypeBadgeOnMobile && "max-md:hidden"
+                hidePostTypeBadgeOnMobile && "max-md:hidden",
               )}
             >
               {label && (
-                <span className="text-[10px] font-bold uppercase tracking-wider text-sectionAccent">
+                <span className="font-bold text-[10px] text-sectionAccent uppercase tracking-wider">
                   {label}
                 </span>
               )}
               {article._type === "sponsored" && sponsorName && (
-                <span className="text-[10px] font-semibold text-amber-800">
+                <span className="font-semibold text-[10px] text-amber-800">
                   {sponsorName}
                 </span>
               )}
-              {article._type === "opinion" &&
-                article.opinionFormat &&
-                (layout === "large" ||
-                  (showTypeMetadataInCompact && layout === "compact")) && (
-                  <span className="text-[10px] capitalize text-neutral-600">
-                    {article.opinionFormat.replace(/-/g, " ")}
-                  </span>
-                )}
             </div>
           )}
           <h3 className={titleClass}>{article.title}</h3>
           {showExcerpt && article.excerpt ? (
             <p
               className={cn(
-                "search-result-excerpt mb-2 line-clamp-3 font-sans text-sm leading-relaxed text-neutral-700 md:text-base",
-                hideExcerptOnMobile && "max-md:hidden"
+                "search-result-excerpt mb-2 line-clamp-3 font-sans text-neutral-700 text-sm leading-relaxed md:text-base",
+                hideExcerptOnMobile && "max-md:hidden",
               )}
             >
               {article.excerpt}
@@ -249,8 +236,8 @@ export default function ArticleFamilyCard({
           {showAuthor && article.author?.name ? (
             <p
               className={cn(
-                "mb-1 font-sans text-xs text-neutral-600",
-                hideAuthorOnMobile && "max-md:hidden"
+                "mb-1 font-sans text-neutral-600 text-xs",
+                hideAuthorOnMobile && "max-md:hidden",
               )}
             >
               {article.author.name}
@@ -259,17 +246,15 @@ export default function ArticleFamilyCard({
           {showAnalysisFocus && (
             <p
               className={cn(
-                "mb-1 line-clamp-2 text-xs text-neutral-600",
-                hidePostTypeBadgeOnMobile && "max-md:hidden"
+                "mb-1 line-clamp-2 text-neutral-600 text-xs",
+                hidePostTypeBadgeOnMobile && "max-md:hidden",
               )}
             >
               {article.analysisFocus}
             </p>
           )}
           {showDate && dateStr && (
-            <p className="mt-1 font-sans text-xs text-neutral-500">
-              {dateStr}
-            </p>
+            <p className="mt-1 font-sans text-neutral-500 text-xs">{dateStr}</p>
           )}
         </div>
       </Link>

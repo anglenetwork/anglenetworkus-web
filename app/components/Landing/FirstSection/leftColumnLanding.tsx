@@ -8,6 +8,10 @@ import { BreakingNewsLabel } from "../../ui/breaking-news-label";
 import { SectionHeader } from "../../ui/section-header";
 import { ImageRenderer } from "../../ui/image-renderer";
 import { urlForImage } from "@/sanity/lib/utils";
+import {
+  justInPrimaryTitle,
+  justInSecondaryTitle,
+} from "@/app/lib/typography/first-section";
 
 interface GalleryImage {
   source?: "asset" | "external";
@@ -145,9 +149,9 @@ function ImageCarousel({
   if (allImages.length === 0) return null;
 
   return (
-    <div className="block mb-3">
+    <div className="mb-3 block">
       <Link href={`/post/${postSlug}`}>
-        <div className="relative w-full h-56 md:h-60 overflow-hidden rounded-sm">
+        <div className="relative h-56 w-full overflow-hidden rounded-sm md:h-60">
           {allImages.map((image, idx) => (
             <ImageRenderer
               key={idx}
@@ -159,8 +163,8 @@ function ImageCarousel({
               unoptimized={image.unoptimized}
               quality={55}
               sizes="(max-width: 640px) 100vw, (max-width: 1024px) 100vw, 300px"
-              className={`object-cover rounded-sm transition-opacity duration-500 ${
-                idx === currentIndex ? "opacity-100 z-10" : "opacity-0 z-0"
+              className={`rounded-sm object-cover transition-opacity duration-500 ${
+                idx === currentIndex ? "z-10 opacity-100" : "z-0 opacity-0"
               }`}
               priority={idx === 0}
             />
@@ -174,7 +178,7 @@ function ImageCarousel({
           )}
           {/* Carousel indicators */}
           {allImages.length > 1 && (
-            <div className="absolute bottom-3 right-3 z-20 flex gap-1.5">
+            <div className="absolute right-3 bottom-3 z-20 flex gap-1.5">
               {allImages.map((_, idx) => (
                 <button
                   key={idx}
@@ -200,7 +204,7 @@ function ImageCarousel({
 
 export function LeftColumnLanding({ justInNews }: LeftColumnLandingProps) {
   return (
-    <div className=" lg:sticky lg:top-20 lg:h-auto lg:overflow-hidden text-left px-0 md:px-4">
+    <div className="px-0 text-left md:px-4 lg:sticky lg:top-20 lg:h-auto lg:overflow-hidden">
       <SectionHeader
         title="Just in"
         variant="light"
@@ -244,7 +248,7 @@ export function LeftColumnLanding({ justInNews }: LeftColumnLandingProps) {
           return (
             <article
               key={post._id}
-              className={`${index < justInNews.length - 1 ? "border-b border-neutral-200" : ""} pb-4`}
+              className={`${index < justInNews.length - 1 ? "border-neutral-200 border-b" : ""} pb-4`}
             >
               {shouldShowCarousel ? (
                 <ImageCarousel
@@ -255,9 +259,9 @@ export function LeftColumnLanding({ justInNews }: LeftColumnLandingProps) {
                   developingStory={post.developingStory}
                 />
               ) : isFirstArticle && coverData?.src ? (
-                <div className="block mb-3">
+                <div className="mb-3 block">
                   <Link href={`/post/${post.slug}`}>
-                    <div className="relative w-full h-56 md:h-60 overflow-hidden rounded-sm">
+                    <div className="relative h-56 w-full overflow-hidden rounded-sm md:h-60">
                       <ImageRenderer
                         src={coverData.src}
                         alt={coverData.alt}
@@ -267,7 +271,7 @@ export function LeftColumnLanding({ justInNews }: LeftColumnLandingProps) {
                         unoptimized={coverData.unoptimized}
                         quality={55}
                         sizes="(max-width: 640px) 100vw, (max-width: 1024px) 100vw, 300px"
-                        className="object-cover rounded-sm"
+                        className="rounded-sm object-cover"
                       />
                       {(post.breakingNews || post.developingStory) && (
                         <div className="absolute bottom-3 left-3 z-10">
@@ -287,9 +291,7 @@ export function LeftColumnLanding({ justInNews }: LeftColumnLandingProps) {
               <Link href={`/post/${post.slug}`} className="hover:text-red-600">
                 <h3
                   className={
-                    isFirstArticle
-                      ? "text-xl font-sans font-semibold text-neutral-900 leading-snug tracking-tight"
-                      : "text-lg font-sans font-normal text-neutral-900 leading-normal tracking-normal"
+                    isFirstArticle ? justInPrimaryTitle : justInSecondaryTitle
                   }
                 >
                   {post.title}

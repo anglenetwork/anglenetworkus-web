@@ -9,7 +9,8 @@ export default defineType({
       name: "sponsorName",
       title: "Sponsor Name",
       type: "string",
-      description: "Brand or organization paying for or partnering on this content (shown in bylines and listings).",
+      description:
+        "Brand or organization paying for or partnering on this content (shown in bylines and listings).",
       validation: (rule) => rule.required().max(80),
     }),
     defineField({
@@ -18,7 +19,8 @@ export default defineType({
       type: "url",
       validation: (rule) =>
         rule.uri({ scheme: ["http", "https"] }).custom((value) => {
-          if (value === undefined || value === null || value === "") return true;
+          if (value === undefined || value === null || value === "")
+            return true;
           return true;
         }),
     }),

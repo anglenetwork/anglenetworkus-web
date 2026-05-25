@@ -46,7 +46,8 @@ export default defineType({
       options: {
         source: "name",
         maxLength: 96,
-        isUnique: (value: string, context: any) => context.defaultIsUnique(value, context),
+        isUnique: (value: string, context: any) =>
+          context.defaultIsUnique(value, context),
       },
       validation: (rule) => rule.required(),
     }),

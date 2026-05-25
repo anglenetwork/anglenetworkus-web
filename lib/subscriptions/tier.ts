@@ -9,7 +9,3 @@ export const tierPriority: Record<Tier, number> = {
 export function hasAtLeastTier(current: Tier, required: Tier) {
   return tierPriority[current] >= tierPriority[required];
 }
-
-
-
-

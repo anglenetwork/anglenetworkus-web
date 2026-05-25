@@ -66,6 +66,3 @@ export async function POST(req: Request) {
 
   return NextResponse.json({ bookmarked: true }, { status: 200 });
 }
-
-
-

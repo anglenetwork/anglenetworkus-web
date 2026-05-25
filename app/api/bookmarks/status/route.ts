@@ -18,7 +18,10 @@ export async function GET(req: Request) {
 
   if (userErr || !user) {
     // Not logged in is NOT an error for status checks
-    return NextResponse.json({ bookmarked: false, authenticated: false }, { status: 200 });
+    return NextResponse.json(
+      { bookmarked: false, authenticated: false },
+      { status: 200 },
+    );
   }
 
   const { data, error } = await supabase
@@ -31,10 +34,12 @@ export async function GET(req: Request) {
   if (error) {
     return NextResponse.json(
       { error: error.message, bookmarked: false, authenticated: true },
-      { status: 500 }
+      { status: 500 },
     );
   }
 
-  return NextResponse.json({ bookmarked: !!data, authenticated: true }, { status: 200 });
+  return NextResponse.json(
+    { bookmarked: !!data, authenticated: true },
+    { status: 200 },
+  );
 }
-

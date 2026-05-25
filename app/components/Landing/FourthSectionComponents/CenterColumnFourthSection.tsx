@@ -28,7 +28,7 @@ export function CenterColumnFourthSection({
   categorySlug,
 }: NewsSectionProps) {
   return (
-    <div className="border-r border-gray-200 px-6">
+    <div className="border-gray-200 border-r px-6">
       {/* News Section */}
       <div className="mb-8">
         <SectionHeader
@@ -48,17 +48,17 @@ export function CenterColumnFourthSection({
                 alt={data.mainStory.title}
                 width={800}
                 height={320}
-                className="w-full h-80 object-cover rounded-sm cursor-pointer hover:opacity-90 transition-opacity"
+                className="h-80 w-full cursor-pointer rounded-sm object-cover transition-opacity hover:opacity-90"
               />
             </Link>
             {data.mainStory.imageSource && (
-              <p className="text-[10px] text-gray-500 font-sans text-right">
+              <p className="text-right font-sans text-[10px] text-gray-500">
                 {data.mainStory.imageSource}
               </p>
             )}
           </div>
           <Link href={`/post/${data.mainStory.slug}`}>
-            <h1 className="text-3xl font-semibold text-gray-900 mb-3 font-sans cursor-pointer hover:text-gray-700 transition-colors">
+            <h1 className="mb-3 cursor-pointer font-sans font-semibold text-3xl text-gray-900 transition-colors hover:text-gray-700">
               {data.mainStory.title}
             </h1>
           </Link>
@@ -68,7 +68,7 @@ export function CenterColumnFourthSection({
         {data.extraStories.map((story, index) => (
           <div
             key={index}
-            className={`border-t border-gray-300 pt-6 ${index < data.extraStories.length - 1 ? "mb-6" : ""}`}
+            className={`border-gray-300 border-t pt-6 ${index < data.extraStories.length - 1 ? "mb-6" : ""}`}
           >
             <div className="flex gap-4">
               <div className="flex-shrink-0">
@@ -78,18 +78,18 @@ export function CenterColumnFourthSection({
                     alt={story.title}
                     width={160}
                     height={112}
-                    className="w-40 h-28 object-cover rounded-sm cursor-pointer hover:opacity-90 transition-opacity"
+                    className="h-28 w-40 cursor-pointer rounded-sm object-cover transition-opacity hover:opacity-90"
                   />
                 </Link>
                 {story.imageSource && (
-                  <p className="text-[10px] text-gray-500 font-sans text-right">
+                  <p className="text-right font-sans text-[10px] text-gray-500">
                     {story.imageSource}
                   </p>
                 )}
               </div>
               <div className="flex-1">
                 <Link href={`/post/${story.slug}`}>
-                  <h3 className="text-base font-semibold text-neutral-900 mb-2 font-sans cursor-pointer hover:text-gray-700 transition-colors">
+                  <h3 className="mb-2 cursor-pointer font-sans font-semibold text-base text-neutral-900 transition-colors hover:text-gray-700">
                     {story.title}
                   </h3>
                 </Link>

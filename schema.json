@@ -377,14 +377,7 @@
           },
           "optional": true
         },
-        "epigraph": {
-          "type": "objectAttribute",
-          "value": {
-            "type": "string"
-          },
-          "optional": true
-        },
-        "creditProvider": {
+        "caption": {
           "type": "objectAttribute",
           "value": {
             "type": "string"
@@ -398,14 +391,14 @@
           },
           "optional": true
         },
-        "creditSourceUrl": {
+        "creditSource": {
           "type": "objectAttribute",
           "value": {
             "type": "string"
           },
           "optional": true
         },
-        "creditLicense": {
+        "licenseOrRights": {
           "type": "objectAttribute",
           "value": {
             "type": "string"
@@ -467,14 +460,7 @@
           },
           "optional": true
         },
-        "epigraph": {
-          "type": "objectAttribute",
-          "value": {
-            "type": "string"
-          },
-          "optional": true
-        },
-        "creditProvider": {
+        "caption": {
           "type": "objectAttribute",
           "value": {
             "type": "string"
@@ -488,14 +474,14 @@
           },
           "optional": true
         },
-        "creditSourceUrl": {
+        "creditSource": {
           "type": "objectAttribute",
           "value": {
             "type": "string"
           },
           "optional": true
         },
-        "creditLicense": {
+        "licenseOrRights": {
           "type": "objectAttribute",
           "value": {
             "type": "string"
@@ -557,14 +543,7 @@
           },
           "optional": true
         },
-        "epigraph": {
-          "type": "objectAttribute",
-          "value": {
-            "type": "string"
-          },
-          "optional": true
-        },
-        "creditProvider": {
+        "caption": {
           "type": "objectAttribute",
           "value": {
             "type": "string"
@@ -578,14 +557,14 @@
           },
           "optional": true
         },
-        "creditSourceUrl": {
+        "creditSource": {
           "type": "objectAttribute",
           "value": {
             "type": "string"
           },
           "optional": true
         },
-        "creditLicense": {
+        "licenseOrRights": {
           "type": "objectAttribute",
           "value": {
             "type": "string"
@@ -1805,31 +1784,6 @@
         "value": {
           "type": "inline",
           "name": "slug"
-        },
-        "optional": true
-      },
-      "opinionFormat": {
-        "type": "objectAttribute",
-        "value": {
-          "type": "union",
-          "of": [
-            {
-              "type": "string",
-              "value": "op-ed"
-            },
-            {
-              "type": "string",
-              "value": "editorial"
-            },
-            {
-              "type": "string",
-              "value": "column"
-            },
-            {
-              "type": "string",
-              "value": "commentary"
-            }
-          ]
         },
         "optional": true
       },

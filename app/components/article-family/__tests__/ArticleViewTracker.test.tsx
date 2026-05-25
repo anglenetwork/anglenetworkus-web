@@ -6,13 +6,15 @@ describe("ArticleViewTracker", () => {
   const originalSendBeacon = navigator.sendBeacon;
   const originalWebdriver = Object.getOwnPropertyDescriptor(
     Navigator.prototype,
-    "webdriver"
+    "webdriver",
   );
 
   beforeEach(() => {
     vi.stubGlobal("fetch", vi.fn().mockResolvedValue({ ok: true }));
     // Force fetch path (sendBeacon would skip fetch mock)
-    navigator.sendBeacon = vi.fn().mockReturnValue(false) as typeof navigator.sendBeacon;
+    navigator.sendBeacon = vi
+      .fn()
+      .mockReturnValue(false) as typeof navigator.sendBeacon;
     localStorage.clear();
   });
 
@@ -20,7 +22,11 @@ describe("ArticleViewTracker", () => {
     vi.unstubAllGlobals();
     navigator.sendBeacon = originalSendBeacon;
     if (originalWebdriver) {
-      Object.defineProperty(Navigator.prototype, "webdriver", originalWebdriver);
+      Object.defineProperty(
+        Navigator.prototype,
+        "webdriver",
+        originalWebdriver,
+      );
     }
   });
 
@@ -29,9 +35,7 @@ describe("ArticleViewTracker", () => {
       configurable: true,
       get: () => true,
     });
-    render(
-      <ArticleViewTracker articleId="a1" articleType="post" />
-    );
+    render(<ArticleViewTracker articleId="a1" articleType="post" />);
     expect(fetch).not.toHaveBeenCalled();
   });
 
@@ -54,7 +58,7 @@ describe("ArticleViewTracker", () => {
     });
     localStorage.setItem(
       "article-viewed:a1",
-      String(Date.now() - 31 * 60 * 1000)
+      String(Date.now() - 31 * 60 * 1000),
     );
 
     await act(async () => {
@@ -67,7 +71,7 @@ describe("ArticleViewTracker", () => {
         method: "POST",
         body: JSON.stringify({ articleId: "a1", articleType: "post" }),
         keepalive: true,
-      })
+      }),
     );
   });
 

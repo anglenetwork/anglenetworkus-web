@@ -6,10 +6,10 @@ export async function GET(request: Request) {
   const url = new URL(request.url);
   const code = url.searchParams.get("code");
   const nextParam = url.searchParams.get("next");
-  
+
   // Default to profile-details with post_login flag
   let next = nextParam ?? "/myprofile/profile-details?post_login=1";
-  
+
   // If next param exists but doesn't have post_login, append it
   if (nextParam && !nextParam.includes("post_login")) {
     const separator = nextParam.includes("?") ? "&" : "?";
@@ -27,7 +27,7 @@ export async function GET(request: Request) {
   if (!supabaseUrl || !supabaseAnonKey) {
     return NextResponse.json(
       { error: "Missing Supabase configuration" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 
@@ -54,11 +54,13 @@ export async function GET(request: Request) {
   if (code) {
     // Exchange the code for a session
     const { error } = await supabase.auth.exchangeCodeForSession(code);
-    
+
     if (error) {
       console.error("Error exchanging code for session:", error);
       // Redirect to sign-in page with error
-      return NextResponse.redirect(new URL(`/signin?error=${encodeURIComponent(error.message)}`, url));
+      return NextResponse.redirect(
+        new URL(`/signin?error=${encodeURIComponent(error.message)}`, url),
+      );
     }
 
     // Ensure profile row exists for all authentication methods (OAuth and email magic link)
@@ -73,8 +75,9 @@ export async function GET(request: Request) {
         // Continue to redirect even if profile creation fails
       } else {
         // Check if this is an OAuth provider (has provider metadata)
-        const isOAuth = user.app_metadata?.provider && user.app_metadata.provider !== "email";
-        const hasOAuthMetadata = 
+        const isOAuth =
+          user.app_metadata?.provider && user.app_metadata.provider !== "email";
+        const hasOAuthMetadata =
           user.user_metadata?.full_name ||
           user.user_metadata?.name ||
           user.user_metadata?.display_name ||
@@ -101,7 +104,10 @@ export async function GET(request: Request) {
         // For OAuth providers (like Google), extract and set name data from metadata
         if (isOAuth && hasOAuthMetadata) {
           // Log user metadata for debugging
-          console.log("User metadata from OAuth provider:", JSON.stringify(user.user_metadata, null, 2));
+          console.log(
+            "User metadata from OAuth provider:",
+            JSON.stringify(user.user_metadata, null, 2),
+          );
 
           // Extract OAuth metadata - check multiple possible field names
           const fullName =
@@ -115,7 +121,7 @@ export async function GET(request: Request) {
           // Parse full_name into first_name and last_name
           let firstName: string | null = null;
           let lastName: string | null = null;
-          
+
           if (fullName) {
             const nameParts = fullName.trim().split(/\s+/).filter(Boolean);
             if (nameParts.length > 0) {
@@ -151,7 +157,10 @@ export async function GET(request: Request) {
         // User can fill in first_name, last_name, date_of_birth via the profile completion modal
 
         // Log what we're about to upsert
-        console.log("Upserting profile:", JSON.stringify(profileUpdate, null, 2));
+        console.log(
+          "Upserting profile:",
+          JSON.stringify(profileUpdate, null, 2),
+        );
 
         // Upsert profile - this will create the profile if it doesn't exist, or update it if it does
         // This ensures a profile row exists for all users (OAuth and email magic link)
@@ -164,11 +173,16 @@ export async function GET(request: Request) {
           console.error("Error upserting profile:", profileError);
           // Don't block auth flow if profile upsert fails
         } else {
-          console.log("Profile upserted successfully:", JSON.stringify(updatedProfile, null, 2));
-          
+          console.log(
+            "Profile upserted successfully:",
+            JSON.stringify(updatedProfile, null, 2),
+          );
+
           // Ensure subscription row exists (idempotent)
           // This provides app-level guarantee in addition to the database trigger
-          const { error: tierError } = await supabase.rpc("ensure_subscription_row");
+          const { error: tierError } = await supabase.rpc(
+            "ensure_subscription_row",
+          );
           if (tierError) {
             console.error("Error ensuring subscription row:", tierError);
             // Don't block auth flow if subscription creation fails (trigger should handle it)
@@ -184,5 +198,3 @@ export async function GET(request: Request) {
   // Redirect to the next URL (defaults to /myprofile)
   return NextResponse.redirect(new URL(next, url));
 }
-
-

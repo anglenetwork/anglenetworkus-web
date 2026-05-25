@@ -191,20 +191,20 @@ export default function SignInPage() {
   }
 
   return (
-    <div className="min-h-screen flex bg-background">
+    <div className="flex min-h-screen bg-background">
       {/* Left Side - Sign In Form */}
-      <div className="flex-1 flex flex-col items-center justify-center px-8 py-12">
+      <div className="flex flex-1 flex-col items-center justify-center px-8 py-12">
         <div className="w-full max-w-md">
           {/* Logo */}
-          <div className="flex justify-center mb-8">
+          <div className="mb-8 flex justify-center">
             <Logo variant="logo-only" />
           </div>
 
           {/* Heading */}
-          <h1 className="text-2xl font-bold text-center mb-2 font-sans">
+          <h1 className="mb-2 text-center font-bold font-sans text-2xl">
             Sign in to continue
           </h1>
-          <p className="text-center text-sm text-muted-foreground mb-8 font-sans">
+          <p className="mb-8 text-center font-sans text-muted-foreground text-sm">
             Enter your email and we’ll send a secure link to sign in or create
             your account.
           </p>
@@ -217,7 +217,7 @@ export default function SignInPage() {
                 variant="outline"
                 onClick={handleGoogleSignIn}
                 disabled={isGoogleLoading || isSending}
-                className="w-full h-11 font-sans border-2"
+                className="h-11 w-full border-2 font-sans"
               >
                 <Chrome className="mr-2 h-4 w-4" />
                 {isGoogleLoading ? "Connecting..." : "Continue with Google"}
@@ -229,7 +229,7 @@ export default function SignInPage() {
                   <Separator className="w-full" />
                 </div>
                 <div className="relative flex justify-center text-xs uppercase">
-                  <span className="bg-background px-2 text-muted-foreground font-sans">
+                  <span className="bg-background px-2 font-sans text-muted-foreground">
                     Or
                   </span>
                 </div>
@@ -241,7 +241,7 @@ export default function SignInPage() {
                 <div className="space-y-2">
                   <label
                     htmlFor="email"
-                    className="text-sm font-medium text-foreground font-sans"
+                    className="font-medium font-sans text-foreground text-sm"
                   >
                     Email
                   </label>
@@ -260,7 +260,9 @@ export default function SignInPage() {
                     disabled={isSending || isGoogleLoading}
                   />
                   {emailError && (
-                    <p className="text-sm text-red-500 font-sans">{emailError}</p>
+                    <p className="font-sans text-red-500 text-sm">
+                      {emailError}
+                    </p>
                   )}
                 </div>
 
@@ -268,19 +270,19 @@ export default function SignInPage() {
                 <Button
                   type="submit"
                   disabled={isSending || isGoogleLoading}
-                  className="w-full bg-foreground text-background hover:bg-foreground/90 h-11 font-sans"
+                  className="h-11 w-full bg-foreground font-sans text-background hover:bg-foreground/90"
                 >
                   {isSending ? "Sending..." : "Send sign-in link"}
                 </Button>
               </form>
             </div>
           ) : (
-            <div className="space-y-4 animate-in fade-in duration-500">
-              <div className="bg-green-50 border border-green-200 rounded-lg p-6">
-                <h2 className="text-lg font-semibold text-green-900 mb-2 font-sans">
+            <div className="fade-in animate-in space-y-4 duration-500">
+              <div className="rounded-lg border border-green-200 bg-green-50 p-6">
+                <h2 className="mb-2 font-sans font-semibold text-green-900 text-lg">
                   Check your email
                 </h2>
-                <p className="text-green-700 font-sans">
+                <p className="font-sans text-green-700">
                   Check your inbox — we sent a secure sign-in link to{" "}
                   <strong>{email}</strong>. Click it to sign in.
                 </p>
@@ -303,13 +305,13 @@ export default function SignInPage() {
 
       {/* Right Side - Gallery Carousel */}
       {!galleryLoading && galleryItems.length > 0 && currentItem && (
-        <div className="hidden lg:flex flex-1 relative bg-gradient-to-br from-orange-200 via-pink-300 to-emerald-200">
+        <div className="relative hidden flex-1 bg-gradient-to-br from-orange-200 via-pink-300 to-emerald-200 lg:flex">
           {/* Gallery Content */}
-          <div className="w-full h-full relative">
+          <div className="relative h-full w-full">
             {/* Image Container */}
-            <div className="w-full h-full relative">
+            <div className="relative h-full w-full">
               {/* Image */}
-              <div className="w-full h-full relative overflow-hidden">
+              <div className="relative h-full w-full overflow-hidden">
                 <Image
                   src={currentItem.image || "/placeholder.svg"}
                   alt={currentItem.title}
@@ -317,22 +319,22 @@ export default function SignInPage() {
                   className="object-cover"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
-                <div className="absolute bottom-20 left-0 right-0 px-8 py-6">
+                <div className="absolute right-0 bottom-20 left-0 px-8 py-6">
                   {currentItem.slug ? (
                     <Link href={`/post/${currentItem.slug}`}>
-                      <h2 className="text-white text-5xl font-bold text-shadow font-sans mb-4 hover:underline cursor-pointer">
+                      <h2 className="mb-4 cursor-pointer font-bold font-sans text-5xl text-shadow text-white hover:underline">
                         {currentItem.title}
                       </h2>
                     </Link>
                   ) : (
-                    <h2 className="text-white text-4xl font-bold text-shadow font-sans mb-4">
+                    <h2 className="mb-4 font-bold font-sans text-4xl text-shadow text-white">
                       {currentItem.title}
                     </h2>
                   )}
                   {currentItem.slug && (
                     <Link
                       href={`/post/${currentItem.slug}`}
-                      className="inline-block text-white text-base font-medium hover:underline underline-offset-4 transition-all font-sans"
+                      className="inline-block font-medium font-sans text-base text-white underline-offset-4 transition-all hover:underline"
                     >
                       Read Article
                     </Link>

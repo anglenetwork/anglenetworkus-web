@@ -5,14 +5,11 @@ import {
 } from "@/sanity/lib/queries";
 
 //For more control, we hardcode the sections names we want to display in the eighth section
-export async function getFourthSectionData(
-  slugs: string[],
-  titles: string[]
-) {
+export async function getFourthSectionData(slugs: string[], titles: string[]) {
   // Validate that slugs and titles arrays have the same length
   if (slugs.length !== titles.length) {
     throw new Error(
-      `getFourthSectionData: slugs and titles arrays must have the same length. Got ${slugs.length} slugs and ${titles.length} titles.`
+      `getFourthSectionData: slugs and titles arrays must have the same length. Got ${slugs.length} slugs and ${titles.length} titles.`,
     );
   }
 
@@ -22,8 +19,8 @@ export async function getFourthSectionData(
       sanityFetchStatic({
         query: fourthSectionQuery,
         params: { categorySlug: slug },
-      })
-    )
+      }),
+    ),
   );
 
   // Map the results to the expected format
@@ -103,5 +100,3 @@ export async function getSecondSectionData() {
     },
   ];
 }
-
-

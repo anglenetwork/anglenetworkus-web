@@ -1,6 +1,10 @@
 import { getWikimediaThumbnail } from "@/lib/image-optimization";
-import { formatImageCredit, urlForImage } from "@/sanity/lib/utils";
-import { DEFAULT_IMAGE_EPIGRAPH } from "./constants";
+import {
+  formatImageCredit,
+  normalizeImageMeta,
+  urlForImage,
+} from "@/sanity/lib/utils";
+import { DEFAULT_IMAGE_CAPTION } from "./constants";
 import type { ArticleImageSource, ResolvedArticleImage } from "./types";
 
 type SanityImageWithAlt = {
@@ -86,11 +90,12 @@ export function buildArticleImageData(
       ? getWikimediaThumbnail(externalUrl.toString(), options.wikimediaWidth)
       : externalUrl.toString();
 
+    const meta = normalizeImageMeta(input);
     return {
       src,
       alt: input.alt || options.fallbackAlt,
       unoptimized: shouldUnoptimizeExternal(externalUrl, options),
-      epigraph: input.epigraph,
+      caption: meta.caption,
       credit: formatImageCredit(input),
     };
   }
@@ -117,11 +122,12 @@ export function buildArticleImageData(
       const src = urlBuilder.url();
       if (!src) return null;
 
+      const meta = normalizeImageMeta(input);
       return {
         src,
         alt: input.alt || image?.alt || options.fallbackAlt,
         unoptimized: false,
-        epigraph: input.epigraph,
+        caption: meta.caption,
         credit: formatImageCredit(input),
       };
     } catch (error) {
@@ -138,7 +144,7 @@ export function buildCoverImageData(
   title: string,
 ): ResolvedArticleImage | null {
   return buildArticleImageData(cover, {
-    fallbackAlt: title || DEFAULT_IMAGE_EPIGRAPH,
+    fallbackAlt: title || DEFAULT_IMAGE_CAPTION,
     sanityQuality: 70,
     wikimediaWidth: 1200,
     externalUnoptimized: "auto",

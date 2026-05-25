@@ -9,16 +9,16 @@ interface FooterProps {
 
 export function Footer({ categories, tags }: FooterProps) {
   return (
-    <footer className="bg-black text-white py-12 mt-0 font-sans">
-      <div className="max-w-7xl mx-auto px-4">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+    <footer className="mt-0 bg-black py-12 font-sans text-white">
+      <div className="mx-auto max-w-7xl px-4">
+        <div className="grid grid-cols-1 gap-8 md:grid-cols-4">
           {/* Company Info */}
           <div className="col-span-1">
             <Link
               href="/"
-              className="hover:opacity-80 transition-opacity inline-block"
+              className="inline-block transition-opacity hover:opacity-80"
             >
-              <div className="flex items-center gap-2 mb-4">
+              <div className="mb-4 flex items-center gap-2">
                 <Image
                   src="/black-logo.svg"
                   alt="The Angle Logo"
@@ -26,7 +26,7 @@ export function Footer({ categories, tags }: FooterProps) {
                   height={48}
                   className="flex-shrink-0"
                 />
-                <h3 className="text-4xl font-bold text-white tracking-tight font-sans">
+                <h3 className="font-bold font-sans text-4xl text-white tracking-tight">
                   The Angle
                 </h3>
               </div>
@@ -35,15 +35,21 @@ export function Footer({ categories, tags }: FooterProps) {
 
           {/* Navigation Links */}
           <div className="col-span-1">
-            <h4 className="font-semibold text-red-600 mb-4">Sections</h4>
+            <h4 className="mb-4 font-semibold text-red-600">Sections</h4>
             <ul className="space-y-2 text-sm">
               <li>
-                <Link href="/opinion" className="text-gray-300 hover:text-white">
+                <Link
+                  href="/opinion"
+                  className="text-gray-300 hover:text-white"
+                >
                   Opinion
                 </Link>
               </li>
               <li>
-                <Link href="/analysis" className="text-gray-300 hover:text-white">
+                <Link
+                  href="/analysis"
+                  className="text-gray-300 hover:text-white"
+                >
                   Analysis
                 </Link>
               </li>
@@ -57,7 +63,7 @@ export function Footer({ categories, tags }: FooterProps) {
                   <li key={category.slug}>
                     <Link
                       href={`/category/${category.slug}`}
-                      className="text-gray-300 hover:text-white capitalize"
+                      className="text-gray-300 capitalize hover:text-white"
                     >
                       {category.name}
                     </Link>
@@ -97,14 +103,14 @@ export function Footer({ categories, tags }: FooterProps) {
 
           {/* Topics */}
           <div className="col-span-1">
-            <h4 className="font-semibold text-red-600 mb-4">Topics</h4>
+            <h4 className="mb-4 font-semibold text-red-600">Topics</h4>
             <ul className="space-y-2 text-sm">
               {tags.length > 0 ? (
                 tags.slice(0, 5).map((tag) => (
                   <li key={tag.slug}>
                     <a
                       href={`/tag/${tag.slug}`}
-                      className="text-gray-300 hover:text-white capitalize"
+                      className="text-gray-300 capitalize hover:text-white"
                     >
                       {tag.title}
                     </a>
@@ -144,7 +150,7 @@ export function Footer({ categories, tags }: FooterProps) {
 
           {/* Company */}
           <div className="col-span-1">
-            <h4 className="font-semibold text-red-600 mb-4">Company</h4>
+            <h4 className="mb-4 font-semibold text-red-600">Company</h4>
             <ul className="space-y-2 text-sm">
               <li>
                 <Link
@@ -182,24 +188,24 @@ export function Footer({ categories, tags }: FooterProps) {
           </div>
         </div>
 
-        <div className="border-t border-gray-700 mt-8 pt-8 flex flex-col md:flex-row justify-between items-center">
+        <div className="mt-8 flex flex-col items-center justify-between border-gray-700 border-t pt-8 md:flex-row">
           <p className="text-gray-400 text-sm">
             © 2025 The Angle LLC. All rights reserved.
           </p>
-          <div className="flex space-x-6 mt-4 md:mt-0">
+          <div className="mt-4 flex space-x-6 md:mt-0">
             <Link
               href="/company/privacy-policy"
-              className="text-gray-400 hover:text-white text-sm"
+              className="text-gray-400 text-sm hover:text-white"
             >
               Privacy
             </Link>
             <Link
               href="/company/terms-of-service"
-              className="text-gray-400 hover:text-white text-sm"
+              className="text-gray-400 text-sm hover:text-white"
             >
               Terms
             </Link>
-            <a href="#" className="text-gray-400 hover:text-white text-sm">
+            <a href="#" className="text-gray-400 text-sm hover:text-white">
               Cookies
             </a>
           </div>

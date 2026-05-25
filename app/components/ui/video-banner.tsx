@@ -9,7 +9,7 @@ export default function VideoBanner({
 }: VideoBannerProps) {
   return (
     <div
-      className={`relative w-full h-screen overflow-hidden z-0 ${className}`}
+      className={`relative z-0 h-screen w-full overflow-hidden ${className}`}
     >
       <video
         src={videoSrc}
@@ -17,7 +17,7 @@ export default function VideoBanner({
         loop
         muted
         playsInline
-        className="absolute top-0 left-0 w-full h-full object-cover"
+        className="absolute top-0 left-0 h-full w-full object-cover"
       />
 
       {/* Dark overlay for better text contrast */}

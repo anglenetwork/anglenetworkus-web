@@ -36,7 +36,7 @@ export async function updateSession(request: NextRequest) {
             options?: CookieOptions;
           }) => {
             response.cookies.set(name, value, options);
-          }
+          },
         );
       },
     },
@@ -52,4 +52,3 @@ export async function updateSession(request: NextRequest) {
 
   return response;
 }
-

@@ -27,8 +27,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   ]);
 
   const list = Array.isArray(articles) ? articles : [];
-  const hasOpinion = list.some((a: { _type?: string }) => a._type === "opinion");
-  const hasAnalysis = list.some((a: { _type?: string }) => a._type === "analysis");
+  const hasOpinion = list.some(
+    (a: { _type?: string }) => a._type === "opinion",
+  );
+  const hasAnalysis = list.some(
+    (a: { _type?: string }) => a._type === "analysis",
+  );
 
   const out: MetadataRoute.Sitemap = [
     {
@@ -65,7 +69,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       url: `${base}${articleFamilyHref(t, slug)}`,
       lastModified: lastMod(
         (row as { _updatedAt?: string; publishedAt?: string })._updatedAt ??
-          (row as { publishedAt?: string }).publishedAt
+          (row as { publishedAt?: string }).publishedAt,
       ),
       changeFrequency: "weekly",
       priority: 0.7,
