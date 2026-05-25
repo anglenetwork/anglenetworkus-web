@@ -34,7 +34,9 @@ export default function ArticleCaption({
       {showPrimaryLine && (
         <p className="leading-snug">
           {displayCaption && (
-            <span className={ARTICLE_IMAGE_EPIGRAPH_CLASS}>{displayCaption}</span>
+            <span className={ARTICLE_IMAGE_EPIGRAPH_CLASS}>
+              {displayCaption}
+            </span>
           )}
           {displayCaption && displayCredit && (
             <span className={ARTICLE_IMAGE_EPIGRAPH_CLASS}>

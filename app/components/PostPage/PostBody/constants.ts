@@ -13,7 +13,8 @@ export const ARTICLE_META_SECONDARY_CLASS = regularPostMetaSecondary;
 
 /** Image epigraph typography (figure captions / credits) */
 export const ARTICLE_IMAGE_EPIGRAPH_CLASS = regularPostImageEpigraph;
-export const ARTICLE_IMAGE_EPIGRAPH_CREDIT_CLASS = regularPostImageEpigraphCredit;
+export const ARTICLE_IMAGE_EPIGRAPH_CREDIT_CLASS =
+  regularPostImageEpigraphCredit;
 
 export const DEFAULT_IMAGE_CAPTION =
   "Catch up on the latest headlines and developing news.";

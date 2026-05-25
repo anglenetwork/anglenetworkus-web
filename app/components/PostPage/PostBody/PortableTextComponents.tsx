@@ -244,11 +244,7 @@ export const portableTextComponents: PortableTextComponents = {
   list: {
     bullet: ({ children }: PortableTextComponentProps) => (
       <ul
-        className={cn(
-          regularPostBodyBulletList,
-          BODY_LIST_LAYOUT,
-          "list-disc",
-        )}
+        className={cn(regularPostBodyBulletList, BODY_LIST_LAYOUT, "list-disc")}
       >
         {children}
       </ul>

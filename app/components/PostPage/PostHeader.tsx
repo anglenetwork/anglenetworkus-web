@@ -50,9 +50,7 @@ export default function PostHeader({
       {/* Matches Portable Text h1 scale in PostBody */}
       <h1 className={cn(regularPostTitle, "mb-4 text-start")}>{title}</h1>
 
-      {excerpt && (
-        <p className={cn(regularPostExcerpt, "mb-4")}>{excerpt}</p>
-      )}
+      {excerpt && <p className={cn(regularPostExcerpt, "mb-4")}>{excerpt}</p>}
 
       <div className={REGULAR_POST_BYLINE_ROW_CLASS}>
         <ArticleByline
