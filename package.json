@@ -9,11 +9,16 @@
     "not op_mini all"
   ],
   "scripts": {
+    "build": "next build",
     "predev": "npm run typegen",
     "dev": "next --turbo",
     "prebuild": "npm run typegen && npm run format",
-    "build": "next build",
     "start": "next start",
+    "cf:build": "opennextjs-cloudflare build",
+    "cf:preview": "opennextjs-cloudflare build && opennextjs-cloudflare preview",
+    "cf:deploy": "opennextjs-cloudflare build && opennextjs-cloudflare deploy",
+    "cf:upload": "opennextjs-cloudflare build && opennextjs-cloudflare upload",
+    "cf:typegen": "wrangler types --env-interface CloudflareEnv cloudflare-env.d.ts",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "format": "biome format --write . && biome lint --write --unsafe --only=nursery/useSortedClasses .",
@@ -94,6 +99,8 @@
     "jsdom": "^25.0.1",
     "playwright": "^1.57.0",
     "typescript": "^5.9.3",
-    "vitest": "^3.0.5"
+    "vitest": "^3.0.5",
+    "@opennextjs/cloudflare": "^1.19.11",
+    "wrangler": "^4.94.0"
   }
 }

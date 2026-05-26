@@ -6,7 +6,17 @@
     "useIgnoreFile": true
   },
   "files": {
-    "includes": ["**", "!!**/dist", "!!sanity.types.ts", "!!schema.json"]
+    "includes": [
+      "**",
+      "!!**/dist",
+      "!!**/.next",
+      "!!**/.open-next",
+      "!!**/.wrangler",
+      "!!**/.unlighthouse",
+      "!!**/node_modules",
+      "!!sanity.types.ts",
+      "!!schema.json"
+    ]
   },
   "formatter": {
     "enabled": true,

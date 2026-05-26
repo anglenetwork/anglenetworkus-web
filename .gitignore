@@ -54,3 +54,12 @@ test-results/
 
 # Playwright auth storage state (generated)
 playwright/.auth/
+# OpenNext
+.open-next
+
+# wrangler files
+.wrangler
+.dev.vars*
+!.dev.vars.example
+.unlighthouse
+tmp-*.png
