@@ -370,7 +370,7 @@ export default function SubscriptionsPage() {
 
               {/* Current Plan Card */}
               <Card className="mb-8 border border-primary/20 bg-gradient-to-br from-primary/5 to-transparent p-8">
-                <div className="grid gap-12 md:grid-cols-3">
+                <div className="grid gap-12 xl:grid-cols-3">
                   {/* Left: Plan Info */}
                   <div>
                     <div className="mb-8">
@@ -402,7 +402,7 @@ export default function SubscriptionsPage() {
                       {error && (
                         <p className="mb-4 text-red-600 text-sm">{error}</p>
                       )}
-                      <div className="flex flex-col gap-3 sm:flex-row">
+                      <div className="flex flex-col gap-3 xl:flex-row">
                         {originalTier === "pro" && status !== "canceling" && (
                           <AlertDialog>
                             <AlertDialogTrigger asChild>
@@ -445,11 +445,11 @@ export default function SubscriptionsPage() {
                   </div>
 
                   {/* Right: Features Grid */}
-                  <div className="md:col-span-2">
+                  <div className="xl:col-span-2">
                     <p className="mb-6 font-semibold text-muted-foreground text-sm uppercase tracking-wide">
                       What&apos;s Included
                     </p>
-                    <div className="grid gap-4 sm:grid-cols-2">
+                    <div className="grid gap-4 xl:grid-cols-2">
                       {getCurrentPlanFeatures().map((feature, idx) => (
                         <div key={idx} className="flex items-start gap-3">
                           <CheckCircle2 className="mt-0.5 h-5 w-5 flex-shrink-0 text-primary" />
@@ -465,7 +465,7 @@ export default function SubscriptionsPage() {
 
               {/* Stats Cards - Only show for Pro tier */}
               {originalTier === "pro" && (
-                <div className="grid gap-4 sm:grid-cols-3">
+                <div className="grid gap-4 xl:grid-cols-3">
                   <Card className="border border-border/60 bg-card/50 p-6">
                     <div className="mb-4 flex items-start justify-between">
                       <div>
@@ -523,7 +523,7 @@ export default function SubscriptionsPage() {
                 <Card className="relative overflow-hidden border-2 border-primary/40 bg-gradient-to-br from-primary/10 to-transparent p-8">
                   <div className="absolute top-0 right-0 -z-10 h-64 w-64 rounded-full bg-primary/5 blur-3xl" />
 
-                  <div className="grid gap-12 md:grid-cols-3">
+                  <div className="grid gap-12 xl:grid-cols-3">
                     {/* Left: Plan Info */}
                     <div>
                       <div className="mb-4 inline-block rounded-full bg-primary px-3 py-1 font-semibold text-primary-foreground text-xs">
@@ -565,11 +565,11 @@ export default function SubscriptionsPage() {
                     </div>
 
                     {/* Right: Features */}
-                    <div className="md:col-span-2">
+                    <div className="xl:col-span-2">
                       <p className="mb-6 font-semibold text-muted-foreground text-sm uppercase tracking-wide">
                         {nextTierInfo.name} Benefits
                       </p>
-                      <div className="grid gap-4 sm:grid-cols-2">
+                      <div className="grid gap-4 xl:grid-cols-2">
                         {nextTierInfo.features.map((feature, idx) => (
                           <div key={idx} className="flex items-start gap-3">
                             <CheckCircle2 className="mt-0.5 h-5 w-5 flex-shrink-0 text-primary" />

@@ -34,8 +34,12 @@ export const REGULAR_POST_BODY_COLUMN_CLASS =
 export const NON_REGULAR_POST_BYLINE_ROW_CLASS =
   "space-y-2 font-sans xl:flex xl:items-center xl:justify-between xl:gap-3 xl:space-y-0";
 
-/** Non-regular post — article column max width */
+/** Non-regular post — article column max width (body copy, byline) */
 export const NON_REGULAR_POST_CONTENT_MAX_WIDTH_CLASS = "mx-auto max-w-[688px]";
+
+/** Non-regular post — hero/cover width (2× content column, centered breakout) */
+export const NON_REGULAR_POST_HERO_WIDTH_CLASS =
+  "relative left-1/2 w-[min(1376px,100vw)] max-w-[1376px] -translate-x-1/2";
 
 /** Non-regular post — gap between byline/social row and hero image */
 export const NON_REGULAR_POST_MEDIA_SECTION_CLASS = "mt-4 space-y-8 text-left";
@@ -50,25 +54,30 @@ export const ARTICLE_MEDIA_CLASSES = {
   },
   editorial: {
     figure: "mb-8 w-full text-left",
-    wrapper: "relative w-full aspect-[5/3] overflow-hidden rounded-md",
+    wrapper:
+      "relative w-full aspect-[5/3] overflow-hidden rounded-none xl:rounded-md",
     image: "object-cover object-center",
-    sizes: "(max-width: 768px) 100vw, 688px",
+    sizes: "(max-width: 768px) 100vw, 1376px",
   },
   nonRegularCover: {
     figure: "mb-10 w-full text-left",
     wrapper:
-      "relative w-full h-[205px] overflow-hidden rounded-lg shadow-lg md:h-[400px]",
+      "relative w-full h-[205px] overflow-hidden rounded-none shadow-lg md:h-[400px] xl:rounded-lg",
     image: "object-cover object-center",
-    sizes: "(max-width: 640px) 100vw, (max-width: 1280px) 66vw, 720px",
+    sizes: "(max-width: 640px) 100vw, (max-width: 1280px) 100vw, 1376px",
   },
 } as const;
 
-/** Non-regular post — in-body editorial image (full body width, ~20% shorter max height) */
+/** Non-regular post — caption / credit under hero and in-body images */
+export const NON_REGULAR_POST_IMAGE_CAPTION_CLASS =
+  "mt-2 pl-4 text-left xl:pl-0";
+
+/** Non-regular post — in-body editorial image (2× content column width) */
 export const NON_REGULAR_POST_BODY_EDITORIAL_IMAGE_FIGURE_CLASS =
   "my-8 w-full text-left";
 
 export const NON_REGULAR_POST_BODY_EDITORIAL_IMAGE_WRAPPER_CLASS =
-  "relative w-full aspect-[4/3] max-h-[560px] overflow-hidden rounded-lg shadow-lg";
+  "relative left-1/2 aspect-[4/3] max-h-[560px] w-[min(1376px,100vw)] max-w-[1376px] -translate-x-1/2 overflow-hidden rounded-none shadow-lg xl:rounded-lg";
 
 export const NON_REGULAR_POST_BODY_EDITORIAL_IMAGE_SIZES =
-  "(max-width: 768px) 100vw, 688px";
+  "(max-width: 768px) 100vw, 1376px";

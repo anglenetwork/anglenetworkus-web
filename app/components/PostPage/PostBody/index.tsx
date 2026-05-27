@@ -1,9 +1,11 @@
 import {
   NON_REGULAR_POST_BYLINE_ROW_CLASS,
   NON_REGULAR_POST_CONTENT_MAX_WIDTH_CLASS,
+  NON_REGULAR_POST_HERO_WIDTH_CLASS,
   NON_REGULAR_POST_MEDIA_SECTION_CLASS,
   REGULAR_POST_BODY_COLUMN_CLASS,
 } from "./constants";
+import { cn } from "@/lib/utils";
 import { PortableText } from "@portabletext/react";
 import type { PortableTextBlock } from "@portabletext/types";
 import ArticleActions from "./ArticleActions";
@@ -62,6 +64,16 @@ export default function PostBody({
     variant === "editorial" || coverPresentation === "nonRegularCover"
       ? nonRegularPortableTextComponents
       : portableTextComponents;
+  const useWideHero = variant === "editorial" || coverPresentation === "nonRegularCover";
+
+  const articleMedia = (
+    <ArticleMedia
+      cover={cover}
+      imageGallery={imageGallery}
+      title={title}
+      presentation={coverPresentation}
+    />
+  );
 
   if (variant === "editorial") {
     return (
@@ -82,28 +94,32 @@ export default function PostBody({
               shareUrl={shareUrl}
             />
           </div>
+        </div>
 
-          <div className={NON_REGULAR_POST_MEDIA_SECTION_CLASS}>
-            <ArticleMedia
-              cover={cover}
-              imageGallery={imageGallery}
-              title={title}
-              presentation={coverPresentation}
-            />
+        <div
+          className={cn(
+            NON_REGULAR_POST_MEDIA_SECTION_CLASS,
+            NON_REGULAR_POST_HERO_WIDTH_CLASS,
+          )}
+        >
+          {articleMedia}
+        </div>
 
-            <div className={REGULAR_POST_BODY_COLUMN_CLASS}>
+        <div
+          className={cn(
+            NON_REGULAR_POST_CONTENT_MAX_WIDTH_CLASS,
+            "mt-8 space-y-8",
+          )}
+        >
+          <div className={REGULAR_POST_BODY_COLUMN_CLASS}>
+            <PortableText value={firstBodySlice} components={bodyComponents} />
+            {popularReadsInset}
+            {secondBodySlice.length > 0 && (
               <PortableText
-                value={firstBodySlice}
+                value={secondBodySlice}
                 components={bodyComponents}
               />
-              {popularReadsInset}
-              {secondBodySlice.length > 0 && (
-                <PortableText
-                  value={secondBodySlice}
-                  components={bodyComponents}
-                />
-              )}
-            </div>
+            )}
           </div>
         </div>
       </div>
@@ -112,12 +128,11 @@ export default function PostBody({
 
   return (
     <div className="mb-8 text-left antialiased">
-      <ArticleMedia
-        cover={cover}
-        imageGallery={imageGallery}
-        title={title}
-        presentation={coverPresentation}
-      />
+      {useWideHero ? (
+        <div className={NON_REGULAR_POST_HERO_WIDTH_CLASS}>{articleMedia}</div>
+      ) : (
+        articleMedia
+      )}
 
       <div className="space-y-8 text-left">
         <div className={REGULAR_POST_BODY_COLUMN_CLASS}>

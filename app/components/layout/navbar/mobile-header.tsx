@@ -17,16 +17,22 @@ export function MobileHeader({
   onSearchMenuOpen,
 }: MobileHeaderProps) {
   return (
-    <div className="flex items-center justify-between py-3 lg:hidden">
-      <HamburgerButton
-        isOpen={isMenuOpen}
-        onClick={onMenuToggle}
-        variant="mobile"
-      />
+    <div className="grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-x-2 py-3 lg:hidden">
+      <div className="shrink-0">
+        <HamburgerButton
+          isOpen={isMenuOpen}
+          onClick={onMenuToggle}
+          variant="mobile"
+        />
+      </div>
       <Logo variant="mobile" />
-      <div className="flex items-center gap-2">
-        <UserMenu variant="mobile" hideSignIn />
-        <SearchButton onClick={onSearchMenuOpen} variant="mobile" />
+      <div className="flex shrink-0 items-center justify-end gap-2">
+        <UserMenu variant="mobile" />
+        <SearchButton
+          onClick={onSearchMenuOpen}
+          variant="mobile"
+          className="hidden xl:flex"
+        />
       </div>
     </div>
   );

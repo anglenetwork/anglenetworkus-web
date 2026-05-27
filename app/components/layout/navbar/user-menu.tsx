@@ -197,8 +197,6 @@ export function UserMenu({
     ? "h-8 w-8"
     : "transition-all duration-500 ease-out lg:h-7 lg:w-7 h-8 w-8";
 
-  if (loading) return null;
-
   const renderSignIn = () => {
     const isLink = signInButtonVariant === "link";
 
@@ -206,9 +204,14 @@ export function UserMenu({
       <Button
         asChild
         variant={isLink ? "link" : "signIn"}
+        size={isMobile && !isLink ? "sm" : "default"}
         className={cn(
+          "shrink-0",
           isLink &&
             "h-auto justify-start p-0 font-bold text-xl hover:text-primary",
+          isMobile &&
+            !isLink &&
+            "h-9 px-3 font-sans text-xs sm:px-4 sm:text-sm",
         )}
       >
         <Link href="/signin" onClick={onSignInNavigate}>
@@ -217,6 +220,18 @@ export function UserMenu({
       </Button>
     );
   };
+
+  if (loading) {
+    return (
+      <div
+        className={cn(
+          "shrink-0 rounded-full bg-neutral-200",
+          isMobile ? "h-10 w-10" : "h-10 w-10 lg:h-8 lg:w-8",
+        )}
+        aria-hidden
+      />
+    );
+  }
 
   if (signInOnly) {
     if (user) return null;
@@ -235,7 +250,10 @@ export function UserMenu({
           variant="outline"
           size="sm"
           aria-label="User menu"
-          className={`flex items-center justify-center rounded-full bg-white p-0 hover:bg-gray-100 ${buttonSize}`}
+          className={cn(
+            "flex shrink-0 items-center justify-center rounded-full bg-white p-0 hover:bg-gray-100",
+            buttonSize,
+          )}
         >
           <Avatar className={avatarSize}>
             {avatarUrl && (

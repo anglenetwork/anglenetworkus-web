@@ -21,6 +21,7 @@ interface ArticleImageFigureProps {
   license?: string | null;
   showAltAsCaption?: boolean;
   fallbackCaption?: string;
+  captionClassName?: string;
 }
 
 export default function ArticleImageFigure({
@@ -43,6 +44,7 @@ export default function ArticleImageFigure({
   license,
   showAltAsCaption,
   fallbackCaption,
+  captionClassName,
 }: ArticleImageFigureProps) {
   return (
     <figure className={figureClassName}>
@@ -69,6 +71,7 @@ export default function ArticleImageFigure({
         alt={alt}
         showAltAsCaption={showAltAsCaption}
         fallbackCaption={fallbackCaption}
+        figcaptionClassName={captionClassName}
       />
     </figure>
   );

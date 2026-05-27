@@ -8,6 +8,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { cn } from "@/lib/utils";
 import { ProfileEditForm } from "./ProfileEditForm";
 
 interface CompleteProfileModalProps {
@@ -66,7 +67,12 @@ export function CompleteProfileModal({
       }}
     >
       <DialogContent
-        className={`sm:max-w-[600px] ${isRequired ? "[&_button[aria-label='Close']]:hidden" : ""}`}
+        className={cn(
+          "top-0 left-0 flex max-h-[100dvh] w-full max-w-none translate-x-0 translate-y-0 flex-col gap-0 overflow-y-auto rounded-none border-0 p-6 shadow-none",
+          "h-[100dvh]",
+          "xl:top-[50%] xl:left-[50%] xl:h-auto xl:max-h-[85vh] xl:max-w-[600px] xl:translate-x-[-50%] xl:translate-y-[-50%] xl:rounded-lg xl:border xl:shadow-lg",
+          isRequired && "[&_button[aria-label='Close']]:hidden",
+        )}
         onEscapeKeyDown={(e) => {
           // Only prevent ESC if required
           if (isRequired) {
@@ -80,7 +86,7 @@ export function CompleteProfileModal({
           }
         }}
       >
-        <DialogHeader>
+        <DialogHeader className="text-left">
           <DialogTitle className="font-sans font-semibold text-2xl text-slate-900">
             {title}
           </DialogTitle>
@@ -89,7 +95,7 @@ export function CompleteProfileModal({
           </DialogDescription>
         </DialogHeader>
 
-        <div className="mt-4">
+        <div className="mt-4 flex min-h-0 flex-1 flex-col">
           <ProfileEditForm
             userId={userId}
             initialFirstName={initialFirstName}

@@ -4,6 +4,7 @@ import {
   NON_REGULAR_POST_BODY_EDITORIAL_IMAGE_FIGURE_CLASS,
   NON_REGULAR_POST_BODY_EDITORIAL_IMAGE_SIZES,
   NON_REGULAR_POST_BODY_EDITORIAL_IMAGE_WRAPPER_CLASS,
+  NON_REGULAR_POST_IMAGE_CAPTION_CLASS,
 } from "./constants";
 import {
   regularPostBodyBulletList,
@@ -62,10 +63,12 @@ function renderEditorialImageBlock(
     wrapperClassName,
     sizes,
     figureClassName = "my-8 text-left",
+    captionClassName,
   }: {
     wrapperClassName: string;
     sizes: string;
     figureClassName?: string;
+    captionClassName?: string;
   },
 ) {
   const imageValue = asRecord(value);
@@ -97,6 +100,7 @@ function renderEditorialImageBlock(
       caption={imageData.caption}
       credit={imageData.credit}
       license={imageData.licenseOrRights}
+      captionClassName={captionClassName}
     />
   );
 }
@@ -267,7 +271,7 @@ export const portableTextComponents: PortableTextComponents = {
   },
 };
 
-/** Non-regular article body — smaller in-body editorial images */
+/** Non-regular article body — in-body editorial images */
 export const nonRegularPortableTextComponents: PortableTextComponents = {
   ...portableTextComponents,
   types: {
@@ -277,6 +281,7 @@ export const nonRegularPortableTextComponents: PortableTextComponents = {
         figureClassName: NON_REGULAR_POST_BODY_EDITORIAL_IMAGE_FIGURE_CLASS,
         wrapperClassName: NON_REGULAR_POST_BODY_EDITORIAL_IMAGE_WRAPPER_CLASS,
         sizes: NON_REGULAR_POST_BODY_EDITORIAL_IMAGE_SIZES,
+        captionClassName: NON_REGULAR_POST_IMAGE_CAPTION_CLASS,
       }),
   },
 };
