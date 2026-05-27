@@ -6,16 +6,19 @@ import { toPlainText } from "next-sanity";
 import { sanityFetchStatic } from "@/sanity/lib/fetch";
 import * as demo from "@/sanity/lib/demo";
 import { getCachedSettings } from "@/app/lib/cached-settings";
-import {
-  buildPublisherForJsonLd,
-  jsonLdScriptContent,
-} from "@/app/lib/article-family/structured-data";
+import { jsonLdScriptContent } from "@/app/lib/article-family/structured-data";
 import {
   buildHomepageMetadata,
+  finalizePublicMetadata,
   resolveSiteName,
 } from "@/app/lib/seo/metadata-builders";
 import { buildWebsiteJsonLd } from "@/app/lib/seo/json-ld";
+import {
+  buildNewsMediaOrganizationJsonLd,
+  organizationJsonLdId,
+} from "@/app/lib/seo/publisher";
 import { getPublicSiteUrl } from "@/app/lib/seo/site-url";
+import { resolveOpenGraphImage } from "@/sanity/lib/utils";
 import {
   homepageMostReadFallbackQuery,
   homepageHeroFrontlineQuery,
@@ -118,20 +121,29 @@ const SixthSection = dynamic(
 
 export async function generateMetadata() {
   const settings = await getCachedSettings();
-  return buildHomepageMetadata(
-    settings,
-    demo.title,
-    toPlainText(demo.description),
+  return finalizePublicMetadata(
+    buildHomepageMetadata(settings, demo.title, toPlainText(demo.description)),
   );
 }
 
 export default async function Page() {
   const settings = await getCachedSettings();
-  const publisher = buildPublisherForJsonLd(settings, demo.title);
+  const siteUrl = getPublicSiteUrl();
+  const siteName = resolveSiteName(settings, demo.title);
+  const orgId = organizationJsonLdId(siteUrl);
+  const og = resolveOpenGraphImage(
+    settings?.ogImage as Parameters<typeof resolveOpenGraphImage>[0],
+  );
+  const organizationLd = buildNewsMediaOrganizationJsonLd({
+    siteName,
+    siteUrl,
+    logoUrl: og?.url ?? null,
+    id: orgId,
+  });
   const websiteLd = buildWebsiteJsonLd({
-    siteName: resolveSiteName(settings, demo.title),
-    siteUrl: getPublicSiteUrl(),
-    publisher,
+    siteName,
+    siteUrl,
+    organizationId: orgId,
   });
   //LANDING PAGE DATA FETCHING
   // 1) Fetch hero slices for FirstSection (server-side filtered/ranked in GROQ)
@@ -238,6 +250,12 @@ export default async function Page() {
 
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: jsonLdScriptContent(organizationLd),
+        }}
+      />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{

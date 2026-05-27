@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { draftMode } from "next/headers";
 import { toPlainText, type PortableTextBlock } from "next-sanity";
 import { getCoverImage, resolveOpenGraphImage } from "@/sanity/lib/utils";
 import type { ArticleFamily } from "@/app/lib/article-family/types";
@@ -6,11 +7,22 @@ import { articleFamilyCanonicalHref } from "@/app/lib/article-family/routes";
 import { getPublicSiteUrl } from "./site-url";
 import { buildCanonicalUrl } from "./canonical";
 import {
+  robotsDraftPreview,
   robotsFromArticleType,
   robotsHomepage,
+  robotsIndexableArticle,
   robotsListingOrTaxonomy,
   robotsUtilityNoindex,
 } from "./robots";
+
+/** When draft preview is active, force noindex/nofollow on all public metadata. */
+export async function finalizePublicMetadata(
+  metadata: Metadata,
+): Promise<Metadata> {
+  const { isEnabled } = await draftMode();
+  if (!isEnabled) return metadata;
+  return { ...metadata, robots: robotsDraftPreview() };
+}
 
 const DESCRIPTION_MAX = 320;
 
@@ -163,12 +175,37 @@ export function buildHomepageMetadata(
     }
   }
 
+  const ogImage = resolveOpenGraphImage(
+    settings?.ogImage as Parameters<typeof resolveOpenGraphImage>[0],
+  );
+  const ogImages = ogImage?.url
+    ? [{ url: ogImage.url, alt: ogImage.alt }]
+    : undefined;
+  const twitterCard: "summary_large_image" | "summary" = ogImages?.length
+    ? "summary_large_image"
+    : "summary";
+  const pageTitle = siteName;
+
   return {
-    title: { absolute: siteName },
+    title: { absolute: pageTitle },
     description,
     robots: robotsHomepage(),
     alternates: {
       canonical: `${siteUrl}/`,
+    },
+    openGraph: {
+      title: pageTitle,
+      description,
+      url: `${siteUrl}/`,
+      type: "website",
+      siteName,
+      images: ogImages,
+    },
+    twitter: {
+      card: twitterCard,
+      title: pageTitle,
+      description,
+      images: ogImages?.map((i) => i.url),
     },
   };
 }
@@ -382,6 +419,39 @@ export function buildCategoryPageMetadata(args: {
     },
     twitter: {
       card: "summary_large_image",
+      title: pageTitle,
+      description,
+    },
+  };
+}
+
+export function buildAuthorPageMetadata(args: {
+  authorName: string;
+  shortBio?: string | null;
+  settings: SiteSettingsForSeo | null | undefined;
+  demoTitle: string;
+  slug: string;
+}): Metadata {
+  const siteName = resolveSiteName(args.settings, args.demoTitle);
+  const pageTitle = `${args.authorName} | ${siteName}`;
+  const description =
+    args.shortBio?.trim() ||
+    `Articles and reporting by ${args.authorName} at ${siteName}.`;
+  const canonical = buildCanonicalUrl(`/author/${args.slug}`);
+  return {
+    title: { absolute: pageTitle },
+    description,
+    robots: robotsIndexableArticle(),
+    alternates: { canonical },
+    openGraph: {
+      title: pageTitle,
+      description,
+      url: canonical,
+      type: "profile",
+      siteName,
+    },
+    twitter: {
+      card: "summary",
       title: pageTitle,
       description,
     },

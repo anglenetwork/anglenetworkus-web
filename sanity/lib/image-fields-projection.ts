@@ -4,6 +4,7 @@ export const imageFieldsProjection = `
   externalUrl,
   image,
   "lqip": image.asset->metadata.lqip,
+  "dimensions": image.asset->metadata.dimensions { width, height },
   alt,
   "caption": coalesce(caption, epigraph),
   creditAuthor,
