@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { usePathname } from "next/navigation";
 import { FullScreenMenu } from "../full-screen-menu";
 import { MobileHeader } from "./mobile-header";
@@ -12,17 +12,20 @@ export function HeaderClient({ categories, tags, showsTags }: HeaderProps) {
   const [focusSearchOnOpen, setFocusSearchOnOpen] = useState(false);
   const [headerOffset, setHeaderOffset] = useState(0);
   const headerRef = useRef<HTMLElement | null>(null);
+  const lastHeightRef = useRef(0);
   const pathname = usePathname();
 
-  const measureHeaderHeight = () => {
+  const measureHeaderHeight = useCallback(() => {
     if (!headerRef.current) return;
     const height = headerRef.current.getBoundingClientRect().height || 0;
+    if (height === lastHeightRef.current) return;
+    lastHeightRef.current = height;
     setHeaderOffset(height);
     document.documentElement.style.setProperty(
       "--header-offset",
       `${height}px`,
     );
-  };
+  }, []);
 
   useEffect(() => {
     if (!headerRef.current) return;
@@ -35,7 +38,7 @@ export function HeaderClient({ categories, tags, showsTags }: HeaderProps) {
       ro.disconnect();
       window.removeEventListener("resize", onResize);
     };
-  }, []);
+  }, [measureHeaderHeight]);
 
   // Close menu on route change
   useEffect(() => {
@@ -45,14 +48,6 @@ export function HeaderClient({ categories, tags, showsTags }: HeaderProps) {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pathname]);
-
-  useEffect(() => {
-    const onScroll = () => {
-      measureHeaderHeight();
-    };
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
 
   const handleMenuToggle = () => {
     setIsMenuOpen((v) => {

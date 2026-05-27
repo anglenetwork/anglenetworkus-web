@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ExcerptCreditCaption } from "@/app/helpers";
 import { ImageRenderer } from "../../ui/image-renderer";
+import { articleFamilyHeroTileTitle } from "@/app/lib/typography/article-family-card";
 
 interface ArticleCardAlternativeProps {
   category: string;
@@ -35,7 +36,7 @@ export default function ArticleCardAlternative({
   const to = hrefProp ?? (slug && slug !== "#" ? `/post/${slug}` : "#");
   return (
     <div>
-      <Link href={to} className="block">
+      <Link href={to} className="group block">
         <div className="relative h-[400px] w-full cursor-pointer overflow-hidden rounded-lg bg-black transition-opacity duration-200 hover:opacity-90">
           <div className="absolute inset-0">
             <ImageRenderer
@@ -52,9 +53,7 @@ export default function ArticleCardAlternative({
 
           <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent" />
           <div className="absolute right-0 bottom-0 left-0 p-4 text-white">
-            <h3 className="mb-2 font-sans font-semibold text-white text-xl leading-snug tracking-tight">
-              {title}
-            </h3>
+            <h3 className={articleFamilyHeroTileTitle}>{title}</h3>
 
             <div className="flex items-center gap-2">
               {/* <Play className="h-4 w-4 fill-white" /> */}

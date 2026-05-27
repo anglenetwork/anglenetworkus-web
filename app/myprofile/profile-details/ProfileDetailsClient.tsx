@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { CompleteProfileModal } from "../components/CompleteProfileModal";
+import { ProfileSectionHeader } from "../components/ProfileSectionHeader";
 
 interface Profile {
   first_name?: string | null;
@@ -109,14 +110,10 @@ export default function ProfileDetailsClient({
       />
 
       <div>
-        <div className="mb-12">
-          <h1 className="mb-2 font-sans font-semibold text-3xl text-slate-900">
-            Profile
-          </h1>
-          <p className="font-sans text-slate-600">
-            Manage your personal information
-          </p>
-        </div>
+        <ProfileSectionHeader
+          title="Profile"
+          description="Manage your personal information"
+        />
 
         <div className="space-y-8">
           <div>

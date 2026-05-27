@@ -40,36 +40,19 @@ export function FullScreenMenu({
   onFocusSearchHandled,
 }: FullScreenMenuProps) {
   const searchInputRef = useRef<HTMLInputElement>(null);
-  // ESC + body scroll lock + disable focusable elements when closed
+
+  // ESC + body scroll lock (only while open)
   useEffect(() => {
+    if (!isOpen) return;
+
     const handleEscKey = (event: KeyboardEvent) => {
       if (event.key === "Escape") onClose();
     };
 
-    if (isOpen) {
-      document.addEventListener("keydown", handleEscKey);
-      // Lock page scroll (no layout shift)
-      const sw = window.innerWidth - document.documentElement.clientWidth;
-      document.body.style.overflow = "hidden";
-      if (sw > 0) document.body.style.paddingRight = `${sw}px`;
-    }
-
-    // Disable/enable focusable elements based on menu state
-    const menuElement = document.querySelector(
-      '[role="dialog"][aria-label="Navigation menu"]',
-    );
-    if (menuElement) {
-      const focusableElements = menuElement.querySelectorAll(
-        'a, button, input, textarea, select, [tabindex]:not([tabindex="-1"])',
-      );
-      focusableElements.forEach((el) => {
-        if (!isOpen) {
-          (el as HTMLElement).setAttribute("tabindex", "-1");
-        } else {
-          (el as HTMLElement).removeAttribute("tabindex");
-        }
-      });
-    }
+    document.addEventListener("keydown", handleEscKey);
+    const sw = window.innerWidth - document.documentElement.clientWidth;
+    document.body.style.overflow = "hidden";
+    if (sw > 0) document.body.style.paddingRight = `${sw}px`;
 
     return () => {
       document.removeEventListener("keydown", handleEscKey);
@@ -121,25 +104,29 @@ export function FullScreenMenu({
             }`}
             style={{ transitionDelay: isOpen ? "150ms" : "0ms" }}
           >
-            {/* Search */}
-            <div data-menu-state={isOpen ? "open" : "closed"}>
-              <SearchBar
-                placeholder="Search news, articles, topics and more"
-                ariaLabel="search bar"
-                onClose={onClose}
-                inputRef={searchInputRef}
-                inputId="menu-search-input"
-              />
-            </div>
+            {isOpen && (
+              <>
+                {/* Search */}
+                <div data-menu-state="open">
+                  <SearchBar
+                    placeholder="Search news, articles, topics and more"
+                    ariaLabel="search bar"
+                    onClose={onClose}
+                    inputRef={searchInputRef}
+                    inputId="menu-search-input"
+                  />
+                </div>
 
-            {/* Sign in (mobile menu only; navbar hides it on small screens) */}
-            <div className="lg:hidden">
-              <UserMenu
-                signInOnly
-                signInButtonVariant="link"
-                onSignInNavigate={onClose}
-              />
-            </div>
+                {/* Sign in (mobile menu only; navbar hides it on small screens) */}
+                <div className="lg:hidden">
+                  <UserMenu
+                    signInOnly
+                    signInButtonVariant="link"
+                    onSignInNavigate={onClose}
+                  />
+                </div>
+              </>
+            )}
 
             {/* Editorial shortcuts */}
             <div className="flex flex-wrap gap-x-8 gap-y-3 border-border border-b pb-6">

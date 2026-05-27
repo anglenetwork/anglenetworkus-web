@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { scheduleIdleTask } from "@/app/lib/schedule-idle";
 
 interface BookmarkButtonProps {
   articleId: string;
@@ -49,39 +50,40 @@ export default function BookmarkButton({
     };
   }, []);
 
-  // Load status per-article (never blocks the button)
+  // Load status per-article (deferred; never blocks initial paint)
   useEffect(() => {
-    const run = async () => {
-      setStatusLoading(true);
+    return scheduleIdleTask(() => {
+      void (async () => {
+        setStatusLoading(true);
 
-      try {
-        const res = await withTimeout(
-          fetch(
-            `/api/bookmarks/status?articleId=${encodeURIComponent(articleId)}`,
-            {
-              method: "GET",
-              cache: "no-store",
-            },
-          ),
-          8000,
-          "bookmark status",
-        );
+        try {
+          const res = await withTimeout(
+            fetch(
+              `/api/bookmarks/status?articleId=${encodeURIComponent(articleId)}`,
+              {
+                method: "GET",
+                cache: "no-store",
+              },
+            ),
+            8000,
+            "bookmark status",
+          );
 
-        const json = (await res.json().catch(() => ({}))) as any;
+          const json = (await res.json().catch(() => ({}))) as {
+            bookmarked?: boolean;
+          };
 
-        if (!mounted.current) return;
+          if (!mounted.current) return;
 
-        // If not authenticated, just show not-bookmarked (don't redirect on status)
-        setIsBookmarked(Boolean(json?.bookmarked));
-      } catch {
-        if (!mounted.current) return;
-        setIsBookmarked(false);
-      } finally {
-        if (mounted.current) setStatusLoading(false);
-      }
-    };
-
-    run();
+          setIsBookmarked(Boolean(json?.bookmarked));
+        } catch {
+          if (!mounted.current) return;
+          setIsBookmarked(false);
+        } finally {
+          if (mounted.current) setStatusLoading(false);
+        }
+      })();
+    });
   }, [articleId]);
 
   const handleToggleBookmark = async (e?: React.MouseEvent) => {

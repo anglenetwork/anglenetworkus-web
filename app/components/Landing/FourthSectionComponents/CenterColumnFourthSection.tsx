@@ -1,6 +1,10 @@
 import Image from "next/image";
 import Link from "next/link";
 import { SectionHeader } from "../../ui/section-header";
+import {
+  editorialColumnExtraStoryTitle,
+  editorialColumnMainTitle,
+} from "@/app/lib/typography/editorial-column";
 
 interface Story {
   image: string;
@@ -58,9 +62,7 @@ export function CenterColumnFourthSection({
             )}
           </div>
           <Link href={`/post/${data.mainStory.slug}`}>
-            <h1 className="mb-3 cursor-pointer font-sans font-semibold text-3xl text-gray-900 transition-colors hover:text-gray-700">
-              {data.mainStory.title}
-            </h1>
+            <h1 className={editorialColumnMainTitle}>{data.mainStory.title}</h1>
           </Link>
         </div>
 
@@ -89,7 +91,7 @@ export function CenterColumnFourthSection({
               </div>
               <div className="flex-1">
                 <Link href={`/post/${story.slug}`}>
-                  <h3 className="mb-2 cursor-pointer font-sans font-semibold text-base text-neutral-900 transition-colors hover:text-gray-700">
+                  <h3 className={editorialColumnExtraStoryTitle}>
                     {story.title}
                   </h3>
                 </Link>

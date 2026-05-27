@@ -46,7 +46,7 @@ export const ARTICLE_MEDIA_CLASSES = {
     wrapper:
       "relative w-full h-64 overflow-hidden rounded-lg shadow-lg md:h-[500px]",
     image: "object-cover object-center",
-    sizes: "(max-width: 768px) 100vw, (max-width: 1280px) 66vw, 800px",
+    sizes: "(max-width: 640px) 100vw, (max-width: 1280px) 66vw, 720px",
   },
   editorial: {
     figure: "mb-8 w-full text-left",
@@ -59,7 +59,7 @@ export const ARTICLE_MEDIA_CLASSES = {
     wrapper:
       "relative w-full h-[205px] overflow-hidden rounded-lg shadow-lg md:h-[400px]",
     image: "object-cover object-center",
-    sizes: "(max-width: 768px) 100vw, (max-width: 1280px) 66vw, 800px",
+    sizes: "(max-width: 640px) 100vw, (max-width: 1280px) 66vw, 720px",
   },
 } as const;
 

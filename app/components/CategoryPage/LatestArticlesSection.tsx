@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Clock } from "lucide-react";
 import Link from "next/link";
 import { ImageRenderer } from "../ui/image-renderer";
+import { categoryLatestStoryLink } from "@/app/lib/typography/category-page";
 
 interface Article {
   id: string;
@@ -93,7 +94,7 @@ function LatestArticleItem({ article }: { article: Article }) {
               <h3 className="font-sans font-semibold text-2xl text-neutral-900 leading-snug tracking-tight">
                 <Link
                   href={article.href ?? `/post/${article.slug}`}
-                  className="hover:underline"
+                  className={categoryLatestStoryLink}
                 >
                   {article.title}
                 </Link>

@@ -3,6 +3,11 @@ import { ListingPhotoCredit } from "@/app/helpers";
 import { getCoverImage } from "@/sanity/lib/utils";
 import CategorySidebar from "./CategorySidebar";
 import { ImageRenderer } from "../ui/image-renderer";
+import {
+  categoryGridStoryTitle,
+  categoryMainStoryTitle,
+  categorySecondaryStoryTitle,
+} from "@/app/lib/typography/category-page";
 
 interface Post {
   _id: string;
@@ -139,7 +144,7 @@ export default function CategoryContent({
                       mainArticle.href ?? `/post/${mainArticle.slug || "#"}`
                     }
                   >
-                    <h2 className="cursor-pointer font-bold text-2xl text-gray-900 leading-tight transition-colors hover:text-blue-600 md:text-3xl">
+                    <h2 className={categoryMainStoryTitle}>
                       {mainArticle.title || "Untitled"}
                     </h2>
                   </Link>
@@ -198,7 +203,7 @@ export default function CategoryContent({
                       <Link
                         href={article.href ?? `/post/${article.slug || "#"}`}
                       >
-                        <h3 className="cursor-pointer font-bold text-gray-900 text-lg leading-tight transition-colors hover:text-blue-600">
+                        <h3 className={categorySecondaryStoryTitle}>
                           {article.title || "Untitled"}
                         </h3>
                       </Link>
@@ -259,7 +264,7 @@ export default function CategoryContent({
                       <Link
                         href={article.href ?? `/post/${article.slug || "#"}`}
                       >
-                        <h4 className="line-clamp-2 cursor-pointer font-bold text-gray-900 text-sm leading-tight transition-colors hover:text-blue-600">
+                        <h4 className={categoryGridStoryTitle}>
                           {article.title || "Untitled"}
                         </h4>
                       </Link>

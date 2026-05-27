@@ -36,10 +36,10 @@ export function ProfileSidebar() {
                   href={item.href}
                   prefetch={false}
                   className={cn(
-                    "flex items-center gap-3 rounded-lg px-4 py-3 font-medium font-sans text-sm transition-colors",
+                    "flex items-center gap-3 rounded-lg px-4 py-3 font-medium font-sans text-base transition-colors",
                     isActive
-                      ? "bg-accent text-accent-foreground"
-                      : "text-muted-foreground hover:bg-accent hover:text-foreground",
+                      ? "bg-accent text-accent-foreground "
+                      : "text-muted-foreground hover:bg-accent hover:text-foreground text-black",
                   )}
                 >
                   <Icon className="h-4 w-4" />

@@ -11,6 +11,7 @@ export function NewsTickerTrack({ children }: NewsTickerTrackProps) {
   const outerRef = useRef<HTMLDivElement>(null);
   const innerRef = useRef<HTMLDivElement>(null);
   const [centerWhenFits, setCenterWhenFits] = useState(true);
+  const centerWhenFitsRef = useRef(true);
 
   useLayoutEffect(() => {
     const outer = outerRef.current;
@@ -18,7 +19,10 @@ export function NewsTickerTrack({ children }: NewsTickerTrackProps) {
     if (!outer || !inner) return;
 
     const update = () => {
-      setCenterWhenFits(inner.scrollWidth <= outer.clientWidth + 1);
+      const next = inner.scrollWidth <= outer.clientWidth + 1;
+      if (next === centerWhenFitsRef.current) return;
+      centerWhenFitsRef.current = next;
+      setCenterWhenFits(next);
     };
 
     update();

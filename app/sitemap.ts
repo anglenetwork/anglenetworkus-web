@@ -2,10 +2,11 @@ import type { MetadataRoute } from "next";
 import { client } from "@/sanity/lib/client";
 import {
   sitemapArticleFamilyEntriesQuery,
+  sitemapAuthorSlugsQuery,
   sitemapCategorySlugsWithArticlesQuery,
   sitemapTagSlugsWithArticlesQuery,
 } from "@/sanity/lib/article-family-queries";
-import { articleFamilyHref } from "@/app/lib/article-family/routes";
+import { articleFamilyCanonicalHref } from "@/app/lib/article-family/routes";
 import type { ArticleFamilyDocType } from "@/app/lib/article-family/types";
 import { getPublicSiteUrl } from "@/app/lib/seo/site-url";
 
@@ -20,10 +21,11 @@ function lastMod(d?: string | null): Date {
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const base = getPublicSiteUrl().replace(/\/$/, "");
 
-  const [articles, categoryRows, tagRows] = await Promise.all([
+  const [articles, categoryRows, tagRows, authorSlugs] = await Promise.all([
     client.fetch(sitemapArticleFamilyEntriesQuery),
     client.fetch(sitemapCategorySlugsWithArticlesQuery),
     client.fetch(sitemapTagSlugsWithArticlesQuery),
+    client.fetch(sitemapAuthorSlugsQuery),
   ]);
 
   const list = Array.isArray(articles) ? articles : [];
@@ -66,7 +68,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     const slug = row.slug as string | undefined;
     if (!slug) continue;
     out.push({
-      url: `${base}${articleFamilyHref(t, slug)}`,
+      url: `${base}${articleFamilyCanonicalHref(t, slug)}`,
       lastModified: lastMod(
         (row as { _updatedAt?: string; publishedAt?: string })._updatedAt ??
           (row as { publishedAt?: string }).publishedAt,
@@ -95,6 +97,16 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       lastModified: new Date(),
       changeFrequency: "daily",
       priority: 0.6,
+    });
+  }
+
+  for (const slug of Array.isArray(authorSlugs) ? authorSlugs : []) {
+    if (typeof slug !== "string" || !slug) continue;
+    out.push({
+      url: `${base}/author/${slug}`,
+      lastModified: new Date(),
+      changeFrequency: "weekly",
+      priority: 0.55,
     });
   }
 

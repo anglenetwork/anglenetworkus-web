@@ -5,6 +5,7 @@ import Link from "next/link";
 import { ChevronDown, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
+import { bookmarksListTitle } from "@/app/lib/typography/myprofile-page";
 
 interface Bookmark {
   id: number;
@@ -263,7 +264,7 @@ export function BookmarksList({}: BookmarksListProps) {
                     href={bookmarkHref(bookmark)}
                     className="block transition-opacity hover:opacity-70"
                   >
-                    <h3 className="mb-2 line-clamp-2 font-sans font-semibold text-base text-slate-900 sm:text-lg">
+                    <h3 className={bookmarksListTitle}>
                       {bookmark.article_title || "Untitled Article"}
                     </h3>
                     {bookmark.article_date && (

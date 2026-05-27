@@ -2,6 +2,10 @@ import Link from "next/link";
 import { ExcerptCreditCaption } from "@/app/helpers";
 import { SectionHeader } from "../../ui/section-header";
 import { ImageRenderer } from "../../ui/image-renderer";
+import {
+  fifthSectionMainTitle,
+  fifthSectionSecondaryTitle,
+} from "@/app/lib/typography/fifth-section";
 
 interface CenterArticle {
   id: string;
@@ -63,9 +67,7 @@ export function CenterColumnFifth({
                   />
                 </div>
                 <Link href={`/post/${article.slug}`}>
-                  <h3 className="text-start font-sans font-semibold text-3xl text-neutral-900 leading-snug tracking-tight">
-                    {article.title}
-                  </h3>
+                  <h3 className={fifthSectionMainTitle}>{article.title}</h3>
                 </Link>
               </div>
             ) : null}
@@ -94,7 +96,7 @@ export function CenterColumnFifth({
                       </Link>
                     </div>
                     <Link href={`/post/${article.slug}`}>
-                      <h3 className="font-normal font-sans text-base text-neutral-900 leading-normal tracking-normal">
+                      <h3 className={fifthSectionSecondaryTitle}>
                         {article.title}
                       </h3>
                     </Link>

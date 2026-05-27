@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { getCoverImage } from "@/sanity/lib/utils";
 import { ImageRenderer } from "@/app/components/ui/image-renderer";
+import { tagSidebarTrendingTitle } from "@/app/lib/typography/tag-page";
 
 interface Post {
   _id: string;
@@ -88,9 +89,7 @@ export default function TagSidebar({ popularReads, tag }: TagSidebarProps) {
                     })()}
                   </div>
                   <div className="min-w-0 flex-1">
-                    <h4 className="line-clamp-2 font-medium text-gray-900 text-sm transition-colors group-hover:text-blue-600">
-                      {post.title}
-                    </h4>
+                    <h4 className={tagSidebarTrendingTitle}>{post.title}</h4>
                     <div className="mt-1 flex items-center gap-2 text-gray-500 text-xs">
                       {post.author && <span>{post.author.name}</span>}
                       {post.views7d && post.views7d > 0 && (

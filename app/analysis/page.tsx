@@ -12,7 +12,10 @@ import * as demo from "@/sanity/lib/demo";
 import { getCachedSettings } from "@/app/lib/cached-settings";
 import { jsonLdScriptContent } from "@/app/lib/article-family/structured-data";
 import { buildBreadcrumbJsonLd } from "@/app/lib/seo/json-ld";
-import { buildAnalysisIndexMetadata } from "@/app/lib/seo/metadata-builders";
+import {
+  buildAnalysisIndexMetadata,
+  finalizePublicMetadata,
+} from "@/app/lib/seo/metadata-builders";
 
 export const revalidate = 60;
 
@@ -31,7 +34,9 @@ export async function generateMetadata({
     }),
   ]);
   const total = typeof totalRaw === "number" ? totalRaw : 0;
-  return buildAnalysisIndexMetadata(page, total, settings, demo.title);
+  return finalizePublicMetadata(
+    buildAnalysisIndexMetadata(page, total, settings, demo.title),
+  );
 }
 
 export default async function AnalysisIndexPage({

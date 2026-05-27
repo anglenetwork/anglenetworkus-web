@@ -2,6 +2,10 @@ import Link from "next/link";
 import { Card } from "@/components/ui/card";
 import { SectionHeader } from "../../ui/section-header";
 import { ImageRenderer } from "../../ui/image-renderer";
+import {
+  fifthSectionMostReadTextTitle,
+  fifthSectionMostReadWithThumbTitle,
+} from "@/app/lib/typography/fifth-section";
 
 interface MostReadArticle {
   id: string;
@@ -55,7 +59,7 @@ export function RightColumnFifth({ mostReadArticles }: RightColumnThirdProps) {
                     </Link>
                     <div className="flex flex-1 items-start gap-2">
                       <Link href={`/post/${article.slug}`} className="flex-1">
-                        <h3 className="mb-2 font-normal font-sans text-base text-neutral-900 leading-snug tracking-normal">
+                        <h3 className={fifthSectionMostReadWithThumbTitle}>
                           {article.title}
                         </h3>
                       </Link>
@@ -67,7 +71,7 @@ export function RightColumnFifth({ mostReadArticles }: RightColumnThirdProps) {
                       {index + 1}
                     </span>
                     <Link href={`/post/${article.slug}`} className="flex-1">
-                      <h3 className="mb-2 font-normal font-sans text-base text-neutral-900 leading-normal tracking-wide">
+                      <h3 className={fifthSectionMostReadTextTitle}>
                         {article.title}
                       </h3>
                     </Link>

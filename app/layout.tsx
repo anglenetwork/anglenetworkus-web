@@ -8,14 +8,13 @@ import { draftMode } from "next/headers";
 import { Libre_Franklin, Newsreader } from "next/font/google";
 
 import { AlertBanner, SiteShell } from "./components/layout";
-import { SessionProviderWrapper } from "./components/SessionProviderWrapper";
 import { VisualEditingProvider } from "./components/VisualEditingProvider";
-import { SupabaseAuthProvider } from "@/app/providers/SupabaseAuthProvider";
 
 import * as demo from "@/sanity/lib/demo";
 import { sanityFetch } from "@/sanity/lib/fetch";
 import { settingsQuery } from "@/sanity/lib/queries";
 import { resolveOpenGraphImage } from "@/sanity/lib/utils";
+import { finalizePublicMetadata } from "@/app/lib/seo/metadata-builders";
 import { getPublicSiteUrl } from "@/app/lib/seo/site-url";
 
 // Primary UI sans (Tailwind `font-sans`) and article body serif (Tailwind `font-body`).
@@ -60,7 +59,7 @@ export async function generateMetadata(): Promise<Metadata> {
       // ignore
     }
   }
-  return {
+  return finalizePublicMetadata({
     metadataBase,
     title: {
       template: `%s | ${title}`,
@@ -70,7 +69,7 @@ export async function generateMetadata(): Promise<Metadata> {
     openGraph: {
       images: ogImage ? [ogImage] : [],
     },
-  };
+  });
 }
 
 export default async function RootLayout({
@@ -91,28 +90,30 @@ export default async function RootLayout({
         />
         <link rel="dns-prefetch" href="https://upload.wikimedia.org" />
         <link rel="dns-prefetch" href="https://cdn.sanity.io" />
+        <link
+          rel="alternate"
+          type="application/rss+xml"
+          title="RSS Feed"
+          href="/feed.xml"
+        />
       </head>
       <body className={`${libreFranklin.variable} ${newsreader.variable}`}>
-        <SupabaseAuthProvider>
-          <SessionProviderWrapper>
-            <section className="min-h-screen">
-              {isDraftMode && (
-                <Suspense fallback={null}>
-                  <AlertBanner />
-                </Suspense>
-              )}
-              <SiteShell>
-                <main className="">{children}</main>
-              </SiteShell>
-            </section>
+        <section className="min-h-screen">
+          {isDraftMode && (
+            <Suspense fallback={null}>
+              <AlertBanner />
+            </Suspense>
+          )}
+          <SiteShell>
+            <main className="">{children}</main>
+          </SiteShell>
+        </section>
 
-            {isDraftMode && <VisualEditingProvider />}
+        {isDraftMode && <VisualEditingProvider />}
 
-            {(process.env.NEXT_PUBLIC_VERCEL_ENV || process.env.VERCEL) && (
-              <SpeedInsights />
-            )}
-          </SessionProviderWrapper>
-        </SupabaseAuthProvider>
+        {(process.env.NEXT_PUBLIC_VERCEL_ENV || process.env.VERCEL) && (
+          <SpeedInsights />
+        )}
       </body>
     </html>
   );

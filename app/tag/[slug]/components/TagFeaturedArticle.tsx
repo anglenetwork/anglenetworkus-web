@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { ImageRenderer } from "@/app/components/ui/image-renderer";
+import { tagFeaturedTitle } from "@/app/lib/typography/tag-page";
 
 interface TagFeaturedArticleProps {
   image: string;
@@ -43,9 +44,7 @@ export function TagFeaturedArticle({
           )}
         </div>
         <div className="mt-4">
-          <h1 className="mt-2 text-start font-sans font-semibold text-2xl text-neutral-900 leading-snug tracking-tight md:text-3xl">
-            {title}
-          </h1>
+          <h1 className={tagFeaturedTitle}>{title}</h1>
         </div>
       </Link>
     </article>

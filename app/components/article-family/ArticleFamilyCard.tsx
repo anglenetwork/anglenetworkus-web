@@ -4,6 +4,11 @@ import { format, parseISO } from "date-fns";
 import { getCoverImage } from "@/sanity/lib/utils";
 import { ImageRenderer } from "../ui/image-renderer";
 import type { ArticleFamilyCard as CardModel } from "@/app/lib/article-family/types";
+import {
+  articleFamilyCardTitle,
+  articleFamilyCardTitleRail,
+  articleFamilyHeroTileTitle,
+} from "@/app/lib/typography/article-family-card";
 
 export type ArticleFamilyCardLayout = "compact" | "large" | "rail" | "heroTile";
 
@@ -125,9 +130,7 @@ export default function ArticleFamilyCard({
             </div>
             <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent" />
             <div className="absolute right-0 bottom-0 left-0 p-4 text-white">
-              <h3 className="mb-2 font-sans font-semibold text-white text-xl leading-snug tracking-tight">
-                {article.title}
-              </h3>
+              <h3 className={articleFamilyHeroTileTitle}>{article.title}</h3>
               <div className="flex items-center gap-2">
                 <span className="font-light font-sans text-xs">
                   {readMins} min read
@@ -156,9 +159,7 @@ export default function ArticleFamilyCard({
         : "(max-width: 768px) 96px, 216px";
   const linkGap = layout === "rail" ? "gap-3" : "gap-4";
   const titleClass =
-    layout === "rail"
-      ? "line-clamp-2 font-sans text-sm font-semibold leading-snug tracking-normal text-neutral-900"
-      : "mb-2 font-sans text-base font-semibold leading-snug tracking-normal text-neutral-900 md:text-lg";
+    layout === "rail" ? articleFamilyCardTitleRail : articleFamilyCardTitle;
 
   const editorialK = editorialKicker(article, label);
 

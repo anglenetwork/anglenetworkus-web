@@ -19,7 +19,10 @@ import * as demo from "@/sanity/lib/demo";
 import { getCachedSettings } from "@/app/lib/cached-settings";
 import { jsonLdScriptContent } from "@/app/lib/article-family/structured-data";
 import { buildBreadcrumbJsonLd } from "@/app/lib/seo/json-ld";
-import { buildCategoryPageMetadata } from "@/app/lib/seo/metadata-builders";
+import {
+  buildCategoryPageMetadata,
+  finalizePublicMetadata,
+} from "@/app/lib/seo/metadata-builders";
 
 // Generate static params for SSG
 export async function generateStaticParams() {
@@ -59,13 +62,15 @@ export async function generateMetadata({
 
   const resultCount = Array.isArray(posts) ? posts.length : 0;
 
-  return buildCategoryPageMetadata({
-    categoryName,
-    resultCount,
-    settings,
-    demoTitle: demo.title,
-    slug,
-  });
+  return finalizePublicMetadata(
+    buildCategoryPageMetadata({
+      categoryName,
+      resultCount,
+      settings,
+      demoTitle: demo.title,
+      slug,
+    }),
+  );
 }
 
 export default async function CategoryPageRoute({

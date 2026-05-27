@@ -4,6 +4,11 @@ import { ListingPhotoCredit } from "@/app/helpers";
 import { getCoverImage } from "@/sanity/lib/utils";
 import { SectionHeader } from "../../ui/section-header";
 import { ImageRenderer } from "../../ui/image-renderer";
+import {
+  secondaryRowTitle,
+  thirdSectionMainHeroTitle,
+  thirdSectionSideCardTitle,
+} from "@/app/lib/typography/third-section";
 
 interface FifthSectionProps {
   posts: FourthSectionQueryResult;
@@ -83,7 +88,7 @@ export default function FifthSection({
                       align="right"
                     />
                   </div>
-                  <h3 className="font-sans font-semibold text-2xl text-neutral-900 leading-snug tracking-tight">
+                  <h3 className={thirdSectionMainHeroTitle}>
                     {mainArticle.title || "Untitled"}
                   </h3>
                 </Link>
@@ -123,7 +128,7 @@ export default function FifthSection({
                       />
                     </div>
                     <div className="mt-2">
-                      <h3 className="font-sans font-semibold text-neutral-900 text-xl leading-snug tracking-tight">
+                      <h3 className={thirdSectionSideCardTitle}>
                         {secondaryArticles[0].title || "Untitled"}
                       </h3>
                     </div>
@@ -163,7 +168,7 @@ export default function FifthSection({
                       />
                     </div>
                     <div className="mt-2">
-                      <h3 className="font-sans font-semibold text-neutral-900 text-xl leading-snug tracking-tight">
+                      <h3 className={thirdSectionSideCardTitle}>
                         {secondaryArticles[1].title || "Untitled"}
                       </h3>
                     </div>
@@ -213,7 +218,7 @@ export default function FifthSection({
                         />
                       </div>
                       <div className="mt-2">
-                        <h3 className="font-sans font-semibold text-neutral-900 text-xl leading-snug tracking-tight">
+                        <h3 className={thirdSectionSideCardTitle}>
                           {rightColumnArticles[0].title || "Untitled"}
                         </h3>
                       </div>
@@ -229,7 +234,7 @@ export default function FifthSection({
                     <div key={article._id}>
                       <Link
                         href={`/post/${article.slug || "#"}`}
-                        className="font-normal font-sans text-base text-neutral-900 leading-snug tracking-normal"
+                        className={secondaryRowTitle}
                       >
                         {article.title || "Untitled"}
                       </Link>
@@ -287,7 +292,7 @@ export default function FifthSection({
                         />
                       </div>
                       <div className="mt-2">
-                        <h3 className="font-sans font-semibold text-neutral-900 text-xl leading-snug tracking-tight">
+                        <h3 className={thirdSectionSideCardTitle}>
                           {rightColumnArticles[
                             Math.ceil(rightColumnArticles.length / 2)
                           ].title || "Untitled"}
@@ -305,7 +310,7 @@ export default function FifthSection({
                     <div key={article._id}>
                       <Link
                         href={`/post/${article.slug || "#"}`}
-                        className="font-normal font-sans text-base text-neutral-900 leading-snug tracking-normal"
+                        className={secondaryRowTitle}
                       >
                         {article.title || "Untitled"}
                       </Link>

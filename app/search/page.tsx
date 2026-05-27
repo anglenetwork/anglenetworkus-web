@@ -4,7 +4,10 @@ import { SitePageWidth } from "@/app/components/layout/site-page-width";
 import SearchResults from "@/app/search/SearchResults";
 import * as demo from "@/sanity/lib/demo";
 import { getCachedSettings } from "@/app/lib/cached-settings";
-import { buildSearchPageMetadata } from "@/app/lib/seo/metadata-builders";
+import {
+  buildSearchPageMetadata,
+  finalizePublicMetadata,
+} from "@/app/lib/seo/metadata-builders";
 
 export async function generateMetadata({
   searchParams,
@@ -13,7 +16,9 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const sp = await searchParams;
   const settings = await getCachedSettings();
-  return buildSearchPageMetadata(sp, settings, demo.title);
+  return finalizePublicMetadata(
+    buildSearchPageMetadata(sp, settings, demo.title),
+  );
 }
 
 export default function SearchPage() {

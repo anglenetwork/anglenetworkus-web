@@ -2,10 +2,7 @@
 
 import Link from "next/link";
 import { useState, useEffect } from "react";
-import {
-  isCarouselLcpCandidate,
-  shouldRenderCarouselSlide,
-} from "@/lib/carousel";
+import { shouldRenderCarouselSlide } from "@/lib/carousel";
 import { resolveListingImage } from "@/lib/editorial-image";
 import { getCoverImage } from "@/sanity/lib/utils";
 import { BreakingNewsLabel } from "../../ui/breaking-news-label";
@@ -99,8 +96,6 @@ function ImageCarousel({
               return null;
             }
 
-            const isLcp = isCarouselLcpCandidate(idx, currentIndex);
-
             return (
               <ImageRenderer
                 key={idx}
@@ -115,7 +110,6 @@ function ImageCarousel({
                 className={`rounded-sm object-cover transition-opacity duration-500 ${
                   idx === currentIndex ? "z-10 opacity-100" : "z-0 opacity-0"
                 }`}
-                priority={isLcp}
               />
             );
           })}

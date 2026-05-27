@@ -21,6 +21,15 @@ const googleBotNoindexFollow: NonNullable<Metadata["robots"]> = {
   },
 };
 
+const googleBotNoindexNofollow: NonNullable<Metadata["robots"]> = {
+  index: false,
+  follow: false,
+  googleBot: {
+    index: false,
+    follow: false,
+  },
+};
+
 /** post, opinion, analysis */
 export function robotsIndexableArticle(): Metadata["robots"] {
   return googleBotLargePreview;
@@ -53,6 +62,11 @@ export function robotsListingOrTaxonomy(args: {
 /** Homepage */
 export function robotsHomepage(): Metadata["robots"] {
   return googleBotLargePreview;
+}
+
+/** Sanity draft / preview mode — never index unpublished views */
+export function robotsDraftPreview(): Metadata["robots"] {
+  return googleBotNoindexNofollow;
 }
 
 export function robotsFromArticleType(

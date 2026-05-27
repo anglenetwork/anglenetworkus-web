@@ -10,7 +10,10 @@ import ArticleFamilyIndexPage, {
 } from "@/app/components/article-family/ArticleFamilyIndexPage";
 import * as demo from "@/sanity/lib/demo";
 import { getCachedSettings } from "@/app/lib/cached-settings";
-import { buildLatestPageMetadata } from "@/app/lib/seo/metadata-builders";
+import {
+  buildLatestPageMetadata,
+  finalizePublicMetadata,
+} from "@/app/lib/seo/metadata-builders";
 
 export const revalidate = 60;
 
@@ -23,7 +26,9 @@ export async function generateMetadata({
   const raw = parseInt(sp.page || "1", 10);
   const page = Number.isFinite(raw) && raw >= 1 ? raw : 1;
   const settings = await getCachedSettings();
-  return buildLatestPageMetadata(page, settings, demo.title);
+  return finalizePublicMetadata(
+    buildLatestPageMetadata(page, settings, demo.title),
+  );
 }
 
 export default async function LatestEditorialPage({

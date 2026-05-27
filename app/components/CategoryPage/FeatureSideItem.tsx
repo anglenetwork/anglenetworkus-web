@@ -1,6 +1,10 @@
 import Link from "next/link";
 import type { Article } from "./types";
 import { ImageRenderer } from "../ui/image-renderer";
+import {
+  categoryFeatureSideDesktopTitle,
+  categoryFeatureSideTitle,
+} from "@/app/lib/typography/category-page";
 
 interface FeatureSideItemProps {
   article: Article;
@@ -44,9 +48,7 @@ export function FeatureSideItem({
             />
           </div>
           <div className="flex-1">
-            <h3
-              className={`font-normal font-sans text-lg leading-normal tracking-wide sm:text-base ${textColor}`}
-            >
+            <h3 className={`${categoryFeatureSideTitle} ${textColor}`}>
               {article.title}
             </h3>
           </div>
@@ -70,7 +72,7 @@ export function FeatureSideItem({
             />
           </div>
           <h3
-            className={`font-normal font-sans text-lg ${desktopTextColor} mb-2 leading-snug tracking-normal`}
+            className={`${categoryFeatureSideDesktopTitle} ${desktopTextColor}`}
           >
             {article.title}
           </h3>

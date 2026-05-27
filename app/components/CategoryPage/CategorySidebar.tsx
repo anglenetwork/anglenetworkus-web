@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { getCoverImage } from "@/sanity/lib/utils";
 import { ImageRenderer } from "../ui/image-renderer";
+import { categorySidebarStoryTitle } from "@/app/lib/typography/category-page";
 
 interface Post {
   _id: string;
@@ -99,7 +100,7 @@ export default function CategorySidebar({
                   {formatDate(post.date)}
                 </div>
                 <Link href={post.href ?? `/post/${post.slug || "#"}`}>
-                  <h4 className="line-clamp-2 cursor-pointer font-semibold text-gray-900 text-sm leading-tight transition-colors hover:text-blue-600">
+                  <h4 className={categorySidebarStoryTitle}>
                     {post.title || "Untitled"}
                   </h4>
                 </Link>
@@ -125,7 +126,7 @@ export default function CategorySidebar({
               </div>
               <div className="min-w-0 flex-1">
                 <Link href={post.href ?? `/post/${post.slug || "#"}`}>
-                  <h4 className="line-clamp-2 cursor-pointer font-semibold text-gray-900 text-sm leading-tight transition-colors hover:text-blue-600">
+                  <h4 className={categorySidebarStoryTitle}>
                     {post.title || "Untitled"}
                   </h4>
                 </Link>
