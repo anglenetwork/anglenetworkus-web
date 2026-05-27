@@ -132,6 +132,20 @@ export const articleFamilyPageByIdQuery = defineQuery(`
   }
 `);
 
+/** Bookmark list hydration — all public article-family types by Sanity _id. */
+export const articleFamilyBookmarksByIdsQuery = defineQuery(`
+  *[_type in ["post", "opinion", "analysis", "sponsored"] && _id in $ids] {
+    _id,
+    _type,
+    "title": coalesce(title, "Untitled"),
+    "slug": slug.current,
+    "date": coalesce(publishedAt, _updatedAt),
+    cover{
+      ${imageFieldsProjection}
+    }
+  }
+`);
+
 export const opinionSlugsQuery = defineQuery(`
   *[_type == "opinion" && defined(slug.current)][].slug.current
 `);

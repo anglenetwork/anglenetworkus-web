@@ -7,6 +7,8 @@ export interface Article {
   readTime: string;
   category: string;
   imageUrl?: string;
+  imageAlt?: string;
+  imageCredit?: string;
   imageUnoptimized?: boolean;
   imageWidth?: number;
   imageHeight?: number;

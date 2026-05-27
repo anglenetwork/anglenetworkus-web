@@ -5,6 +5,8 @@ export type ExcerptCreditCaptionProps = {
   credit?: string | null;
   /** Merged onto the outer `<p>` (e.g. spacing overrides). */
   className?: string;
+  align?: "left" | "right";
+  variant?: "default" | "compact";
 };
 
 /**
@@ -15,6 +17,8 @@ export function ExcerptCreditCaption({
   excerpt,
   credit,
   className,
+  align = "left",
+  variant = "default",
 }: ExcerptCreditCaptionProps) {
   const excerptText = (excerpt ?? "").trim();
   const creditText = (credit ?? "").trim();
@@ -23,10 +27,15 @@ export function ExcerptCreditCaption({
     return null;
   }
 
+  const isCompact = variant === "compact";
+
   return (
     <p
       className={cn(
-        "mt-3 font-sans text-neutral-600 text-sm leading-relaxed md:text-base",
+        isCompact
+          ? "mt-1 font-sans text-[10px] text-gray-500"
+          : "mt-3 font-sans text-neutral-600 text-sm leading-relaxed md:text-base",
+        align === "right" && "text-right",
         className,
       )}
     >
@@ -34,10 +43,15 @@ export function ExcerptCreditCaption({
         <span className="font-normal tracking-normal">{excerptText}</span>
       ) : null}
       {excerptText && creditText ? (
-        <span className="text-neutral-500"> - </span>
+        <span className={isCompact ? "text-gray-500" : "text-neutral-500"}>
+          {" "}
+          -{" "}
+        </span>
       ) : null}
       {creditText ? (
-        <span className="text-gray-500 text-sm">{creditText}</span>
+        <span className={isCompact ? "" : "text-gray-500 text-sm"}>
+          {creditText}
+        </span>
       ) : null}
     </p>
   );

@@ -1,10 +1,12 @@
 import Image from "next/image";
+import { isWikimediaUrl } from "@/lib/editorial-image/policy";
 import { cn } from "@/lib/utils";
 
 type ImageRendererProps = {
   src: string;
   alt: string;
   unoptimized?: boolean;
+  blurDataURL?: string | null;
   priority?: boolean;
   fetchPriority?: "auto" | "high" | "low";
   quality?: number;
@@ -34,6 +36,7 @@ export function ImageRenderer(props: ImageRendererProps) {
     src,
     alt,
     unoptimized: propUnoptimized = false,
+    blurDataURL,
     priority = false,
     fetchPriority,
     quality,
@@ -41,18 +44,10 @@ export function ImageRenderer(props: ImageRendererProps) {
     className,
     fill = false,
   } = props;
-  // Helper to detect Wikimedia Commons images
-  const isWikimedia = (url: string): boolean => {
-    try {
-      const urlObj = new URL(url);
-      return /(^|\.)upload\.wikimedia\.org$/.test(urlObj.hostname);
-    } catch {
-      return false;
-    }
-  };
-
   // Force unoptimized for Wikimedia images to avoid rate limiting (429 errors)
-  const shouldUnoptimize = isWikimedia(src) || propUnoptimized;
+  const shouldUnoptimize = isWikimediaUrl(src) || propUnoptimized;
+  const placeholder =
+    blurDataURL && !shouldUnoptimize ? ("blur" as const) : ("empty" as const);
   const imageClassName = cn("border-0 outline-none ring-0", className);
 
   // If using fill, don't pass width/height
@@ -67,6 +62,8 @@ export function ImageRenderer(props: ImageRendererProps) {
         fetchPriority={fetchPriority}
         quality={quality}
         sizes={sizes}
+        placeholder={placeholder}
+        blurDataURL={!shouldUnoptimize ? (blurDataURL ?? undefined) : undefined}
         className={imageClassName}
       />
     );
@@ -103,6 +100,8 @@ export function ImageRenderer(props: ImageRendererProps) {
       fetchPriority={fetchPriority}
       quality={quality}
       sizes={sizes}
+      placeholder={placeholder}
+      blurDataURL={!shouldUnoptimize ? (blurDataURL ?? undefined) : undefined}
       className={imageClassName}
       style={style}
     />

@@ -1,5 +1,5 @@
-import Image from "next/image";
 import Link from "next/link";
+import { ImageRenderer } from "@/app/components/ui/image-renderer";
 import { getCoverImage } from "@/sanity/lib/utils";
 
 interface Post {
@@ -71,13 +71,15 @@ export default function MainSeventhSection({
                     );
                     if (coverData?.src) {
                       return (
-                        <Image
+                        <ImageRenderer
                           src={coverData.src}
                           alt={coverData.alt}
+                          width={1200}
+                          height={750}
                           fill
+                          sizes="(max-width: 1024px) 100vw, 60vw"
                           unoptimized={coverData.unoptimized}
                           className="rounded-xl object-cover transition-opacity group-hover:opacity-90"
-                          priority
                         />
                       );
                     }

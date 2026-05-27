@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { getCoverImage, formatImageCredit } from "@/sanity/lib/utils";
+import { ListingPhotoCredit } from "@/app/helpers";
+import { getCoverImage } from "@/sanity/lib/utils";
 import { SectionHeader } from "../../ui/section-header";
 import { ImageRenderer } from "../../ui/image-renderer";
 import {
@@ -143,13 +144,10 @@ export default function FourthSection({
                               />
                             </div>
                           </Link>
-                          {/* {formatImageCredit(mainPost?.cover) && (
-                            <p
-                              className={`text-[10px] font-sans text-right ${variant === "dark" ? "text-gray-400" : "text-gray-500"}`}
-                            >
-                              {formatImageCredit(mainPost?.cover)}
-                            </p>
-                          )} */}
+                          <ListingPhotoCredit
+                            cover={mainPost?.cover}
+                            align="right"
+                          />
                         </>
                       );
                     }

@@ -55,11 +55,13 @@ export default function ArticleMedia({
       quality={70}
       sizes={mediaClasses.sizes}
       unoptimized={coverImageData.unoptimized}
+      blurDataURL={coverImageData.blurDataURL}
       figureClassName={mediaClasses.figure}
       wrapperClassName={mediaClasses.wrapper}
       imageClassName={mediaClasses.image}
       caption={coverImageData.caption}
       credit={coverImageData.credit}
+      license={coverImageData.licenseOrRights}
       fallbackCaption={DEFAULT_IMAGE_CAPTION}
     />
   );

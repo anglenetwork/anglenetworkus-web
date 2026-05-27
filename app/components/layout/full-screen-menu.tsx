@@ -97,10 +97,12 @@ export function FullScreenMenu({
           : "pointer-events-none translate-y-full opacity-0"
       }`}
       style={{ height: "100svh" }}
-      aria-hidden={!isOpen}
       role="dialog"
-      aria-modal={isOpen ? "true" : "false"}
       aria-label="Navigation menu"
+      data-state={isOpen ? "open" : "closed"}
+      {...(isOpen
+        ? { "aria-modal": true }
+        : { "aria-hidden": true, "aria-modal": false })}
       onClick={onClose}
     >
       {/* Only this area can scroll; top padding = current header height */}
@@ -112,7 +114,7 @@ export function FullScreenMenu({
         <div className="container mx-auto max-w-7xl md:py-6">
           {/* Shared wrapper: search + nav same horizontal padding */}
           <div
-            className={`space-y-10 px-4 transition-all duration-700 ease-out md:space-y-12 md:px-0 ${
+            className={`space-y-10 px-4 transition-all duration-700 ease-out sm:px-6 md:space-y-12 lg:px-16 xl:px-0 ${
               isOpen
                 ? "translate-y-0 pt-2 opacity-100 md:pt-0"
                 : "translate-y-8 opacity-0"
@@ -351,7 +353,7 @@ export function FullScreenMenu({
 
           {/* Social */}
           <div
-            className={`mt-10 mb-8 flex items-center gap-4 px-4 transition-all duration-700 ease-out md:px-0 ${
+            className={`mt-10 mb-8 flex items-center gap-4 px-4 transition-all duration-700 ease-out sm:px-6 lg:px-16 xl:px-0 ${
               isOpen ? "translate-y-0 opacity-100" : "translate-y-8 opacity-0"
             }`}
             style={{ transitionDelay: isOpen ? "300ms" : "0ms" }}
@@ -388,7 +390,7 @@ export function FullScreenMenu({
 
           {/* Footer */}
           <div
-            className={`space-y-2 px-4 text-muted-foreground text-xs transition-all duration-700 ease-out md:px-0 ${
+            className={`space-y-2 px-4 text-muted-foreground text-xs transition-all duration-700 ease-out sm:px-6 lg:px-16 xl:px-0 ${
               isOpen ? "translate-y-0 opacity-100" : "translate-y-8 opacity-0"
             }`}
             style={{ transitionDelay: isOpen ? "400ms" : "0ms" }}

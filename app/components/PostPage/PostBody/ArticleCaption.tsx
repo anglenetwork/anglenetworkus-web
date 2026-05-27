@@ -6,6 +6,7 @@ import {
 interface ArticleCaptionProps {
   caption?: string | null;
   credit?: string | null;
+  license?: string | null;
   alt?: string | null;
   showAltAsCaption?: boolean;
   fallbackCaption?: string;
@@ -18,16 +19,18 @@ function captionCreditSeparator(caption: string): string {
 export default function ArticleCaption({
   caption,
   credit,
+  license,
   alt,
   showAltAsCaption = false,
   fallbackCaption,
 }: ArticleCaptionProps) {
   const displayCaption = (caption || fallbackCaption)?.trim() || null;
   const displayCredit = credit?.trim() || null;
+  const displayLicense = license?.trim() || null;
   const showPrimaryLine = Boolean(displayCaption || displayCredit);
   const showAltLine = Boolean(showAltAsCaption && alt);
 
-  if (!showPrimaryLine && !showAltLine) return null;
+  if (!showPrimaryLine && !showAltLine && !displayLicense) return null;
 
   return (
     <figcaption className="mt-2 text-left">
@@ -56,6 +59,11 @@ export default function ArticleCaption({
           aria-hidden="true"
         >
           {alt}
+        </p>
+      )}
+      {displayLicense && (
+        <p className="mt-1 font-sans text-neutral-500 text-xs">
+          {displayLicense}
         </p>
       )}
     </figcaption>

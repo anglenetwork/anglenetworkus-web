@@ -41,4 +41,17 @@ describe("ExcerptCreditCaption", () => {
     rerender(<ExcerptCreditCaption excerpt={null} credit="  Only credit  " />);
     expect(screen.getByRole("paragraph")).toHaveTextContent("Only credit");
   });
+
+  it("applies compact variant and right alignment classes", () => {
+    const { container } = render(
+      <ExcerptCreditCaption
+        credit="Photo: Jane Doe"
+        variant="compact"
+        align="right"
+      />,
+    );
+    const line = container.querySelector("p");
+    expect(line).toHaveClass("text-[10px]", "text-gray-500", "text-right");
+    expect(line).toHaveTextContent("Photo: Jane Doe");
+  });
 });

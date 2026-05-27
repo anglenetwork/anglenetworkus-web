@@ -19,6 +19,7 @@ import {
 } from "@/app/lib/typography/posts";
 import {
   formatImageCredit,
+  formatImageLicense,
   normalizeImageMeta,
   urlForImage,
 } from "@/sanity/lib/utils";
@@ -87,6 +88,7 @@ function renderEditorialImageBlock(
       height={900}
       fill
       unoptimized={imageData.unoptimized}
+      blurDataURL={imageData.blurDataURL}
       sizes={sizes}
       quality={55}
       figureClassName={`${figureClassName} ${layoutClass}`}
@@ -94,6 +96,7 @@ function renderEditorialImageBlock(
       imageClassName="object-cover"
       caption={imageData.caption}
       credit={imageData.credit}
+      license={imageData.licenseOrRights}
     />
   );
 }
@@ -131,6 +134,7 @@ export const portableTextComponents: PortableTextComponents = {
           imageClassName="object-cover"
           caption={normalizeImageMeta(imageValue).caption}
           credit={formatImageCredit(imageValue)}
+          license={formatImageLicense(imageValue)}
           showAltAsCaption
         />
       );

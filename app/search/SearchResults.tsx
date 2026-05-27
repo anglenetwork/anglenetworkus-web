@@ -214,8 +214,8 @@ export default function SearchResults() {
       ) : (
         <>
           <div className="flex flex-col gap-6">
-            {/* Mobile filters */}
-            <div className="flex w-full items-center justify-start gap-3 md:hidden">
+            {/* Compact filters (base through lg) */}
+            <div className="flex w-full items-center justify-start gap-3 xl:hidden">
               <Dialog
                 open={typeFilterOpen}
                 onOpenChange={handleTypeFilterOpenChange}
@@ -309,8 +309,8 @@ export default function SearchResults() {
               </Select>
             </div>
 
-            {/* Desktop filters */}
-            <div className="hidden flex-col gap-4 md:flex lg:flex-row lg:flex-wrap lg:items-center lg:justify-end xl:justify-start xl:gap-8">
+            {/* Desktop filters (xl and up) */}
+            <div className="hidden flex-col gap-8 xl:flex xl:flex-row xl:flex-wrap xl:items-center xl:justify-start">
               <div className="flex flex-row flex-wrap items-center gap-2">
                 <span className="font-sans font-semibold text-muted-foreground text-sm">
                   Type

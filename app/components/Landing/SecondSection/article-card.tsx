@@ -35,6 +35,7 @@ export default function ArticleCard({
             alt={imageAlt || "Article image"}
             width={400}
             height={240}
+            sizes="(max-width: 768px) 100vw, 320px"
             unoptimized={imageUnoptimized}
             className="h-60 w-full rounded-sm object-cover object-center"
           />

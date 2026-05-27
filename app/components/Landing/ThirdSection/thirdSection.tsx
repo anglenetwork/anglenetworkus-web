@@ -2,7 +2,12 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { getCoverImage, urlForImage } from "@/sanity/lib/utils";
+import {
+  isCarouselLcpCandidate,
+  shouldRenderCarouselSlide,
+} from "@/lib/carousel";
+import { resolveListingImage } from "@/lib/editorial-image";
+import { getCoverImage } from "@/sanity/lib/utils";
 import { cn } from "@/lib/utils";
 import { SectionHeader } from "../../ui/section-header";
 import { ImageRenderer } from "../../ui/image-renderer";
@@ -44,75 +49,18 @@ interface ThirdSectionProps {
   rightSmallArticles: Article[];
 }
 
-// Helper to build gallery image data
-function buildGalleryImageData(galleryImage: GalleryImage): {
+function listingGalleryImage(galleryImage: GalleryImage): {
   src: string;
   alt: string;
   unoptimized: boolean;
 } | null {
-  if (!galleryImage) return null;
-
-  const hasExternalUrl =
-    galleryImage.externalUrl && galleryImage.externalUrl.trim() !== "";
-  const hasImageAsset =
-    galleryImage.image && (galleryImage.image as any)?.asset?._ref;
-
-  if (!hasExternalUrl && !hasImageAsset) return null;
-
-  // External URL
-  if (
-    hasExternalUrl &&
-    (galleryImage.source === "external" || !galleryImage.source)
-  ) {
-    let externalUrl = galleryImage.externalUrl!.trim();
-    if (externalUrl.startsWith("//")) {
-      externalUrl = `https:${externalUrl}`;
-    } else if (!externalUrl.match(/^https?:\/\//)) {
-      externalUrl = `https://${externalUrl}`;
-    }
-
-    try {
-      new URL(externalUrl);
-      const isWikimedia = /(^|\.)upload\.wikimedia\.org$/.test(
-        new URL(externalUrl).hostname,
-      );
-      return {
-        src: externalUrl,
-        alt: galleryImage.alt || "Gallery image",
-        unoptimized: isWikimedia,
-      };
-    } catch {
-      return null;
-    }
-  }
-
-  // Asset image
-  if (
-    hasImageAsset &&
-    (galleryImage.source === "asset" || !galleryImage.source || !hasExternalUrl)
-  ) {
-    const imageUrl = urlForImage(galleryImage.image);
-    if (imageUrl) {
-      try {
-        const url = imageUrl.quality(60).url();
-        if (url && url.length > 0) {
-          return {
-            src: url,
-            alt:
-              galleryImage.alt ||
-              (galleryImage.image as any)?.alt ||
-              "Gallery image",
-            unoptimized: false,
-          };
-        }
-      } catch (error) {
-        console.warn("Failed to build Sanity image URL:", error);
-        return null;
-      }
-    }
-  }
-
-  return null;
+  const resolved = resolveListingImage(galleryImage, "Gallery image", 1200);
+  if (!resolved) return null;
+  return {
+    src: resolved.src,
+    alt: resolved.alt,
+    unoptimized: resolved.unoptimized,
+  };
 }
 
 const featuredImageClassName =
@@ -146,21 +94,30 @@ function ArticleImageCarousel({
   return (
     <Link href={`/post/${postSlug}`}>
       <div className={featuredImageClassName}>
-        {allImages.map((image, idx) => (
-          <ImageRenderer
-            key={idx}
-            src={image.src}
-            alt={image.alt}
-            width={800}
-            height={320}
-            fill
-            unoptimized={image.unoptimized}
-            sizes="(max-width: 1024px) 100vw, 50vw"
-            className={`absolute inset-0 object-cover transition-opacity duration-500 ${
-              idx === currentIndex ? "z-10 opacity-100" : "z-0 opacity-0"
-            }`}
-          />
-        ))}
+        {allImages.map((image, idx) => {
+          if (!shouldRenderCarouselSlide(idx, currentIndex, allImages.length)) {
+            return null;
+          }
+
+          const isLcp = isCarouselLcpCandidate(idx, currentIndex);
+
+          return (
+            <ImageRenderer
+              key={idx}
+              src={image.src}
+              alt={image.alt}
+              width={800}
+              height={320}
+              fill
+              unoptimized={image.unoptimized}
+              sizes="(max-width: 1024px) 100vw, 50vw"
+              priority={isLcp}
+              className={`absolute inset-0 object-cover transition-opacity duration-500 ${
+                idx === currentIndex ? "z-10 opacity-100" : "z-0 opacity-0"
+              }`}
+            />
+          );
+        })}
         {/* Carousel indicators */}
         {allImages.length > 1 && (
           <div className="absolute right-3 bottom-3 z-20 flex gap-1.5">
@@ -194,7 +151,7 @@ function SmallArticleGridItem({ article }: { article: Article }) {
   );
   const firstGallery =
     article.imageGallery?.[0] != null
-      ? buildGalleryImageData(article.imageGallery[0])
+      ? listingGalleryImage(article.imageGallery[0])
       : null;
   const thumbImage = coverData ?? firstGallery;
 
@@ -244,7 +201,7 @@ export default function ThirdSection({
   }> = [];
   if (leftArticle.imageGallery && Array.isArray(leftArticle.imageGallery)) {
     leftGalleryImagesData = leftArticle.imageGallery
-      .map((img) => buildGalleryImageData(img))
+      .map((img) => listingGalleryImage(img))
       .filter(
         (img): img is { src: string; alt: string; unoptimized: boolean } =>
           img !== null,
@@ -264,7 +221,7 @@ export default function ThirdSection({
   }> = [];
   if (rightArticle.imageGallery && Array.isArray(rightArticle.imageGallery)) {
     rightGalleryImagesData = rightArticle.imageGallery
-      .map((img) => buildGalleryImageData(img))
+      .map((img) => listingGalleryImage(img))
       .filter(
         (img): img is { src: string; alt: string; unoptimized: boolean } =>
           img !== null,

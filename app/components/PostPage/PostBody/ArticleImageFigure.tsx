@@ -12,11 +12,13 @@ interface ArticleImageFigureProps {
   priority?: boolean;
   fetchPriority?: "auto" | "high" | "low";
   unoptimized?: boolean;
+  blurDataURL?: string | null;
   figureClassName: string;
   wrapperClassName: string;
   imageClassName: string;
   caption?: string | null;
   credit?: string | null;
+  license?: string | null;
   showAltAsCaption?: boolean;
   fallbackCaption?: string;
 }
@@ -32,11 +34,13 @@ export default function ArticleImageFigure({
   priority,
   fetchPriority,
   unoptimized,
+  blurDataURL,
   figureClassName,
   wrapperClassName,
   imageClassName,
   caption,
   credit,
+  license,
   showAltAsCaption,
   fallbackCaption,
 }: ArticleImageFigureProps) {
@@ -54,12 +58,14 @@ export default function ArticleImageFigure({
           quality={quality}
           sizes={sizes}
           unoptimized={unoptimized}
+          blurDataURL={blurDataURL}
           className={imageClassName}
         />
       </div>
       <ArticleCaption
         caption={caption}
         credit={credit}
+        license={license}
         alt={alt}
         showAltAsCaption={showAltAsCaption}
         fallbackCaption={fallbackCaption}

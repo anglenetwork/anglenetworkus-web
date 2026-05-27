@@ -1,7 +1,9 @@
 import { NextResponse } from "next/server";
+import { articleFamilyCanonicalHref } from "@/app/lib/article-family/routes";
+import { isArticleFamilyDocType } from "@/app/lib/article-family/normalize";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { sanityFetch } from "@/sanity/lib/fetch";
-import { postsByIdsQuery } from "@/sanity/lib/queries";
+import { articleFamilyBookmarksByIdsQuery } from "@/sanity/lib/article-family-queries";
 import { getCoverImage } from "@/sanity/lib/utils";
 
 export const dynamic = "force-dynamic";
@@ -40,7 +42,7 @@ export async function GET(req: Request) {
   let articlesData: Record<string, any> = {};
   try {
     const articles = await sanityFetch({
-      query: postsByIdsQuery,
+      query: articleFamilyBookmarksByIdsQuery,
       params: { ids: articleIds },
     });
 
@@ -64,6 +66,20 @@ export async function GET(req: Request) {
       ? getCoverImage(article.cover, article.title || "Article")
       : null;
 
+    const articleType =
+      typeof article?._type === "string" &&
+      isArticleFamilyDocType(article._type)
+        ? article._type
+        : null;
+    const slug =
+      typeof article?.slug === "string" ? article.slug : bookmark.article_slug;
+    const articleHref =
+      articleType && slug
+        ? articleFamilyCanonicalHref(articleType, slug)
+        : slug
+          ? `/post/${slug}`
+          : null;
+
     return {
       id: bookmark.id,
       article_id: bookmark.article_id,
@@ -71,6 +87,8 @@ export async function GET(req: Request) {
       created_at: bookmark.created_at,
       // Article data from Sanity
       article_title: article?.title || null,
+      article_type: articleType,
+      article_href: articleHref,
       article_date: article?.date || null,
       article_cover: coverImage
         ? {

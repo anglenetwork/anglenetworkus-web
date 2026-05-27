@@ -39,6 +39,8 @@ describe("editorial search GROQ", () => {
 
     expect(scoreSection).toContain("boost(searchText match $term, 20)");
     expect(scoreSection).toContain("boost(title match $term, 100)");
+    expect(scoreSection).toContain("boost(cover.caption match $term, 55)");
+    expect(scoreSection).not.toContain("coalesce(");
     expect(scoreSection).not.toContain("pt::text(body)");
     expect(scoreSection).not.toContain("category->name");
     expect(scoreSection).not.toContain("count(tags[]->aliases");

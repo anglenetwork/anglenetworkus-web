@@ -64,6 +64,7 @@
 // export default nextConfig;
 // next.config.ts
 import type { NextConfig } from "next";
+import { REMOTE_PATTERN_HOSTS } from "./lib/editorial-image/policy";
 
 const nextConfig: NextConfig = {
   env: {
@@ -93,36 +94,10 @@ const nextConfig: NextConfig = {
 
   // 🔥 Image optimization tuned for Lighthouse & caching
   images: {
-    remotePatterns: [
-      {
-        protocol: "https",
-        hostname: "images.unsplash.com",
-      },
-      {
-        protocol: "https",
-        hostname: "cdn.sanity.io",
-      },
-      {
-        protocol: "https",
-        hostname: "upload.wikimedia.org",
-      },
-      {
-        protocol: "https",
-        hostname: "images.pexels.com",
-      },
-      {
-        protocol: "https",
-        hostname: "pixabay.com",
-      },
-      {
-        protocol: "https",
-        hostname: "cdn.pixabay.com",
-      },
-      {
-        protocol: "https",
-        hostname: "commons.wikimedia.org",
-      },
-    ],
+    remotePatterns: REMOTE_PATTERN_HOSTS.map((hostname) => ({
+      protocol: "https" as const,
+      hostname,
+    })),
     formats: ["image/avif", "image/webp"], // modern formats
     deviceSizes: [480, 768, 1024, 1280, 1600],
     imageSizes: [16, 32, 64, 96, 128, 256, 384],
