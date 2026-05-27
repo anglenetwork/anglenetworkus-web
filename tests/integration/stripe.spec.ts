@@ -5,7 +5,7 @@ import { gotoSubscriptionsShell } from "../helpers/subscriptions-shell";
 
 // Initialize Stripe for test webhook signing
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || "sk_test_dummy", {
-  apiVersion: "2025-01-27.acacia",
+  apiVersion: "2025-02-24.acacia",
 });
 
 test.describe("Stripe Integration", () => {

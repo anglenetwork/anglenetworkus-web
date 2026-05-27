@@ -72,6 +72,7 @@ export default function TagSidebar({ popularReads, tag }: TagSidebarProps) {
                             width={64}
                             height={64}
                             fill
+                            sizes="64px"
                             unoptimized={coverData.unoptimized}
                             className="object-cover transition-transform duration-200 group-hover:scale-105"
                           />

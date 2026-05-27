@@ -12,18 +12,27 @@ import {
   checkArticleMetricsReadiness,
   assertArticleMetricsReady,
 } from "../metrics-readiness";
+import {
+  mockFromLimitProbe,
+  mockPostgrestError,
+  mockRpcError,
+  mockRpcSuccess,
+} from "./supabase-test-helpers";
 
 describe("checkArticleMetricsReadiness", () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    vi.mocked(supabaseAdmin.from).mockImplementation(() => ({
-      select: () => ({
-        limit: () => Promise.resolve({ error: null }),
-      }),
-    }));
-    vi.mocked(supabaseAdmin.rpc).mockResolvedValue({
-      error: { message: "article_id required", code: "P0001" },
-    });
+    vi.mocked(supabaseAdmin.from).mockReturnValue(
+      mockFromLimitProbe(null) as never,
+    );
+    vi.mocked(supabaseAdmin.rpc).mockResolvedValue(
+      mockRpcError(
+        mockPostgrestError({
+          message: "article_id required",
+          code: "P0001",
+        }),
+      ) as never,
+    );
   });
 
   it("returns ready true when all objects are present", async () => {
@@ -37,17 +46,14 @@ describe("checkArticleMetricsReadiness", () => {
   });
 
   it("returns ready false with issues when a table is missing", async () => {
-    vi.mocked(supabaseAdmin.from).mockImplementation((name: string) => ({
-      select: () => ({
-        limit: () =>
-          Promise.resolve({
-            error: {
-              message: 'relation "public.article_metrics_daily" does not exist',
-              code: "42P01",
-            },
-          }),
-      }),
-    }));
+    vi.mocked(supabaseAdmin.from).mockReturnValue(
+      mockFromLimitProbe(
+        mockPostgrestError({
+          message: 'relation "public.article_metrics_daily" does not exist',
+          code: "42P01",
+        }),
+      ) as never,
+    );
 
     const r = await checkArticleMetricsReadiness();
     expect(r.ready).toBe(false);
@@ -56,12 +62,14 @@ describe("checkArticleMetricsReadiness", () => {
   });
 
   it("returns ready false when increment RPC is missing", async () => {
-    vi.mocked(supabaseAdmin.rpc).mockResolvedValue({
-      error: {
-        message: "Could not find the function public.increment_article_view",
-        code: "PGRST202",
-      },
-    });
+    vi.mocked(supabaseAdmin.rpc).mockResolvedValue(
+      mockRpcError(
+        mockPostgrestError({
+          message: "Could not find the function public.increment_article_view",
+          code: "PGRST202",
+        }),
+      ) as never,
+    );
 
     const r = await checkArticleMetricsReadiness();
     expect(r.ready).toBe(false);
@@ -75,25 +83,25 @@ describe("checkArticleMetricsReadiness", () => {
 describe("assertArticleMetricsReady", () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    vi.mocked(supabaseAdmin.from).mockImplementation(() => ({
-      select: () => ({
-        limit: () => Promise.resolve({ error: null }),
-      }),
-    }));
-    vi.mocked(supabaseAdmin.rpc).mockResolvedValue({
-      error: { message: "article_id required" },
-    });
+    vi.mocked(supabaseAdmin.from).mockReturnValue(
+      mockFromLimitProbe(null) as never,
+    );
+    vi.mocked(supabaseAdmin.rpc).mockResolvedValue(
+      mockRpcError(
+        mockPostgrestError({ message: "article_id required" }),
+      ) as never,
+    );
   });
 
   it("throws with operator guidance when not ready", async () => {
-    vi.mocked(supabaseAdmin.from).mockImplementation(() => ({
-      select: () => ({
-        limit: () =>
-          Promise.resolve({
-            error: { message: "does not exist", code: "PGRST205" },
-          }),
-      }),
-    }));
+    vi.mocked(supabaseAdmin.from).mockReturnValue(
+      mockFromLimitProbe(
+        mockPostgrestError({
+          message: "does not exist",
+          code: "PGRST205",
+        }),
+      ) as never,
+    );
 
     await expect(assertArticleMetricsReady()).rejects.toThrow(
       /20260327_article_metrics\.sql/,

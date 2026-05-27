@@ -69,7 +69,7 @@ test.describe("Smoke: search", () => {
     await expect(statusLine).toBeVisible({ timeout: 20000 });
   });
 
-  test("mobile: type filter dialog and sort select update URL", async ({
+  test("below xl: type filter dialog and sort select update URL", async ({
     page,
   }) => {
     await page.setViewportSize({ width: 390, height: 844 });
@@ -104,9 +104,10 @@ test.describe("Smoke: search", () => {
     );
   });
 
-  test("type filters include Sponsored and sponsored scope loads", async ({
+  test("xl: type filter buttons and sponsored scope loads", async ({
     page,
   }) => {
+    await page.setViewportSize({ width: 1280, height: 720 });
     const main = page.locator("main");
 
     await page.goto("/search?q=news&sort=relevance&type=all", {

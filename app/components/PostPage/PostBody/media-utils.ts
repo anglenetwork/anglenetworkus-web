@@ -1,18 +1,12 @@
-import { getWikimediaThumbnail } from "@/lib/image-optimization";
 import {
-  formatImageCredit,
-  normalizeImageMeta,
-  urlForImage,
-} from "@/sanity/lib/utils";
+  normalizeExternalImageUrl,
+  resolveEditorialImage,
+} from "@/lib/editorial-image";
+import { urlForImage } from "@/sanity/lib/image-url";
 import { DEFAULT_IMAGE_CAPTION } from "./constants";
 import type { ArticleImageSource, ResolvedArticleImage } from "./types";
 
-type SanityImageWithAlt = {
-  alt?: string | null;
-  asset?: {
-    _ref?: string;
-  } | null;
-};
+export { normalizeExternalImageUrl };
 
 interface BuildArticleImageOptions {
   fallbackAlt: string;
@@ -24,119 +18,32 @@ interface BuildArticleImageOptions {
   externalUnoptimized?: boolean | "auto";
 }
 
-function getSanityImage(image: unknown): SanityImageWithAlt | null {
-  if (!image || typeof image !== "object") return null;
-  return image as SanityImageWithAlt;
-}
-
-function hasSanityAsset(image: unknown): boolean {
-  return Boolean(getSanityImage(image)?.asset?._ref);
-}
-
-export function normalizeExternalImageUrl(
-  value: string | null | undefined,
-): URL | null {
-  const trimmed = value?.trim();
-  if (!trimmed) return null;
-
-  const normalized = trimmed.startsWith("//")
-    ? `https:${trimmed}`
-    : /^https?:\/\//.test(trimmed)
-      ? trimmed
-      : `https://${trimmed}`;
-
-  try {
-    return new URL(normalized);
-  } catch {
-    return null;
-  }
-}
-
-export function isWikimediaUrl(url: URL): boolean {
-  return /(^|\.)upload\.wikimedia\.org$/.test(url.hostname);
-}
-
-function isWhitelistedExternalImage(url: URL): boolean {
-  return ["images.unsplash.com", "cdn.sanity.io", "images.pexels.com"].includes(
-    url.hostname,
-  );
-}
-
-function shouldUnoptimizeExternal(url: URL, options: BuildArticleImageOptions) {
-  if (isWikimediaUrl(url)) return true;
-  if (options.externalUnoptimized === "auto") {
-    return !isWhitelistedExternalImage(url);
-  }
-  return options.externalUnoptimized ?? false;
-}
-
 export function buildArticleImageData(
   input: ArticleImageSource | null | undefined,
   options: BuildArticleImageOptions,
 ): ResolvedArticleImage | null {
-  if (!input) return null;
+  const resolved = resolveEditorialImage(input, {
+    fallbackAlt: options.fallbackAlt,
+    sanityWidth: options.sanityWidth,
+    sanityHeight: options.sanityHeight,
+    sanityQuality: options.sanityQuality,
+    sanityFit: options.sanityFit,
+    wikimediaWidth: options.wikimediaWidth,
+    externalUnoptimized: options.externalUnoptimized,
+    includeAttribution: true,
+  });
 
-  const externalUrl = normalizeExternalImageUrl(input.externalUrl);
-  const image = getSanityImage(input.image);
-  const hasImageAsset = hasSanityAsset(image);
+  if (!resolved) return null;
 
-  if (!externalUrl && !hasImageAsset) {
-    return null;
-  }
-
-  if (externalUrl && (input.source === "external" || !input.source)) {
-    const isWikimedia = isWikimediaUrl(externalUrl);
-    const src = isWikimedia
-      ? getWikimediaThumbnail(externalUrl.toString(), options.wikimediaWidth)
-      : externalUrl.toString();
-
-    const meta = normalizeImageMeta(input);
-    return {
-      src,
-      alt: input.alt || options.fallbackAlt,
-      unoptimized: shouldUnoptimizeExternal(externalUrl, options),
-      caption: meta.caption,
-      credit: formatImageCredit(input),
-    };
-  }
-
-  if (
-    hasImageAsset &&
-    (input.source === "asset" || !input.source || !externalUrl)
-  ) {
-    const builder = urlForImage(image as Parameters<typeof urlForImage>[0]);
-    if (!builder) return null;
-
-    try {
-      let urlBuilder = builder.quality(options.sanityQuality ?? 60);
-      if (options.sanityWidth) {
-        urlBuilder = urlBuilder.width(options.sanityWidth);
-      }
-      if (options.sanityHeight) {
-        urlBuilder = urlBuilder.height(options.sanityHeight);
-      }
-      if (options.sanityFit) {
-        urlBuilder = urlBuilder.fit(options.sanityFit);
-      }
-
-      const src = urlBuilder.url();
-      if (!src) return null;
-
-      const meta = normalizeImageMeta(input);
-      return {
-        src,
-        alt: input.alt || image?.alt || options.fallbackAlt,
-        unoptimized: false,
-        caption: meta.caption,
-        credit: formatImageCredit(input),
-      };
-    } catch (error) {
-      console.warn("Failed to build Sanity image URL:", error);
-      return null;
-    }
-  }
-
-  return null;
+  return {
+    src: resolved.src,
+    alt: resolved.alt,
+    unoptimized: resolved.unoptimized,
+    blurDataURL: resolved.blurDataURL,
+    caption: resolved.caption,
+    credit: resolved.credit,
+    licenseOrRights: resolved.licenseOrRights,
+  };
 }
 
 export function buildCoverImageData(

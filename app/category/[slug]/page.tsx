@@ -11,7 +11,8 @@ import {
   sortIdsByRankingThenPublishedAt,
 } from "@/app/lib/article-family/metrics";
 import { CategoryPage } from "@/app/components/CategoryPage";
-import { getCoverImage } from "@/sanity/lib/utils";
+import type { Article } from "@/app/components/CategoryPage/types";
+import { formatImageCredit, getCoverImage } from "@/sanity/lib/utils";
 import { articleFamilyHref } from "@/app/lib/article-family/routes";
 import type { ArticleFamilyDocType } from "@/app/lib/article-family/types";
 import * as demo from "@/sanity/lib/demo";
@@ -19,24 +20,6 @@ import { getCachedSettings } from "@/app/lib/cached-settings";
 import { jsonLdScriptContent } from "@/app/lib/article-family/structured-data";
 import { buildBreadcrumbJsonLd } from "@/app/lib/seo/json-ld";
 import { buildCategoryPageMetadata } from "@/app/lib/seo/metadata-builders";
-
-// Keep this in sync with the client Article type shape
-interface Article {
-  id: string;
-  title: string;
-  excerpt: string;
-  author: string;
-  publishedAt: string;
-  readTime: string;
-  category: string;
-  imageUrl?: string;
-  imageUnoptimized?: boolean;
-  imageWidth?: number;
-  imageHeight?: number;
-  imageBlurDataURL?: string;
-  slug: string;
-  href?: string;
-}
 
 // Generate static params for SSG
 export async function generateStaticParams() {
@@ -148,6 +131,8 @@ export default async function CategoryPageRoute({
       readTime: "5 min read",
       category: post.category?.title || categoryName,
       imageUrl: coverData?.src,
+      imageAlt: coverData?.alt,
+      imageCredit: formatImageCredit(post.cover) ?? undefined,
       imageUnoptimized: coverData?.unoptimized,
       slug,
       href: articleFamilyHref(t, slug),

@@ -16,6 +16,7 @@
 
 # next.js
 /.next/
+/.open-next/
 /out/
 
 # sanity
@@ -47,6 +48,10 @@ next-env.d.ts
 # Env files created by scripts for working locally
 .env
 .env.local
+
+# generated audit artifacts (markdown summaries in docs/audits/ remain trackable)
+docs/audits/lighthouse-reports/*.json
+docs/audits/lighthouse-reports/*.html
 
 #testing
 playwright-report/

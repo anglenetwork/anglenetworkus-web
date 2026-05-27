@@ -2,12 +2,15 @@
 
 import Link from "next/link";
 import { useState, useEffect } from "react";
-import { getWikimediaThumbnail } from "@/lib/image-optimization";
+import {
+  isCarouselLcpCandidate,
+  shouldRenderCarouselSlide,
+} from "@/lib/carousel";
+import { resolveListingImage } from "@/lib/editorial-image";
 import { getCoverImage } from "@/sanity/lib/utils";
 import { BreakingNewsLabel } from "../../ui/breaking-news-label";
 import { SectionHeader } from "../../ui/section-header";
 import { ImageRenderer } from "../../ui/image-renderer";
-import { urlForImage } from "@/sanity/lib/utils";
 import {
   justInPrimaryTitle,
   justInSecondaryTitle,
@@ -36,81 +39,18 @@ interface Post {
   developingStory?: boolean | null;
 }
 
-// Helper to get image data from gallery image (similar to getCoverImage)
-function getGalleryImageData(
-  galleryImage: GalleryImage,
-): { src: string; alt: string; unoptimized: boolean } | null {
-  if (!galleryImage) return null;
-
-  const hasExternalUrl =
-    galleryImage.externalUrl && galleryImage.externalUrl.trim() !== "";
-  const hasImageAsset =
-    galleryImage.image && (galleryImage.image as any)?.asset?._ref;
-
-  if (!hasExternalUrl && !hasImageAsset) return null;
-
-  // External URL
-  if (
-    hasExternalUrl &&
-    (galleryImage.source === "external" || !galleryImage.source)
-  ) {
-    let externalUrl = galleryImage.externalUrl!.trim();
-    if (externalUrl.startsWith("//")) {
-      externalUrl = `https:${externalUrl}`;
-    } else if (!externalUrl.match(/^https?:\/\//)) {
-      externalUrl = `https://${externalUrl}`;
-    }
-
-    try {
-      new URL(externalUrl);
-      const isWikimedia = /(^|\.)upload\.wikimedia\.org$/.test(
-        new URL(externalUrl).hostname,
-      );
-      // Use Wikimedia thumbnail API to get optimized sizes
-      if (isWikimedia) {
-        const optimizedUrl = getWikimediaThumbnail(externalUrl, 1200);
-        return {
-          src: optimizedUrl,
-          alt: galleryImage.alt || "Gallery image",
-          unoptimized: true,
-        };
-      }
-      return {
-        src: externalUrl,
-        alt: galleryImage.alt || "Gallery image",
-        unoptimized: false,
-      };
-    } catch {
-      return null;
-    }
-  }
-
-  // Asset image
-  if (
-    hasImageAsset &&
-    (galleryImage.source === "asset" || !galleryImage.source || !hasExternalUrl)
-  ) {
-    const imageUrl = urlForImage(galleryImage.image);
-    if (imageUrl) {
-      try {
-        const url = imageUrl.quality(55).url();
-        if (url && url.length > 0) {
-          return {
-            src: url,
-            alt:
-              galleryImage.alt ||
-              (galleryImage.image as any)?.alt ||
-              "Gallery image",
-            unoptimized: false,
-          };
-        }
-      } catch {
-        return null;
-      }
-    }
-  }
-
-  return null;
+function listingImageFromGallery(galleryImage: GalleryImage): {
+  src: string;
+  alt: string;
+  unoptimized: boolean;
+} | null {
+  const resolved = resolveListingImage(galleryImage, "Gallery image", 1200);
+  if (!resolved) return null;
+  return {
+    src: resolved.src,
+    alt: resolved.alt,
+    unoptimized: resolved.unoptimized,
+  };
 }
 
 interface LeftColumnLandingProps {
@@ -152,23 +92,33 @@ function ImageCarousel({
     <div className="mb-3 block">
       <Link href={`/post/${postSlug}`}>
         <div className="relative h-56 w-full overflow-hidden rounded-sm md:h-60">
-          {allImages.map((image, idx) => (
-            <ImageRenderer
-              key={idx}
-              src={image.src}
-              alt={image.alt}
-              width={600}
-              height={240}
-              fill
-              unoptimized={image.unoptimized}
-              quality={55}
-              sizes="(max-width: 640px) 100vw, (max-width: 1024px) 100vw, 300px"
-              className={`rounded-sm object-cover transition-opacity duration-500 ${
-                idx === currentIndex ? "z-10 opacity-100" : "z-0 opacity-0"
-              }`}
-              priority={idx === 0}
-            />
-          ))}
+          {allImages.map((image, idx) => {
+            if (
+              !shouldRenderCarouselSlide(idx, currentIndex, allImages.length)
+            ) {
+              return null;
+            }
+
+            const isLcp = isCarouselLcpCandidate(idx, currentIndex);
+
+            return (
+              <ImageRenderer
+                key={idx}
+                src={image.src}
+                alt={image.alt}
+                width={600}
+                height={240}
+                fill
+                unoptimized={image.unoptimized}
+                quality={55}
+                sizes="(max-width: 640px) 100vw, (max-width: 1024px) 100vw, 300px"
+                className={`rounded-sm object-cover transition-opacity duration-500 ${
+                  idx === currentIndex ? "z-10 opacity-100" : "z-0 opacity-0"
+                }`}
+                priority={isLcp}
+              />
+            );
+          })}
           {(breakingNews || developingStory) && (
             <div className="absolute bottom-3 left-3 z-20">
               <BreakingNewsLabel
@@ -231,7 +181,7 @@ export function LeftColumnLanding({ justInNews }: LeftColumnLandingProps) {
             Array.isArray(post.imageGallery)
           ) {
             galleryImagesData = post.imageGallery
-              .map((img) => getGalleryImageData(img))
+              .map((img) => listingImageFromGallery(img))
               .filter(
                 (
                   img,

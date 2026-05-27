@@ -1,3 +1,5 @@
+import { isWikimediaHostname } from "@/lib/editorial-image/policy";
+
 /**
  * Image optimization utilities for external images
  * Helps reduce network payload by using optimized image URLs when available
@@ -22,8 +24,7 @@ export function getWikimediaThumbnail(
   try {
     const url = new URL(originalUrl);
 
-    // Check if it's a Wikimedia Commons URL
-    if (!/(^|\.)upload\.wikimedia\.org$/.test(url.hostname)) {
+    if (!isWikimediaHostname(url.hostname)) {
       return originalUrl;
     }
 
@@ -103,8 +104,7 @@ export function getOptimizedImageUrl(
   try {
     const url = new URL(originalUrl);
 
-    // Wikimedia Commons - use thumbnail API
-    if (/(^|\.)upload\.wikimedia\.org$/.test(url.hostname)) {
+    if (isWikimediaHostname(url.hostname)) {
       return getWikimediaThumbnail(originalUrl, maxWidth);
     }
 

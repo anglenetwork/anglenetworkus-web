@@ -96,6 +96,7 @@ export default function TagPostsList({
                           width={600}
                           height={400}
                           fill
+                          sizes="(max-width: 768px) 100vw, 33vw"
                           unoptimized={coverData.unoptimized}
                           className="object-cover"
                         />

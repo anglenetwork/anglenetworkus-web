@@ -8,11 +8,16 @@ vi.mock("@/lib/supabase/admin", () => ({
 
 import { supabaseAdmin } from "@/lib/supabase/admin";
 import { recordArticleView } from "../metrics";
+import {
+  mockPostgrestError,
+  mockRpcError,
+  mockRpcSuccess,
+} from "./supabase-test-helpers";
 
 describe("recordArticleView", () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    vi.mocked(supabaseAdmin.rpc).mockResolvedValue({ error: null });
+    vi.mocked(supabaseAdmin.rpc).mockResolvedValue(mockRpcSuccess() as never);
   });
 
   it("delegates valid article types to increment_article_view", async () => {
@@ -40,9 +45,11 @@ describe("recordArticleView", () => {
   });
 
   it("propagates errors when metrics infra fails", async () => {
-    vi.mocked(supabaseAdmin.rpc).mockResolvedValue({
-      error: { message: "connection refused" },
-    });
+    vi.mocked(supabaseAdmin.rpc).mockResolvedValue(
+      mockRpcError(
+        mockPostgrestError({ message: "connection refused" }),
+      ) as never,
+    );
     await expect(
       recordArticleView({ articleId: "a", articleType: "post" }),
     ).rejects.toEqual(

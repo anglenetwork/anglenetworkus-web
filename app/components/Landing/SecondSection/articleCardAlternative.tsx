@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { ExcerptCreditCaption } from "@/app/helpers";
 import { ImageRenderer } from "../../ui/image-renderer";
 
 interface ArticleCardAlternativeProps {
@@ -64,6 +65,13 @@ export default function ArticleCardAlternative({
           </div>
         </div>
       </Link>
+      {imageSource ? (
+        <ExcerptCreditCaption
+          credit={imageSource}
+          align="right"
+          variant="compact"
+        />
+      ) : null}
     </div>
   );
 }

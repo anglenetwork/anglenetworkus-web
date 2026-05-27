@@ -1,6 +1,10 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import {
+  isCarouselLcpCandidate,
+  shouldRenderCarouselSlide,
+} from "@/lib/carousel";
 import { ImageRenderer } from "../../ui/image-renderer";
 import ArticleCaption from "./ArticleCaption";
 import { ARTICLE_MEDIA_CLASSES, DEFAULT_IMAGE_CAPTION } from "./constants";
@@ -41,24 +45,33 @@ export default function CoverImageCarousel({
   return (
     <figure className={mediaClasses.figure}>
       <div className={mediaClasses.wrapper}>
-        {allImages.map((image, idx) => (
-          <ImageRenderer
-            key={`${image.src}-${idx}`}
-            src={image.src}
-            alt={image.alt}
-            width={1200}
-            height={675}
-            fill
-            priority={idx === 0}
-            fetchPriority={idx === 0 ? "high" : "low"}
-            quality={idx === 0 ? 70 : 55}
-            sizes={mediaClasses.sizes}
-            unoptimized={image.unoptimized}
-            className={`absolute inset-0 object-cover object-center transition-opacity duration-500 ${
-              idx === currentIndex ? "z-10 opacity-100" : "z-0 opacity-0"
-            }`}
-          />
-        ))}
+        {allImages.map((image, idx) => {
+          if (!shouldRenderCarouselSlide(idx, currentIndex, allImages.length)) {
+            return null;
+          }
+
+          const isLcp = isCarouselLcpCandidate(idx, currentIndex);
+
+          return (
+            <ImageRenderer
+              key={`${image.src}-${idx}`}
+              src={image.src}
+              alt={image.alt}
+              width={1200}
+              height={675}
+              fill
+              priority={isLcp}
+              fetchPriority={isLcp ? "high" : undefined}
+              quality={isLcp ? 70 : 55}
+              sizes={mediaClasses.sizes}
+              unoptimized={image.unoptimized}
+              blurDataURL={image.blurDataURL}
+              className={`absolute inset-0 object-cover object-center transition-opacity duration-500 ${
+                idx === currentIndex ? "z-10 opacity-100" : "z-0 opacity-0"
+              }`}
+            />
+          );
+        })}
         {allImages.length > 1 && (
           <div className="absolute right-4 bottom-4 z-20 flex gap-1.5">
             {allImages.map((image, idx) => (
@@ -81,6 +94,7 @@ export default function CoverImageCarousel({
       <ArticleCaption
         caption={currentImage.caption}
         credit={currentImage.credit}
+        license={currentImage.licenseOrRights}
         fallbackCaption={DEFAULT_IMAGE_CAPTION}
       />
     </figure>

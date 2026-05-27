@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { ArticleFamilyCard } from "@/app/lib/article-family/types";
-import { getCoverImage, urlForImage } from "@/sanity/lib/utils";
+import { resolveListingImage } from "@/lib/editorial-image";
+import { getCoverImage } from "@/sanity/lib/utils";
 import { SectionHeader } from "../../ui/section-header";
 import { ImageRenderer } from "../../ui/image-renderer";
 import {
@@ -17,74 +18,18 @@ interface GalleryImage {
   alt?: string | null;
 }
 
-function buildGalleryImageData(galleryImage: GalleryImage): {
+function listingGalleryImage(galleryImage: GalleryImage): {
   src: string;
   alt: string;
   unoptimized: boolean;
 } | null {
-  if (!galleryImage) return null;
-
-  const hasExternalUrl =
-    galleryImage.externalUrl && galleryImage.externalUrl.trim() !== "";
-  const hasImageAsset =
-    galleryImage.image &&
-    (galleryImage.image as { asset?: { _ref?: string } })?.asset?._ref;
-
-  if (!hasExternalUrl && !hasImageAsset) return null;
-
-  if (
-    hasExternalUrl &&
-    (galleryImage.source === "external" || !galleryImage.source)
-  ) {
-    let externalUrl = galleryImage.externalUrl!.trim();
-    if (externalUrl.startsWith("//")) {
-      externalUrl = `https:${externalUrl}`;
-    } else if (!externalUrl.match(/^https?:\/\//)) {
-      externalUrl = `https://${externalUrl}`;
-    }
-
-    try {
-      new URL(externalUrl);
-      const isWikimedia = /(^|\.)upload\.wikimedia\.org$/.test(
-        new URL(externalUrl).hostname,
-      );
-      return {
-        src: externalUrl,
-        alt: galleryImage.alt || "Gallery image",
-        unoptimized: isWikimedia,
-      };
-    } catch {
-      return null;
-    }
-  }
-
-  if (
-    hasImageAsset &&
-    (galleryImage.source === "asset" || !galleryImage.source || !hasExternalUrl)
-  ) {
-    const imageUrl = urlForImage(
-      galleryImage.image as Parameters<typeof urlForImage>[0],
-    );
-    if (imageUrl) {
-      try {
-        const url = imageUrl.quality(60).url();
-        if (url && url.length > 0) {
-          return {
-            src: url,
-            alt:
-              galleryImage.alt ||
-              String((galleryImage.image as { alt?: string })?.alt || "") ||
-              "Gallery image",
-            unoptimized: false,
-          };
-        }
-      } catch {
-        return null;
-      }
-    }
-  }
-
-  return null;
+  const resolved = resolveListingImage(galleryImage, "Gallery image", 480);
+  if (!resolved) return null;
+  return {
+    src: resolved.src,
+    alt: resolved.alt,
+    unoptimized: resolved.unoptimized,
+  };
 }
 
 function thumbImageForCard(article: ArticleFamilyCard): {
@@ -100,7 +45,7 @@ function thumbImageForCard(article: ArticleFamilyCard): {
   const gal = article.imageGallery;
   const firstGallery =
     Array.isArray(gal) && gal[0] != null
-      ? buildGalleryImageData(gal[0] as GalleryImage)
+      ? listingGalleryImage(gal[0] as GalleryImage)
       : null;
   return coverData ?? firstGallery;
 }

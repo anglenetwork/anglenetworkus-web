@@ -38,10 +38,13 @@ export function validateImageAttribution(
   return true;
 }
 
-// Object-level Sanity validation (rule typed loosely for ObjectRule compatibility).
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const imageAttributionValidation = (rule: any) =>
-  rule.custom((_: unknown, context: { parent?: unknown }) =>
+// Sanity object-level validation helper; Rule type is not exported for reuse.
+export const imageAttributionValidation = (
+  rule: Parameters<
+    NonNullable<import("sanity").ObjectDefinition["validation"]>
+  >[0],
+) =>
+  rule.custom((_, context) =>
     validateImageAttribution(context.parent as ImageMediaParent),
   );
 

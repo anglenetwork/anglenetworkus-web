@@ -86,6 +86,7 @@ export default function CategorySidebar({
                         alt={imageData.alt}
                         width={80}
                         height={60}
+                        sizes="80px"
                         unoptimized={imageData.unoptimized}
                         className="h-15 w-20 cursor-pointer rounded object-cover transition-opacity hover:opacity-90"
                       />

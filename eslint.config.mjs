@@ -14,10 +14,13 @@ const eslintConfig = [
     ignores: [
       "**/node_modules/**",
       "**/.next/**",
+      "**/.open-next/**",
       "**/out/**",
       "**/dist/**",
+      "**/coverage/**",
       "**/playwright-report/**",
       "**/test-results/**",
+      "**/docs/audits/lighthouse-reports/**",
       "sanity.types.ts",
     ],
   },

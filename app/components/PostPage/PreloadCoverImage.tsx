@@ -3,8 +3,8 @@
 import { useEffect } from "react";
 
 /**
- * Client component to preload the cover image for faster LCP
- * Only preloads if the image URL is provided
+ * Optional early hint for the cover image URL.
+ * Does not set fetchpriority="high" — ArticleMedia / next/image owns LCP priority.
  */
 export function PreloadCoverImage({ imageUrl }: { imageUrl: string | null }) {
   useEffect(() => {
@@ -21,7 +21,6 @@ export function PreloadCoverImage({ imageUrl }: { imageUrl: string | null }) {
     link.rel = "preload";
     link.as = "image";
     link.href = imageUrl;
-    link.setAttribute("fetchpriority", "high");
     document.head.appendChild(link);
 
     // Cleanup on unmount

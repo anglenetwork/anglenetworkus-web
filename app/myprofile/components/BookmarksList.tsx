@@ -12,11 +12,19 @@ interface Bookmark {
   article_slug: string | null;
   created_at: string;
   article_title: string | null;
+  article_type: string | null;
+  article_href: string | null;
   article_date: string | null;
   article_cover: {
     src: string;
     alt: string;
   } | null;
+}
+
+function bookmarkHref(bookmark: Bookmark): string {
+  if (bookmark.article_href) return bookmark.article_href;
+  if (bookmark.article_slug) return `/post/${bookmark.article_slug}`;
+  return "#";
 }
 
 interface BookmarksListProps {}
@@ -225,22 +233,26 @@ export function BookmarksList({}: BookmarksListProps) {
               {/* Cover Image */}
               <div className="w-full flex-shrink-0 sm:w-48">
                 {bookmark.article_cover ? (
-                  <Link
-                    href={
-                      bookmark.article_slug
-                        ? `/post/${bookmark.article_slug}`
-                        : "#"
-                    }
-                  >
-                    {/* eslint-disable-next-line @next/next/no-img-element -- remote bookmark URLs; dimensions vary */}
-                    <img
-                      src={bookmark.article_cover.src}
-                      alt={bookmark.article_cover.alt}
-                      className="h-40 w-full rounded-lg object-cover sm:h-32"
-                    />
+                  <Link href={bookmarkHref(bookmark)}>
+                    <div className="relative aspect-[3/2] w-full overflow-hidden rounded-lg">
+                      {/* eslint-disable-next-line @next/next/no-img-element -- remote bookmark URLs; dimensions vary */}
+                      <img
+                        src={bookmark.article_cover.src}
+                        alt={
+                          bookmark.article_cover.alt ||
+                          bookmark.article_title ||
+                          "Article image"
+                        }
+                        width={384}
+                        height={256}
+                        loading="lazy"
+                        decoding="async"
+                        className="h-full w-full object-cover"
+                      />
+                    </div>
                   </Link>
                 ) : (
-                  <div className="h-40 w-full rounded-lg bg-slate-100 sm:h-32" />
+                  <div className="aspect-[3/2] w-full rounded-lg bg-slate-100" />
                 )}
               </div>
 
@@ -248,11 +260,7 @@ export function BookmarksList({}: BookmarksListProps) {
               <div className="flex flex-1 flex-col justify-between">
                 <div>
                   <Link
-                    href={
-                      bookmark.article_slug
-                        ? `/post/${bookmark.article_slug}`
-                        : "#"
-                    }
+                    href={bookmarkHref(bookmark)}
                     className="block transition-opacity hover:opacity-70"
                   >
                     <h3 className="mb-2 line-clamp-2 font-sans font-semibold text-base text-slate-900 sm:text-lg">

@@ -6,14 +6,17 @@ export interface ArticleImageSource extends ImageMetaInput {
   externalUrl?: string | null;
   image?: unknown;
   alt?: string | null;
+  lqip?: string | null;
 }
 
 export interface ResolvedArticleImage {
   src: string;
   alt: string;
   unoptimized: boolean;
+  blurDataURL?: string | null;
   caption?: string | null;
   credit?: string | null;
+  licenseOrRights?: string | null;
 }
 
 export interface ArticleAuthor {

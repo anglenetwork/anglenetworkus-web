@@ -6,7 +6,18 @@
     "useIgnoreFile": true
   },
   "files": {
-    "includes": ["**", "!!**/dist", "!!sanity.types.ts", "!!schema.json"]
+    "includes": [
+      "**",
+      "!!**/dist",
+      "!!**/.next",
+      "!!**/.open-next",
+      "!!**/coverage",
+      "!!**/playwright-report",
+      "!!**/test-results",
+      "!!**/docs/audits/lighthouse-reports",
+      "!!sanity.types.ts",
+      "!!schema.json"
+    ]
   },
   "formatter": {
     "enabled": true,

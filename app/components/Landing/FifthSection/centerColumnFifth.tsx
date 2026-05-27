@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { formatImageCredit } from "@/sanity/lib/utils";
+import { ExcerptCreditCaption } from "@/app/helpers";
 import { SectionHeader } from "../../ui/section-header";
 import { ImageRenderer } from "../../ui/image-renderer";
 
@@ -56,11 +56,11 @@ export function CenterColumnFifth({
                       className="h-80 w-full cursor-pointer rounded-sm object-cover"
                     />
                   </Link>
-                  {/* {article.imageSource && (
-                    <p className="text-[10px] text-gray-500 font-sans text-right">
-                      {article.imageSource}
-                    </p>
-                  )} */}
+                  <ExcerptCreditCaption
+                    credit={article.imageSource}
+                    align="right"
+                    variant="compact"
+                  />
                 </div>
                 <Link href={`/post/${article.slug}`}>
                   <h3 className="text-start font-sans font-semibold text-3xl text-neutral-900 leading-snug tracking-tight">

@@ -289,13 +289,7 @@ export const latestNews4Query = `
   "slug": slug.current,
   excerpt, 
   cover{
-    source,
-    externalUrl,
-    image,
-    alt,
-    "caption": coalesce(caption, epigraph),
-    creditAuthor,
-    "creditSource": coalesce(creditSource, creditProvider),
+    ${imageFieldsProjection}
   },
   publishedAt,
   "date": coalesce(publishedAt, _updatedAt)
@@ -312,13 +306,7 @@ export const popularReadsFallbackQuery = `
 ]{
   _id, title, "slug": slug.current, excerpt, 
   cover{
-    source,
-    externalUrl,
-    image,
-    alt,
-    "caption": coalesce(caption, epigraph),
-    creditAuthor,
-    "creditSource": coalesce(creditSource, creditProvider),
+    ${imageFieldsProjection}
   },
   publishedAt,
   priority, featured,
@@ -339,13 +327,7 @@ export const homepageMostReadFallbackQuery = `
 ]{
   _id, title, "slug": slug.current, excerpt, 
   cover{
-    source,
-    externalUrl,
-    image,
-    alt,
-    "caption": coalesce(caption, epigraph),
-    creditAuthor,
-    "creditSource": coalesce(creditSource, creditProvider),
+    ${imageFieldsProjection}
   },
   publishedAt,
   priority, featured,
@@ -529,13 +511,14 @@ const SEARCH_TEXT_MATCH = `(
   coalesce(cover.caption, cover.epigraph) match $term
 )`;
 
-/** score()/boost() only allow document-local match expressions (no derefs, pt::text, count). */
+/** score()/boost() only allow document-local match expressions (no coalesce, derefs, pt::text, count). */
 const SEARCH_SCORE_PIPE = `
 | score(
   boost(title match $term, 100),
   boost(tickerTitle match $term, 80),
   boost(excerpt match $term, 65),
-  boost(coalesce(cover.caption, cover.epigraph) match $term, 55),
+  boost(cover.caption match $term, 55),
+  boost(cover.epigraph match $term, 50),
   boost(searchText match $term, 20)
 )
 | order(_score desc, publishedAt desc)

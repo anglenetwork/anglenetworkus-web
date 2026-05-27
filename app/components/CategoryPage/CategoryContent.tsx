@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { ListingPhotoCredit } from "@/app/helpers";
 import { getCoverImage } from "@/sanity/lib/utils";
 import CategorySidebar from "./CategorySidebar";
 import { ImageRenderer } from "../ui/image-renderer";
@@ -113,6 +114,7 @@ export default function CategoryContent({
                           alt={imageData.alt}
                           width={800}
                           height={400}
+                          sizes="(max-width: 1024px) 100vw, 66vw"
                           unoptimized={imageData.unoptimized}
                           className="h-64 w-full cursor-pointer rounded-lg object-cover transition-opacity hover:opacity-90 md:h-80"
                         />
@@ -123,6 +125,7 @@ export default function CategoryContent({
                     {mainArticle.author?.name || "Anonymous"}
                   </div>
                 </div>
+                <ListingPhotoCredit cover={mainArticle.cover} align="right" />
 
                 <div className="space-y-3">
                   <div className="flex items-center gap-4 text-gray-500 text-sm">
@@ -173,6 +176,7 @@ export default function CategoryContent({
                               alt={imageData.alt}
                               width={400}
                               height={250}
+                              sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 400px"
                               unoptimized={imageData.unoptimized}
                               className="h-48 w-full cursor-pointer rounded-lg object-cover transition-opacity hover:opacity-90"
                             />
@@ -233,6 +237,7 @@ export default function CategoryContent({
                               alt={imageData.alt}
                               width={300}
                               height={200}
+                              sizes="(max-width: 768px) 100vw, (max-width: 1024px) 33vw, 300px"
                               unoptimized={imageData.unoptimized}
                               className="h-40 w-full cursor-pointer rounded-lg object-cover transition-opacity hover:opacity-90"
                             />

@@ -1,0 +1,104 @@
+npm warn Unknown env config "devdir". This will stop working in the next major version of npm. See `npm help npmrc` for supported config options.
+Warning: Custom Cache-Control headers detected for the following routes:
+  - /_next/image
+  - /_next/static/css/:path*
+
+Setting a custom Cache-Control header can break Next.js development behavior.
+▲ Next.js 16.2.6 (Turbopack)
+- Environments: .env.local
+- Experiments (use with caution):
+  · optimizePackageImports
+
+  Creating an optimized production build ...
+✓ Compiled successfully in 20.4s
+  Running TypeScript ...
+  Finished TypeScript in 10.3s ...
+  Collecting page data using 15 workers ...
+  Generating static pages using 15 workers (0/297) ...
+  Generating static pages using 15 workers (74/297) 
+  Generating static pages using 15 workers (148/297) 
+  Generating static pages using 15 workers (222/297) 
+✓ Generating static pages using 15 workers (297/297) in 5.0s
+  Finalizing page optimization ...
+
+Route (app)                                                                                    Revalidate  Expire
+┌ ○ /                                                                                                  1m      1y
+├ ○ /_not-found                                                                                        1m      1y
+├ ƒ /analysis
+├ ● /analysis/[slug]                                                                                   1m      1y
+│ ├ /analysis/analysis-reading-between-the-lines-on-ai-risk-in-sec-filings                             1m      1y
+│ ├ /analysis/analysis-where-credential-stuffing-still-wins-without-phishing-users                     1m      1y
+│ ├ /analysis/analysis-consumer-air-purifiers-spike-when-smoke-forecasts-extend-past-48-hours          1m      1y
+│ └ [+77 more paths]
+├ ƒ /api/article-view
+├ ƒ /api/auth/[...nextauth]
+├ ƒ /api/auth/session
+├ ƒ /api/auth/signout
+├ ƒ /api/bookmarks/list
+├ ƒ /api/bookmarks/status
+├ ƒ /api/bookmarks/toggle
+├ ƒ /api/draft-mode/enable
+├ ƒ /api/internal/article-metrics-status
+├ ƒ /api/newsletters/list
+├ ƒ /api/newsletters/toggle
+├ ƒ /api/posts/main-headlines
+├ ƒ /api/profile/update
+├ ƒ /api/search
+├ ƒ /api/stripe/checkout
+├ ƒ /api/stripe/subscription/cancel
+├ ƒ /api/stripe/webhook
+├ ƒ /api/track-category-view
+├ ƒ /api/track-tag-view
+├ ○ /apple-icon-1gp61b.png
+├ ƒ /auth/callback
+├ ● /category/[slug]                                                                                   1m      1y
+│ ├ /category/business                                                                                 1m      1y
+│ ├ /category/science                                                                                  1m      1y
+│ ├ /category/us                                                                                       1m      1y
+│ └ [+5 more paths]
+├ ○ /company/advertise-with-us                                                                         1m      1y
+├ ○ /company/contact                                                                                   1m      1y
+├ ○ /company/privacy-policy                                                                            1m      1y
+├ ○ /company/terms-of-service                                                                          1m      1y
+├ ○ /icon-1gp61b.svg
+├ ○ /icon.svg
+├ ƒ /latest
+├ ○ /logineditor                                                                                       1m      1y
+├ ƒ /myprofile
+├ ƒ /myprofile/bookmarks
+├ ƒ /myprofile/newsletters
+├ ƒ /myprofile/profile-details
+├ ƒ /myprofile/subscriptions
+├ ƒ /myprofile/subscriptions/success
+├ ƒ /news-sitemap.xml
+├ ƒ /opinion
+├ ● /opinion/[slug]                                                                                    1m      1y
+│ ├ /opinion/column-the-gadget-cycle-is-cooling-good-for-buyers-stressful-for-retailers                1m      1y
+│ ├ /opinion/editorial-public-r-and-d-grants-should-favor-reproducible-benchmarks                      1m      1y
+│ ├ /opinion/column-the-quiet-comeback-of-on-prem-inference-for-regulated-workloads                    1m      1y
+│ └ [+7 more paths]
+├ ƒ /post/[slug]
+├ ○ /pricing                                                                                           1m      1y
+├ ○ /robots.txt
+├ ƒ /search
+├ ○ /signin                                                                                            1m      1y
+├ ○ /sitemap.xml
+├ ● /sponsored/[slug]                                                                                  1m      1y
+│ ├ /sponsored/sponsored-building-governance-boards-for-cross-border-data-projects                     1m      1y
+│ ├ /sponsored/sponsored-mapping-evidence-lockers-before-your-next-soc-2-renewal-window                1m      1y
+│ ├ /sponsored/sponsored-zero-trust-checklists-before-your-next-vpn-refresh-2                          1m      1y
+│ └ [+77 more paths]
+├ ƒ /studio/[[...tool]]
+└ ● /tag/[slug]                                                                                        1m      1y
+  ├ /tag/white-house                                                                                   1m      1y
+  ├ /tag/congress                                                                                      1m      1y
+  ├ /tag/artificial-intelligence                                                                       1m      1y
+  └ [+6 more paths]
+
+
+ƒ Proxy (Middleware)
+
+○  (Static)   prerendered as static content
+●  (SSG)      prerendered as static HTML (uses generateStaticParams)
+ƒ  (Dynamic)  server-rendered on demand
+
