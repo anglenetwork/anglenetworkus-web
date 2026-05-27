@@ -28,6 +28,7 @@ const articleFamilyAuthor = `
   "author": select(
     defined(author->name) => {
       "name": coalesce(author->name, "Anonymous"),
+      "slug": author->slug.current,
       "picture": author->picture
     }
   )
@@ -118,15 +119,29 @@ export const ARTICLE_FAMILY_PUBLISHED = `
   defined(publishedAt) && publishedAt <= now()
 `;
 
-/** Single document by type + slug (uses _type from caller — no guessing) */
+/** Single document by type + slug — published editorial only (public site). */
 export const articleFamilyPageBySlugQuery = defineQuery(`
+  *[_type == $type && slug.current == $slug && ${ARTICLE_FAMILY_PUBLISHED}][0] {
+    ${articleFamilyPageFragment}
+  }
+`);
+
+/** Single document by type + slug — draft/preview (no published guard). */
+export const articleFamilyPageBySlugPreviewQuery = defineQuery(`
   *[_type == $type && slug.current == $slug][0] {
     ${articleFamilyPageFragment}
   }
 `);
 
-/** Single document by stable Sanity ID, with slug guard for duplicate-slug routes. */
+/** Single document by stable Sanity ID, with slug guard — published only. */
 export const articleFamilyPageByIdQuery = defineQuery(`
+  *[_type == $type && _id == $id && slug.current == $slug && ${ARTICLE_FAMILY_PUBLISHED}][0] {
+    ${articleFamilyPageFragment}
+  }
+`);
+
+/** Single document by ID — draft/preview (no published guard). */
+export const articleFamilyPageByIdPreviewQuery = defineQuery(`
   *[_type == $type && _id == $id && slug.current == $slug][0] {
     ${articleFamilyPageFragment}
   }
@@ -144,6 +159,14 @@ export const articleFamilyBookmarksByIdsQuery = defineQuery(`
       ${imageFieldsProjection}
     }
   }
+`);
+
+export const postPublishedSlugsQuery = defineQuery(`
+  *[
+    _type == "post" &&
+    defined(slug.current) &&
+    ${ARTICLE_FAMILY_PUBLISHED}
+  ][].slug.current
 `);
 
 export const opinionSlugsQuery = defineQuery(`
@@ -255,6 +278,58 @@ export const latestEditorialIndexCountQuery = defineQuery(`
     ${ARTICLE_FAMILY_PUBLISHED} &&
     defined(slug.current)
   ])
+`);
+
+/** RSS / Atom feed — mixed editorial, canonical URLs only at render time */
+export const feedEditorialEntriesQuery = defineQuery(`
+  *[
+    _type in ["post", "opinion", "analysis"] &&
+    ${ARTICLE_FAMILY_PUBLISHED} &&
+    defined(slug.current)
+  ] | order(coalesce(publishedAt, _updatedAt) desc) [0...40] {
+    _type,
+    "title": coalesce(title, "Untitled"),
+    "slug": slug.current,
+    excerpt,
+    publishedAt,
+    ${articleFamilyAuthor}
+  }
+`);
+
+export const authorPageQuery = defineQuery(`
+  *[_type == "author" && slug.current == $slug][0] {
+    name,
+    title,
+    "slug": slug.current,
+    shortBio,
+    bio,
+    picture,
+    website,
+    twitter,
+    linkedin,
+    instagram,
+    "articles": *[
+      _type in ["post", "opinion", "analysis"] &&
+      author->slug.current == $slug &&
+      ${ARTICLE_FAMILY_PUBLISHED} &&
+      defined(slug.current)
+    ] | order(coalesce(publishedAt, _updatedAt) desc) [0...20] {
+      ${articleFamilyListFragment}
+    }
+  }
+`);
+
+export const sitemapAuthorSlugsQuery = defineQuery(`
+  *[
+    _type == "author" &&
+    defined(slug.current) &&
+    count(*[
+      _type in ["post", "opinion", "analysis"] &&
+      author->slug.current == ^.slug.current &&
+      ${ARTICLE_FAMILY_PUBLISHED} &&
+      defined(slug.current)
+    ]) > 0
+  ].slug.current
 `);
 
 /** Category/topic listing: post + analysis only (see FEED_TOPIC_CATEGORY_TAG_TYPES) */

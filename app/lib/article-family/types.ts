@@ -17,7 +17,17 @@ export type ArticleFamilySeo = {
 
 export type ArticleFamilyAuthor = {
   name: string;
+  slug?: string | null;
   picture?: unknown;
+};
+
+/** Cover shape from GROQ (coverFieldsProjection) */
+export type ArticleFamilyCover = {
+  source?: "asset" | "external";
+  externalUrl?: string | null;
+  image?: unknown;
+  alt?: string | null;
+  dimensions?: { width?: number; height?: number } | null;
 };
 
 export type ArticleFamilyCategory = {

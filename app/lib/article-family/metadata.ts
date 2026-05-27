@@ -4,7 +4,10 @@ import type { Metadata } from "next";
 import { sanityFetch } from "@/sanity/lib/fetch";
 import { settingsQuery } from "@/sanity/lib/queries";
 import * as demo from "@/sanity/lib/demo";
-import { buildArticlePageMetadata } from "@/app/lib/seo/metadata-builders";
+import {
+  buildArticlePageMetadata,
+  finalizePublicMetadata,
+} from "@/app/lib/seo/metadata-builders";
 import type { ArticleFamily } from "./types";
 
 export async function buildArticleFamilyMetadata(
@@ -14,5 +17,7 @@ export async function buildArticleFamilyMetadata(
     query: settingsQuery,
     stega: false,
   });
-  return buildArticlePageMetadata(article, settings, demo.title);
+  return finalizePublicMetadata(
+    buildArticlePageMetadata(article, settings, demo.title),
+  );
 }
