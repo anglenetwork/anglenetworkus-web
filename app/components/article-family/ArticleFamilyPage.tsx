@@ -10,7 +10,7 @@ import { settingsQuery } from "@/sanity/lib/queries";
 import PostHeader from "@/app/components/PostPage/PostHeader";
 import PostBody from "@/app/components/PostPage/PostBody";
 import PostSelectedNews from "@/app/components/PostPage/PostSelectedNews";
-import { PreloadCoverImage } from "@/app/components/PostPage/PreloadCoverImage";
+import { ArticleCoverPreload } from "@/app/components/PostPage/ArticleCoverPreload";
 import { getCoverImage } from "@/sanity/lib/utils";
 import ArticleViewTracker from "@/app/components/article-family/ArticleViewTracker";
 import CategoryViewTracker from "@/app/post/[slug]/CategoryViewTracker";
@@ -123,7 +123,7 @@ export default async function ArticleFamilyPage({
         }}
       />
 
-      {coverImageUrl && <PreloadCoverImage imageUrl={coverImageUrl} />}
+      {coverImageUrl && <ArticleCoverPreload src={coverImageUrl} />}
 
       <ArticleViewTracker articleId={article._id} articleType={article._type} />
 

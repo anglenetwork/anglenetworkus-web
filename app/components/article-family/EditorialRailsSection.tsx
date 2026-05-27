@@ -6,6 +6,7 @@ import { normalizeArticleFamilyCard } from "@/app/lib/article-family/normalize";
 import { getCoverImage, urlForImage } from "@/sanity/lib/utils";
 import { ImageRenderer } from "@/app/components/ui/image-renderer";
 import type { ArticleFamilyCard } from "@/app/lib/article-family/types";
+import { editorialOpinionRailTitle } from "@/app/lib/typography/article-family-card";
 
 function relativeTime(publishedAt: string | null): string {
   if (!publishedAt) return "";
@@ -55,9 +56,7 @@ function OpinionCard({ article }: { article: ArticleFamilyCard }) {
       <div className="absolute bottom-5 left-5 flex w-[72%] min-w-0 max-w-[320px] flex-col justify-start gap-4 rounded-2xl border-2 border-neutral-900 bg-white p-4 sm:gap-5 sm:p-5 md:w-[65%] md:max-w-[280px] md:gap-5 lg:w-[57%] lg:max-w-[320px] lg:gap-6 lg:p-6">
         {/* Headline */}
         <Link href={article.href} className="group min-w-0">
-          <h3 className="break-words font-bold font-sans text-neutral-900 text-xl leading-[1.08] tracking-tight group-hover:underline sm:text-2xl md:text-2xl lg:text-4xl">
-            {article.title}
-          </h3>
+          <h3 className={editorialOpinionRailTitle}>{article.title}</h3>
         </Link>
 
         {/* Author row */}

@@ -1,5 +1,6 @@
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { NewsletterToggles } from "../components/NewsletterToggles";
+import { ProfileSectionHeader } from "../components/ProfileSectionHeader";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -14,14 +15,10 @@ export default async function NewslettersPage() {
 
   return (
     <div>
-      <div className="mb-12">
-        <h1 className="mb-2 font-sans font-semibold text-3xl text-slate-900">
-          Newsletters
-        </h1>
-        <p className="font-sans text-slate-600">
-          Choose which newsletters you&apos;d like to receive
-        </p>
-      </div>
+      <ProfileSectionHeader
+        title="Newsletters"
+        description="Choose which newsletters you'd like to receive"
+      />
 
       <NewsletterToggles />
 

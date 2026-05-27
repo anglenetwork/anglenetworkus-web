@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { NewsTickerScrollControls } from "./news-ticker-scroll-controls";
 import { NewsTickerTrack } from "./news-ticker-track";
+import { newsTickerItemLink } from "@/app/lib/typography/news-ticker";
 
 interface NewsTickerPost {
   tickerTitle: string;
@@ -30,10 +31,7 @@ export function NewsTicker({ posts }: NewsTickerProps) {
               key={item.slug || index}
               className="flex shrink-0 items-center"
             >
-              <Link
-                href={`/post/${item.slug}`}
-                className="block whitespace-nowrap px-4 font-normal font-sans text-base tracking-normal hover:opacity-60"
-              >
+              <Link href={`/post/${item.slug}`} className={newsTickerItemLink}>
                 {item.tickerTitle}
               </Link>
               {index < newsItems.length - 1 && (

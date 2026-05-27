@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { Article } from "./types";
 import { ImageRenderer } from "../ui/image-renderer";
+import { categoryMostReadStoryLink } from "@/app/lib/typography/category-page";
 
 interface MostReadItemProps {
   article: Article;
@@ -42,7 +43,7 @@ export function MostReadItem({
           <h3 className="font-medium font-sans text-base text-neutral-900 leading-snug tracking-normal">
             <Link
               href={article.href ?? `/post/${article.slug}`}
-              className="hover:underline"
+              className={categoryMostReadStoryLink}
             >
               {article.title}
             </Link>

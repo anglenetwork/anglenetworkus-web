@@ -76,3 +76,6 @@
     scrollbar-width: none; /* Firefox */
   }
 }
+
+/* Article title hover underline is applied via Tailwind utilities on `articleTitleLink`
+   (see app/lib/typography/article-links.ts). This marker class is kept for semantics/tests. */

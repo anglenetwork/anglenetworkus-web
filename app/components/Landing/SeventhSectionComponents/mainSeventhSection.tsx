@@ -1,6 +1,10 @@
 import Link from "next/link";
 import { ImageRenderer } from "@/app/components/ui/image-renderer";
 import { getCoverImage } from "@/sanity/lib/utils";
+import {
+  seventhSectionListTitle,
+  seventhSectionMainTitle,
+} from "@/app/lib/typography/seventh-section";
 
 interface Post {
   _id: string;
@@ -90,7 +94,7 @@ export default function MainSeventhSection({
                     );
                   })()}
                 </div>
-                <h2 className="mt-6 text-balance font-bold font-sans text-2xl text-neutral-900 leading-tight">
+                <h2 className={seventhSectionMainTitle}>
                   {mainArticle.title || "Untitled"}
                 </h2>
               </Link>
@@ -104,7 +108,7 @@ export default function MainSeventhSection({
                   href={`/post/${article.slug || "#"}`}
                   className="block py-4 transition-opacity hover:opacity-70"
                 >
-                  <h3 className="font-normal font-sans text-base text-neutral-900 leading-relaxed">
+                  <h3 className={seventhSectionListTitle}>
                     {article.title || "Untitled"}
                   </h3>
                 </Link>

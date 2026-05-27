@@ -1,13 +1,25 @@
+import { articleTitleLink } from "./article-links";
+
 /** SecondSection — category column: lead story title */
 export const categoryFeaturedTitle = {
-  light:
-    "text-xl font-sans font-semibold leading-snug tracking-normal text-neutral-900",
-  dark: "text-lg md:text-xl font-sans font-semibold leading-snug tracking-normal text-white",
+  light: `text-xl font-sans font-semibold leading-snug tracking-normal text-neutral-900 ${articleTitleLink}`,
+  dark: `text-lg md:text-xl font-sans font-semibold leading-snug tracking-normal text-white ${articleTitleLink}`,
 } as const;
 
 /** SecondSection — category column: secondary row story title */
 export const categorySecondaryRowTitle = {
-  light:
-    "flex-1 min-w-0 text-base font-sans font-normal leading-snug text-neutral-900",
-  dark: "flex-1 min-w-0 text-base font-sans font-normal leading-snug text-white",
+  light: `flex-1 min-w-0 text-base font-sans font-normal leading-snug text-neutral-900 ${articleTitleLink}`,
+  dark: `flex-1 min-w-0 text-base font-sans font-normal leading-snug text-white ${articleTitleLink}`,
+} as const;
+
+/** SecondSection — mainFourthSection / seventhSection second related story */
+export const categoryColumnSecondaryTitle = {
+  light: `mb-4 font-normal font-sans text-base leading-snug text-neutral-900 ${articleTitleLink}`,
+  dark: `mb-4 font-normal font-sans text-base leading-snug text-white ${articleTitleLink}`,
+} as const;
+
+/** SecondSection — mainFourthSection / seventhSection third related story */
+export const categoryColumnTertiaryTitle = {
+  light: `mb-2 font-normal font-sans text-base leading-snug text-neutral-900 ${articleTitleLink}`,
+  dark: `mb-2 font-normal font-sans text-base leading-snug text-white ${articleTitleLink}`,
 } as const;

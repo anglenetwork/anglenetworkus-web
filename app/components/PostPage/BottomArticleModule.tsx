@@ -5,6 +5,12 @@ import { SectionHeader } from "@/app/components/ui/section-header";
 import { ImageRenderer } from "../ui/image-renderer";
 import type { ArticleSidebarPost } from "@/app/lib/article-family/types";
 import { ARTICLE_IMAGE_FRAME_CLASS } from "./PostBody/constants";
+import {
+  postRelatedClassicHeroTitle,
+  postRelatedClassicListTitle,
+  postRelatedModernCardTitle,
+  postRelatedModernSideTitle,
+} from "@/app/lib/typography/post-page";
 
 export type BottomArticleModuleVariant = "classic" | "modern";
 
@@ -94,7 +100,7 @@ function ClassicRelatedArticles({ posts }: { posts: ArticleSidebarPost[] }) {
                     );
                   })()}
                 </div>
-                <h2 className="mt-4 text-start font-sans font-semibold text-2xl text-neutral-900 leading-snug tracking-tight md:text-3xl">
+                <h2 className={postRelatedClassicHeroTitle}>
                   {posts[0].title || "Untitled"}
                 </h2>
               </Link>
@@ -110,7 +116,7 @@ function ClassicRelatedArticles({ posts }: { posts: ArticleSidebarPost[] }) {
                     href={post.href}
                     className="block py-4 transition-opacity"
                   >
-                    <h3 className="mb-2 font-normal font-sans text-lg text-neutral-900 leading-normal tracking-normal">
+                    <h3 className={postRelatedClassicListTitle}>
                       {post.title || "Untitled"}
                     </h3>
                   </Link>
@@ -205,7 +211,7 @@ function ModernSideItem({ post }: { post: ArticleSidebarPost }) {
         <p className="font-sans font-semibold text-[11px] text-sectionAccent uppercase tracking-wide">
           {formatTopStoryTimestamp(post.date)}
         </p>
-        <h3 className="mt-2 break-words font-medium font-sans text-sm text-white leading-snug group-hover:underline sm:text-base">
+        <h3 className={postRelatedModernSideTitle}>
           {post.title || "Untitled"}
         </h3>
       </Link>
@@ -243,9 +249,7 @@ function ModernGridCard({ post }: { post: ArticleSidebarPost }) {
           </div>
         )}
       </div>
-      <h3 className="mt-3 break-words font-medium font-sans text-sm text-white leading-snug group-hover:underline sm:text-base">
-        {post.title || "Untitled"}
-      </h3>
+      <h3 className={postRelatedModernCardTitle}>{post.title || "Untitled"}</h3>
     </Link>
   );
 }

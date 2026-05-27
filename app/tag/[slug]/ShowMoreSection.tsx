@@ -8,6 +8,7 @@ import { SectionHeader } from "@/app/components/ui/section-header";
 import { ChevronDown } from "lucide-react";
 import { getCoverImage } from "@/sanity/lib/utils";
 import { SitePageWidth } from "@/app/components/layout/site-page-width";
+import { tagShowMoreTitle } from "@/app/lib/typography/tag-page";
 
 interface Post {
   _id: string;
@@ -149,9 +150,7 @@ function FullWidthArticle({
       </div>
       <div className="flex-1">
         <Link href={to} className="block">
-          <h2 className="font-sans font-semibold text-2xl text-neutral-900 leading-snug tracking-tight">
-            {title}
-          </h2>
+          <h2 className={tagShowMoreTitle}>{title}</h2>
         </Link>
         <p className="mt-2 text-pretty font-sans text-base text-muted-foreground leading-relaxed">
           {description}

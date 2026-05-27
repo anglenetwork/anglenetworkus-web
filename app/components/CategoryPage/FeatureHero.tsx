@@ -2,6 +2,7 @@ import Link from "next/link";
 import { ExcerptCreditCaption } from "@/app/helpers";
 import type { Article } from "./types";
 import { ImageRenderer } from "../ui/image-renderer";
+import { categoryFeatureHeroTitle } from "@/app/lib/typography/category-page";
 
 interface FeatureHeroProps {
   article: Article;
@@ -41,9 +42,7 @@ export function FeatureHero({ article, variant = "light" }: FeatureHeroProps) {
           align="right"
           variant="compact"
         />
-        <h2
-          className={`font-sans font-semibold text-2xl md:text-3xl lg:text-3xl ${textColor} text-start leading-snug tracking-tight`}
-        >
+        <h2 className={`${categoryFeatureHeroTitle} ${textColor}`}>
           {article.title}
         </h2>
       </Link>

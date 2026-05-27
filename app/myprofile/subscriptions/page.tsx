@@ -24,6 +24,7 @@ import {
 import { CheckCircle2, Zap, Users, Lock, ArrowRight } from "lucide-react";
 
 import { type Tier } from "@/lib/subscriptions/tier";
+import { ProfileSectionHeader } from "../components/ProfileSectionHeader";
 
 function formatDate(iso: string) {
   try {
@@ -337,6 +338,10 @@ export default function SubscriptionsPage() {
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-secondary/10 font-sans">
       {/* Main Content */}
       <div className="mx-auto max-w-7xl px-2">
+        <ProfileSectionHeader
+          title="Subscriptions"
+          description="Manage your subscription and explore upgrade options"
+        />
         {loading ? (
           <div className="py-16 text-center">
             <div className="text-muted-foreground">

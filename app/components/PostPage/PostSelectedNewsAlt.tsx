@@ -2,6 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { format, parseISO } from "date-fns";
 import { getCoverImage } from "@/sanity/lib/utils";
+import { postSidebarListTitleAlt } from "@/app/lib/typography/post-page";
 
 interface Post {
   _id: string;
@@ -91,9 +92,7 @@ export default function PostSelectedNewsAlt({
 
             {/* Article Content */}
             <div className="min-w-0 flex-1">
-              <h3 className="line-clamp-2 font-sans font-semibold text-foreground text-sm leading-tight transition-colors duration-200 group-hover:text-primary">
-                {post.title}
-              </h3>
+              <h3 className={postSidebarListTitleAlt}>{post.title}</h3>
             </div>
           </Link>
         ))}

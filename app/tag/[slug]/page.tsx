@@ -18,7 +18,10 @@ import * as demo from "@/sanity/lib/demo";
 import { getCachedSettings } from "@/app/lib/cached-settings";
 import { jsonLdScriptContent } from "@/app/lib/article-family/structured-data";
 import { buildBreadcrumbJsonLd } from "@/app/lib/seo/json-ld";
-import { buildTagPageMetadata } from "@/app/lib/seo/metadata-builders";
+import {
+  buildTagPageMetadata,
+  finalizePublicMetadata,
+} from "@/app/lib/seo/metadata-builders";
 import { getCoverImage } from "@/sanity/lib/utils";
 import { articleFamilyHref } from "@/app/lib/article-family/routes";
 import type { ArticleFamilyDocType } from "@/app/lib/article-family/types";
@@ -69,13 +72,15 @@ export async function generateMetadata({
   const title = tag.title ?? "Tag";
   const resultCount = typeof countRaw === "number" ? countRaw : 0;
 
-  return buildTagPageMetadata({
-    tagTitle: title,
-    resultCount,
-    settings,
-    demoTitle: demo.title,
-    slug,
-  });
+  return finalizePublicMetadata(
+    buildTagPageMetadata({
+      tagTitle: title,
+      resultCount,
+      settings,
+      demoTitle: demo.title,
+      slug,
+    }),
+  );
 }
 
 async function getTagData(slug: string) {

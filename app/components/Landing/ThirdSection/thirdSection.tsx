@@ -2,10 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import {
-  isCarouselLcpCandidate,
-  shouldRenderCarouselSlide,
-} from "@/lib/carousel";
+import { shouldRenderCarouselSlide } from "@/lib/carousel";
 import { resolveListingImage } from "@/lib/editorial-image";
 import { getCoverImage } from "@/sanity/lib/utils";
 import { cn } from "@/lib/utils";
@@ -99,8 +96,6 @@ function ArticleImageCarousel({
             return null;
           }
 
-          const isLcp = isCarouselLcpCandidate(idx, currentIndex);
-
           return (
             <ImageRenderer
               key={idx}
@@ -111,7 +106,6 @@ function ArticleImageCarousel({
               fill
               unoptimized={image.unoptimized}
               sizes="(max-width: 1024px) 100vw, 50vw"
-              priority={isLcp}
               className={`absolute inset-0 object-cover transition-opacity duration-500 ${
                 idx === currentIndex ? "z-10 opacity-100" : "z-0 opacity-0"
               }`}

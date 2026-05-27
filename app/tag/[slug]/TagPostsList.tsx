@@ -3,6 +3,7 @@ import { getCoverImage } from "@/sanity/lib/utils";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { ImageRenderer } from "@/app/components/ui/image-renderer";
+import { tagPostListTitle } from "@/app/lib/typography/tag-page";
 
 interface Post {
   _id: string;
@@ -129,9 +130,7 @@ export default function TagPostsList({
                 </div>
 
                 <Link href={`/post/${post.slug}`} className="block">
-                  <h3 className="mb-2 font-semibold text-gray-900 text-xl transition-colors hover:text-blue-600">
-                    {post.title}
-                  </h3>
+                  <h3 className={tagPostListTitle}>{post.title}</h3>
                 </Link>
 
                 {post.excerpt && (

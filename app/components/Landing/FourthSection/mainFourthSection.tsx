@@ -4,6 +4,11 @@ import { ListingPhotoCredit } from "@/app/helpers";
 import { getCoverImage } from "@/sanity/lib/utils";
 import { SectionHeader } from "../../ui/section-header";
 import { ImageRenderer } from "../../ui/image-renderer";
+import {
+  categoryColumnSecondaryTitle,
+  categoryColumnTertiaryTitle,
+  categoryFeaturedTitle,
+} from "@/app/lib/typography/second-section";
 
 interface Post {
   _id: string;
@@ -120,9 +125,7 @@ export default function FourthSection({
                 {mainPost && mainPost.slug && (
                   <div className="space-y-2">
                     <Link href={`/post/${mainPost.slug}`}>
-                      <h3
-                        className={`font-sans font-semibold text-xl leading-snug tracking-tight ${variant === "dark" ? "text-white" : "text-neutral-900"}`}
-                      >
+                      <h3 className={categoryFeaturedTitle[variant]}>
                         {mainPost.title}
                       </h3>
                     </Link>
@@ -139,9 +142,7 @@ export default function FourthSection({
                   {secondPost && secondPost.slug && (
                     <>
                       <Link href={`/post/${secondPost.slug}`}>
-                        <h3
-                          className={`mb-4 font-normal font-sans text-base leading-snug ${variant === "dark" ? "text-white" : "text-neutral-900"}`}
-                        >
+                        <h3 className={categoryColumnSecondaryTitle[variant]}>
                           {secondPost.title}
                         </h3>
                       </Link>
@@ -152,9 +153,7 @@ export default function FourthSection({
                       <hr
                         className={`my-4 border-1 ${variant === "dark" ? "border-white" : "border-neutral-200"}`}
                       />
-                      <h3
-                        className={`mb-2 font-normal font-sans text-base leading-snug ${variant === "dark" ? "text-white" : "text-neutral-900"}`}
-                      >
+                      <h3 className={categoryColumnTertiaryTitle[variant]}>
                         {thirdPost.title}
                       </h3>
                     </Link>

@@ -10,6 +10,7 @@ import Image from "next/image";
 import { Logo } from "@/app/components/layout/navbar/logo";
 import { Chrome } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
+import { signInGalleryTitle } from "@/app/lib/typography/sign-in-page";
 
 interface GalleryItem {
   id: string;
@@ -322,7 +323,7 @@ export default function SignInPage() {
                 <div className="absolute right-0 bottom-20 left-0 px-8 py-6">
                   {currentItem.slug ? (
                     <Link href={`/post/${currentItem.slug}`}>
-                      <h2 className="mb-4 cursor-pointer font-bold font-sans text-5xl text-shadow text-white hover:underline">
+                      <h2 className={signInGalleryTitle}>
                         {currentItem.title}
                       </h2>
                     </Link>

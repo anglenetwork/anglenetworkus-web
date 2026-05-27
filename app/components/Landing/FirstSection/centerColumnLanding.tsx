@@ -88,7 +88,7 @@ export function CenterColumnLanding({
                         quality={70}
                         priority
                         fetchPriority="high"
-                        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 90vw, (max-width: 1280px) 60vw, 800px"
+                        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 720px"
                         className="rounded-sm object-cover object-center"
                         fill
                       />

@@ -6,28 +6,43 @@ import { ChevronRight, ChevronLeft } from "lucide-react";
 export function NewsTickerScrollControls({ itemCount }: { itemCount: number }) {
   const [showLeftArrow, setShowLeftArrow] = useState(false);
   const [showRightArrow, setShowRightArrow] = useState(true);
+  const showLeftRef = useRef(false);
+  const showRightRef = useRef(true);
+  const rafRef = useRef<number | null>(null);
 
   useEffect(() => {
     const container = document.getElementById("news-ticker-scroll");
+    if (!container) return;
 
-    const handleScroll = () => {
-      if (container) {
-        const scrollLeft = container.scrollLeft;
-        const maxScroll = container.scrollWidth - container.clientWidth;
+    const applyScrollState = () => {
+      rafRef.current = null;
+      const scrollLeft = container.scrollLeft;
+      const maxScroll = container.scrollWidth - container.clientWidth;
+      const nextLeft = scrollLeft > 10;
+      const nextRight = scrollLeft < maxScroll - 10;
 
-        setShowLeftArrow(scrollLeft > 10);
-        setShowRightArrow(scrollLeft < maxScroll - 10);
+      if (nextLeft !== showLeftRef.current) {
+        showLeftRef.current = nextLeft;
+        setShowLeftArrow(nextLeft);
+      }
+      if (nextRight !== showRightRef.current) {
+        showRightRef.current = nextRight;
+        setShowRightArrow(nextRight);
       }
     };
 
-    if (container) {
-      container.addEventListener("scroll", handleScroll);
-      handleScroll(); // Initial check
-    }
+    const handleScroll = () => {
+      if (rafRef.current !== null) return;
+      rafRef.current = requestAnimationFrame(applyScrollState);
+    };
+
+    container.addEventListener("scroll", handleScroll, { passive: true });
+    applyScrollState();
 
     return () => {
-      if (container) {
-        container.removeEventListener("scroll", handleScroll);
+      container.removeEventListener("scroll", handleScroll);
+      if (rafRef.current !== null) {
+        cancelAnimationFrame(rafRef.current);
       }
     };
   }, []);

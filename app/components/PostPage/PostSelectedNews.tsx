@@ -3,6 +3,7 @@ import { format, parseISO } from "date-fns";
 import { getCoverImage } from "@/sanity/lib/utils";
 import { ImageRenderer } from "../ui/image-renderer";
 import type { ArticleSidebarPost } from "@/app/lib/article-family/types";
+import { postSidebarListTitle } from "@/app/lib/typography/post-page";
 
 interface PostSelectedNewsProps {
   latestNews: ArticleSidebarPost[];
@@ -34,10 +35,10 @@ export default function PostSelectedNews({
           const imgUrl = coverData?.src ?? null;
 
           return (
-            <article key={post._id} className="group">
+            <div key={post._id}>
               <Link
                 href={post.href}
-                className="flex cursor-pointer items-start gap-4 rounded-lg transition-colors duration-200"
+                className="group flex cursor-pointer items-start gap-4 rounded-lg transition-colors duration-200"
               >
                 {/* Article Image */}
                 <div className="flex-shrink-0">
@@ -65,9 +66,7 @@ export default function PostSelectedNews({
 
                 {/* Article Content */}
                 <div className="min-w-0 flex-1">
-                  <h3 className="mb-2 font-sans font-semibold text-[15px] text-neutral-900 leading-snug tracking-normal">
-                    {post.title}
-                  </h3>
+                  <h3 className={postSidebarListTitle}>{post.title}</h3>
                   {post.date && (
                     <p className="mt-1 font-sans text-neutral-500 text-xs">
                       {(() => {
@@ -81,7 +80,7 @@ export default function PostSelectedNews({
                   )}
                 </div>
               </Link>
-            </article>
+            </div>
           );
         })}
       </div>

@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { ImageRenderer } from "@/app/components/ui/image-renderer";
+import { tagArticleRowTitle } from "@/app/lib/typography/tag-page";
 
 interface TagArticleItemProps {
   image: string;
@@ -35,9 +36,7 @@ export function TagArticleItem({
         </Link>
       </div>
       <Link href={to} className="block flex-1">
-        <h2 className="font-normal font-sans text-lg text-neutral-900 leading-normal tracking-normal">
-          {title}
-        </h2>
+        <h2 className={tagArticleRowTitle}>{title}</h2>
       </Link>
     </article>
   );

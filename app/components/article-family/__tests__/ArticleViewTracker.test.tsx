@@ -2,6 +2,13 @@ import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { render, act } from "@testing-library/react";
 import ArticleViewTracker from "../ArticleViewTracker";
 
+vi.mock("@/app/lib/schedule-idle", () => ({
+  scheduleIdleTask: (task: () => void) => {
+    task();
+    return () => {};
+  },
+}));
+
 describe("ArticleViewTracker", () => {
   const originalSendBeacon = navigator.sendBeacon;
   const originalWebdriver = Object.getOwnPropertyDescriptor(

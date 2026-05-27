@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { ImageRenderer } from "@/app/components/ui/image-renderer";
+import { tagDarkRailTitle } from "@/app/lib/typography/tag-page";
 
 interface TagNewsItemProps {
   image: string;
@@ -23,9 +24,7 @@ export function TagNewsItem({
     <article className="flex gap-4 py-6">
       <div className="flex-1">
         <Link href={to} className="block">
-          <h2 className="font-normal font-sans text-base text-white leading-normal tracking-normal">
-            {title}
-          </h2>
+          <h2 className={tagDarkRailTitle}>{title}</h2>
         </Link>
         <p className="mt-2 font-sans font-semibold text-neutral-400 text-xs capitalize tracking-wide">
           {readTime}

@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import type { ArticleFamilyDocType } from "@/app/lib/article-family/types";
+import { scheduleIdleTask } from "@/app/lib/schedule-idle";
 
 const DEDUPE_MS = 30 * 60 * 1000;
 
@@ -62,20 +63,26 @@ export default function ArticleViewTracker({
       return;
     }
 
-    try {
-      const raw = localStorage.getItem(storageKey(articleId));
-      if (raw) {
-        const t = Number.parseInt(raw, 10);
-        if (!Number.isNaN(t) && Date.now() - t < DEDUPE_MS) {
-          return;
-        }
-      }
-    } catch {
-      /* proceed */
-    }
+    const cancel = scheduleIdleTask(() => {
+      if (sentRef.current) return;
 
-    sentRef.current = true;
-    sendView(articleId.trim(), articleType);
+      try {
+        const raw = localStorage.getItem(storageKey(articleId));
+        if (raw) {
+          const t = Number.parseInt(raw, 10);
+          if (!Number.isNaN(t) && Date.now() - t < DEDUPE_MS) {
+            return;
+          }
+        }
+      } catch {
+        /* proceed */
+      }
+
+      sentRef.current = true;
+      sendView(articleId.trim(), articleType);
+    });
+
+    return cancel;
   }, [articleId, articleType]);
 
   return null;
