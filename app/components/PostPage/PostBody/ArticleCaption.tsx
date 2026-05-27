@@ -10,6 +10,7 @@ interface ArticleCaptionProps {
   alt?: string | null;
   showAltAsCaption?: boolean;
   fallbackCaption?: string;
+  figcaptionClassName?: string;
 }
 
 function captionCreditSeparator(caption: string): string {
@@ -23,17 +24,21 @@ export default function ArticleCaption({
   alt,
   showAltAsCaption = false,
   fallbackCaption,
+  figcaptionClassName = "mt-2 text-left",
 }: ArticleCaptionProps) {
   const displayCaption = (caption || fallbackCaption)?.trim() || null;
   const displayCredit = credit?.trim() || null;
   const displayLicense = license?.trim() || null;
-  const showPrimaryLine = Boolean(displayCaption || displayCredit);
+  const showPrimaryLine = Boolean(
+    displayCaption || displayCredit || displayLicense,
+  );
   const showAltLine = Boolean(showAltAsCaption && alt);
+  const hasLeadingEpigraph = Boolean(displayCaption || displayCredit);
 
-  if (!showPrimaryLine && !showAltLine && !displayLicense) return null;
+  if (!showPrimaryLine && !showAltLine) return null;
 
   return (
-    <figcaption className="mt-2 text-left">
+    <figcaption className={figcaptionClassName}>
       {showPrimaryLine && (
         <p className="leading-snug">
           {displayCaption && (
@@ -51,6 +56,11 @@ export default function ArticleCaption({
               {displayCredit}
             </span>
           )}
+          {displayLicense && (
+            <span className={ARTICLE_IMAGE_EPIGRAPH_CREDIT_CLASS}>
+              {hasLeadingEpigraph ? " " : ""}({displayLicense})
+            </span>
+          )}
         </p>
       )}
       {showAltLine && (
@@ -59,11 +69,6 @@ export default function ArticleCaption({
           aria-hidden="true"
         >
           {alt}
-        </p>
-      )}
-      {displayLicense && (
-        <p className="mt-1 font-sans text-neutral-500 text-xs">
-          {displayLicense}
         </p>
       )}
     </figcaption>

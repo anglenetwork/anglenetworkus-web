@@ -3,8 +3,8 @@
 import { Facebook, Twitter, Instagram, Youtube } from "lucide-react";
 import { SearchBar } from "../ui/search-bar";
 import Link from "next/link";
-import { useEffect, useRef } from "react";
-import { UserMenu } from "./navbar/user-menu";
+import { useEffect, useMemo, useRef } from "react";
+import { cn } from "@/lib/utils";
 
 interface Category {
   slug: string;
@@ -16,6 +16,60 @@ interface Tag {
   slug: string;
   title: string;
   views?: number;
+}
+
+const menuNavListClass = "flex flex-col gap-4";
+
+/** Tags and Company nav links */
+const menuSecondaryLinkClass =
+  "font-medium font-sans text-lg transition-colors hover:text-primary xl:text-xl";
+
+const menuTagFallbacks = [
+  { slug: "video", title: "Video" },
+  { slug: "shop", title: "Shop" },
+  { slug: "health", title: "Health" },
+  { slug: "weather", title: "Weather" },
+  { slug: "sports", title: "Sports" },
+  { slug: "morning-news", title: "Morning News" },
+  { slug: "evening-report", title: "Evening Report" },
+  { slug: "weekend-edition", title: "Weekend Edition" },
+  { slug: "investigative-reports", title: "Investigative Reports" },
+  { slug: "special-coverage", title: "Special Coverage" },
+  { slug: "documentary-series", title: "Documentary Series" },
+] as const;
+
+function EditorialShortcuts({
+  onClose,
+  className,
+}: {
+  onClose: () => void;
+  className?: string;
+}) {
+  return (
+    <div className={cn("flex flex-wrap gap-x-8 gap-y-3", className)}>
+      <Link
+        href="/opinion"
+        onClick={onClose}
+        className="font-sans font-semibold text-lg transition-colors hover:text-primary"
+      >
+        Opinion
+      </Link>
+      <Link
+        href="/analysis"
+        onClick={onClose}
+        className="font-sans font-semibold text-lg transition-colors hover:text-primary"
+      >
+        Analysis
+      </Link>
+      <Link
+        href="/latest"
+        onClick={onClose}
+        className="font-sans font-semibold text-lg transition-colors hover:text-primary"
+      >
+        Latest
+      </Link>
+    </div>
+  );
 }
 
 interface FullScreenMenuProps {
@@ -40,6 +94,15 @@ export function FullScreenMenu({
   onFocusSearchHandled,
 }: FullScreenMenuProps) {
   const searchInputRef = useRef<HTMLInputElement>(null);
+
+  const menuTags = useMemo(() => {
+    const seen = new Set<string>();
+    return [...tags, ...showsTags].filter((tag) => {
+      if (seen.has(tag.slug)) return false;
+      seen.add(tag.slug);
+      return true;
+    });
+  }, [tags, showsTags]);
 
   // ESC + body scroll lock (only while open)
   useEffect(() => {
@@ -97,7 +160,7 @@ export function FullScreenMenu({
         <div className="container mx-auto max-w-7xl md:py-6">
           {/* Shared wrapper: search + nav same horizontal padding */}
           <div
-            className={`space-y-10 px-4 transition-all duration-700 ease-out sm:px-6 md:space-y-12 lg:px-16 xl:px-0 ${
+            className={`space-y-6 px-4 pb-4 transition-all duration-700 ease-out sm:px-6 sm:pb-6 md:space-y-12 lg:px-16 lg:pb-16 xl:px-0 xl:pb-0 ${
               isOpen
                 ? "translate-y-0 pt-2 opacity-100 md:pt-0"
                 : "translate-y-8 opacity-0"
@@ -116,45 +179,11 @@ export function FullScreenMenu({
                     inputId="menu-search-input"
                   />
                 </div>
-
-                {/* Sign in (mobile menu only; navbar hides it on small screens) */}
-                <div className="lg:hidden">
-                  <UserMenu
-                    signInOnly
-                    signInButtonVariant="link"
-                    onSignInNavigate={onClose}
-                  />
-                </div>
               </>
             )}
 
-            {/* Editorial shortcuts */}
-            <div className="flex flex-wrap gap-x-8 gap-y-3 border-border border-b pb-6">
-              <Link
-                href="/opinion"
-                onClick={onClose}
-                className="font-sans font-semibold text-lg transition-colors hover:text-primary"
-              >
-                Opinion
-              </Link>
-              <Link
-                href="/analysis"
-                onClick={onClose}
-                className="font-sans font-semibold text-lg transition-colors hover:text-primary"
-              >
-                Analysis
-              </Link>
-              <Link
-                href="/latest"
-                onClick={onClose}
-                className="font-sans font-semibold text-lg transition-colors hover:text-primary"
-              >
-                Latest
-              </Link>
-            </div>
-
             {/* Navigation Sections */}
-            <div className="grid grid-cols-1 gap-8 md:grid-cols-2 md:gap-12 lg:grid-cols-4">
+            <div className="grid grid-cols-1 gap-8 md:grid-cols-2 md:gap-12 lg:grid-cols-3">
               {/* Main Sections - Dynamic Categories */}
               <div>
                 <nav className="flex flex-col gap-4">
@@ -164,7 +193,7 @@ export function FullScreenMenu({
                         key={category.slug}
                         href={`/category/${category.slug}`}
                         onClick={onClose}
-                        className="font-bold font-sans text-3xl capitalize transition-colors hover:text-primary"
+                        className="font-bold font-sans text-2xl capitalize transition-colors hover:text-primary xl:text-3xl"
                       >
                         {category.name}
                       </Link>
@@ -177,159 +206,59 @@ export function FullScreenMenu({
                 </nav>
               </div>
 
-              {/* Content Types */}
+              {/* Tags */}
               <div>
-                <nav className="flex flex-col gap-4">
-                  {tags.length > 0 ? (
-                    tags.map((tag) => (
+                <nav className={menuNavListClass}>
+                  {(menuTags.length > 0 ? menuTags : menuTagFallbacks).map(
+                    (tag) => (
                       <Link
                         key={tag.slug}
-                        href={`/tag/${tag.slug}`}
+                        href={menuTags.length > 0 ? `/tag/${tag.slug}` : "#"}
                         onClick={onClose}
-                        className="font-bold font-sans text-2xl transition-colors hover:text-primary"
+                        className={menuSecondaryLinkClass}
                       >
                         {tag.title}
                       </Link>
-                    ))
-                  ) : (
-                    <>
-                      <Link
-                        href="#"
-                        onClick={onClose}
-                        className="font-bold font-sans text-2xl transition-colors hover:text-primary"
-                      >
-                        Video
-                      </Link>
-                      <Link
-                        href="#"
-                        onClick={onClose}
-                        className="font-bold font-sans text-2xl transition-colors hover:text-primary"
-                      >
-                        Shop
-                      </Link>
-                      <Link
-                        href="#"
-                        onClick={onClose}
-                        className="font-bold font-sans text-2xl transition-colors hover:text-primary"
-                      >
-                        Health
-                      </Link>
-                      <Link
-                        href="#"
-                        onClick={onClose}
-                        className="font-bold font-sans text-2xl transition-colors hover:text-primary"
-                      >
-                        Weather
-                      </Link>
-                      <Link
-                        href="#"
-                        onClick={onClose}
-                        className="font-bold font-sans text-2xl transition-colors hover:text-primary"
-                      >
-                        Sports
-                      </Link>
-                    </>
+                    ),
                   )}
                 </nav>
-              </div>
-
-              {/* See more */}
-              <div>
-                <h3 className="mb-4 font-sans font-semibold text-blue-600 text-lg">
-                  See more
-                </h3>
-                <nav className="flex flex-col gap-3">
-                  {showsTags.length > 0 ? (
-                    showsTags.map((tag) => (
-                      <Link
-                        key={tag.slug}
-                        href={`/tag/${tag.slug}`}
-                        onClick={onClose}
-                        className="font-sans text-base transition-colors hover:text-primary"
-                      >
-                        {tag.title}
-                      </Link>
-                    ))
-                  ) : (
-                    <>
-                      <Link
-                        href="#"
-                        onClick={onClose}
-                        className="font-sans text-base transition-colors hover:text-primary"
-                      >
-                        Morning News
-                      </Link>
-                      <Link
-                        href="#"
-                        onClick={onClose}
-                        className="font-sans text-base transition-colors hover:text-primary"
-                      >
-                        Evening Report
-                      </Link>
-                      <Link
-                        href="#"
-                        onClick={onClose}
-                        className="font-sans text-base transition-colors hover:text-primary"
-                      >
-                        Weekend Edition
-                      </Link>
-                      <Link
-                        href="#"
-                        onClick={onClose}
-                        className="font-sans text-base transition-colors hover:text-primary"
-                      >
-                        Investigative Reports
-                      </Link>
-                      <Link
-                        href="#"
-                        onClick={onClose}
-                        className="font-sans text-base transition-colors hover:text-primary"
-                      >
-                        Special Coverage
-                      </Link>
-                      <Link
-                        href="#"
-                        onClick={onClose}
-                        className="font-sans text-base transition-colors hover:text-primary"
-                      >
-                        Documentary Series
-                      </Link>
-                    </>
-                  )}
-                </nav>
+                <EditorialShortcuts
+                  onClose={onClose}
+                  className="mt-8 border-border border-t pt-6 xl:hidden"
+                />
               </div>
 
               {/* Company */}
               <div>
-                <h3 className="mb-4 font-sans font-semibold text-blue-600 text-lg">
+                <h3 className="mb-4 font-sans font-semibold text-lg text-red-600 xl:text-blue-600">
                   Company
                 </h3>
-                <nav className="flex flex-col gap-3">
+                <nav className={menuNavListClass}>
                   <Link
                     href="/company/terms-of-service"
                     onClick={onClose}
-                    className="font-sans text-base transition-colors hover:text-primary"
+                    className={menuSecondaryLinkClass}
                   >
                     Terms of Use
                   </Link>
                   <Link
                     href="/company/privacy-policy"
                     onClick={onClose}
-                    className="font-sans text-base transition-colors hover:text-primary"
+                    className={menuSecondaryLinkClass}
                   >
                     Privacy Policy
                   </Link>
                   <Link
                     href="/company/advertise-with-us"
                     onClick={onClose}
-                    className="font-sans text-base transition-colors hover:text-primary"
+                    className={menuSecondaryLinkClass}
                   >
                     Partner with us
                   </Link>
                   <Link
                     href="/company/contact"
                     onClick={onClose}
-                    className="font-sans text-base transition-colors hover:text-primary"
+                    className={menuSecondaryLinkClass}
                   >
                     Contact
                   </Link>
@@ -338,9 +267,21 @@ export function FullScreenMenu({
             </div>
           </div>
 
+          <div
+            className={`hidden transition-all duration-700 ease-out xl:block ${
+              isOpen ? "translate-y-0 opacity-100" : "translate-y-8 opacity-0"
+            }`}
+            style={{ transitionDelay: isOpen ? "250ms" : "0ms" }}
+          >
+            <EditorialShortcuts
+              onClose={onClose}
+              className="border-border border-b p-8 px-4 sm:px-6 lg:px-16 xl:px-0"
+            />
+          </div>
+
           {/* Social */}
           <div
-            className={`mt-10 mb-8 flex items-center gap-4 px-4 transition-all duration-700 ease-out sm:px-6 lg:px-16 xl:px-0 ${
+            className={`flex items-center gap-4 p-4 transition-all duration-700 ease-out sm:px-6 lg:px-16 xl:px-0 ${
               isOpen ? "translate-y-0 opacity-100" : "translate-y-8 opacity-0"
             }`}
             style={{ transitionDelay: isOpen ? "300ms" : "0ms" }}
@@ -377,7 +318,7 @@ export function FullScreenMenu({
 
           {/* Footer */}
           <div
-            className={`space-y-2 px-4 text-muted-foreground text-xs transition-all duration-700 ease-out sm:px-6 lg:px-16 xl:px-0 ${
+            className={`space-y-2 px-4 pb-4 text-muted-foreground text-xs transition-all duration-700 ease-out sm:px-6 sm:pb-6 lg:px-16 lg:pb-16 xl:px-0 xl:pb-8 ${
               isOpen ? "translate-y-0 opacity-100" : "translate-y-8 opacity-0"
             }`}
             style={{ transitionDelay: isOpen ? "400ms" : "0ms" }}

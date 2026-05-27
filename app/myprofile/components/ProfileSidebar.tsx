@@ -22,7 +22,7 @@ export function ProfileSidebar() {
   return (
     <>
       {/* Desktop Sidebar */}
-      <aside className="sticky top-0 hidden h-screen w-64 flex-col border-border border-r bg-background md:flex">
+      <aside className="sticky top-0 hidden h-screen w-64 flex-col border-border border-r bg-background xl:flex">
         <div className="flex flex-1 flex-col overflow-y-auto px-8 py-10">
           <nav className="flex-1 space-y-0.5">
             {navigation.map((item) => {
@@ -36,10 +36,8 @@ export function ProfileSidebar() {
                   href={item.href}
                   prefetch={false}
                   className={cn(
-                    "flex items-center gap-3 rounded-lg px-4 py-3 font-medium font-sans text-base transition-colors",
-                    isActive
-                      ? "bg-accent text-accent-foreground "
-                      : "text-muted-foreground hover:bg-accent hover:text-foreground text-black",
+                    "flex items-center gap-3 rounded-lg px-4 py-3 font-medium font-sans text-base text-black transition-colors",
+                    isActive ? "bg-accent" : "hover:bg-accent",
                   )}
                 >
                   <Icon className="h-4 w-4" />
@@ -52,7 +50,7 @@ export function ProfileSidebar() {
       </aside>
 
       {/* Mobile/Tablet Navigation */}
-      <div className="w-full md:hidden">
+      <div className="w-full xl:hidden">
         <nav className="sticky top-0 flex gap-2 overflow-x-auto border-border border-b bg-background px-4 py-3">
           {navigation.map((item) => {
             const Icon = item.icon;
@@ -65,14 +63,12 @@ export function ProfileSidebar() {
                 href={item.href}
                 prefetch={false}
                 className={cn(
-                  "flex flex-shrink-0 items-center gap-2 whitespace-nowrap rounded-lg px-3 py-2 font-medium font-sans text-xs transition-colors",
-                  isActive
-                    ? "bg-primary text-primary-foreground"
-                    : "text-muted-foreground hover:bg-accent hover:text-accent-foreground",
+                  "flex flex-shrink-0 items-center gap-2 whitespace-nowrap rounded-lg px-3 py-2 font-medium font-sans text-black text-xs transition-colors",
+                  isActive ? "bg-accent" : "hover:bg-accent",
                 )}
               >
                 <Icon className="h-4 w-4" />
-                <span className="hidden sm:inline">{item.name}</span>
+                {isActive ? <span>{item.name}</span> : null}
               </Link>
             );
           })}

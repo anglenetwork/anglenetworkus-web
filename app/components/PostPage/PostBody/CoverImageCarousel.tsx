@@ -14,12 +14,14 @@ interface CoverImageCarouselProps {
   coverImage: ResolvedArticleImage | null;
   galleryImages: ResolvedArticleImage[];
   presentation?: MediaPresentation;
+  captionClassName?: string;
 }
 
 export default function CoverImageCarousel({
   coverImage,
   galleryImages,
   presentation = "default",
+  captionClassName,
 }: CoverImageCarouselProps) {
   const allImages = useMemo(
     () => [...(coverImage ? [coverImage] : []), ...galleryImages],
@@ -96,6 +98,7 @@ export default function CoverImageCarousel({
         credit={currentImage.credit}
         license={currentImage.licenseOrRights}
         fallbackCaption={DEFAULT_IMAGE_CAPTION}
+        figcaptionClassName={captionClassName}
       />
     </figure>
   );

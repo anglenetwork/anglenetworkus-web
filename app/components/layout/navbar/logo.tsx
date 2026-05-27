@@ -22,19 +22,20 @@ export function Logo({ variant = "mobile" }: LogoProps) {
 
   if (variant === "mobile") {
     return (
-      <Link href="/" className="flex items-center gap-2">
-        <div className="flex items-center gap-2">
-          <Image
-            src="/black-logo.svg"
-            alt="The Angle Logo"
-            width={30}
-            height={30}
-            className="flex-shrink-0"
-          />
-          <h1 className="font-bold font-sans text-3xl text-neutral-900 tracking-tight">
-            The Angle
-          </h1>
-        </div>
+      <Link
+        href="/"
+        className="flex min-w-0 items-center justify-center gap-2 px-1"
+      >
+        <Image
+          src="/black-logo.svg"
+          alt="The Angle Logo"
+          width={30}
+          height={30}
+          className="shrink-0"
+        />
+        <h1 className="truncate font-bold font-sans text-2xl text-neutral-900 tracking-tight sm:text-3xl">
+          The Angle
+        </h1>
       </Link>
     );
   }

@@ -18,7 +18,7 @@ export default async function MyProfileLayout({
 
   if (!user) {
     return (
-      <div className="mx-auto max-w-2xl px-4 py-8 md:py-12">
+      <div className="mx-auto max-w-2xl px-4 py-8 xl:py-12">
         <Card>
           <CardHeader>
             <CardTitle className="font-sans text-2xl">Sign In</CardTitle>
@@ -32,12 +32,12 @@ export default async function MyProfileLayout({
   }
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-8 md:py-12">
-      <div className="grid grid-cols-1 gap-8 md:grid-cols-4">
-        <div className="md:col-span-1">
+    <div className="mx-auto max-w-7xl px-4 py-8 xl:py-12">
+      <div className="grid grid-cols-1 gap-8 xl:grid-cols-4">
+        <div className="xl:col-span-1">
           <ProfileSidebar />
         </div>
-        <div className="md:col-span-3">{children}</div>
+        <div className="xl:col-span-3">{children}</div>
       </div>
     </div>
   );

@@ -161,7 +161,11 @@ export function DesktopHeader({
             Become Pro
           </Link>
         )}
-        <SearchButton onClick={onSearchMenuOpen} variant="desktop" />
+        <SearchButton
+          onClick={onSearchMenuOpen}
+          variant="desktop"
+          className="hidden xl:flex"
+        />
         <UserMenu variant="desktop" />
       </div>
     </div>

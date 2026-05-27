@@ -16,7 +16,7 @@ export default function Error({
   }, [error]);
 
   return (
-    <div className="mx-auto max-w-2xl px-4 py-8 md:py-12">
+    <div className="mx-auto max-w-2xl px-4 py-8 xl:py-12">
       <Card>
         <CardHeader>
           <CardTitle className="font-sans text-2xl">

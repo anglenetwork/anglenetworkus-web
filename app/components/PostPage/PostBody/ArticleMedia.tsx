@@ -1,8 +1,18 @@
 import ArticleImageFigure from "./ArticleImageFigure";
 import CoverImageCarousel from "./CoverImageCarousel";
-import { ARTICLE_MEDIA_CLASSES, DEFAULT_IMAGE_CAPTION } from "./constants";
+import {
+  ARTICLE_MEDIA_CLASSES,
+  DEFAULT_IMAGE_CAPTION,
+  NON_REGULAR_POST_IMAGE_CAPTION_CLASS,
+} from "./constants";
 import { buildCoverImageData, buildGalleryImageData } from "./media-utils";
 import type { MediaPresentation, PostBodyProps } from "./types";
+
+function nonRegularCaptionClass(presentation: MediaPresentation) {
+  return presentation === "editorial" || presentation === "nonRegularCover"
+    ? NON_REGULAR_POST_IMAGE_CAPTION_CLASS
+    : undefined;
+}
 
 interface ArticleMediaProps {
   cover: PostBodyProps["cover"];
@@ -35,6 +45,7 @@ export default function ArticleMedia({
         coverImage={coverImageData}
         galleryImages={galleryImagesData}
         presentation={presentation}
+        captionClassName={nonRegularCaptionClass(presentation)}
       />
     );
   }
@@ -63,6 +74,7 @@ export default function ArticleMedia({
       credit={coverImageData.credit}
       license={coverImageData.licenseOrRights}
       fallbackCaption={DEFAULT_IMAGE_CAPTION}
+      captionClassName={nonRegularCaptionClass(presentation)}
     />
   );
 }
