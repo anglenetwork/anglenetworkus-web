@@ -38,10 +38,10 @@ This document summarizes the full audit program. Phase 6 added workflow hardenin
 |------|------|-----|------|-----|-----|-----|------|--------|
 | Home (phase 4) | 77 | 100 | 92 | 5.4s | 175ms | 0.026 | 11ms | `home-mobile-after-phase-4.json` |
 | Home (phase 5) | 72 | 100 | 92 | 5.4s | 345ms | 0.026 | 19ms | `home-mobile-after-phase-5.json` |
-| Home (final) | 79 | 100 | 92 | 5.2s | 148ms | 0.026 | 10ms | `home-mobile-final.json` |
+| Home (final) | 79 | 100 | 92 | 5.2s | 162ms | 0.026 | 9ms | `home-mobile-final.json` |
 | Article (phase 4) | 67 | 100 | 92 | 10.9s | 235ms | 0.000 | 39ms | `article-mobile-after-phase-4.json` |
 | Article (phase 5) | 63 | 100 | 92 | 9.4s | 455ms | 0.000 | 21ms | `article-mobile-after-phase-5.json` |
-| Article (final) | 73 | 100 | 92 | 10.3s | 125ms | 0.000 | 12ms | `article-mobile-final.json` |
+| Article (final) | 74 | 100 | 92 | 10.9s | 105ms | 0.000 | 10ms | `article-mobile-final.json` |
 
 Localhost performance scores vary run-to-run; **SEO 100** on home/article is the stability target.
 
@@ -95,7 +95,7 @@ Auth/env under `/myprofile/subscriptions` — not public SEO regressions unless 
 | Final Lighthouse scripts | `lighthouse:home:mobile:final`, `lighthouse:article:mobile:final`, `lighthouse:mobile:final` |
 | Unlighthouse | Not added (see workflow doc) |
 | Prettier | Not added |
-| Manual curl (`:3001`) | Public routes 200; robots/sitemap/feed OK; no `with-id`/`?id=` in discovery; `post?id=` 200; sponsored/search `noindex, follow` |
+| Manual curl (`:3001`) | Public routes 200; robots/sitemap/feed OK; no `with-id`/`?id=` in discovery; `post?id=` 200; sponsored/search `noindex, follow`; canonical/OG/sitemap/feed use `localhost:3001` when built with matching `NEXT_PUBLIC_SITE_URL` |
 | Final Lighthouse | Home/article SEO 100; perf/TBT improved vs phase 5 on this run (localhost variance expected) |
 
 ---
