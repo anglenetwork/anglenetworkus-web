@@ -1,3 +1,4 @@
+// Pre-existing: requires auth env; failures are not public SEO regressions.
 import { test, expect } from "@playwright/test";
 
 import { gotoSubscriptionsShell } from "../helpers/subscriptions-shell";
