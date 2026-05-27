@@ -22,6 +22,7 @@ const eslintConfig = [
       "**/test-results/**",
       "**/docs/audits/lighthouse-reports/**",
       "sanity.types.ts",
+      "schema.json",
     ],
   },
   ...compat.extends("next/core-web-vitals"),
