@@ -88,3 +88,16 @@ Use **production** build on port **3001**, not `next dev` on `:3000`. Use Incogn
 - [ ] Optional: `npm run test:unit` (1 pre-existing failure in `CoverImageCarousel.test.tsx`, unrelated)
 
 When satisfied, push `main` or open a PR. Next phase (not started): article LCP / bundle analysis of `HeaderClient` + `next/image`.
+
+---
+
+## Follow-up: manual report items (2026-05-28)
+
+| Lighthouse insight | Action | Result |
+|--------------------|--------|--------|
+| **Legacy JavaScript** (~14 KiB, `d3f5d2…js`) | Alias Next `polyfill-module` to empty stub (`lib/empty-polyfill-module.js`) | **Cleared** — audit score 1, no items (`home-mobile-after-polyfill-stub.json`) |
+| **Forced reflow** (~35 ms unattributed) | Defer ticker scroll-control layout read to `requestIdleCallback` | ~31 ms unattributed remains (browser/framework noise) |
+| **Unused JavaScript** (~300 KiB) | Prior Phases D–E (lazy auth, viewport-gated below-fold) | Expected — `6346…`, `next/image`, header shell; needs bundle pass to shrink further |
+| **Unused CSS** (~12 KiB) | Tailwind global bundle | Low priority; typography/plugin scope review |
+| **BFCache** `no-store` | Localhost dev / dynamic routes | Not actionable on localhost |
+| **Minify JS** (~8 KiB) | Prod build already minified | Often Lighthouse noise on localhost |
