@@ -1,11 +1,16 @@
 "use client";
 
 import { useState, useEffect, useRef, useCallback } from "react";
+import dynamic from "next/dynamic";
 import { usePathname } from "next/navigation";
-import { FullScreenMenu } from "../full-screen-menu";
 import { MobileHeader } from "./mobile-header";
 import { DesktopHeader } from "./desktop-header";
 import { HeaderProps } from "./types";
+
+const FullScreenMenu = dynamic(
+  () => import("../full-screen-menu").then((mod) => mod.FullScreenMenu),
+  { ssr: false },
+);
 
 export function HeaderClient({ categories, tags, showsTags }: HeaderProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -27,8 +32,10 @@ export function HeaderClient({ categories, tags, showsTags }: HeaderProps) {
     );
   }, []);
 
+  // Measure header height only while the full-screen menu is open (used for menu top padding).
   useEffect(() => {
-    if (!headerRef.current) return;
+    if (!isMenuOpen || !headerRef.current) return;
+
     measureHeaderHeight();
     const ro = new ResizeObserver(measureHeaderHeight);
     ro.observe(headerRef.current);
@@ -38,7 +45,7 @@ export function HeaderClient({ categories, tags, showsTags }: HeaderProps) {
       ro.disconnect();
       window.removeEventListener("resize", onResize);
     };
-  }, [measureHeaderHeight]);
+  }, [isMenuOpen, measureHeaderHeight]);
 
   // Close menu on route change
   useEffect(() => {
@@ -97,16 +104,18 @@ export function HeaderClient({ categories, tags, showsTags }: HeaderProps) {
         </div>
       </header>
 
-      <FullScreenMenu
-        isOpen={isMenuOpen}
-        categories={categories}
-        tags={tags}
-        showsTags={showsTags}
-        onClose={handleMenuClose}
-        headerOffset={headerOffset}
-        focusSearchOnOpen={focusSearchOnOpen}
-        onFocusSearchHandled={() => setFocusSearchOnOpen(false)}
-      />
+      {isMenuOpen ? (
+        <FullScreenMenu
+          isOpen={isMenuOpen}
+          categories={categories}
+          tags={tags}
+          showsTags={showsTags}
+          onClose={handleMenuClose}
+          headerOffset={headerOffset}
+          focusSearchOnOpen={focusSearchOnOpen}
+          onFocusSearchHandled={() => setFocusSearchOnOpen(false)}
+        />
+      ) : null}
     </>
   );
 }

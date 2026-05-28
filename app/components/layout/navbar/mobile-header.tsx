@@ -3,7 +3,7 @@
 import { HamburgerButton } from "./hamburger-button";
 import { Logo } from "./logo";
 import { SearchButton } from "./search-button";
-import { UserMenu } from "./user-menu";
+import { UserMenuSlot } from "./user-menu-slot";
 
 interface MobileHeaderProps {
   isMenuOpen: boolean;
@@ -27,7 +27,7 @@ export function MobileHeader({
       </div>
       <Logo variant="mobile" />
       <div className="flex shrink-0 items-center justify-end gap-2">
-        <UserMenu variant="mobile" />
+        <UserMenuSlot variant="mobile" />
         <SearchButton
           onClick={onSearchMenuOpen}
           variant="mobile"

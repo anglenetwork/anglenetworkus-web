@@ -64,7 +64,8 @@ export default function PostBody({
     variant === "editorial" || coverPresentation === "nonRegularCover"
       ? nonRegularPortableTextComponents
       : portableTextComponents;
-  const useWideHero = variant === "editorial" || coverPresentation === "nonRegularCover";
+  const useWideHero =
+    variant === "editorial" || coverPresentation === "nonRegularCover";
 
   const articleMedia = (
     <ArticleMedia

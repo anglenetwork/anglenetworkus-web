@@ -1,4 +1,4 @@
-import { LeftColumnLanding } from "./leftColumnLanding";
+import { LeftColumnLanding } from "./left-column-landing";
 import { CenterColumnLanding } from "./centerColumnLanding";
 import { RightColumnLanding } from "./rightColumnLanding";
 import Link from "next/link";

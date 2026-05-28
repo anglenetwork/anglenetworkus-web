@@ -24,7 +24,11 @@ function rewritePostIdDisambiguation(
   const rewriteUrl = request.nextUrl.clone();
   rewriteUrl.pathname = `/post/${slug}/with-id/${encodeURIComponent(id)}`;
   rewriteUrl.search = "";
-  return NextResponse.rewrite(rewriteUrl);
+  const requestHeaders = new Headers(request.headers);
+  requestHeaders.set("x-pathname", request.nextUrl.pathname);
+  return NextResponse.rewrite(rewriteUrl, {
+    request: { headers: requestHeaders },
+  });
 }
 
 export async function proxy(request: NextRequest) {

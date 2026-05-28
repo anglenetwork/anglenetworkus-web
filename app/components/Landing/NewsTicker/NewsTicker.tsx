@@ -1,6 +1,6 @@
 import Link from "next/link";
-import { NewsTickerScrollControls } from "./news-ticker-scroll-controls";
 import { NewsTickerTrack } from "./news-ticker-track";
+import { NewsTickerControls } from "./news-ticker-controls";
 import { newsTickerItemLink } from "@/app/lib/typography/news-ticker";
 
 interface NewsTickerPost {
@@ -40,7 +40,7 @@ export function NewsTicker({ posts }: NewsTickerProps) {
             </div>
           ))}
         </NewsTickerTrack>
-        <NewsTickerScrollControls itemCount={newsItems.length} />
+        <NewsTickerControls itemCount={newsItems.length} />
       </div>
     </nav>
   );

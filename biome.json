@@ -17,7 +17,8 @@
       "!!**/test-results",
       "!!**/docs/audits/lighthouse-reports",
       "!!sanity.types.ts",
-      "!!schema.json"
+      "!!schema.json",
+      "!!**/.unlighthouse"
     ]
   },
   "formatter": {

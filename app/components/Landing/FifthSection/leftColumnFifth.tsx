@@ -1,10 +1,11 @@
+"use client";
+
 import Link from "next/link";
+import { LazyBackgroundVideo } from "@/app/components/ui/lazy-background-video";
+import { PROMO_VIDEO_SRC } from "@/lib/pexels-video";
 import { SectionHeader } from "@/app/components/ui/section-header";
 
 export function LeftColumnFifth() {
-  const videoSrc =
-    "https://videos.pexels.com/video-files/4622514/4622514-uhd_2560_1440_24fps.mp4";
-
   return (
     <div className="border-gray-200 border-r pr-6 pl-4">
       <div className="sticky top-6">
@@ -16,13 +17,9 @@ export function LeftColumnFifth() {
         />
         <Link href="/company/advertise-with-us" className="group block">
           <div className="relative h-96 w-full overflow-hidden rounded-sm">
-            <video
-              src={videoSrc}
-              autoPlay
-              loop
-              muted
-              playsInline
-              className="absolute top-0 left-0 h-full w-full object-cover"
+            <LazyBackgroundVideo
+              videoSrc={PROMO_VIDEO_SRC}
+              loadStrategy="viewport"
             />
             {/* Dark overlay for better text contrast */}
             <div className="absolute inset-0 bg-black/50" />
@@ -33,7 +30,10 @@ export function LeftColumnFifth() {
                 <div className="font-medium text-2xl">Our Audience.</div>
                 <div className="font-bold text-4xl">Real Impact.</div>
               </h1>
-              <button className="mt-6 border-2 border-white bg-transparent px-6 py-3 font-medium font-sans text-sm text-white uppercase tracking-wide transition-colors hover:bg-white/10">
+              <button
+                type="button"
+                className="mt-6 border-2 border-white bg-transparent px-6 py-3 font-medium font-sans text-sm text-white uppercase tracking-wide transition-colors hover:bg-white/10"
+              >
                 Reach Our Audience
               </button>
             </div>

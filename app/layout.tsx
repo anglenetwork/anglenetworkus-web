@@ -4,8 +4,8 @@ import { SpeedInsights } from "@vercel/speed-insights/next";
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import { toPlainText, type PortableTextBlock } from "next-sanity";
-import { draftMode } from "next/headers";
-import { Libre_Franklin, Newsreader } from "next/font/google";
+import { draftMode, headers } from "next/headers";
+import { libreFranklin } from "@/app/lib/fonts/sans";
 
 import { AlertBanner, SiteShell } from "./components/layout";
 import { VisualEditingProvider } from "./components/VisualEditingProvider";
@@ -16,26 +16,6 @@ import { settingsQuery } from "@/sanity/lib/queries";
 import { resolveOpenGraphImage } from "@/sanity/lib/utils";
 import { finalizePublicMetadata } from "@/app/lib/seo/metadata-builders";
 import { getPublicSiteUrl } from "@/app/lib/seo/site-url";
-
-// Primary UI sans (Tailwind `font-sans`) and article body serif (Tailwind `font-body`).
-// Weights match in-app usage.
-const libreFranklin = Libre_Franklin({
-  subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700"],
-  variable: "--font-sans",
-  display: "swap",
-  preload: false,
-  adjustFontFallback: true,
-});
-
-const newsreader = Newsreader({
-  subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700"],
-  variable: "--font-body",
-  display: "swap",
-  preload: false,
-  adjustFontFallback: true,
-});
 
 export async function generateMetadata(): Promise<Metadata> {
   const settings = await sanityFetch({
@@ -78,18 +58,14 @@ export default async function RootLayout({
   children: React.ReactNode;
 }) {
   const { isEnabled: isDraftMode } = await draftMode();
+  const pathname = (await headers()).get("x-pathname") ?? "";
+  const isStudioRoute = pathname.startsWith("/studio");
 
   return (
     <html lang="en">
       <head>
-        {/* Preconnect to critical image CDNs for faster LCP */}
-        <link
-          rel="preconnect"
-          href="https://images.pexels.com"
-          crossOrigin=""
-        />
-        <link rel="dns-prefetch" href="https://upload.wikimedia.org" />
         <link rel="dns-prefetch" href="https://cdn.sanity.io" />
+        <link rel="dns-prefetch" href="https://upload.wikimedia.org" />
         <link
           rel="alternate"
           type="application/rss+xml"
@@ -97,16 +73,20 @@ export default async function RootLayout({
           href="/feed.xml"
         />
       </head>
-      <body className={`${libreFranklin.variable} ${newsreader.variable}`}>
+      <body className={libreFranklin.variable}>
         <section className="min-h-screen">
           {isDraftMode && (
             <Suspense fallback={null}>
               <AlertBanner />
             </Suspense>
           )}
-          <SiteShell>
-            <main className="">{children}</main>
-          </SiteShell>
+          {isStudioRoute ? (
+            children
+          ) : (
+            <SiteShell>
+              <main className="">{children}</main>
+            </SiteShell>
+          )}
         </section>
 
         {isDraftMode && <VisualEditingProvider />}

@@ -74,7 +74,16 @@ const nextConfig: NextConfig = {
 
   experimental: {
     // Optimize bundle splitting for small shared deps.
-    optimizePackageImports: ["lucide-react", "@radix-ui/react-slot"],
+    optimizePackageImports: [
+      "lucide-react",
+      "@radix-ui/react-slot",
+      "@radix-ui/react-dialog",
+      "@radix-ui/react-dropdown-menu",
+      "@radix-ui/react-select",
+      "@radix-ui/react-alert-dialog",
+      "date-fns",
+      "@supabase/supabase-js",
+    ],
   },
 
   // Set Turbopack root to silence workspace root warning

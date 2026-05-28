@@ -12,13 +12,14 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { useDeferredIdle } from "@/app/hooks/use-deferred-idle";
 import { createClient } from "@/lib/supabase/client";
 import type { User } from "@supabase/supabase-js";
 
 /** `default` = filled sign-in button; `link` = shadcn link style. */
 export type SignInButtonVariant = "default" | "link";
 
-interface UserMenuProps {
+export interface UserMenuProps {
   variant?: "mobile" | "desktop";
   /** Hide Sign in when signed out (e.g. mobile navbar — show in full-screen menu instead). */
   hideSignIn?: boolean;
@@ -62,7 +63,11 @@ export function UserMenu({
   signInButtonVariant = "default",
   onSignInNavigate,
 }: UserMenuProps) {
-  const supabase = useMemo(() => createClient(), []);
+  const authReady = useDeferredIdle();
+  const supabase = useMemo(
+    () => (authReady ? createClient() : null),
+    [authReady],
+  );
   const [user, setUser] = useState<User | null>(null);
   const [firstName, setFirstName] = useState<string | null>(null);
   const [lastName, setLastName] = useState<string | null>(null);
@@ -72,15 +77,11 @@ export function UserMenu({
   const router = useRouter();
 
   useEffect(() => {
+    if (!authReady || !supabase) return;
+
     let mounted = true;
 
-    const loadUserData = async () => {
-      const {
-        data: { session },
-      } = await supabase.auth.getSession();
-
-      if (!mounted) return;
-
+    const applySession = async (session: { user: User } | null) => {
       setUser(session?.user ?? null);
 
       if (session?.user) {
@@ -94,34 +95,6 @@ export function UserMenu({
 
         setFirstName(profile?.first_name ?? null);
         setLastName(profile?.last_name ?? null);
-        // Get avatar from user metadata (Google OAuth provides it there)
-        setAvatarUrl(
-          session.user.user_metadata?.avatar_url ||
-            session.user.user_metadata?.picture ||
-            null,
-        );
-      }
-
-      setLoading(false);
-    };
-
-    loadUserData();
-
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange(async (_event, session) => {
-      setUser(session?.user ?? null);
-
-      if (session?.user) {
-        const { data: profile } = await supabase
-          .from("profiles")
-          .select("first_name, last_name")
-          .eq("id", session.user.id)
-          .maybeSingle();
-
-        setFirstName(profile?.first_name ?? null);
-        setLastName(profile?.last_name ?? null);
-        // Get avatar from user metadata (Google OAuth provides it there)
         setAvatarUrl(
           session.user.user_metadata?.avatar_url ||
             session.user.user_metadata?.picture ||
@@ -132,13 +105,32 @@ export function UserMenu({
         setLastName(null);
         setAvatarUrl(null);
       }
+    };
+
+    const loadUserData = async () => {
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+
+      if (!mounted) return;
+
+      await applySession(session);
+      setLoading(false);
+    };
+
+    void loadUserData();
+
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange(async (_event, session) => {
+      await applySession(session);
     });
 
     return () => {
       mounted = false;
       subscription.unsubscribe();
     };
-  }, [supabase]);
+  }, [authReady, supabase]);
 
   const handleSignOut = async () => {
     if (signingOut) return;
@@ -174,7 +166,7 @@ export function UserMenu({
       console.error("Error signing out:", err);
       // As a fallback, try client signOut (won't hurt)
       try {
-        await supabase.auth.signOut();
+        await supabase?.auth.signOut();
         router.refresh();
         router.push("/signin");
       } catch (e) {
@@ -221,7 +213,7 @@ export function UserMenu({
     );
   };
 
-  if (loading) {
+  if (!authReady || loading) {
     return (
       <div
         className={cn(

@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { LazyBackgroundVideo } from "@/app/components/ui/lazy-background-video";
+import { PROMO_VIDEO_SRC } from "@/lib/pexels-video";
 import {
   promoCtaButton,
   promoHeadline,
@@ -10,47 +11,12 @@ import {
   promoHeadlineLine3,
 } from "@/app/lib/typography/fifth-section";
 
-const VIDEO_SRC =
-  "https://videos.pexels.com/video-files/4622514/4622514-uhd_2560_1440_24fps.mp4";
-
-/** Static gradient fallback when video fails or motion is reduced. */
-function StaticBackdrop() {
-  return (
-    <div
-      className="absolute inset-0 bg-gradient-to-br from-neutral-800 via-neutral-900 to-black"
-      aria-hidden
-    />
-  );
-}
+export { PROMO_VIDEO_SRC } from "@/lib/pexels-video";
 
 export function ThirdSection() {
-  const [reduceMotion, setReduceMotion] = useState(false);
-  const [videoFailed, setVideoFailed] = useState(false);
-
-  useEffect(() => {
-    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
-    const update = () => setReduceMotion(mq.matches);
-    update();
-    mq.addEventListener("change", update);
-    return () => mq.removeEventListener("change", update);
-  }, []);
-
-  const showVideo = !reduceMotion && !videoFailed;
-
   return (
     <div className="relative h-96 w-full overflow-hidden rounded-md bg-neutral-900">
-      <StaticBackdrop />
-      {showVideo ? (
-        <video
-          src={VIDEO_SRC}
-          autoPlay
-          loop
-          muted
-          playsInline
-          className="absolute top-0 left-0 h-full w-full object-cover"
-          onError={() => setVideoFailed(true)}
-        />
-      ) : null}
+      <LazyBackgroundVideo videoSrc={PROMO_VIDEO_SRC} loadStrategy="viewport" />
 
       <div className="absolute inset-0 bg-black/50" />
 

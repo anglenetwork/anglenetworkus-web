@@ -1,6 +1,9 @@
 import { FirstSection, NewsTicker } from "./components/Landing/index";
+import {
+  HomepageBelowFoldBottom,
+  HomepageBelowFoldTop,
+} from "./components/Landing/homepage-below-fold";
 import EditorialRailsSection from "./components/article-family/EditorialRailsSection";
-import { ThirdSection as FifthSection } from "./components/ui/thirdSection";
 import dynamic from "next/dynamic";
 import { toPlainText } from "next-sanity";
 import { sanityFetchStatic } from "@/sanity/lib/fetch";
@@ -98,25 +101,24 @@ async function loadHomepageMostReadPosts() {
   }
 }
 
-// Dynamically import below-the-fold sections to reduce initial bundle size
-const SecondSection = dynamic(
-  () => import("./components/Landing/FourthSection/fourthSection"),
-  { ssr: true },
-);
+function PromoSectionPlaceholder() {
+  return (
+    <div
+      className="relative h-96 w-full overflow-hidden rounded-md bg-neutral-900"
+      aria-hidden
+    >
+      <div className="absolute inset-0 bg-gradient-to-br from-neutral-800 via-neutral-900 to-black" />
+      <div className="absolute inset-0 bg-black/50" />
+    </div>
+  );
+}
 
-const ThirdSection = dynamic(
-  () => import("./components/Landing/ThirdSection/thirdSection"),
-  { ssr: true },
-);
-
-const FourthSection = dynamic(
-  () => import("./components/Landing/ThirdSection/fifthSection"),
-  { ssr: true },
-);
-
-const SixthSection = dynamic(
-  () => import("./components/Landing/SecondSection/sixthSection"),
-  { ssr: true },
+const PromoSection = dynamic(
+  () =>
+    import("./components/ui/thirdSection").then((mod) => ({
+      default: mod.ThirdSection,
+    })),
+  { ssr: true, loading: () => <PromoSectionPlaceholder /> },
 );
 
 export async function generateMetadata() {
@@ -273,32 +275,38 @@ export default async function Page() {
             sideStories={rightHeadlinePosts as any}
             mostReadPosts={mostReadPosts as any}
           />
-          <SecondSection
-            variant="dark"
-            categoriesData={secondSectionData as any}
+          <HomepageBelowFoldTop
+            secondSection={{
+              variant: "dark",
+              categoriesData: secondSectionData as any,
+            }}
+            thirdSection={
+              thirdSectionLeftPosts?.length > 0 &&
+              thirdSectionRightPosts?.length > 0
+                ? {
+                    leftArticle: thirdSectionLeftPosts[0] as any,
+                    leftSmallArticles: (
+                      thirdSectionLeftPosts.slice(1, 3) as any[]
+                    ).filter((p) => p.slug),
+                    rightArticle: thirdSectionRightPosts[0] as any,
+                    rightSmallArticles: (
+                      thirdSectionRightPosts.slice(1, 3) as any[]
+                    ).filter((p) => p.slug),
+                  }
+                : null
+            }
           />
-          {thirdSectionLeftPosts?.length > 0 &&
-            thirdSectionRightPosts?.length > 0 && (
-              <ThirdSection
-                leftArticle={thirdSectionLeftPosts[0] as any}
-                leftSmallArticles={(
-                  thirdSectionLeftPosts.slice(1, 3) as any[]
-                ).filter((p) => p.slug)}
-                rightArticle={thirdSectionRightPosts[0] as any}
-                rightSmallArticles={(
-                  thirdSectionRightPosts.slice(1, 3) as any[]
-                ).filter((p) => p.slug)}
-              />
-            )}
           <EditorialRailsSection />
-          <FourthSection
-            leftColumnPosts={fourthSectionLeftCards}
-            rightColumnPosts={fourthSectionRightCards}
-            leftCategory={HOMEPAGE_FIFTH_SECTION_CATEGORIES.left}
-            rightCategory={HOMEPAGE_FIFTH_SECTION_CATEGORIES.right}
+          <HomepageBelowFoldBottom
+            fourthSection={{
+              leftColumnPosts: fourthSectionLeftCards,
+              rightColumnPosts: fourthSectionRightCards,
+              leftCategory: HOMEPAGE_FIFTH_SECTION_CATEGORIES.left,
+              rightCategory: HOMEPAGE_FIFTH_SECTION_CATEGORIES.right,
+            }}
+            sixthSection={{ categoriesData: sixthSectionData as any }}
           />
-          <FifthSection />
-          <SixthSection categoriesData={sixthSectionData as any} />
+          {/* <PromoSection /> */}
           {/* Light variant duplicate (FourthSection/seventhSection.tsx), not wired:
           <SecondSection variant="light" categoriesData={secondSectionData as any} />
           */}
