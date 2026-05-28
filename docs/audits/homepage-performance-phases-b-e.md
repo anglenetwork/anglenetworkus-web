@@ -62,3 +62,29 @@ npm run lighthouse:home:mobile:optimized   # after adding script
 ```
 
 Network tab: on first paint without scroll, below-fold section chunks should not load until scroll (Phase E).
+
+---
+
+## Phase status (paused for manual verification)
+
+| Item | Value |
+|------|--------|
+| **Status** | Complete — committed locally, **not pushed** |
+| **Commit** | `57dcb6c` — homepage performance (Phases B–E) |
+| **Branch** | `main` (ahead of `origin/main` by 1) |
+
+### Manual verification checklist
+
+Use **production** build on port **3001**, not `next dev` on `:3000`. Use Incognito with extensions disabled for Lighthouse.
+
+- [ ] `npm run build:prod` succeeds
+- [ ] Homepage loads: hero, ticker, opinion rail, no console errors
+- [ ] Full-screen menu opens and aligns under sticky header
+- [ ] Sign-in / avatar appears after brief skeleton (lazy auth)
+- [ ] Scroll: below-fold sections load (skeletons → content); Network shows section chunks only after scroll
+- [ ] Article page (`/post/...`): body uses serif (`font-body`); homepage does not download extra serif on first load (Network → filter `woff2`)
+- [ ] `/studio` loads without site header/footer
+- [ ] `npm run lighthouse:home:mobile:optimized` — compare to prior baseline (`home-mobile-final.json` if present locally)
+- [ ] Optional: `npm run test:unit` (1 pre-existing failure in `CoverImageCarousel.test.tsx`, unrelated)
+
+When satisfied, push `main` or open a PR. Next phase (not started): article LCP / bundle analysis of `HeaderClient` + `next/image`.
