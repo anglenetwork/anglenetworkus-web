@@ -437,8 +437,9 @@ export const commentsQuery = defineQuery(`
   }
 `);
 
+/** Homepage second section: 1 featured + 1 secondary post per category column. */
 export const fourthSectionQuery = defineQuery(`
-  *[_type == "post" && category->slug.current == $categorySlug] | order(coalesce(publishedAt, _updatedAt) desc, _updatedAt desc) [0...3] {
+  *[_type == "post" && category->slug.current == $categorySlug] | order(coalesce(publishedAt, _updatedAt) desc, _updatedAt desc) [0...2] {
     ${postFields}
   }
 `);
@@ -455,10 +456,10 @@ export const thirdSectionQuery = defineQuery(`
   }
 `);
 
-/** Latest 3 posts per category: 1 featured + 2 in the small list (SecondSection). */
+/** Homepage ThirdSection: latest featured post per category (1 per column). */
 export const highlightedStoriesByCategoryQuery = defineQuery(`
   *[_type == "post" && category->slug.current == $categorySlug]
-  | order(coalesce(publishedAt, _updatedAt) desc, _updatedAt desc) [0...3] {
+  | order(coalesce(publishedAt, _updatedAt) desc, _updatedAt desc) [0...1] {
     ${postFieldsHighlightedStories}
   }
 `);

@@ -27,7 +27,7 @@ export const sideStoryTitle = `text-xl font-sans font-semibold text-neutral-900 
 
 /** FirstSection — right rail: What Matters rank number */
 export const mostReadRankNumber =
-  "text-lg font-bold text-blue-600 flex-shrink-0 font-sans";
+  "text-lg font-bold text-red-600 flex-shrink-0 font-sans";
 
 /** FirstSection — right rail: What Matters list item titles */
 export const mostReadItemTitle = `text-neutral-900 leading-tight font-sans text-lg sm:text-base font-normal tracking-normal ${articleTitleLink}`;

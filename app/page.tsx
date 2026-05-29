@@ -1,6 +1,7 @@
 import { FirstSection, NewsTicker } from "./components/Landing/index";
+import { HomepageBelowFoldLazy } from "./components/Landing/homepage-below-fold-lazy";
+import { HOMEPAGE_BELOW_FOLD_SECTION_GAP } from "./components/Landing/homepage-below-fold-spacing";
 import EditorialRailsSection from "./components/article-family/EditorialRailsSection";
-import { ThirdSection as FifthSection } from "./components/ui/thirdSection";
 import dynamic from "next/dynamic";
 import { toPlainText } from "next-sanity";
 import { sanityFetchStatic } from "@/sanity/lib/fetch";
@@ -38,12 +39,12 @@ import {
 import { logDevMetricsFallback } from "@/app/lib/article-family/metrics-dev-log";
 import { normalizeArticleFamilyCard } from "@/app/lib/article-family/normalize";
 import type { ArticleFamilyCard } from "@/app/lib/article-family/types";
-import { getFourthSectionData, getSecondSectionData } from "./lib/homepage";
+import { getFifthSectionData, getSecondSectionData } from "./lib/homepage";
 import {
-  HOMEPAGE_FIFTH_SECTION_CATEGORIES,
-  HOMEPAGE_FIFTH_SECTION_LEFT_FETCH_LIMIT,
-  HOMEPAGE_FIFTH_SECTION_RIGHT_FETCH_LIMIT,
-} from "./lib/homepage-fifth-section";
+  HOMEPAGE_THIRD_SECTION_CATEGORIES,
+  HOMEPAGE_THIRD_SECTION_LEFT_FETCH_LIMIT,
+  HOMEPAGE_THIRD_SECTION_RIGHT_FETCH_LIMIT,
+} from "./lib/homepage-third-section";
 import { SitePageWidth } from "@/app/components/layout/site-page-width";
 
 type HeroPostWithCategory = {
@@ -52,7 +53,7 @@ type HeroPostWithCategory = {
   category?: { slug?: string | null } | null;
 };
 
-function fourthSectionCardsForCategory(
+function thirdSectionCardsForCategory(
   raw: unknown,
   categorySlug: string,
   maxRows: number,
@@ -98,25 +99,24 @@ async function loadHomepageMostReadPosts() {
   }
 }
 
-// Dynamically import below-the-fold sections to reduce initial bundle size
-const SecondSection = dynamic(
-  () => import("./components/Landing/FourthSection/fourthSection"),
-  { ssr: true },
-);
+function PromoSectionPlaceholder() {
+  return (
+    <div
+      className="relative h-96 w-full overflow-hidden rounded-md bg-neutral-900"
+      aria-hidden
+    >
+      <div className="absolute inset-0 bg-gradient-to-br from-neutral-800 via-neutral-900 to-black" />
+      <div className="absolute inset-0 bg-black/50" />
+    </div>
+  );
+}
 
-const ThirdSection = dynamic(
-  () => import("./components/Landing/ThirdSection/thirdSection"),
-  { ssr: true },
-);
-
-const FourthSection = dynamic(
-  () => import("./components/Landing/ThirdSection/fifthSection"),
-  { ssr: true },
-);
-
-const SixthSection = dynamic(
-  () => import("./components/Landing/SecondSection/sixthSection"),
-  { ssr: true },
+const PromoSection = dynamic(
+  () =>
+    import("./components/ui/thirdSection").then((mod) => ({
+      default: mod.ThirdSection,
+    })),
+  { ssr: true, loading: () => <PromoSectionPlaceholder /> },
 );
 
 export async function generateMetadata() {
@@ -190,8 +190,12 @@ export default async function Page() {
         })
       : [];
 
-  // 3) Fetch posts for ThirdSection (1 featured + 2 small per column)
-  const [thirdSectionLeftPosts, thirdSectionRightPosts] = await Promise.all([
+  // 3) Fetch posts for FourthSection (1 featured per column: US, Politics, Business)
+  const [
+    fourthSectionLeftPosts,
+    fourthSectionCenterPosts,
+    fourthSectionRightPosts,
+  ] = await Promise.all([
     sanityFetchStatic({
       query: highlightedStoriesByCategoryQuery,
       params: { categorySlug: "us" },
@@ -200,52 +204,58 @@ export default async function Page() {
       query: highlightedStoriesByCategoryQuery,
       params: { categorySlug: "politics" },
     }),
+    sanityFetchStatic({
+      query: highlightedStoriesByCategoryQuery,
+      params: { categorySlug: "business" },
+    }),
   ]);
+
+  const fourthSectionLeftArticle = fourthSectionLeftPosts[0];
+  const fourthSectionCenterArticle = fourthSectionCenterPosts[0];
+  const fourthSectionRightArticle = fourthSectionRightPosts[0];
 
   // 4) Fetch latest posts for news ticker (component shows up to 4)
   const newsTickerPosts = await sanityFetchStatic({
     query: newsTickerQuery,
   });
 
-  // 5) Below-the-fold: second + sixth sections (fourth fetched separately so category
-  //    params cannot be mixed with other parallel Sanity calls).
-  const [secondSectionData, sixthSectionData] = await Promise.all([
-    getFourthSectionData(
-      ["tech", "business", "entertainment", "lifestyle"],
-      ["Tech", "Business", "Entertainment", "Lifestyle"],
+  // 5) Below-the-fold sections (third-section queries run separately from second).
+  const [secondSectionData, fifthSectionData] = await Promise.all([
+    getSecondSectionData(
+      ["tech", "business", "entertainment"],
+      ["Tech", "Business", "Entertainment"],
     ),
-    getSecondSectionData(),
+    getFifthSectionData(),
   ]);
 
-  // Newest `post` only per category (no analysis) — `/category/[slug]` still uses post+analysis.
-  const [fourthSectionLeftRaw, fourthSectionRightRaw] = await Promise.all([
+  const [thirdSectionLeftRaw, thirdSectionRightRaw] = await Promise.all([
     sanityFetchStatic({
       query: postsByCategoryStandardPostsLimitedQuery,
       params: {
-        categorySlug: HOMEPAGE_FIFTH_SECTION_CATEGORIES.left.slug,
-        limit: HOMEPAGE_FIFTH_SECTION_LEFT_FETCH_LIMIT,
+        categorySlug: HOMEPAGE_THIRD_SECTION_CATEGORIES.left.slug,
+        limit: HOMEPAGE_THIRD_SECTION_LEFT_FETCH_LIMIT,
       },
-      tag: "homepage.fifth-column.left",
+      tag: "homepage.third-section.left",
     }),
     sanityFetchStatic({
       query: postsByCategoryStandardPostsLimitedQuery,
       params: {
-        categorySlug: HOMEPAGE_FIFTH_SECTION_CATEGORIES.right.slug,
-        limit: HOMEPAGE_FIFTH_SECTION_RIGHT_FETCH_LIMIT,
+        categorySlug: HOMEPAGE_THIRD_SECTION_CATEGORIES.right.slug,
+        limit: HOMEPAGE_THIRD_SECTION_RIGHT_FETCH_LIMIT,
       },
-      tag: "homepage.fifth-column.right",
+      tag: "homepage.third-section.right",
     }),
   ]);
 
-  const fourthSectionLeftCards = fourthSectionCardsForCategory(
-    fourthSectionLeftRaw,
-    HOMEPAGE_FIFTH_SECTION_CATEGORIES.left.slug,
-    HOMEPAGE_FIFTH_SECTION_LEFT_FETCH_LIMIT,
+  const thirdSectionLeftCards = thirdSectionCardsForCategory(
+    thirdSectionLeftRaw,
+    HOMEPAGE_THIRD_SECTION_CATEGORIES.left.slug,
+    HOMEPAGE_THIRD_SECTION_LEFT_FETCH_LIMIT,
   );
-  const fourthSectionRightCards = fourthSectionCardsForCategory(
-    fourthSectionRightRaw,
-    HOMEPAGE_FIFTH_SECTION_CATEGORIES.right.slug,
-    HOMEPAGE_FIFTH_SECTION_RIGHT_FETCH_LIMIT,
+  const thirdSectionRightCards = thirdSectionCardsForCategory(
+    thirdSectionRightRaw,
+    HOMEPAGE_THIRD_SECTION_CATEGORIES.right.slug,
+    HOMEPAGE_THIRD_SECTION_RIGHT_FETCH_LIMIT,
   );
 
   return (
@@ -264,7 +274,7 @@ export default async function Page() {
       />
       <SitePageWidth>
         <NewsTicker posts={newsTickerPosts as any} />
-        <div className="space-y-10 md:space-y-14">
+        <div className={`${HOMEPAGE_BELOW_FOLD_SECTION_GAP} pb-10 md:pb-14`}>
           <FirstSection
             justInNews={justInPosts as any}
             mainStory={mainHeadlinePosts as any}
@@ -273,35 +283,32 @@ export default async function Page() {
             sideStories={rightHeadlinePosts as any}
             mostReadPosts={mostReadPosts as any}
           />
-          <SecondSection
-            variant="dark"
-            categoriesData={secondSectionData as any}
+          <HomepageBelowFoldLazy
+            secondSection={{
+              variant: "light",
+              categoriesData: secondSectionData as any,
+            }}
+            thirdSection={{
+              leftColumnPosts: thirdSectionLeftCards,
+              rightColumnPosts: thirdSectionRightCards,
+              leftCategory: HOMEPAGE_THIRD_SECTION_CATEGORIES.left,
+              rightCategory: HOMEPAGE_THIRD_SECTION_CATEGORIES.right,
+            }}
+            fourthSection={
+              fourthSectionLeftArticle?.slug &&
+              fourthSectionCenterArticle?.slug &&
+              fourthSectionRightArticle?.slug
+                ? {
+                    leftArticle: fourthSectionLeftArticle as any,
+                    centerArticle: fourthSectionCenterArticle as any,
+                    rightArticle: fourthSectionRightArticle as any,
+                  }
+                : null
+            }
+            fifthSection={{ categoriesData: fifthSectionData as any }}
+            editorialRails={<EditorialRailsSection />}
           />
-          {thirdSectionLeftPosts?.length > 0 &&
-            thirdSectionRightPosts?.length > 0 && (
-              <ThirdSection
-                leftArticle={thirdSectionLeftPosts[0] as any}
-                leftSmallArticles={(
-                  thirdSectionLeftPosts.slice(1, 3) as any[]
-                ).filter((p) => p.slug)}
-                rightArticle={thirdSectionRightPosts[0] as any}
-                rightSmallArticles={(
-                  thirdSectionRightPosts.slice(1, 3) as any[]
-                ).filter((p) => p.slug)}
-              />
-            )}
-          <EditorialRailsSection />
-          <FourthSection
-            leftColumnPosts={fourthSectionLeftCards}
-            rightColumnPosts={fourthSectionRightCards}
-            leftCategory={HOMEPAGE_FIFTH_SECTION_CATEGORIES.left}
-            rightCategory={HOMEPAGE_FIFTH_SECTION_CATEGORIES.right}
-          />
-          <FifthSection />
-          <SixthSection categoriesData={sixthSectionData as any} />
-          {/* Light variant duplicate (FourthSection/seventhSection.tsx), not wired:
-          <SecondSection variant="light" categoriesData={secondSectionData as any} />
-          */}
+          {/* <PromoSection /> */}
         </div>
       </SitePageWidth>
     </>

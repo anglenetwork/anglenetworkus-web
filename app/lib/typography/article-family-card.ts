@@ -6,7 +6,7 @@ export const articleFamilyCardTitle = `mb-2 font-sans text-base font-semibold le
 /** ArticleFamilyCard — rail layout title */
 export const articleFamilyCardTitleRail = `line-clamp-2 font-sans text-sm font-semibold leading-snug tracking-normal text-neutral-900 ${articleTitleLink}`;
 
-/** ArticleFamilyCard / articleCardAlternative — hero tile overlay title */
+/** ArticleFamilyCard — hero tile overlay title (fifth homepage section carousel) */
 export const articleFamilyHeroTileTitle = `mb-2 font-sans font-semibold text-white text-xl leading-snug tracking-tight ${articleTitleLink}`;
 
 /** Homepage — EditorialRailsSection opinion overlay card headline */

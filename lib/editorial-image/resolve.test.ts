@@ -79,6 +79,20 @@ describe("resolveEditorialImage", () => {
     expect(result?.unoptimized).toBe(false);
   });
 
+  it("clamps Unsplash width query to maxWidth for listings", () => {
+    const result = resolveEditorialImage(
+      {
+        source: "external",
+        externalUrl:
+          "https://images.unsplash.com/photo-1?w=1600&q=80&auto=format&fit=crop",
+      },
+      { fallbackAlt: "Fallback", maxWidth: 720, externalUnoptimized: "auto" },
+    );
+    expect(result?.src).toContain("w=720");
+    expect(result?.src).not.toContain("w=1600");
+    expect(result?.unoptimized).toBe(false);
+  });
+
   it("uses Wikimedia thumbnails and always unoptimizes", () => {
     const result = resolveEditorialImage(
       {

@@ -1,8 +1,16 @@
 import { createServerClient, type CookieOptions } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
+function nextWithPathname(request: NextRequest) {
+  const requestHeaders = new Headers(request.headers);
+  requestHeaders.set("x-pathname", request.nextUrl.pathname);
+  return NextResponse.next({
+    request: { headers: requestHeaders },
+  });
+}
+
 export async function updateSession(request: NextRequest) {
-  let response = NextResponse.next({ request });
+  let response = nextWithPathname(request);
 
   const supabaseUrl =
     process.env.NEXT_PUBLIC_SUPABASE_PROJECT_URL ||
@@ -24,7 +32,7 @@ export async function updateSession(request: NextRequest) {
         });
 
         // 2) create a new response and set cookies on it (so the browser stores refreshed tokens)
-        response = NextResponse.next({ request });
+        response = nextWithPathname(request);
         cookiesToSet.forEach(
           ({
             name,

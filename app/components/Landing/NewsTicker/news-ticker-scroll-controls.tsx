@@ -37,12 +37,23 @@ export function NewsTickerScrollControls({ itemCount }: { itemCount: number }) {
     };
 
     container.addEventListener("scroll", handleScroll, { passive: true });
-    applyScrollState();
+    // Defer first layout read until scroll or idle (avoids forced reflow on mount).
+    const idleId =
+      typeof window.requestIdleCallback === "function"
+        ? window.requestIdleCallback(() => applyScrollState(), {
+            timeout: 2000,
+          })
+        : window.setTimeout(() => applyScrollState(), 1);
 
     return () => {
       container.removeEventListener("scroll", handleScroll);
       if (rafRef.current !== null) {
         cancelAnimationFrame(rafRef.current);
+      }
+      if (typeof window.cancelIdleCallback === "function") {
+        window.cancelIdleCallback(idleId as number);
+      } else {
+        window.clearTimeout(idleId as number);
       }
     };
   }, []);

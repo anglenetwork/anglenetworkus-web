@@ -56,6 +56,7 @@ next-env.d.ts
 # generated audit artifacts (markdown summaries in docs/audits/ remain trackable)
 docs/audits/lighthouse-reports/*.json
 docs/audits/lighthouse-reports/*.html
+.unlighthouse/
 
 #testing
 playwright-report/

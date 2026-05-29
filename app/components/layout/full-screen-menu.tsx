@@ -230,7 +230,7 @@ export function FullScreenMenu({
 
               {/* Company */}
               <div>
-                <h3 className="mb-4 font-sans font-semibold text-lg text-red-600 xl:text-blue-600">
+                <h3 className="mb-4 font-sans font-semibold text-lg text-red-600">
                   Company
                 </h3>
                 <nav className={menuNavListClass}>

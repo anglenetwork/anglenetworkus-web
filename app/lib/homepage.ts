@@ -4,16 +4,14 @@ import {
   fourthSectionQuery,
 } from "@/sanity/lib/queries";
 
-//For more control, we hardcode the sections names we want to display in the eighth section
-export async function getFourthSectionData(slugs: string[], titles: string[]) {
-  // Validate that slugs and titles arrays have the same length
+/** Homepage second section: category columns (e.g. Tech, Business, Entertainment). */
+export async function getSecondSectionData(slugs: string[], titles: string[]) {
   if (slugs.length !== titles.length) {
     throw new Error(
-      `getFourthSectionData: slugs and titles arrays must have the same length. Got ${slugs.length} slugs and ${titles.length} titles.`,
+      `getSecondSectionData: slugs and titles arrays must have the same length. Got ${slugs.length} slugs and ${titles.length} titles.`,
     );
   }
 
-  // Fetch posts for each category slug
   const categoryPosts = await Promise.all(
     slugs.map((slug) =>
       sanityFetchStatic({
@@ -23,7 +21,6 @@ export async function getFourthSectionData(slugs: string[], titles: string[]) {
     ),
   );
 
-  // Map the results to the expected format
   return slugs.map((slug, index) => ({
     name: titles[index] || slug,
     slug: slug,
@@ -31,8 +28,8 @@ export async function getFourthSectionData(slugs: string[], titles: string[]) {
   }));
 }
 
-//For more control, we hardcode the sections names we want to display in the second section
-export async function getSecondSectionData() {
+/** Homepage fifth section: featured-stories carousel (one card per category). */
+export async function getFifthSectionData() {
   const [
     politicsThirdArticle,
     internationalThirdArticle,

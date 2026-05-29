@@ -66,6 +66,13 @@
 import type { NextConfig } from "next";
 import { REMOTE_PATTERN_HOSTS } from "./lib/editorial-image/policy";
 
+/** Next ships a fixed polyfill module; our browserslist is modern-only (see package.json). */
+const EMPTY_POLYFILL = "./lib/empty-polyfill-module.js";
+const POLYFILL_MODULE_ALIASES = {
+  "../build/polyfills/polyfill-module": EMPTY_POLYFILL,
+  "next/dist/build/polyfills/polyfill-module": EMPTY_POLYFILL,
+} as const;
+
 const nextConfig: NextConfig = {
   env: {
     // Match Sanity Studio’s behavior for styled-components.
@@ -74,12 +81,33 @@ const nextConfig: NextConfig = {
 
   experimental: {
     // Optimize bundle splitting for small shared deps.
-    optimizePackageImports: ["lucide-react", "@radix-ui/react-slot"],
+    optimizePackageImports: [
+      "lucide-react",
+      "@radix-ui/react-slot",
+      "@radix-ui/react-dialog",
+      "@radix-ui/react-dropdown-menu",
+      "@radix-ui/react-select",
+      "@radix-ui/react-alert-dialog",
+      "date-fns",
+      "@supabase/supabase-js",
+    ],
   },
 
   // Set Turbopack root to silence workspace root warning
   turbopack: {
     root: __dirname,
+    resolveAlias: POLYFILL_MODULE_ALIASES,
+  },
+
+  webpack(config) {
+    config.resolve.alias = {
+      ...config.resolve.alias,
+      ...POLYFILL_MODULE_ALIASES,
+      // webpack accepts `false`; turbopack needs the empty file path above
+      "../build/polyfills/polyfill-module": false,
+      "next/dist/build/polyfills/polyfill-module": false,
+    };
+    return config;
   },
 
   compiler: {

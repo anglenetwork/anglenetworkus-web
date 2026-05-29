@@ -1,3 +1,5 @@
+import { LazyBackgroundVideo } from "@/app/components/ui/lazy-background-video";
+
 interface VideoBannerProps {
   videoSrc: string;
   className?: string;
@@ -11,13 +13,10 @@ export default function VideoBanner({
     <div
       className={`relative z-0 h-screen w-full overflow-hidden ${className}`}
     >
-      <video
-        src={videoSrc}
-        autoPlay
-        loop
-        muted
-        playsInline
-        className="absolute top-0 left-0 h-full w-full object-cover"
+      <LazyBackgroundVideo
+        videoSrc={videoSrc}
+        loadStrategy="idle"
+        posterPriority
       />
 
       {/* Dark overlay for better text contrast */}

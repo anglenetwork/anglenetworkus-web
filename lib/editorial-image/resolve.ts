@@ -6,7 +6,10 @@ import {
   type ImageMetaInput,
 } from "@/sanity/lib/image-attribution";
 import { urlForImage } from "@/sanity/lib/image-url";
-import { normalizeExternalImageUrl } from "./normalize";
+import {
+  clampOptimizableExternalUrl,
+  normalizeExternalImageUrl,
+} from "./normalize";
 import { isWikimediaUrl, shouldUnoptimizeExternalUrl } from "./policy";
 
 export type EditorialImageInput = {
@@ -114,9 +117,10 @@ export function resolveEditorialImage(
   const includeAttribution = options.includeAttribution ?? false;
 
   if (externalUrl && (input.source === "external" || !input.source)) {
+    const listingWidth = options.maxWidth ?? 1200;
     const src = isWikimediaUrl(externalUrl)
       ? getWikimediaThumbnail(externalUrl.toString(), wikimediaWidth)
-      : externalUrl.toString();
+      : clampOptimizableExternalUrl(externalUrl, listingWidth).toString();
 
     const result: ResolvedEditorialImage = {
       src,

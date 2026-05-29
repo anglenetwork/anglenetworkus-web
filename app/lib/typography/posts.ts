@@ -6,7 +6,7 @@ export const regularPostCategory =
 
 /** Regular post — page title (PostHeader h1) */
 export const regularPostTitle =
-  "font-sans text-2xl font-semibold leading-tight tracking-normal text-neutral-900 sm:text-2xl sm:leading-tight md:text-3xl lg:text-4xl";
+  "font-sans text-2xl font-bold leading-tight tracking-tight text-neutral-900 sm:text-2xl sm:leading-tight md:text-3xl lg:text-5xl xl:leading-tight";
 
 /** Regular post — dek / excerpt */
 export const regularPostExcerpt =

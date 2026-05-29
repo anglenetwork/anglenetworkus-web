@@ -1,6 +1,6 @@
 import Link from "next/link";
-import { NewsTickerScrollControls } from "./news-ticker-scroll-controls";
 import { NewsTickerTrack } from "./news-ticker-track";
+import { NewsTickerShell } from "./news-ticker-shell";
 import { newsTickerItemLink } from "@/app/lib/typography/news-ticker";
 
 interface NewsTickerPost {
@@ -24,7 +24,7 @@ export function NewsTicker({ posts }: NewsTickerProps) {
 
   return (
     <nav className="w-full min-w-0 max-w-full bg-white">
-      <div className="relative w-full min-w-0 max-w-full">
+      <NewsTickerShell itemCount={newsItems.length}>
         <NewsTickerTrack>
           {newsItems.map((item, index) => (
             <div
@@ -40,8 +40,7 @@ export function NewsTicker({ posts }: NewsTickerProps) {
             </div>
           ))}
         </NewsTickerTrack>
-        <NewsTickerScrollControls itemCount={newsItems.length} />
-      </div>
+      </NewsTickerShell>
     </nav>
   );
 }
