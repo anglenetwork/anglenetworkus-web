@@ -1,13 +1,11 @@
-import { ArrowRight } from "lucide-react";
 import Link from "next/link";
 import { ListingPhotoCredit } from "@/app/helpers";
 import { getCoverImage } from "@/sanity/lib/utils";
 import { SectionHeader } from "../../ui/section-header";
 import { ImageRenderer } from "../../ui/image-renderer";
 import {
-  categoryColumnSecondaryTitle,
-  categoryColumnTertiaryTitle,
   categoryFeaturedTitle,
+  categorySecondaryRowTitle,
 } from "@/app/lib/typography/second-section";
 
 interface Post {
@@ -41,33 +39,68 @@ interface CategoryData {
   posts: Post[];
 }
 
-interface FourthSectionProps {
+interface SecondSectionProps {
   categoriesData: CategoryData[];
   variant?: "light" | "dark";
 }
 
-export default function FourthSection({
+function SecondSectionSecondaryRow({
+  post,
+  variant,
+}: {
+  post: Post;
+  variant: "light" | "dark";
+}) {
+  if (!post.slug) return null;
+
+  const coverData = getCoverImage(post.cover, post.title || "Article image");
+  const titleClass = categorySecondaryRowTitle[variant];
+
+  return (
+    <Link href={`/post/${post.slug}`} className="group flex items-start gap-3">
+      {coverData?.src ? (
+        <div className="relative h-20 w-28 flex-shrink-0 overflow-hidden rounded-sm bg-black">
+          <ImageRenderer
+            src={coverData.src}
+            alt={coverData.alt}
+            width={112}
+            height={80}
+            unoptimized={coverData.unoptimized}
+            sizes="112px"
+            className="rounded-sm object-cover object-center"
+            fill
+          />
+        </div>
+      ) : null}
+      <h3 className={titleClass}>{post.title}</h3>
+    </Link>
+  );
+}
+
+export default function SecondSection({
   categoriesData,
   variant = "light",
-}: FourthSectionProps) {
-  // Filter out categories without required data and limit to 3 posts per category
+}: SecondSectionProps) {
+  // Filter out categories without required data and limit to 2 posts per category
   const validCategories = categoriesData
     .filter(
       (category) => category.slug && category.name && category.posts.length > 0,
     )
     .map((category) => ({
       ...category,
-      posts: category.posts.slice(0, 3), // Take only the first 3 posts
+      posts: category.posts.slice(0, 2),
     }));
 
   return (
     <main
-      className={`rounded-lg p-10 ${variant === "dark" ? "bg-black" : "bg-background"}`}
+      className={`rounded-lg ${
+        variant === "dark" ? "bg-black" : "bg-background"
+      }`}
     >
       <div className="">
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
           {validCategories.map((category, index) => {
-            const [mainPost, secondPost, thirdPost] = category.posts;
+            const [mainPost, secondPost] = category.posts;
 
             return (
               <article key={category.slug} className="space-y-4">
@@ -75,8 +108,8 @@ export default function FourthSection({
                 <SectionHeader
                   title={category.name || "Category"}
                   variant={variant}
-                  accentStyle="geometric-square"
-                  size="large"
+                  accentStyle="small-dot"
+                  size="regular"
                   href={
                     category.slug ? `/category/${category.slug}` : undefined
                   }
@@ -98,15 +131,16 @@ export default function FourthSection({
                             className="block"
                             aria-label={`Read article: ${mainPost?.title || "Featured article"}`}
                           >
-                            <div className="overflow-hidden rounded-sm bg-black">
+                            <div className="relative h-[300px] w-full overflow-hidden rounded-sm bg-black">
                               <ImageRenderer
                                 src={coverData.src}
                                 alt={coverData.alt}
                                 width={800}
                                 height={300}
                                 unoptimized={coverData.unoptimized}
-                                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 25vw, 800px"
-                                className="h-[300px] w-full rounded-sm object-cover"
+                                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 33vw, 400px"
+                                className="rounded-sm object-cover object-center"
+                                fill
                               />
                             </div>
                           </Link>
@@ -137,28 +171,12 @@ export default function FourthSection({
                   className={`border-t ${variant === "dark" ? "border-white" : "border-neutral-200"}`}
                 />
 
-                {/* Related Articles */}
-                <div className="space-y-4">
-                  {secondPost && secondPost.slug && (
-                    <>
-                      <Link href={`/post/${secondPost.slug}`}>
-                        <h3 className={categoryColumnSecondaryTitle[variant]}>
-                          {secondPost.title}
-                        </h3>
-                      </Link>
-                    </>
-                  )}
-                  {thirdPost && thirdPost.slug && (
-                    <Link href={`/post/${thirdPost.slug}`}>
-                      <hr
-                        className={`my-4 border-1 ${variant === "dark" ? "border-white" : "border-neutral-200"}`}
-                      />
-                      <h3 className={categoryColumnTertiaryTitle[variant]}>
-                        {thirdPost.title}
-                      </h3>
-                    </Link>
-                  )}
-                </div>
+                {secondPost?.slug ? (
+                  <SecondSectionSecondaryRow
+                    post={secondPost}
+                    variant={variant}
+                  />
+                ) : null}
               </article>
             );
           })}

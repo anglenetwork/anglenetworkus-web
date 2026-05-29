@@ -34,7 +34,9 @@ interface Post {
   developingStory?: boolean | null;
 }
 
-function listingImageFromGallery(galleryImage: GalleryImage): JustInCarouselImage | null {
+function listingImageFromGallery(
+  galleryImage: GalleryImage,
+): JustInCarouselImage | null {
   const resolved = resolveListingImage(galleryImage, "Gallery image", 1200);
   if (!resolved) return null;
   return {
@@ -75,8 +77,8 @@ export function LeftColumnLanding({ justInNews }: LeftColumnLandingProps) {
       <SectionHeader
         title="Just in"
         variant="light"
-        accentStyle="geometric-square"
-        size="large"
+        accentStyle="small-dot"
+        size="regular"
       />
 
       <div className="space-y-6">
@@ -86,8 +88,7 @@ export function LeftColumnLanding({ justInNews }: LeftColumnLandingProps) {
             ? carouselImagesForPost(post)
             : [];
           const showCarousel = isFirstArticle && carouselImages.length > 1;
-          const showStaticImage =
-            isFirstArticle && carouselImages.length === 1;
+          const showStaticImage = isFirstArticle && carouselImages.length === 1;
 
           return (
             <article

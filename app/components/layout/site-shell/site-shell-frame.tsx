@@ -18,11 +18,7 @@ export function SiteShellFrame({
 }: SiteShellFrameProps) {
   return (
     <div className="min-h-screen bg-white">
-      <HeaderClient
-        categories={categories}
-        tags={tags}
-        showsTags={showsTags}
-      />
+      <HeaderClient categories={categories} tags={tags} showsTags={showsTags} />
       {children}
       <Footer categories={categories} tags={tags} />
     </div>

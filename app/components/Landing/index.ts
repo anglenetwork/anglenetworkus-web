@@ -1,12 +1,2 @@
-export { FirstSection } from "./FirstSection/mainFirstSection";
+export { FirstSection } from "./FirstSection/firstSection";
 export { NewsTicker } from "./NewsTicker/NewsTicker";
-export { CenterColumnFourthSection } from "./FourthSectionComponents/CenterColumnFourthSection";
-export { default as ArticleCard } from "./SecondSection/article-card";
-export { default as SixthSection } from "./SecondSection/sixthSection";
-export { default as FifthSection } from "./ThirdSection/fifthSection";
-export { default as FourthSection } from "./FourthSection/fourthSection";
-export { default as SeventhSection } from "./FourthSection/seventhSection";
-export { default as MainFifthSection } from "./FifthSection/mainFifthSection";
-export { default as MainSixthSection } from "./SixthSection/MainSixthSection";
-export { default as MainSeventhSection } from "./SeventhSectionComponents/mainSeventhSection";
-export { default as ThirdSection } from "./ThirdSection/thirdSection";

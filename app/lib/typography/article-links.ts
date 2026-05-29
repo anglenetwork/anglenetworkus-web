@@ -6,3 +6,7 @@
  */
 export const articleTitleLink =
   "article-title-link underline-offset-2 hover:underline group-hover:underline";
+
+/** Linked SectionHeader title (category index, opinion index, etc.) */
+export const sectionHeaderLink =
+  "cursor-pointer transition-colors group-hover:text-red-600 hover:text-red-600 dark:group-hover:text-red-400 dark:hover:text-red-400";

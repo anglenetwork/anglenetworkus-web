@@ -9,7 +9,8 @@ import { UserMenuSlot } from "./user-menu-slot";
 import { Category } from "./types";
 
 const BecomeProCta = dynamic(
-  () => import("./become-pro-cta").then((mod) => ({ default: mod.BecomeProCta })),
+  () =>
+    import("./become-pro-cta").then((mod) => ({ default: mod.BecomeProCta })),
   { ssr: false },
 );
 

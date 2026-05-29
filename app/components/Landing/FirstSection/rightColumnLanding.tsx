@@ -72,8 +72,8 @@ export function RightColumnLanding({
         <SectionHeader
           title="What Matters"
           variant="light"
-          accentStyle="geometric-square"
-          size="large"
+          accentStyle="small-dot"
+          size="regular"
         />
 
         <div className="space-y-6">

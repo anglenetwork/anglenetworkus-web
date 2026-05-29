@@ -5,7 +5,7 @@ import { useEffect, useRef, useState, type ReactNode } from "react";
 type DeferUntilNearViewportProps = {
   children: ReactNode;
   fallback: ReactNode;
-  /** IntersectionObserver rootMargin (default loads ~400px before entering viewport). */
+  /** IntersectionObserver rootMargin (default: flush with viewport — avoids mobile prefetch). */
   rootMargin?: string;
 };
 
@@ -16,7 +16,7 @@ type DeferUntilNearViewportProps = {
 export function DeferUntilNearViewport({
   children,
   fallback,
-  rootMargin = "400px 0px",
+  rootMargin = "0px 0px 120px 0px",
 }: DeferUntilNearViewportProps) {
   const sentinelRef = useRef<HTMLDivElement>(null);
   const [shouldRender, setShouldRender] = useState(false);

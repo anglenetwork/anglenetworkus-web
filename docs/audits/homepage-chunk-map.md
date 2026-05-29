@@ -22,7 +22,7 @@ Last updated: 2026-05-28. Chunk hashes change each `npm run build:prod`; use RSC
 |------------|--------|
 | Shared runtime (`6346…`, `3cd8…`) | `HeaderClient`, `next/image`, hydration — still largest “unused” in LH |
 | Image pipeline (`49b21…`) | LCP hero via `ImageRenderer` in server `centerColumnLanding` |
-| News ticker / legacy hero (`9c801…`) | Should shrink after Just In server split; re-verify per build |
+| News ticker / hero (`9c801…`) | Should shrink after Just In server split; re-verify per build |
 | Menu (`cb1bb…` or similar) | `FullScreenMenu` — loads only when menu opens |
 | Below-fold (`6be83…`, `ea311…`, etc.) | Second/Sixth/Third/Fifth sections — after first paint |
 | Auth (`user-menu` lazy) | Supabase + Radix dropdown — idle + separate chunk |

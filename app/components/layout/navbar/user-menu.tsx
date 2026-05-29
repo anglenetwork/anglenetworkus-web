@@ -12,9 +12,9 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { useDeferredIdle } from "@/app/hooks/use-deferred-idle";
 import { createClient } from "@/lib/supabase/client";
 import type { User } from "@supabase/supabase-js";
+import { UserMenuSkeleton } from "./user-menu-skeleton";
 
 /** `default` = filled sign-in button; `link` = shadcn link style. */
 export type SignInButtonVariant = "default" | "link";
@@ -63,74 +63,82 @@ export function UserMenu({
   signInButtonVariant = "default",
   onSignInNavigate,
 }: UserMenuProps) {
-  const authReady = useDeferredIdle();
-  const supabase = useMemo(
-    () => (authReady ? createClient() : null),
-    [authReady],
-  );
+  const supabase = useMemo(() => createClient(), []);
   const [user, setUser] = useState<User | null>(null);
   const [firstName, setFirstName] = useState<string | null>(null);
   const [lastName, setLastName] = useState<string | null>(null);
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
+  const [avatarImageStatus, setAvatarImageStatus] = useState<
+    "idle" | "loading" | "loaded" | "error"
+  >("idle");
   const [loading, setLoading] = useState(true);
   const [signingOut, setSigningOut] = useState(false);
   const router = useRouter();
 
+  // Auth session — getSession for initial state; onAuthStateChange for updates only.
+  // Avoid DB calls inside the auth callback (Supabase can deadlock).
   useEffect(() => {
-    if (!authReady || !supabase) return;
-
     let mounted = true;
 
-    const applySession = async (session: { user: User } | null) => {
-      setUser(session?.user ?? null);
-
-      if (session?.user) {
-        const { data: profile } = await supabase
-          .from("profiles")
-          .select("first_name, last_name")
-          .eq("id", session.user.id)
-          .maybeSingle();
-
-        if (!mounted) return;
-
-        setFirstName(profile?.first_name ?? null);
-        setLastName(profile?.last_name ?? null);
-        setAvatarUrl(
-          session.user.user_metadata?.avatar_url ||
-            session.user.user_metadata?.picture ||
-            null,
-        );
-      } else {
+    const syncUserFromSession = (session: { user: User } | null) => {
+      const nextUser = session?.user ?? null;
+      setUser(nextUser);
+      setAvatarUrl(
+        nextUser?.user_metadata?.avatar_url ||
+          nextUser?.user_metadata?.picture ||
+          null,
+      );
+      if (!nextUser) {
         setFirstName(null);
         setLastName(null);
-        setAvatarUrl(null);
       }
     };
 
-    const loadUserData = async () => {
-      const {
-        data: { session },
-      } = await supabase.auth.getSession();
-
+    void supabase.auth.getSession().then(({ data: { session } }) => {
       if (!mounted) return;
-
-      await applySession(session);
+      syncUserFromSession(session);
       setLoading(false);
-    };
-
-    void loadUserData();
+    });
 
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange(async (_event, session) => {
-      await applySession(session);
+    } = supabase.auth.onAuthStateChange((event, session) => {
+      if (!mounted || event === "INITIAL_SESSION") return;
+      syncUserFromSession(session);
+      setLoading(false);
     });
 
     return () => {
       mounted = false;
       subscription.unsubscribe();
     };
-  }, [authReady, supabase]);
+  }, [supabase]);
+
+  // Profile names — separate from auth callback to avoid Supabase auth deadlocks.
+  useEffect(() => {
+    if (!user) return;
+
+    let mounted = true;
+
+    void supabase
+      .from("profiles")
+      .select("first_name, last_name")
+      .eq("id", user.id)
+      .maybeSingle()
+      .then(({ data: profile }) => {
+        if (!mounted) return;
+        setFirstName(profile?.first_name ?? null);
+        setLastName(profile?.last_name ?? null);
+      });
+
+    return () => {
+      mounted = false;
+    };
+  }, [supabase, user]);
+
+  useEffect(() => {
+    setAvatarImageStatus(avatarUrl ? "loading" : "idle");
+  }, [avatarUrl]);
 
   const handleSignOut = async () => {
     if (signingOut) return;
@@ -140,7 +148,6 @@ export function UserMenu({
     const t = setTimeout(() => controller.abort(), 12000);
 
     try {
-      // Server-side signout clears cookies reliably
       const res = await fetch("/api/auth/signout", {
         method: "POST",
         cache: "no-store",
@@ -153,20 +160,17 @@ export function UserMenu({
         console.error("Sign out failed:", json?.error || res.statusText);
       }
 
-      // Update local UI immediately
       setUser(null);
       setFirstName(null);
       setLastName(null);
       setAvatarUrl(null);
 
-      // Refresh server components and optionally send to /signin
       router.refresh();
       router.push("/signin");
     } catch (err) {
       console.error("Error signing out:", err);
-      // As a fallback, try client signOut (won't hurt)
       try {
-        await supabase?.auth.signOut();
+        await supabase.auth.signOut();
         router.refresh();
         router.push("/signin");
       } catch (e) {
@@ -179,6 +183,8 @@ export function UserMenu({
   };
 
   const userInitials = getUserInitials(user, firstName, lastName);
+  const showAvatarInitials =
+    !avatarUrl || avatarImageStatus === "error" || avatarImageStatus === "idle";
   const isMobile = variant === "mobile";
 
   const buttonSize = isMobile
@@ -213,16 +219,8 @@ export function UserMenu({
     );
   };
 
-  if (!authReady || loading) {
-    return (
-      <div
-        className={cn(
-          "shrink-0 rounded-full bg-neutral-200",
-          isMobile ? "h-10 w-10" : "h-10 w-10 lg:h-8 lg:w-8",
-        )}
-        aria-hidden
-      />
-    );
+  if (loading) {
+    return <UserMenuSkeleton variant={variant} />;
   }
 
   if (signInOnly) {
@@ -248,11 +246,15 @@ export function UserMenu({
           )}
         >
           <Avatar className={avatarSize}>
-            {avatarUrl && (
-              <AvatarImage src={avatarUrl} alt={user?.email || "User"} />
-            )}
+            {avatarUrl ? (
+              <AvatarImage
+                src={avatarUrl}
+                alt={user.email || "User"}
+                onLoadingStatusChange={setAvatarImageStatus}
+              />
+            ) : null}
             <AvatarFallback className="bg-white font-sans text-neutral-700 text-xs">
-              {userInitials}
+              {showAvatarInitials ? userInitials : null}
             </AvatarFallback>
           </Avatar>
         </Button>

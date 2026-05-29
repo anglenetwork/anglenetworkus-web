@@ -16,6 +16,8 @@
 | **D+** | Lazy `UserMenu` + `BecomeProCta`; Supabase only after idle | `user-menu-slot.tsx`, `become-pro-cta.tsx`, `user-menu.tsx` |
 | **D++** | Header `ResizeObserver` only when menu open | `header-client.tsx` |
 | **E** | Below-fold chunks gated by `DeferUntilNearViewport`; opinion rail stays server HTML | `defer-until-near-viewport.tsx`, `page.tsx` |
+| **F** | Desktop header chunk not loaded on mobile viewports (`matchMedia` + dynamic `DesktopHeader`) | `header-client.tsx` |
+| **G** | Unused JS: draft-only visual editing, below-fold lazy entry, interaction-gated auth/ticker, SVG `<img>` logos | `draft-mode-shell.tsx`, `homepage-below-fold-lazy.tsx`, `use-deferred-on-interaction.ts` — see [homepage-unused-javascript-report.md](./homepage-unused-javascript-report.md) |
 
 ---
 
@@ -32,6 +34,8 @@ Scores vary between runs; use trends, not single numbers.
 | `home-mobile-after-header-defer.json` | 82 | 4.5 s | 190 ms | 0.9 s | 0 |
 | `home-mobile-after-viewport-gate.json` | 82–88 | 3.8–4.5 s | 110–180 ms | 0.6–0.8 s | 0 |
 | Post-repro verification (2026-05-28) | **88** | **3.8 s** | **110 ms** | **0.6 s** | 0 |
+| `home-mobile-after-phase-f.json` (Phase F) | 85 | 4.1 s | 140 ms | — | 0 |
+| `home-mobile-unused-js-fix.json` (Phase G, `:3000`) | **93** | **3.2 s** | **80 ms** | — | 0 |
 
 \*Run variance / deferred chunks loading during audit window.
 
@@ -45,11 +49,26 @@ Scores vary between runs; use trends, not single numbers.
 
 ---
 
-## Remaining cost (not addressed here)
+## Phase F — desktop header deferred on mobile (2026-05-28)
 
-- Shared **`next/image`** + **`HeaderClient`** chunks (`6346…`, `3cd8…`, `49b21…`) on every public page.
-- **Article LCP** dominated by hero image hosts (separate from homepage).
-- **localhost** scores ≠ production CDN / HTTP3 / edge caching.
+`HeaderClient` mounts only `MobileHeader` until `matchMedia('(min-width: 1024px)')` is true; `DesktopHeader` is a separate dynamic chunk (`ssr: false`).
+
+**Tradeoff:** On desktop viewports, the first paint may show the mobile header bar until the effect runs, then swap to the desktop nav.
+
+## Phase G — unused JavaScript (2026-05-28) ✅
+
+Homepage mobile unused JS: **~300 KiB → ~48 KiB** (`home-mobile-unused-js-fix.json`). Main wins: draft-only `@sanity/visual-editing`, tighter viewport defer, interaction-gated Supabase/ticker, native SVG logos.
+
+**Deferred (not started):** article LCP, unused CSS (~12 KiB), further shell trimming below ~48 KiB.
+
+---
+
+## Remaining cost (out of scope for homepage program)
+
+- **~48 KiB** app shell + header client on cold load (expected).
+- **Article LCP** — separate phase.
+- **Unused CSS** — low priority.
+- **localhost** ≠ production CDN.
 
 ---
 
@@ -65,13 +84,13 @@ Network tab: on first paint without scroll, below-fold section chunks should not
 
 ---
 
-## Phase status (paused for manual verification)
+## Phase status — homepage program complete
 
 | Item | Value |
 |------|--------|
-| **Status** | Complete — committed locally, **not pushed** |
-| **Commit** | `57dcb6c` — homepage performance (Phases B–E) |
-| **Branch** | `main` (ahead of `origin/main` by 1) |
+| **Status** | Phases B–G implemented; **uncommitted** local changes (F + G) |
+| **Commits on `main`** | `57dcb6c` … `94ecabd` (3 ahead of `origin/main`, not pushed) |
+| **Next (optional)** | Manual checklist → commit → push/PR |
 
 ### Manual verification checklist
 
@@ -85,9 +104,11 @@ Use **production** build on port **3001**, not `next dev` on `:3000`. Use Incogn
 - [ ] Article page (`/post/...`): body uses serif (`font-body`); homepage does not download extra serif on first load (Network → filter `woff2`)
 - [ ] `/studio` loads without site header/footer
 - [ ] `npm run lighthouse:home:mobile:optimized` — compare to prior baseline (`home-mobile-final.json` if present locally)
+- [ ] **Desktop (≥1024px):** nav shows categories row; no stuck mobile-only bar after load
+- [ ] **Mobile:** Network on first load does not fetch `desktop-header` chunk until resize to desktop
 - [ ] Optional: `npm run test:unit` (1 pre-existing failure in `CoverImageCarousel.test.tsx`, unrelated)
 
-When satisfied, push `main` or open a PR. Next phase (not started): article LCP / bundle analysis of `HeaderClient` + `next/image`.
+When satisfied, commit Phases F+G and push `main` or open a PR. **Not started:** article LCP, unused CSS trim.
 
 ---
 
@@ -97,7 +118,7 @@ When satisfied, push `main` or open a PR. Next phase (not started): article LCP 
 |--------------------|--------|--------|
 | **Legacy JavaScript** (~14 KiB, `d3f5d2…js`) | Alias Next `polyfill-module` to empty stub (`lib/empty-polyfill-module.js`) | **Cleared** — audit score 1, no items (`home-mobile-after-polyfill-stub.json`) |
 | **Forced reflow** (~35 ms unattributed) | Defer ticker scroll-control layout read to `requestIdleCallback` | ~31 ms unattributed remains (browser/framework noise) |
-| **Unused JavaScript** (~300 KiB) | Prior Phases D–E (lazy auth, viewport-gated below-fold) | Expected — `6346…`, `next/image`, header shell; needs bundle pass to shrink further |
+| **Unused JavaScript** (~300 KiB) | **Phase G** (draft shell, below-fold lazy, interaction defer, SVG logos) + F | **~48 KiB** — [report](./homepage-unused-javascript-report.md) |
 | **Unused CSS** (~12 KiB) | Tailwind global bundle | Low priority; typography/plugin scope review |
 | **BFCache** `no-store` | Localhost dev / dynamic routes | Not actionable on localhost |
 | **Minify JS** (~8 KiB) | Prod build already minified | Often Lighthouse noise on localhost |

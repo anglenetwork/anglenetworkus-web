@@ -1,17 +1,16 @@
 import { test, expect } from "@playwright/test";
 
 /**
- * Fifth Section: DOM must expose category slugs (see data-fifth-column / data-article-category-slug).
- * Mirrors what you would check in Chrome DevTools → Elements on each <a href^="/post/">.
+ * Third section: DOM must expose category slugs (data-third-column / data-article-category-slug).
  */
-test.describe("Homepage Fifth Section category DOM", () => {
+test.describe("Homepage third section category DOM", () => {
   test("left column article links carry world; right column carries politics", async ({
     page,
   }) => {
     await page.goto("/");
 
-    const left = page.locator('[data-fifth-column="left"]');
-    const right = page.locator('[data-fifth-column="right"]');
+    const left = page.locator('[data-third-column="left"]');
+    const right = page.locator('[data-third-column="right"]');
 
     await expect(left).toHaveAttribute("data-expected-category-slug", "world");
     await expect(right).toHaveAttribute(
@@ -38,18 +37,14 @@ test.describe("Homepage Fifth Section category DOM", () => {
       const slug = await leftPostLinks
         .nth(i)
         .getAttribute("data-article-category-slug");
-      expect(slug, `left post link ${i} data-article-category-slug`).toBe(
-        "world",
-      );
+      expect(slug, `left post link ${i}`).toBe("world");
     }
 
     for (let i = 0; i < rightCount; i++) {
       const slug = await rightPostLinks
         .nth(i)
         .getAttribute("data-article-category-slug");
-      expect(slug, `right post link ${i} data-article-category-slug`).toBe(
-        "politics",
-      );
+      expect(slug, `right post link ${i}`).toBe("politics");
     }
   });
 });

@@ -5,10 +5,10 @@ import type { Metadata } from "next";
 import { Suspense } from "react";
 import { toPlainText, type PortableTextBlock } from "next-sanity";
 import { draftMode, headers } from "next/headers";
-import { libreFranklin } from "@/app/lib/fonts/sans";
+import { publicSans } from "@/app/lib/fonts/sans";
 
-import { AlertBanner, SiteShell } from "./components/layout";
-import { VisualEditingProvider } from "./components/VisualEditingProvider";
+import { SiteShell } from "./components/layout";
+import { DraftModeShell } from "./components/layout/draft-mode-shell";
 
 import * as demo from "@/sanity/lib/demo";
 import { sanityFetch } from "@/sanity/lib/fetch";
@@ -73,11 +73,11 @@ export default async function RootLayout({
           href="/feed.xml"
         />
       </head>
-      <body className={libreFranklin.variable}>
+      <body className={publicSans.variable}>
         <section className="min-h-screen">
           {isDraftMode && (
             <Suspense fallback={null}>
-              <AlertBanner />
+              <DraftModeShell />
             </Suspense>
           )}
           {isStudioRoute ? (
@@ -88,8 +88,6 @@ export default async function RootLayout({
             </SiteShell>
           )}
         </section>
-
-        {isDraftMode && <VisualEditingProvider />}
 
         {(process.env.NEXT_PUBLIC_VERCEL_ENV || process.env.VERCEL) && (
           <SpeedInsights />

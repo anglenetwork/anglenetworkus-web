@@ -48,8 +48,6 @@ Do **not** add AP, Reuters, Getty, Imago, or similar wire/CDN domains without le
 | Category / tag featured | `FeatureHero`, `TagFeaturedArticle` |
 | `PreloadCoverImage` | Optional `<link rel="preload" as="image">` **without** `fetchpriority="high"` so `next/image` owns high priority |
 
-`mainSeventhSection` is not mounted on the homepage; do not use `priority` there unless the section is promoted above the fold.
-
 ## LQIP (Sanity assets)
 
 GROQ projects `"lqip": image.asset->metadata.lqip` via [`sanity/lib/image-fields-projection.ts`](../../sanity/lib/image-fields-projection.ts). Resolver maps to `blurDataURL`; `ImageRenderer` uses `placeholder="blur"` only when optimized (not Wikimedia/unoptimized).

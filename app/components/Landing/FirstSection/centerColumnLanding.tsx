@@ -62,7 +62,7 @@ export function CenterColumnLanding({
 
   return (
     <div className="lg:px-6">
-      {/* <SectionHeader title="Top News" variant="light" accentStyle="geometric-square" size="large" /> */}
+      {/* <SectionHeader title="Top News" variant="light" accentStyle="small-dot" size="regular" /> */}
 
       {/* Main Story */}
       {mainStory.map((post, index) => (

@@ -38,7 +38,7 @@ interface CategoryData {
   thirdArticle: Post | null;
 }
 
-interface SixthSectionProps {
+interface FifthSectionProps {
   categoriesData?: CategoryData[];
 }
 
@@ -90,7 +90,7 @@ function fallbackCard(): CardModel {
   };
 }
 
-export default function SixthSection({ categoriesData }: SixthSectionProps) {
+export default function FifthSection({ categoriesData }: FifthSectionProps) {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
   const rows =
@@ -139,12 +139,12 @@ export default function SixthSection({ categoriesData }: SixthSectionProps) {
   };
 
   return (
-    <div className="mb-10 bg-white pb-16">
+    <div className="bg-white">
       <SectionHeader
         title="Featured Stories"
         variant="light"
-        accentStyle="geometric-square"
-        size="large"
+        accentStyle="small-dot"
+        size="regular"
       />
 
       <div className="relative">

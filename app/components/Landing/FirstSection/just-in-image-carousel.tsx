@@ -45,9 +45,7 @@ export function JustInImageCarousel({
       <Link href={`/post/${postSlug}`}>
         <div className="relative h-56 w-full overflow-hidden rounded-sm md:h-60">
           {images.map((image, idx) => {
-            if (
-              !shouldRenderCarouselSlide(idx, currentIndex, images.length)
-            ) {
+            if (!shouldRenderCarouselSlide(idx, currentIndex, images.length)) {
               return null;
             }
 

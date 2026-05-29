@@ -44,20 +44,10 @@ Image optimization is **enabled** in [`next.config.ts`](../next.config.ts) for a
 | **Homepage hero** | `app/components/Landing/FirstSection/centerColumnLanding.tsx` | `ImageRenderer` | `getCoverImage(cover)` | Yes | Yes | Credit computed, **UI commented out** | `priority` + `fetchPriority="high"` on main story; `fill` + `sizes` |
 | **Homepage Just In carousel** | `app/components/Landing/FirstSection/leftColumnLanding.tsx` | `ImageRenderer` in `ImageCarousel` | Cover + `imageGallery` (local `getGalleryImageData`) | Yes | Yes | No | Client carousel; all slides in DOM; `priority` on first slide |
 | **Homepage right rail** | `app/components/Landing/FirstSection/rightColumnLanding.tsx` | `ImageRenderer` | `getCoverImage` | Yes | Yes | No | Missing image → null (no placeholder) |
-| **Homepage second section** | `app/components/Landing/SecondSection/article-card.tsx` | `ImageRenderer` | Prop URL from parent | Yes | Yes | No | Falls back to `/placeholder.svg`; **no `sizes`** |
-| **Homepage second section alt** | `app/components/Landing/SecondSection/articleCardAlternative.tsx` | `ImageRenderer` | Prop URL | Yes | Yes | No | `fill` + `sizes` |
-| **Homepage second section data** | `app/components/Landing/SecondSection/mainSecondSection.tsx` | (data only) | `getCoverImage` | N/A | Yes | `formatImageCredit` in props, not rendered in card | Decorative red bar when no cover |
-| **Homepage third section** | `app/components/Landing/ThirdSection/mainThirdSection.tsx` | `ImageRenderer` | `getCoverImage` | Yes | Yes | Credits **commented out** | Multiple grid slots |
-| **Homepage third gallery** | `app/components/Landing/ThirdSection/thirdSection.tsx` | `ImageRenderer` | `getCoverImage` + `urlForImage` for gallery | Yes | Yes | No | Custom gallery URL helper (duplicates utils) |
-| **Homepage fifth (category)** | `app/components/Landing/ThirdSection/fifthSection.tsx` | `ImageRenderer` | `getCoverImage` / gallery helpers | Yes | Yes | No | `fill` + `sizes` on several slots |
-| **Homepage fifth section** | `app/components/Landing/FifthSection/centerColumnFifth.tsx` | `ImageRenderer` | Props from `mainFifthSection` | Yes | Yes | `imageSource` prop, **UI commented out** | |
-| **Homepage fifth data** | `app/components/Landing/FifthSection/mainFifthSection.tsx` | (data) | `getCoverImage` | N/A | Yes | `formatImageCredit` → `imageSource` | Placeholder when no image |
-| **Homepage fifth right** | `app/components/Landing/FifthSection/rightColumnFifth.tsx` | `ImageRenderer` | Prop URL | Yes | Yes | No | `/placeholder.svg` fallback |
-| **Homepage fourth** | `app/components/Landing/FourthSection/fourthSection.tsx`, `mainFourthSection.tsx`, `seventhSection.tsx` | `ImageRenderer` | `getCoverImage` | Yes | Yes | Credits **commented out** | |
-| **Homepage fourth legacy columns** | `FourthSectionComponents/CenterColumnFourthSection.tsx` | `Image` direct | Hardcoded/mock story URLs | Yes | Weak | No | `/placeholder.svg` fallbacks |
-| **Homepage ads** | `FourthSectionComponents/leftColumnFourth.tsx`, `ThirdSection/leftColumnSixth.tsx` | `Image` direct | Unsplash ad placeholder | Yes | "Generic placeholder" | No | Static marketing placeholder |
-| **Homepage video columns** | `FourthSectionComponents/rightColumnFourth.tsx`, `ThirdSection/rightColumnSixth.tsx`, `SixthSection/MainSixthSection.tsx` | `Image` direct | Video thumbnail URLs | Yes | Variable | No | `/placeholder.svg` for missing thumbs |
-| **Homepage seventh** | `SeventhSectionComponents/mainSeventhSection.tsx` | `Image` direct | `getCoverImage` | Yes | Yes | No | **`priority` without `sizes`**; bypasses `ImageRenderer` |
+| **Homepage second section** | `app/components/Landing/SecondSection/secondSection.tsx` | `ImageRenderer` | `getCoverImage` | Yes | Yes | `ListingPhotoCredit` on hero | Tech / Business / Entertainment columns |
+| **Homepage third section** | `app/components/Landing/ThirdSection/thirdSection.tsx` | `ImageRenderer` | `getCoverImage` | Yes | Yes | No | World / Politics two-column layout |
+| **Homepage fourth section** | `app/components/Landing/FourthSection/fourthSection.tsx` | `ImageRenderer` | `getCoverImage` + gallery | Yes | Yes | No | US / Politics / Business highlights; custom gallery helper |
+| **Homepage fifth section** | `app/components/Landing/FifthSection/fifthSection.tsx` | `ArticleFamilyCard` → `ImageRenderer` | `getCoverImage` | Yes | Yes | No | Featured Stories carousel (`heroTile`) |
 | **Opinion rail** | `app/components/article-family/EditorialRailsSection.tsx` | `ImageRenderer` | `getCoverImage` + author `urlForImage` | Yes | Yes | No | Full-bleed cover `fill`; avatar 32px |
 | **Article detail cover** | `app/components/PostPage/PostBody/ArticleMedia.tsx` | `ArticleImageFigure` → `ImageRenderer` | `buildCoverImageData` | Yes | Yes | Yes (`ArticleCaption`) | `priority` + `fetchPriority="high"` |
 | **Article detail gallery carousel** | `app/components/PostPage/PostBody/CoverImageCarousel.tsx` | `ImageRenderer` | Cover + gallery resolved images | Yes | Yes | Yes (current slide) | All images mounted; 7s auto-advance |
@@ -103,9 +93,8 @@ Image optimization is **enabled** in [`next.config.ts`](../next.config.ts) for a
 | Issue | Location | Detail |
 |-------|----------|--------|
 | `fill` + unused `width`/`height` | Many files (e.g. `ArticleImageFigure`, `centerColumnLanding`, `ArticleFamilyCard`) | When `fill={true}`, width/height props are ignored—harmless but confusing for maintainers |
-| Missing `sizes` | `article-card.tsx`, `CategoryContent.tsx` (3 calls), `CategorySidebar.tsx`, `TagSidebar.tsx`, `mainSeventhSection.tsx` | Browser may download larger src than needed |
+| Missing `sizes` | `CategoryContent.tsx` (3 calls), `CategorySidebar.tsx`, `TagSidebar.tsx` | Browser may download larger src than needed |
 | Empty alt | `FeatureHero.tsx` line 28 | `alt=""` while image is meaningful; link has `aria-label` but image should have descriptive alt |
-| `priority` without `sizes` | `mainSeventhSection.tsx` | Direct `Image` with `priority` only |
 | Non-whitelisted external + `unoptimized: false` in gallery helper | `leftColumnLanding.tsx` `getGalleryImageData` | External non-Wikimedia returns `unoptimized: false` without whitelist check—may error at runtime if domain not in `remotePatterns` |
 | No blur placeholder | Entire `app/` | No `placeholder="blur"` or `blurDataURL` |
 | SVG in footer/nav | `logo.tsx`, `footer.tsx` | Local SVG via `next/image`—works; ensure `images.dangerouslyAllowSVG` not needed for local paths (default allows local) |
@@ -117,10 +106,6 @@ Image optimization is **enabled** in [`next.config.ts`](../next.config.ts) for a
 |------|---------|----------------|
 | `PostSelectedNewsAlt.tsx` | Small related-article thumbs | Could use `ImageRenderer` for Wikimedia consistency |
 | `logo.tsx`, `footer.tsx` | Brand SVG | Reasonable to keep direct |
-| `leftColumnFourth.tsx`, `leftColumnSixth.tsx` | Ad placeholders | Static; low priority |
-| `CenterColumnFourthSection.tsx`, `CenterColumnSixthSection.tsx` | Section mock data | **Needs verification** if still fed live CMS data |
-| `rightColumnFourth.tsx`, `rightColumnSixth.tsx`, `MainSixthSection.tsx` | Video posters | May stay direct if URLs are non-Sanity |
-| `mainSeventhSection.tsx` | Featured post | Should align with `ImageRenderer` + `sizes` |
 | `signin/page.tsx` | Marketing carousel | Optional unify |
 
 ---
@@ -280,7 +265,6 @@ Used in [`sanity/lib/queries.ts`](../sanity/lib/queries.ts), [`sanity/lib/articl
 | `alt=""` on meaningful featured image | High | `FeatureHero.tsx` |
 | Generic `DEFAULT_ALT_TEXT` when alt missing | Medium | `getCoverImage` in `utils.ts` |
 | `showAltAsCaption` with `aria-hidden` on alt line | Low | `ArticleCaption.tsx`—alt shown visually but hidden from SR on legacy blocks |
-| Decorative article cards use colored bar, not alt | OK | `article-card.tsx` `isDecorative` |
 | Carousel dot buttons have `aria-label` | Good | `CoverImageCarousel`, `leftColumnLanding` |
 | Bookmarks `<img>` without dimensions | Medium | CLS for screen magnifier users too |
 | Link wraps images without redundant text | OK | Most article links include visible titles nearby |
@@ -299,7 +283,6 @@ Used in [`sanity/lib/queries.ts`](../sanity/lib/queries.ts), [`sanity/lib/articl
 | 1-year `minimumCacheTTL` on optimizer | Good for repeat views |
 | AVIF/WebP formats configured | Good |
 | No blur/LQIP placeholders | LCP may show empty until load |
-| `getCoverImage` called multiple times per card in `mainSecondSection` | Redundant URL building (CPU) |
 
 ---
 
@@ -310,7 +293,7 @@ Used in [`sanity/lib/queries.ts`](../sanity/lib/queries.ts), [`sanity/lib/articl
 | Credit author / source | Required (with image) in Studio | Shown on **article** figures only |
 | Caption | Optional | Article figures; not listings |
 | License / rights | Required in Studio | **Not fetched or displayed** |
-| Listing photo credit | N/A | **Commented out** in homepage/fifth section |
+| Listing photo credit | N/A | Shown on second-section hero via `ListingPhotoCredit`; other homepage sections omit credits |
 | `ExcerptCreditCaption` helper | N/A | **Unused** in production UI |
 
 For a news website, **visible photo credits on all published images** (especially homepage and syndicated wires) are typically mandatory—current UI does not meet that bar on listings.
@@ -336,7 +319,7 @@ For a news website, **visible photo credits on all published images** (especiall
 ### Immediate Fixes
 
 1. Set descriptive `alt` on [`FeatureHero`](../app/components/CategoryPage/FeatureHero.tsx) from article title or cover alt.
-2. Add `sizes` to [`mainSeventhSection.tsx`](../app/components/Landing/SeventhSectionComponents/mainSeventhSection.tsx), [`article-card.tsx`](../app/components/Landing/SecondSection/article-card.tsx), [`CategoryContent.tsx`](../app/components/CategoryPage/CategoryContent.tsx), [`CategorySidebar.tsx`](../app/components/CategoryPage/CategorySidebar.tsx), [`TagSidebar.tsx`](../app/tag/[slug]/TagSidebar.tsx).
+2. Add `sizes` where missing on [`CategoryContent.tsx`](../app/components/CategoryPage/CategoryContent.tsx), [`CategorySidebar.tsx`](../app/components/CategoryPage/CategorySidebar.tsx), [`TagSidebar.tsx`](../app/tag/[slug]/TagSidebar.tsx).
 3. Align `getGalleryImageData` in [`leftColumnLanding.tsx`](../app/components/Landing/FirstSection/leftColumnLanding.tsx) with `getCoverImage` whitelist / unoptimized rules.
 4. Add `width`/`height` or aspect-ratio box to bookmarks [`<img>`](../app/myprofile/components/BookmarksList.tsx) to reduce CLS.
 5. Uncomment or wire `ExcerptCreditCaption` / `formatImageCredit` on homepage hero and category rails if product requires visible credits.
@@ -368,8 +351,7 @@ For a news website, **visible photo credits on all published images** (especiall
 3. **Content:** **Needs verification**—do production articles use wire URLs (AP, Reuters, Getty) not in `remotePatterns`?
 4. **Content:** **Needs verification**—volume of legacy `image` blocks vs `editorialImage` in body content.
 5. **Infra:** Does Cloudflare OpenNext deployment support `/_next/image` optimization at scale?
-6. **Design:** Are fourth/sixth section columns still mock-only (`CenterColumnFourthSection`) or wired to live queries?
-7. **Pixabay:** Seeds/config include Pixabay hosts—should they be added to runtime whitelist for optimization?
+6. **Pixabay:** Seeds/config include Pixabay hosts—should they be added to runtime whitelist for optimization?
 
 ---
 
@@ -413,13 +395,11 @@ For a news website, **visible photo credits on all published images** (especiall
 - `app/components/Landing/FirstSection/centerColumnLanding.tsx`
 - `app/components/Landing/FirstSection/leftColumnLanding.tsx`
 - `app/components/Landing/FirstSection/rightColumnLanding.tsx`
-- `app/components/Landing/SecondSection/*`
-- `app/components/Landing/ThirdSection/*`
-- `app/components/Landing/FourthSection/*`
-- `app/components/Landing/FourthSectionComponents/*`
-- `app/components/Landing/FifthSection/*`
-- `app/components/Landing/SixthSection/MainSixthSection.tsx`
-- `app/components/Landing/SeventhSectionComponents/mainSeventhSection.tsx`
+- `app/components/Landing/SecondSection/secondSection.tsx`
+- `app/components/Landing/ThirdSection/thirdSection.tsx`
+- `app/components/Landing/FourthSection/fourthSection.tsx`
+- `app/components/Landing/FifthSection/fifthSection.tsx`
+- `app/components/Landing/homepage-below-fold.tsx`
 - `app/components/Landing/NewsTicker/NewsTicker.tsx`
 
 ### Category / tag / search

@@ -1,5 +1,4 @@
 import Link from "next/link";
-import Image from "next/image";
 import type { Category, Tag } from "./site-shell/types";
 
 interface FooterProps {
@@ -19,12 +18,13 @@ export function Footer({ categories, tags }: FooterProps) {
               className="inline-block transition-opacity hover:opacity-80"
             >
               <div className="mb-4 flex items-center gap-2">
-                <Image
+                <img
                   src="/black-logo.svg"
                   alt="The Angle Logo"
                   width={48}
                   height={48}
                   className="flex-shrink-0"
+                  decoding="async"
                 />
                 <h3 className="font-bold font-sans text-4xl text-white tracking-tight">
                   The Angle

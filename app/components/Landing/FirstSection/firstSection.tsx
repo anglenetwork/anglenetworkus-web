@@ -184,7 +184,7 @@ export function FirstSection({
   const mainStoryPost = mainStoryPosts[0];
 
   return (
-    <main className="w-full pt-4">
+    <main className="w-full">
       {mainStoryPost?.title && mainStoryPost?.slug && (
         <div className="mb-6 hidden lg:block">
           <Link

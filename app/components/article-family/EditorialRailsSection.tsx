@@ -4,6 +4,7 @@ import { sanityFetchStatic } from "@/sanity/lib/fetch";
 import { opinionListQuery } from "@/sanity/lib/article-family-queries";
 import { normalizeArticleFamilyCard } from "@/app/lib/article-family/normalize";
 import { getCoverImage, urlForImage } from "@/sanity/lib/utils";
+import { SectionHeader } from "@/app/components/ui/section-header";
 import { ImageRenderer } from "@/app/components/ui/image-renderer";
 import type { ArticleFamilyCard } from "@/app/lib/article-family/types";
 import { editorialOpinionRailTitle } from "@/app/lib/typography/article-family-card";
@@ -111,9 +112,13 @@ export default async function EditorialRailsSection() {
 
   return (
     <section>
-      <h2 className="mb-4 font-bold font-sans text-base text-foreground uppercase tracking-wide">
-        Opinion
-      </h2>
+      <SectionHeader
+        title="Opinion"
+        variant="light"
+        accentStyle="small-dot"
+        size="regular"
+        href="/opinion"
+      />
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
         {articles.map((article) => (
           <OpinionCard key={article._id} article={article} />
