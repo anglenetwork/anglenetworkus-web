@@ -164,22 +164,23 @@ export function FirstSection({
     .filter((post): post is PostForRightColumn => post !== null)
     .slice(0, 2);
 
-  const mostRead = mostReadPosts
-    .filter(
-      (post) =>
-        !!post.slug &&
-        (!post.category || (!!post.category.title && !!post.category.slug)),
-    )
-    .map(
-      (post): PostForRightColumn => ({
-        _id: post._id,
-        title: post.title,
-        slug: post.slug!,
-        cover: post.cover,
-        author: post.author,
-      }),
-    )
-    .slice(0, 5);
+  const mostRead = mostReadPosts.reduce<PostForRightColumn[]>((acc, post) => {
+    if (
+      !post.slug ||
+      (post.category && (!post.category.title || !post.category.slug))
+    ) {
+      return acc;
+    }
+    if (acc.length >= 5) return acc;
+    acc.push({
+      _id: post._id,
+      title: post.title,
+      slug: post.slug,
+      cover: post.cover,
+      author: post.author,
+    });
+    return acc;
+  }, []);
 
   const mainStoryPost = mainStoryPosts[0];
 

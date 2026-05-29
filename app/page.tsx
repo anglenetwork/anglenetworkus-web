@@ -1,13 +1,14 @@
-import { FirstSection, NewsTicker } from "./components/Landing/index";
+import { FirstSection } from "./components/Landing/FirstSection/firstSection";
+import { NewsTicker } from "./components/Landing/NewsTicker/NewsTicker";
 import { HomepageBelowFoldLazy } from "./components/Landing/homepage-below-fold-lazy";
 import { HOMEPAGE_BELOW_FOLD_SECTION_GAP } from "./components/Landing/homepage-below-fold-spacing";
 import EditorialRailsSection from "./components/article-family/EditorialRailsSection";
+import { JsonLdScript } from "./components/seo/json-ld-script";
 import dynamic from "next/dynamic";
 import { toPlainText } from "next-sanity";
 import { sanityFetchStatic } from "@/sanity/lib/fetch";
 import * as demo from "@/sanity/lib/demo";
 import { getCachedSettings } from "@/app/lib/cached-settings";
-import { jsonLdScriptContent } from "@/app/lib/article-family/structured-data";
 import {
   buildHomepageMetadata,
   finalizePublicMetadata,
@@ -214,21 +215,21 @@ export default async function Page() {
   const fourthSectionCenterArticle = fourthSectionCenterPosts[0];
   const fourthSectionRightArticle = fourthSectionRightPosts[0];
 
-  // 4) Fetch latest posts for news ticker (component shows up to 4)
-  const newsTickerPosts = await sanityFetchStatic({
-    query: newsTickerQuery,
-  });
-
-  // 5) Below-the-fold sections (third-section queries run separately from second).
-  const [secondSectionData, fifthSectionData] = await Promise.all([
+  const [
+    newsTickerPosts,
+    secondSectionData,
+    fifthSectionData,
+    thirdSectionLeftRaw,
+    thirdSectionRightRaw,
+  ] = await Promise.all([
+    sanityFetchStatic({
+      query: newsTickerQuery,
+    }),
     getSecondSectionData(
       ["tech", "business", "entertainment"],
       ["Tech", "Business", "Entertainment"],
     ),
     getFifthSectionData(),
-  ]);
-
-  const [thirdSectionLeftRaw, thirdSectionRightRaw] = await Promise.all([
     sanityFetchStatic({
       query: postsByCategoryStandardPostsLimitedQuery,
       params: {
@@ -260,18 +261,8 @@ export default async function Page() {
 
   return (
     <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: jsonLdScriptContent(organizationLd),
-        }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: jsonLdScriptContent(websiteLd),
-        }}
-      />
+      <JsonLdScript data={organizationLd} />
+      <JsonLdScript data={websiteLd} />
       <SitePageWidth>
         <NewsTicker posts={newsTickerPosts as any} />
         <div className={`${HOMEPAGE_BELOW_FOLD_SECTION_GAP} pb-10 md:pb-14`}>
@@ -306,8 +297,8 @@ export default async function Page() {
                 : null
             }
             fifthSection={{ categoriesData: fifthSectionData as any }}
-            editorialRails={<EditorialRailsSection />}
           />
+          <EditorialRailsSection />
           {/* <PromoSection /> */}
         </div>
       </SitePageWidth>

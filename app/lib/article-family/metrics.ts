@@ -205,7 +205,7 @@ export function orderDocumentsByIds<T extends { _id: string }>(
 export function sortIdsByRankingThenPublishedAt<
   T extends { _id: string; publishedAt?: string | null },
 >(items: T[], metrics: Map<string, ArticleRankingRow>): T[] {
-  return [...items].sort((a, b) => {
+  return items.toSorted((a, b) => {
     const ma = metrics.get(a._id);
     const mb = metrics.get(b._id);
     const va = ma?.views7d ?? 0;

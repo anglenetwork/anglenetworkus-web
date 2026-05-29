@@ -27,28 +27,28 @@ export type SidebarArticleLink = ArticleSidebarPost;
 function attachPostHref(
   rows: Array<Record<string, unknown>> | null | undefined,
 ): SidebarArticleLink[] {
-  return (rows || [])
-    .filter((r) => typeof r.slug === "string" && r.slug)
-    .map((r) => {
-      const slug = r.slug as string;
-      return {
-        _id: String(r._id ?? ""),
-        _type: "post",
-        title: String(r.title ?? ""),
-        slug,
-        href: articleFamilyHref("post", slug),
-        excerpt: r.excerpt as string | null | undefined,
-        cover: r.cover,
-        date:
-          typeof r.date === "string"
-            ? r.date
-            : typeof r.publishedAt === "string"
-              ? r.publishedAt
-              : undefined,
-        author: r.author as SidebarArticleLink["author"],
-        category: r.category as SidebarArticleLink["category"],
-      };
+  return (rows ?? []).reduce<SidebarArticleLink[]>((acc, r) => {
+    if (typeof r.slug !== "string" || !r.slug) return acc;
+    const slug = r.slug;
+    acc.push({
+      _id: String(r._id ?? ""),
+      _type: "post",
+      title: String(r.title ?? ""),
+      slug,
+      href: articleFamilyHref("post", slug),
+      excerpt: r.excerpt as string | null | undefined,
+      cover: r.cover,
+      date:
+        typeof r.date === "string"
+          ? r.date
+          : typeof r.publishedAt === "string"
+            ? r.publishedAt
+            : undefined,
+      author: r.author as SidebarArticleLink["author"],
+      category: r.category as SidebarArticleLink["category"],
     });
+    return acc;
+  }, []);
 }
 
 function relatedQueryFor(article: ArticleFamily) {

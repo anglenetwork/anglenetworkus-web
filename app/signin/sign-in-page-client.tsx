@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useReducer } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
@@ -18,47 +18,79 @@ const isValidEmail = (email: string): boolean => {
   return emailRegex.test(email);
 };
 
+type SignInState = {
+  currentIndex: number;
+  email: string;
+  isSubmitted: boolean;
+  emailError: string;
+  isSending: boolean;
+  isGoogleLoading: boolean;
+};
+
+type SignInAction =
+  | { type: "set_email"; email: string }
+  | { type: "clear_email_error" }
+  | { type: "submit_start" }
+  | { type: "submit_success" }
+  | { type: "submit_error"; message: string }
+  | { type: "google_start" }
+  | { type: "google_error"; message: string }
+  | { type: "reset_form" }
+  | { type: "advance_carousel"; count: number };
+
+const initialState: SignInState = {
+  currentIndex: 0,
+  email: "",
+  isSubmitted: false,
+  emailError: "",
+  isSending: false,
+  isGoogleLoading: false,
+};
+
+function signInReducer(state: SignInState, action: SignInAction): SignInState {
+  switch (action.type) {
+    case "set_email":
+      return { ...state, email: action.email, emailError: "" };
+    case "clear_email_error":
+      return { ...state, emailError: "" };
+    case "submit_start":
+      return { ...state, isSending: true, emailError: "" };
+    case "submit_success":
+      return { ...state, isSubmitted: true, isSending: false };
+    case "submit_error":
+      return { ...state, emailError: action.message, isSending: false };
+    case "google_start":
+      return { ...state, isGoogleLoading: true, emailError: "" };
+    case "google_error":
+      return { ...state, emailError: action.message, isGoogleLoading: false };
+    case "reset_form":
+      return {
+        ...state,
+        isSubmitted: false,
+        email: "",
+        emailError: "",
+      };
+    case "advance_carousel":
+      return {
+        ...state,
+        currentIndex: (state.currentIndex + 1) % action.count,
+      };
+    default:
+      return state;
+  }
+}
+
 export default function SignInPageClient({
   initialGalleryItems,
 }: {
   initialGalleryItems: SignInGalleryItem[];
 }) {
   const galleryItems = initialGalleryItems;
-  const [loading, setLoading] = useState<boolean | undefined>(undefined);
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [email, setEmail] = useState("");
-  const [isSubmitted, setIsSubmitted] = useState(false);
-  const [emailError, setEmailError] = useState("");
-  const [isSending, setIsSending] = useState(false);
-  const [isGoogleLoading, setIsGoogleLoading] = useState(false);
+  const [state, dispatch] = useReducer(signInReducer, initialState);
   const { push } = useRouter();
   const supabase = createClient();
 
   useEffect(() => {
-    const checkUser = async () => {
-      try {
-        const res = await fetch("/api/auth/session", {
-          method: "GET",
-          cache: "no-store",
-        });
-
-        const json = (await res.json().catch(() => ({}))) as any;
-
-        if (json?.authenticated && json?.user) {
-          // User is already logged in, redirect to profile
-          push("/myprofile");
-        } else {
-          setLoading(false);
-        }
-      } catch (error) {
-        console.error("Error checking session:", error);
-        setLoading(false);
-      }
-    };
-
-    checkUser();
-
-    // Listen for auth changes (still use client-side listener for real-time updates)
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, session) => {
@@ -70,12 +102,11 @@ export default function SignInPageClient({
     return () => subscription.unsubscribe();
   }, [supabase.auth, push]);
 
-  // Auto-scroll carousel every 10 seconds
   useEffect(() => {
     if (galleryItems.length === 0) return;
 
     const interval = setInterval(() => {
-      setCurrentIndex((prev) => (prev + 1) % galleryItems.length);
+      dispatch({ type: "advance_carousel", count: galleryItems.length });
     }, 10000);
 
     return () => clearInterval(interval);
@@ -83,45 +114,45 @@ export default function SignInPageClient({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setEmailError("");
 
-    if (!email.trim()) {
-      setEmailError("Please enter your email");
+    if (!state.email.trim()) {
+      dispatch({ type: "submit_error", message: "Please enter your email" });
       return;
     }
 
-    if (!isValidEmail(email)) {
-      setEmailError("Please enter a valid email address");
+    if (!isValidEmail(state.email)) {
+      dispatch({
+        type: "submit_error",
+        message: "Please enter a valid email address",
+      });
       return;
     }
 
-    // If validation passes, send the magic link
-    setIsSending(true);
+    dispatch({ type: "submit_start" });
 
     try {
       const { error } = await supabase.auth.signInWithOtp({
-        email,
+        email: state.email,
         options: {
           emailRedirectTo: `${window.location.origin}/auth/callback?next=/myprofile/profile-details&post_login=1`,
         },
       });
 
       if (error) {
-        setEmailError(error.message);
-        setIsSending(false);
+        dispatch({ type: "submit_error", message: error.message });
       } else {
-        // Show success state
-        setIsSubmitted(true);
-        setIsSending(false);
+        dispatch({ type: "submit_success" });
       }
-    } catch (error) {
-      setEmailError("An unexpected error occurred. Please try again.");
-      setIsSending(false);
+    } catch {
+      dispatch({
+        type: "submit_error",
+        message: "An unexpected error occurred. Please try again.",
+      });
     }
   };
 
   const handleGoogleSignIn = async () => {
-    setIsGoogleLoading(true);
+    dispatch({ type: "google_start" });
     try {
       const { error } = await supabase.auth.signInWithOAuth({
         provider: "google",
@@ -132,24 +163,19 @@ export default function SignInPageClient({
 
       if (error) {
         console.error("Error initiating Google OAuth:", error);
-        setEmailError(error.message);
-        setIsGoogleLoading(false);
+        dispatch({ type: "google_error", message: error.message });
       }
-      // If successful, user will be redirected to Google, so we don't reset loading state
     } catch (error) {
       console.error("Unexpected error with Google OAuth:", error);
-      setEmailError("An unexpected error occurred. Please try again.");
-      setIsGoogleLoading(false);
+      dispatch({
+        type: "google_error",
+        message: "An unexpected error occurred. Please try again.",
+      });
     }
   };
 
   const currentItem =
-    galleryItems.length > 0 ? galleryItems[currentIndex] : null;
-
-  // Show nothing while checking or if redirecting
-  if (loading !== false) {
-    return null;
-  }
+    galleryItems.length > 0 ? galleryItems[state.currentIndex] : null;
 
   return (
     <div className="flex min-h-screen bg-background">
@@ -170,18 +196,18 @@ export default function SignInPageClient({
             your account.
           </p>
 
-          {!isSubmitted ? (
+          {!state.isSubmitted ? (
             <div className="space-y-6">
               {/* Google OAuth Button */}
               <Button
                 type="button"
                 variant="outline"
                 onClick={handleGoogleSignIn}
-                disabled={isGoogleLoading || isSending}
+                disabled={state.isGoogleLoading || state.isSending}
                 className="h-11 w-full border-2 font-sans"
               >
                 <Chrome className="mr-2 size-4" />
-                {isGoogleLoading ? "Connecting..." : "Continue with Google"}
+                {state.isGoogleLoading ? "Connecting..." : "Continue with Google"}
               </Button>
 
               {/* Divider */}
@@ -210,19 +236,18 @@ export default function SignInPageClient({
                     id="email"
                     type="email"
                     placeholder="Enter your email"
-                    value={email}
-                    onChange={(e) => {
-                      setEmail(e.target.value);
-                      setEmailError("");
-                    }}
+                    value={state.email}
+                    onChange={(e) =>
+                      dispatch({ type: "set_email", email: e.target.value })
+                    }
                     className={`w-full font-sans ${
-                      emailError ? "border-red-500" : ""
+                      state.emailError ? "border-red-500" : ""
                     }`}
-                    disabled={isSending || isGoogleLoading}
+                    disabled={state.isSending || state.isGoogleLoading}
                   />
-                  {emailError && (
+                  {state.emailError && (
                     <p className="font-sans text-red-500 text-sm">
-                      {emailError}
+                      {state.emailError}
                     </p>
                   )}
                 </div>
@@ -230,10 +255,10 @@ export default function SignInPageClient({
                 {/* Sign In Button */}
                 <Button
                   type="submit"
-                  disabled={isSending || isGoogleLoading}
+                  disabled={state.isSending || state.isGoogleLoading}
                   className="h-11 w-full bg-foreground font-sans text-background hover:bg-foreground/90"
                 >
-                  {isSending ? "Sending..." : "Send sign-in link"}
+                  {state.isSending ? "Sending..." : "Send sign-in link"}
                 </Button>
               </form>
             </div>
@@ -244,18 +269,14 @@ export default function SignInPageClient({
                   Check your email
                 </h2>
                 <p className="font-sans text-green-700">
-                  Check your inbox — we sent a secure sign-in link to{" "}
-                  <strong>{email}</strong>. Click it to sign in.
+                  Check your inbox. We sent a secure sign-in link to{" "}
+                  <strong>{state.email}</strong>. Click it to sign in.
                 </p>
               </div>
               <Button
                 variant="outline"
                 className="w-full bg-transparent font-sans"
-                onClick={() => {
-                  setIsSubmitted(false);
-                  setEmail("");
-                  setEmailError("");
-                }}
+                onClick={() => dispatch({ type: "reset_form" })}
               >
                 Try another email
               </Button>
@@ -277,6 +298,7 @@ export default function SignInPageClient({
                   src={currentItem.image || "/placeholder.svg"}
                   alt={currentItem.title}
                   fill
+                  sizes="50vw"
                   className="object-cover"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />

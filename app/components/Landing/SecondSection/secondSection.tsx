@@ -59,7 +59,7 @@ function SecondSectionSecondaryRow({
   return (
     <Link href={`/post/${post.slug}`} className="group flex items-start gap-3">
       {coverData?.src ? (
-        <div className="relative h-20 w-28 flex-shrink-0 overflow-hidden rounded-sm bg-black">
+        <div className="relative h-20 w-28 flex-shrink-0 overflow-hidden rounded-sm bg-neutral-950">
           <ImageRenderer
             src={coverData.src}
             alt={coverData.alt}
@@ -82,19 +82,20 @@ export default function SecondSection({
   variant = "light",
 }: SecondSectionProps) {
   // Filter out categories without required data and limit to 2 posts per category
-  const validCategories = categoriesData
-    .filter(
-      (category) => category.slug && category.name && category.posts.length > 0,
-    )
-    .map((category) => ({
-      ...category,
-      posts: category.posts.slice(0, 2),
-    }));
+  const validCategories = categoriesData.reduce<CategoryData[]>(
+    (acc, category) => {
+      if (category.slug && category.name && category.posts.length > 0) {
+        acc.push({ ...category, posts: category.posts.slice(0, 2) });
+      }
+      return acc;
+    },
+    [],
+  );
 
   return (
     <main
       className={`rounded-lg ${
-        variant === "dark" ? "bg-black" : "bg-background"
+        variant === "dark" ? "bg-neutral-950" : "bg-background"
       }`}
     >
       <div className="">
@@ -131,7 +132,7 @@ export default function SecondSection({
                             className="block"
                             aria-label={`Read article: ${mainPost?.title || "Featured article"}`}
                           >
-                            <div className="relative h-[300px] w-full overflow-hidden rounded-sm bg-black">
+                            <div className="relative h-[300px] w-full overflow-hidden rounded-sm bg-neutral-950">
                               <ImageRenderer
                                 src={coverData.src}
                                 alt={coverData.alt}
