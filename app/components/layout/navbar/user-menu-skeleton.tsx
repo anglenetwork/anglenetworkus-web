@@ -2,12 +2,12 @@ import { cn } from "@/lib/utils";
 import type { UserMenuProps } from "./user-menu";
 
 /** Matches the signed-in avatar trigger: white circle with a light border. */
-export function userMenuCircleClass(
+function userMenuCircleClass(
   variant: UserMenuProps["variant"] = "desktop",
 ) {
   return cn(
     "shrink-0 rounded-full border border-neutral-200 bg-white",
-    variant === "mobile" ? "h-10 w-10" : "h-10 w-10 lg:h-8 lg:w-8",
+    variant === "mobile" ? "size-10" : "size-10 lg:h-8 lg:w-8",
   );
 }
 

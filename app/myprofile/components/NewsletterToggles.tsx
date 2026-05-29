@@ -133,10 +133,10 @@ export function NewsletterToggles() {
       {AVAILABLE_NEWSLETTERS.map((newsletter) => (
         <div
           key={newsletter.key}
-          className="flex items-center justify-between rounded-lg border border-slate-200 px-4 py-4 transition-colors hover:border-slate-300"
+          className="flex items-center justify-between rounded-lg border border-slate-200 p-4 transition-colors hover:border-slate-300"
         >
           <div className="flex flex-1 items-start gap-4">
-            <Mail className="mt-0.5 h-5 w-5 flex-shrink-0 text-slate-600" />
+            <Mail className="mt-0.5 size-5 flex-shrink-0 text-slate-600" />
             <div>
               <h3 className="font-sans font-semibold text-slate-900">
                 {newsletter.label}

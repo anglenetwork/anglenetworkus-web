@@ -35,7 +35,7 @@ export default function BookmarkButton({
   articleSlug,
   variant = "default",
 }: BookmarkButtonProps) {
-  const router = useRouter();
+  const { push } = useRouter();
 
   const [isBookmarked, setIsBookmarked] = useState(false);
   const [statusLoading, setStatusLoading] = useState(false);
@@ -113,7 +113,7 @@ export default function BookmarkButton({
       if (res.status === 401) {
         // revert optimistic + go sign in
         setIsBookmarked(!optimistic);
-        router.push("/signin");
+        push("/signin");
         return;
       }
 
@@ -144,11 +144,11 @@ export default function BookmarkButton({
 
   const isCompact = variant === "compact";
   const buttonClass = cn(
-    isCompact ? "h-6 w-6 rounded-sm shadow-none" : "h-10 w-10 rounded-full",
+    isCompact ? "size-6 rounded-sm shadow-none" : "size-10 rounded-full",
     isBookmarked ? "text-yellow-500" : "text-black",
     isToggling && "opacity-60",
   );
-  const iconClass = isCompact ? "h-3 w-3" : "h-5 w-5";
+  const iconClass = isCompact ? "size-3" : "size-5";
 
   return (
     <Button

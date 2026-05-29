@@ -40,7 +40,7 @@ export function ProfileSidebar() {
                     isActive ? "bg-accent" : "hover:bg-accent",
                   )}
                 >
-                  <Icon className="h-4 w-4" />
+                  <Icon className="size-4" />
                   {item.name}
                 </Link>
               );
@@ -67,7 +67,7 @@ export function ProfileSidebar() {
                   isActive ? "bg-accent" : "hover:bg-accent",
                 )}
               >
-                <Icon className="h-4 w-4" />
+                <Icon className="size-4" />
                 {isActive ? <span>{item.name}</span> : null}
               </Link>
             );

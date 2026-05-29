@@ -31,7 +31,7 @@ export default function ArticleByline({
   const displayDate = updatedAt || date;
   const dateLabel = updatedAt && updatedAt !== date ? "Updated" : "Published";
   const avatarClassName = cn(
-    "h-9 w-9 shrink-0 overflow-hidden rounded-full",
+    "size-9 shrink-0 overflow-hidden rounded-full",
     showAvatar === "xl" && "hidden xl:block",
   );
 

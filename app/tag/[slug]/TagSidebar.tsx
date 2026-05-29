@@ -59,7 +59,7 @@ export default function TagSidebar({ popularReads, tag }: TagSidebarProps) {
                 className="group block"
               >
                 <div className="flex gap-3">
-                  <div className="relative h-16 w-16 flex-shrink-0 overflow-hidden rounded">
+                  <div className="relative size-16 flex-shrink-0 overflow-hidden rounded">
                     {(() => {
                       const coverData = getCoverImage(
                         post.cover,
@@ -80,7 +80,7 @@ export default function TagSidebar({ popularReads, tag }: TagSidebarProps) {
                         );
                       }
                       return (
-                        <div className="flex h-full w-full items-center justify-center bg-gray-200">
+                        <div className="flex size-full items-center justify-center bg-gray-200">
                           <span className="text-gray-400 text-xs">
                             No Image
                           </span>

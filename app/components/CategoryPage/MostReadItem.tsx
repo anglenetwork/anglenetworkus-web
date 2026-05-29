@@ -36,7 +36,7 @@ export function MostReadItem({
         </Link>
       )}
       <div className="flex gap-4">
-        <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-blue-100 font-sans font-semibold text-blue-700 text-sm">
+        <div className="flex size-8 flex-shrink-0 items-center justify-center rounded-full bg-blue-100 font-sans font-semibold text-blue-700 text-sm">
           {index + 1}
         </div>
         <div className="flex-1 space-y-2">

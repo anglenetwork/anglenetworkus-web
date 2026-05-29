@@ -23,7 +23,7 @@ export function SearchBar({
   inputRef,
   inputId,
 }: SearchBarProps) {
-  const router = useRouter();
+  const { push } = useRouter();
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -41,7 +41,7 @@ export function SearchBar({
         onSubmit(query.trim());
       } else {
         // Default behavior: navigate to search results page
-        router.push(
+        push(
           `/search?q=${encodeURIComponent(query.trim())}&sort=relevance&type=all&page=1`,
         );
       }
@@ -61,14 +61,15 @@ export function SearchBar({
         type="search"
         name="search"
         placeholder={placeholder}
+        aria-label={ariaLabel}
         className="h-12 w-full rounded-lg bg-neutral-100 pr-16 pl-6 font-sans text-foreground text-sm transition-all placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
       />
       <button
         type="submit"
-        className="absolute top-1/2 right-3 flex h-12 w-12 -translate-y-1/2 items-center justify-center rounded-lg transition-colors"
+        className="absolute top-1/2 right-3 flex size-12 -translate-y-1/2 items-center justify-center rounded-lg transition-colors"
         aria-label="Search"
       >
-        <Search className="h-6 w-6 text-neutral-600" strokeWidth={2.5} />
+        <Search className="size-6 text-neutral-600" strokeWidth={2.5} />
       </button>
     </form>
   );

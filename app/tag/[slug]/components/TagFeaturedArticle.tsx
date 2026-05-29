@@ -38,7 +38,7 @@ export function TagFeaturedArticle({
               className="object-cover"
             />
           ) : (
-            <div className="flex h-full w-full items-center justify-center bg-gray-200">
+            <div className="flex size-full items-center justify-center bg-gray-200">
               <span className="text-gray-400">No Image</span>
             </div>
           )}

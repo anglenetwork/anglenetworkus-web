@@ -94,7 +94,7 @@ function ClassicRelatedArticles({ posts }: { posts: ArticleSidebarPost[] }) {
                       );
                     }
                     return (
-                      <div className="flex h-full w-full items-center justify-center bg-neutral-200">
+                      <div className="flex size-full items-center justify-center bg-neutral-200">
                         <span className="text-neutral-500">No Image</span>
                       </div>
                     );
@@ -244,7 +244,7 @@ function ModernGridCard({ post }: { post: ArticleSidebarPost }) {
             className="object-cover transition-opacity group-hover:opacity-90"
           />
         ) : (
-          <div className="flex h-full w-full items-center justify-center rounded-lg bg-neutral-800">
+          <div className="flex size-full items-center justify-center rounded-lg bg-neutral-800">
             <span className="text-neutral-400 text-xs">No image</span>
           </div>
         )}

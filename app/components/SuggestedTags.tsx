@@ -14,7 +14,7 @@ export function SuggestedTags({ tags }: SuggestedTagsProps) {
     <div className="mt-8 border-neutral-200 border-t pt-6">
       <div className="mb-6">
         <div className="mb-4 flex items-center">
-          {/* <div className="w-2 h-2 bg-red-500 rounded-full mr-2"></div> */}
+          {/* <div className="size-2 bg-red-500 rounded-full mr-2"></div> */}
           <h2 className="font-medium font-sans text-neutral-900 text-sm uppercase tracking-wide">
             Suggested Topics
           </h2>
@@ -22,8 +22,8 @@ export function SuggestedTags({ tags }: SuggestedTagsProps) {
         {/* <div className="border-t border-black mb-6"></div> */}
       </div>
       <div className="flex flex-wrap gap-2">
-        {tags.map((tag, index) => (
-          <Link key={index} href={`/tag/${tag.slug}`}>
+        {tags.map((tag) => (
+          <Link key={tag.slug} href={`/tag/${tag.slug}`}>
             <Badge
               variant="secondary"
               className="cursor-pointer rounded-full border border-transparent bg-sectionAccent/10 px-4 py-2 font-medium font-sans text-sectionAccent text-sm uppercase transition-colors hover:border-sectionAccent hover:bg-sectionAccent/20 hover:text-black"

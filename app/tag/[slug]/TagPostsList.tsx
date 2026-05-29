@@ -104,7 +104,7 @@ export default function TagPostsList({
                       );
                     }
                     return (
-                      <div className="flex h-full w-full items-center justify-center bg-gray-200">
+                      <div className="flex size-full items-center justify-center bg-gray-200">
                         <span className="text-gray-400">No Image</span>
                       </div>
                     );
@@ -167,7 +167,7 @@ export default function TagPostsList({
             {pagination.hasPrevPage && (
               <Link href={`/tag/${tagSlug}?page=${pagination.currentPage - 1}`}>
                 <Button variant="outline" size="sm">
-                  <ChevronLeft className="mr-1 h-4 w-4" />
+                  <ChevronLeft className="mr-1 size-4" />
                   Previous
                 </Button>
               </Link>
@@ -181,7 +181,7 @@ export default function TagPostsList({
               <Link href={`/tag/${tagSlug}?page=${pagination.currentPage + 1}`}>
                 <Button variant="outline" size="sm">
                   Next
-                  <ChevronRight className="ml-1 h-4 w-4" />
+                  <ChevronRight className="ml-1 size-4" />
                 </Button>
               </Link>
             )}

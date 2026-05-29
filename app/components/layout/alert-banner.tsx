@@ -1,30 +1,34 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useEffect, useState, useTransition } from "react";
+import { useSyncExternalStore, useTransition } from "react";
 
 import { disableDraftMode } from "../actions";
 
+function getTopWindowSnapshot(): boolean {
+  try {
+    return window.top === window;
+  } catch {
+    return false;
+  }
+}
+
+function getTopWindowServerSnapshot(): boolean {
+  return false;
+}
+
+function subscribeTopWindow(_onStoreChange: () => void) {
+  return () => {};
+}
+
 export default function AlertBanner() {
-  const router = useRouter();
+  const { refresh } = useRouter();
   const [pending, startTransition] = useTransition();
-  const [shouldShow, setShouldShow] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    try {
-      // Check if we're in an iframe after hydration
-      if (typeof window !== "undefined") {
-        setShouldShow(window.top === window);
-      }
-    } catch (err) {
-      console.error("AlertBanner error:", err);
-      setError("Failed to initialize banner");
-    }
-  }, []);
-
-  // If there's an error, don't render the banner
-  if (error) return null;
+  const shouldShow = useSyncExternalStore(
+    subscribeTopWindow,
+    getTopWindowSnapshot,
+    getTopWindowServerSnapshot,
+  );
 
   if (!shouldShow) return null;
 
@@ -46,9 +50,7 @@ export default function AlertBanner() {
                 try {
                   startTransition(() =>
                     disableDraftMode().then(() => {
-                      if (router && typeof router.refresh === "function") {
-                        router.refresh();
-                      }
+                      refresh();
                     }),
                   );
                 } catch (err) {

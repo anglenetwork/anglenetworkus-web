@@ -155,7 +155,7 @@ export default function FifthSection({ categoriesData }: FifthSectionProps) {
           className="absolute top-1/2 left-0 z-10 -translate-y-1/2 bg-white shadow-lg hover:bg-gray-50"
           onClick={scrollLeft}
         >
-          <ChevronLeft className="h-4 w-4" />
+          <ChevronLeft className="size-4" />
         </Button>
 
         <Button
@@ -165,7 +165,7 @@ export default function FifthSection({ categoriesData }: FifthSectionProps) {
           className="absolute top-1/2 right-0 z-10 -translate-y-1/2 bg-white shadow-lg hover:bg-gray-50"
           onClick={scrollRight}
         >
-          <ChevronRight className="h-4 w-4" />
+          <ChevronRight className="size-4" />
         </Button>
 
         <div

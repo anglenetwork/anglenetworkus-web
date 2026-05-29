@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -50,13 +50,7 @@ export function ProfileEditForm({
     dateOfBirth?: string;
   }>({});
 
-  const router = useRouter();
-
-  useEffect(() => {
-    setFirstName(initialFirstName ?? "");
-    setLastName(initialLastName ?? "");
-    setDateOfBirth(initialDateOfBirth ?? "");
-  }, [initialFirstName, initialLastName, initialDateOfBirth]);
+  const { refresh } = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -136,7 +130,7 @@ export function ProfileEditForm({
       if (onUpdate) {
         setTimeout(() => onUpdate(), 500);
       } else {
-        setTimeout(() => router.refresh(), 1000);
+        setTimeout(() => refresh(), 1000);
       }
     } catch (error: any) {
       const isAbort =

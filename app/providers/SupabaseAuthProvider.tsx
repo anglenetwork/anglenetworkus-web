@@ -2,7 +2,7 @@
 
 import React, {
   createContext,
-  useContext,
+  use,
   useEffect,
   useMemo,
   useRef,
@@ -93,5 +93,5 @@ export function SupabaseAuthProvider({
 }
 
 export function useSupabaseAuth() {
-  return useContext(Ctx);
+  return use(Ctx);
 }

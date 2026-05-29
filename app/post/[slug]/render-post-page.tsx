@@ -1,24 +1,11 @@
 import { notFound } from "next/navigation";
-import type { Metadata } from "next";
 import ArticleFamilyPage from "@/app/components/article-family/ArticleFamilyPage";
 import BottomArticleModule, {
   RELATED_MODULE_MODERN_TOTAL,
 } from "@/app/components/PostPage/BottomArticleModule";
 import { SuggestedTags } from "@/app/components/SuggestedTags";
 import { fetchArticleFamilyPage } from "@/app/lib/article-family/fetch";
-import { buildArticleFamilyMetadata } from "@/app/lib/article-family/metadata";
 import { loadLatestInCategory } from "@/app/lib/article-family/sidebars";
-
-export async function buildPostPageMetadata(
-  slug: string,
-  id?: string,
-): Promise<Metadata> {
-  const article = await fetchArticleFamilyPage({ type: "post", slug, id });
-  if (!article) {
-    return { title: "Post Not Found" };
-  }
-  return buildArticleFamilyMetadata(article);
-}
 
 export async function RenderPostPage({
   slug,
@@ -38,12 +25,15 @@ export async function RenderPostPage({
   );
 
   const tagsForSuggested =
-    article.tags
-      ?.filter((tag) => tag.title && tag.slug)
-      .map((tag) => ({
-        name: tag.title as string,
-        slug: tag.slug as string,
-      })) ?? [];
+    article.tags?.reduce<Array<{ name: string; slug: string }>>(
+      (acc, tag) => {
+        if (tag.title && tag.slug) {
+          acc.push({ name: tag.title, slug: tag.slug });
+        }
+        return acc;
+      },
+      [],
+    ) ?? [];
 
   const categoryName = article.category?.title || undefined;
   const categoryHref = article.category?.slug

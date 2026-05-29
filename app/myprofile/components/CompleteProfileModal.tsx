@@ -97,6 +97,7 @@ export function CompleteProfileModal({
 
         <div className="mt-4 flex min-h-0 flex-1 flex-col">
           <ProfileEditForm
+            key={`${userId}:${initialFirstName ?? ""}:${initialLastName ?? ""}:${initialDateOfBirth ?? ""}`}
             userId={userId}
             initialFirstName={initialFirstName}
             initialLastName={initialLastName}

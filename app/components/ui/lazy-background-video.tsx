@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { getPexelsVideoPosterUrl } from "@/lib/pexels-video";
 
 export type LazyBackgroundVideoLoadStrategy =
@@ -19,6 +19,20 @@ interface LazyBackgroundVideoProps {
   /** Prioritize poster fetch (above-the-fold heroes). */
   posterPriority?: boolean;
   onVideoFailed?: () => void;
+}
+
+function subscribeToReducedMotion(onStoreChange: () => void) {
+  const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
+  mq.addEventListener("change", onStoreChange);
+  return () => mq.removeEventListener("change", onStoreChange);
+}
+
+function getReducedMotionSnapshot() {
+  return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+}
+
+function getReducedMotionServerSnapshot() {
+  return false;
 }
 
 function StaticBackdrop() {
@@ -42,27 +56,23 @@ function scheduleIdle(callback: () => void): () => void {
 export function LazyBackgroundVideo({
   videoSrc,
   posterSrc,
-  className = "absolute top-0 left-0 h-full w-full object-cover",
+  className = "absolute top-0 left-0 size-full object-cover",
   loadStrategy = "viewport",
   posterPriority = false,
   onVideoFailed,
 }: LazyBackgroundVideoProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
-  const [reduceMotion, setReduceMotion] = useState(false);
+  const reduceMotion = useSyncExternalStore(
+    subscribeToReducedMotion,
+    getReducedMotionSnapshot,
+    getReducedMotionServerSnapshot,
+  );
   const [videoFailed, setVideoFailed] = useState(false);
   const [attachedSrc, setAttachedSrc] = useState<string | null>(null);
 
   const poster = posterSrc ?? getPexelsVideoPosterUrl(videoSrc) ?? undefined;
   const showVideo = !reduceMotion && !videoFailed && attachedSrc;
-
-  useEffect(() => {
-    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
-    const update = () => setReduceMotion(mq.matches);
-    update();
-    mq.addEventListener("change", update);
-    return () => mq.removeEventListener("change", update);
-  }, []);
 
   useEffect(() => {
     if (reduceMotion || videoFailed) return;
@@ -138,6 +148,7 @@ export function LazyBackgroundVideo({
           loop
           muted
           playsInline
+          aria-hidden
           className={`${className} ${showVideo ? "opacity-100" : "opacity-0"}`}
           src={attachedSrc ?? undefined}
           onError={handleVideoError}

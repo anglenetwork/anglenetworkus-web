@@ -1,106 +1,25 @@
 import { NextResponse } from "next/server";
-import { articleFamilyCanonicalHref } from "@/app/lib/article-family/routes";
-import { isArticleFamilyDocType } from "@/app/lib/article-family/normalize";
+import { listUserBookmarks } from "@/app/lib/bookmarks/list-user-bookmarks";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
-import { sanityFetch } from "@/sanity/lib/fetch";
-import { articleFamilyBookmarksByIdsQuery } from "@/sanity/lib/article-family-queries";
-import { getCoverImage } from "@/sanity/lib/utils";
 
 export const dynamic = "force-dynamic";
 
-export async function GET(req: Request) {
+export async function GET() {
   const supabase = await createSupabaseServerClient();
-
   const { data: userData, error: userErr } = await supabase.auth.getUser();
-  const user = userData?.user;
 
-  if (userErr || !user) {
+  if (userErr || !userData?.user) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const { data, error } = await supabase
-    .from("bookmarks")
-    .select("id, article_id, article_slug, created_at")
-    .eq("user_id", user.id)
-    .order("created_at", { ascending: false });
-
-  if (error) {
+  try {
+    const bookmarks = await listUserBookmarks();
+    return NextResponse.json({ bookmarks }, { status: 200 });
+  } catch (error) {
+    console.error("Error listing bookmarks:", error);
     return NextResponse.json(
-      { error: error.message, bookmarks: [] },
+      { error: "Failed to list bookmarks", bookmarks: [] },
       { status: 500 },
     );
   }
-
-  if (!data || data.length === 0) {
-    return NextResponse.json({ bookmarks: [] }, { status: 200 });
-  }
-
-  // Extract article IDs from bookmarks
-  const articleIds = data.map((bookmark) => bookmark.article_id);
-
-  // Fetch article data from Sanity
-  let articlesData: Record<string, any> = {};
-  try {
-    const articles = await sanityFetch({
-      query: articleFamilyBookmarksByIdsQuery,
-      params: { ids: articleIds },
-    });
-
-    // Create a map of article_id -> article data for quick lookup
-    if (Array.isArray(articles)) {
-      articles.forEach((article: any) => {
-        if (article?._id) {
-          articlesData[article._id] = article;
-        }
-      });
-    }
-  } catch (sanityError) {
-    console.error("Error fetching articles from Sanity:", sanityError);
-    // Continue with empty articlesData - bookmarks will show without article data
-  }
-
-  // Combine bookmark data with article data
-  const bookmarksWithArticles = data.map((bookmark) => {
-    const article = articlesData[bookmark.article_id];
-    const coverImage = article?.cover
-      ? getCoverImage(article.cover, article.title || "Article")
-      : null;
-
-    const articleType =
-      typeof article?._type === "string" &&
-      isArticleFamilyDocType(article._type)
-        ? article._type
-        : null;
-    const slug =
-      typeof article?.slug === "string" ? article.slug : bookmark.article_slug;
-    const articleHref =
-      articleType && slug
-        ? articleFamilyCanonicalHref(articleType, slug)
-        : slug
-          ? `/post/${slug}`
-          : null;
-
-    return {
-      id: bookmark.id,
-      article_id: bookmark.article_id,
-      article_slug: bookmark.article_slug,
-      created_at: bookmark.created_at,
-      // Article data from Sanity
-      article_title: article?.title || null,
-      article_type: articleType,
-      article_href: articleHref,
-      article_date: article?.date || null,
-      article_cover: coverImage
-        ? {
-            src: coverImage.src,
-            alt: coverImage.alt,
-          }
-        : null,
-    };
-  });
-
-  return NextResponse.json(
-    { bookmarks: bookmarksWithArticles },
-    { status: 200 },
-  );
 }

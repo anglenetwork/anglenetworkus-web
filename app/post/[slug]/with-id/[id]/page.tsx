@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
-import { RenderPostPage, buildPostPageMetadata } from "../../render-post-page";
+import { RenderPostPage } from "../../render-post-page";
+import { buildPostPageMetadata } from "../../post-page-metadata";
 
 export const dynamic = "force-dynamic";
 

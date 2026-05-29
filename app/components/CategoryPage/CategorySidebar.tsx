@@ -121,7 +121,7 @@ export default function CategorySidebar({
         <div className="space-y-4">
           {trendingPosts.map((post, index) => (
             <div key={post._id} className="flex items-start gap-3">
-              <div className="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-blue-600 font-bold text-white text-xs">
+              <div className="flex size-6 flex-shrink-0 items-center justify-center rounded-full bg-blue-600 font-bold text-white text-xs">
                 {index + 1}
               </div>
               <div className="min-w-0 flex-1">
@@ -167,9 +167,10 @@ export default function CategorySidebar({
           <input
             type="email"
             placeholder="Enter your email"
+            aria-label="Email address for newsletter"
             className="w-full rounded border border-gray-700 bg-gray-800 px-3 py-2 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
-          <button className="w-full rounded bg-blue-600 px-4 py-2 font-medium text-sm text-white transition-colors hover:bg-blue-700">
+          <button type="button" className="w-full rounded bg-blue-600 px-4 py-2 font-medium text-sm text-white transition-colors hover:bg-blue-700">
             Subscribe
           </button>
         </div>

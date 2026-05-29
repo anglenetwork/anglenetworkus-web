@@ -19,12 +19,12 @@ export default function SocialShareButtons({
   const encodedUrl = encodeURIComponent(url);
   const isCompact = variant === "compact";
   const buttonClass = cn(
-    isCompact ? "h-6 w-6 rounded-sm shadow-none" : "h-10 w-10 rounded-full",
+    isCompact ? "size-6 rounded-sm shadow-none" : "size-10 rounded-full",
   );
-  const iconClass = isCompact ? "h-3 w-3" : "h-5 w-5";
+  const iconClass = isCompact ? "size-3" : "size-5";
   const xIconClass = isCompact
-    ? "h-3 w-3 fill-current"
-    : "h-4 w-4 fill-current";
+    ? "size-3 fill-current"
+    : "size-4 fill-current";
 
   const handleCopyLink = async () => {
     try {

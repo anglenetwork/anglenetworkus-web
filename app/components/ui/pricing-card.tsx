@@ -120,10 +120,10 @@ const PricingCard: React.FC<PricingCardProps> = ({
 
       {/* Features */}
       <div className="flex-1 space-y-4">
-        {features.map((feature, index) => (
-          <div key={index} className="flex items-start gap-3">
+        {features.map((feature) => (
+          <div key={feature} className="flex items-start gap-3">
             <Check
-              className={`h-5 w-5 flex-shrink-0 ${hasCustomBackground || recommended ? "text-red-200" : "text-emerald-600"} mt-0.5`}
+              className={`size-5 flex-shrink-0 ${hasCustomBackground || recommended ? "text-red-200" : "text-emerald-600"} mt-0.5`}
             />
             <span className={`text-base ${secondaryTextClass}`}>{feature}</span>
           </div>

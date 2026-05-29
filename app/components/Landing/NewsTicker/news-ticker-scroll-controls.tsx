@@ -8,14 +8,15 @@ export function NewsTickerScrollControls({ itemCount }: { itemCount: number }) {
   const [showRightArrow, setShowRightArrow] = useState(true);
   const showLeftRef = useRef(false);
   const showRightRef = useRef(true);
-  const rafRef = useRef<number | null>(null);
 
   useEffect(() => {
     const container = document.getElementById("news-ticker-scroll");
     if (!container) return;
 
+    let pendingRaf: number | null = null;
+
     const applyScrollState = () => {
-      rafRef.current = null;
+      pendingRaf = null;
       const scrollLeft = container.scrollLeft;
       const maxScroll = container.scrollWidth - container.clientWidth;
       const nextLeft = scrollLeft > 10;
@@ -32,8 +33,8 @@ export function NewsTickerScrollControls({ itemCount }: { itemCount: number }) {
     };
 
     const handleScroll = () => {
-      if (rafRef.current !== null) return;
-      rafRef.current = requestAnimationFrame(applyScrollState);
+      if (pendingRaf !== null) return;
+      pendingRaf = requestAnimationFrame(applyScrollState);
     };
 
     container.addEventListener("scroll", handleScroll, { passive: true });
@@ -47,8 +48,8 @@ export function NewsTickerScrollControls({ itemCount }: { itemCount: number }) {
 
     return () => {
       container.removeEventListener("scroll", handleScroll);
-      if (rafRef.current !== null) {
-        cancelAnimationFrame(rafRef.current);
+      if (pendingRaf !== null) {
+        cancelAnimationFrame(pendingRaf);
       }
       if (typeof window.cancelIdleCallback === "function") {
         window.cancelIdleCallback(idleId as number);
@@ -78,20 +79,22 @@ export function NewsTickerScrollControls({ itemCount }: { itemCount: number }) {
     <>
       {showLeftArrow && (
         <button
+          type="button"
           onClick={scrollToPrev}
           className="absolute top-1/2 left-2 -translate-y-1/2 rounded-full bg-white p-1 shadow-md md:hidden"
           aria-label="Scroll to previous article"
         >
-          <ChevronLeft className="h-5 w-5" />
+          <ChevronLeft className="size-5" />
         </button>
       )}
       {showRightArrow && (
         <button
+          type="button"
           onClick={scrollToNext}
           className="absolute top-1/2 right-2 -translate-y-1/2 rounded-full bg-white p-1 shadow-md md:hidden"
           aria-label="Scroll to next article"
         >
-          <ChevronRight className="h-5 w-5" />
+          <ChevronRight className="size-5" />
         </button>
       )}
     </>

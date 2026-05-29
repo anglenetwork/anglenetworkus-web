@@ -1,7 +1,7 @@
 "use client";
 
 import { useSearchParams, useRouter } from "next/navigation";
-import { useEffect, useState, useCallback } from "react";
+import { Suspense, useEffect, useState, useCallback } from "react";
 import { SearchBar } from "../components/ui/search-bar";
 import { Button } from "../components/ui/button";
 import {
@@ -87,14 +87,15 @@ function buildSearchPath(
   return qs ? `/search?${qs}` : "/search";
 }
 
-export default function SearchResults() {
+function SearchResultsContent() {
   const searchParams = useSearchParams();
-  const router = useRouter();
+  const { get } = searchParams;
+  const { push, refresh } = useRouter();
 
-  const q = (searchParams.get("q") || "").trim();
-  const sort = parseSort(searchParams.get("sort"));
-  const type = parseType(searchParams.get("type"));
-  const page = parsePage(searchParams.get("page"));
+  const q = (get("q") || "").trim();
+  const sort = parseSort(get("sort"));
+  const type = parseType(get("type"));
+  const page = parsePage(get("page"));
 
   const [payload, setPayload] = useState<SearchApiResponse | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -114,9 +115,9 @@ export default function SearchResults() {
 
   const navigate = useCallback(
     (updates: Record<string, string | null>) => {
-      router.push(buildSearchPath(searchParams, updates));
+      push(buildSearchPath(searchParams, updates));
     },
-    [router, searchParams],
+    [push, searchParams],
   );
 
   const handleSort = (next: SortParam) => {
@@ -142,7 +143,7 @@ export default function SearchResults() {
   const handleNewSearch = (query: string) => {
     const trimmed = query.trim();
     if (!trimmed) return;
-    router.push(
+    push(
       `/search?q=${encodeURIComponent(trimmed)}&sort=relevance&type=all&page=1`,
     );
   };
@@ -226,7 +227,7 @@ export default function SearchResults() {
                     variant="outline"
                     className="shrink-0 rounded-lg font-sans"
                   >
-                    <ListFilter className="h-4 w-4" />
+                    <ListFilter className="size-4" />
                     Filter
                   </Button>
                 </DialogTrigger>
@@ -240,12 +241,12 @@ export default function SearchResults() {
                   }}
                 >
                   <div className="flex items-center px-6 py-4">
-                    <div className="h-12 w-12 shrink-0" aria-hidden />
+                    <div className="size-12 shrink-0" aria-hidden />
                     <DialogTitle className="flex-1 text-center font-semibold text-xl leading-none">
                       Filter by type
                     </DialogTitle>
-                    <DialogClose className="flex h-12 w-12 shrink-0 items-center justify-center rounded-md opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2">
-                      <X className="h-6 w-6" />
+                    <DialogClose className="flex size-12 shrink-0 items-center justify-center rounded-md opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2">
+                      <X className="size-6" />
                       <span className="sr-only">Close</span>
                     </DialogClose>
                   </div>
@@ -265,7 +266,7 @@ export default function SearchResults() {
                           <RadioGroupItem
                             value={value}
                             id={`search-type-${value}`}
-                            className="h-5 w-5 border-neutral-300 text-red-600 focus-visible:ring-red-600 data-[state=checked]:border-red-600 [&_svg]:fill-red-600"
+                            className="size-5 border-neutral-300 text-red-600 focus-visible:ring-red-600 data-[state=checked]:border-red-600 [&_svg]:fill-red-600"
                           />
                           <Label
                             htmlFor={`search-type-${value}`}
@@ -299,7 +300,7 @@ export default function SearchResults() {
                   className="h-9 w-auto shrink-0 justify-start gap-2 rounded-lg px-3 font-sans [&>span]:hidden"
                   aria-label={`Sort, ${sort === "newest" ? "Newest" : "Relevance"} selected`}
                 >
-                  <ArrowDownUp className="h-4 w-4 shrink-0" />
+                  <ArrowDownUp className="size-4 shrink-0" />
                   Sort
                 </SelectTrigger>
                 <SelectContent>
@@ -399,7 +400,7 @@ export default function SearchResults() {
                 <p className="mb-4 text-red-500">{error}</p>
                 <Button
                   type="button"
-                  onClick={() => router.refresh()}
+                  onClick={() => refresh()}
                   className="px-4 py-2"
                 >
                   Try again
@@ -442,10 +443,10 @@ export default function SearchResults() {
                       type="button"
                       variant="outline"
                       disabled={page <= 1}
-                      className="rounded-xl bg-transparent px-6 py-6 font-medium font-sans text-base text-neutral-900"
+                      className="rounded-xl bg-transparent p-6 font-medium font-sans text-base text-neutral-900"
                       onClick={() => handlePage(page - 1)}
                     >
-                      <ChevronLeft className="mr-2 h-5 w-5" />
+                      <ChevronLeft className="mr-2 size-5" />
                       Prev
                     </Button>
                     <span className="font-sans text-muted-foreground text-sm">
@@ -455,11 +456,11 @@ export default function SearchResults() {
                       type="button"
                       variant="outline"
                       disabled={page >= totalPages}
-                      className="rounded-xl bg-transparent px-6 py-6 font-medium font-sans text-base text-neutral-900"
+                      className="rounded-xl bg-transparent p-6 font-medium font-sans text-base text-neutral-900"
                       onClick={() => handlePage(page + 1)}
                     >
                       Next
-                      <ChevronRight className="ml-2 h-5 w-5" />
+                      <ChevronRight className="ml-2 size-5" />
                     </Button>
                   </div>
                 ) : null}
@@ -469,5 +470,26 @@ export default function SearchResults() {
         </>
       )}
     </div>
+  );
+}
+
+function SearchResultsFallback() {
+  return (
+    <div className="animate-pulse">
+      <div className="mb-8 h-12 rounded-lg bg-gray-200" />
+      <div className="space-y-4">
+        <div className="h-6 w-1/3 rounded bg-gray-200" />
+        <div className="h-32 rounded-lg bg-gray-200" />
+        <div className="h-32 rounded-lg bg-gray-200" />
+      </div>
+    </div>
+  );
+}
+
+export default function SearchResults() {
+  return (
+    <Suspense fallback={<SearchResultsFallback />}>
+      <SearchResultsContent />
+    </Suspense>
   );
 }

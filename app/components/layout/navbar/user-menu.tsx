@@ -56,6 +56,38 @@ function getUserInitials(
   return user.email?.[0].toUpperCase() || "U";
 }
 
+function UserMenuSignInButton({
+  isMobile,
+  signInButtonVariant,
+  onSignInNavigate,
+}: {
+  isMobile: boolean;
+  signInButtonVariant: SignInButtonVariant;
+  onSignInNavigate?: () => void;
+}) {
+  const isLink = signInButtonVariant === "link";
+
+  return (
+    <Button
+      asChild
+      variant={isLink ? "link" : "signIn"}
+      size={isMobile && !isLink ? "sm" : "default"}
+      className={cn(
+        "shrink-0",
+        isLink &&
+          "h-auto justify-start p-0 font-bold text-xl hover:text-primary",
+        isMobile &&
+          !isLink &&
+          "h-9 px-3 font-sans text-xs sm:px-4 sm:text-sm",
+      )}
+    >
+      <Link href="/signin" onClick={onSignInNavigate}>
+        Sign in
+      </Link>
+    </Button>
+  );
+}
+
 export function UserMenu({
   variant = "desktop",
   hideSignIn = false,
@@ -73,7 +105,7 @@ export function UserMenu({
   >("idle");
   const [loading, setLoading] = useState(true);
   const [signingOut, setSigningOut] = useState(false);
-  const router = useRouter();
+  const { refresh, push } = useRouter();
 
   // Auth session — getSession for initial state; onAuthStateChange for updates only.
   // Avoid DB calls inside the auth callback (Supabase can deadlock).
@@ -83,11 +115,12 @@ export function UserMenu({
     const syncUserFromSession = (session: { user: User } | null) => {
       const nextUser = session?.user ?? null;
       setUser(nextUser);
-      setAvatarUrl(
+      const nextAvatarUrl =
         nextUser?.user_metadata?.avatar_url ||
-          nextUser?.user_metadata?.picture ||
-          null,
-      );
+        nextUser?.user_metadata?.picture ||
+        null;
+      setAvatarUrl(nextAvatarUrl);
+      setAvatarImageStatus(nextAvatarUrl ? "loading" : "idle");
       if (!nextUser) {
         setFirstName(null);
         setLastName(null);
@@ -136,10 +169,6 @@ export function UserMenu({
     };
   }, [supabase, user]);
 
-  useEffect(() => {
-    setAvatarImageStatus(avatarUrl ? "loading" : "idle");
-  }, [avatarUrl]);
-
   const handleSignOut = async () => {
     if (signingOut) return;
     setSigningOut(true);
@@ -165,14 +194,14 @@ export function UserMenu({
       setLastName(null);
       setAvatarUrl(null);
 
-      router.refresh();
-      router.push("/signin");
+      refresh();
+      push("/signin");
     } catch (err) {
       console.error("Error signing out:", err);
       try {
         await supabase.auth.signOut();
-        router.refresh();
-        router.push("/signin");
+        refresh();
+        push("/signin");
       } catch (e) {
         console.error("Fallback client signOut failed:", e);
       }
@@ -188,36 +217,12 @@ export function UserMenu({
   const isMobile = variant === "mobile";
 
   const buttonSize = isMobile
-    ? "h-10 w-10"
-    : "transition-all duration-500 ease-out lg:h-8 lg:w-8 h-10 w-10";
+    ? "size-10"
+    : "transition-all duration-500 ease-out lg:h-8 lg:w-8 size-10";
 
   const avatarSize = isMobile
-    ? "h-8 w-8"
-    : "transition-all duration-500 ease-out lg:h-7 lg:w-7 h-8 w-8";
-
-  const renderSignIn = () => {
-    const isLink = signInButtonVariant === "link";
-
-    return (
-      <Button
-        asChild
-        variant={isLink ? "link" : "signIn"}
-        size={isMobile && !isLink ? "sm" : "default"}
-        className={cn(
-          "shrink-0",
-          isLink &&
-            "h-auto justify-start p-0 font-bold text-xl hover:text-primary",
-          isMobile &&
-            !isLink &&
-            "h-9 px-3 font-sans text-xs sm:px-4 sm:text-sm",
-        )}
-      >
-        <Link href="/signin" onClick={onSignInNavigate}>
-          Sign in
-        </Link>
-      </Button>
-    );
-  };
+    ? "size-8"
+    : "transition-all duration-500 ease-out lg:h-7 lg:w-7 size-8";
 
   if (loading) {
     return <UserMenuSkeleton variant={variant} />;
@@ -225,12 +230,26 @@ export function UserMenu({
 
   if (signInOnly) {
     if (user) return null;
-    return <div className="border-border border-b pb-6">{renderSignIn()}</div>;
+    return (
+      <div className="border-border border-b pb-6">
+        <UserMenuSignInButton
+          isMobile={isMobile}
+          signInButtonVariant={signInButtonVariant}
+          onSignInNavigate={onSignInNavigate}
+        />
+      </div>
+    );
   }
 
   if (!user) {
     if (hideSignIn) return null;
-    return renderSignIn();
+    return (
+      <UserMenuSignInButton
+        isMobile={isMobile}
+        signInButtonVariant={signInButtonVariant}
+        onSignInNavigate={onSignInNavigate}
+      />
+    );
   }
 
   return (

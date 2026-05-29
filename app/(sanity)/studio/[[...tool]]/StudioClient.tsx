@@ -12,7 +12,7 @@ const NextStudio = dynamic(
     ssr: false,
     loading: () => (
       <div className="flex h-screen items-center justify-center">
-        <div className="text-lg">Loading Sanity Studio...</div>
+        <div className="text-lg">Loading Sanity Studio…</div>
       </div>
     ),
   },
@@ -30,6 +30,7 @@ export default function StudioClient() {
     <div className="relative">
       {/* Sign Out Button - Fixed position in top right */}
       <button
+        type="button"
         onClick={handleSignOut}
         className="fixed bottom-16 left-4 z-50 rounded-md bg-red-600 px-4 py-2 font-medium font-sans text-sm text-white shadow-lg transition-colors hover:bg-red-700"
         aria-label="Sign out"

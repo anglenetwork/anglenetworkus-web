@@ -1,4 +1,14 @@
+import type { Metadata } from "next";
 import VideoBanner from "@/app/components/ui/video-banner";
+import { staticPageMetadata } from "@/app/lib/seo/static-page-metadata";
+
+export async function generateMetadata(): Promise<Metadata> {
+  return staticPageMetadata(
+  "Advertise With Us",
+  "Partner with The Angle to reach engaged readers across news, opinion, and analysis.",
+  "/company/advertise-with-us",
+);
+}
 
 export default function AdvertiseWithUsPage() {
   const videoSrc =
