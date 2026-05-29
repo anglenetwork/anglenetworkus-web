@@ -51,7 +51,7 @@ export function JustInImageCarousel({
 
             return (
               <ImageRenderer
-                key={idx}
+                key={image.src}
                 src={image.src}
                 alt={image.alt}
                 width={600}
@@ -75,9 +75,9 @@ export function JustInImageCarousel({
           )}
           {images.length > 1 && (
             <div className="absolute right-3 bottom-3 z-20 flex gap-1.5">
-              {images.map((_, idx) => (
+              {images.map((image, idx) => (
                 <button
-                  key={idx}
+                  key={image.src}
                   type="button"
                   onClick={(e) => {
                     e.preventDefault();

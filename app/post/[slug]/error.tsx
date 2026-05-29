@@ -8,7 +8,7 @@ export default function Error({ error }: { error: Error }) {
       <div className="mx-auto max-w-md px-4 text-center">
         <div className="mb-6">
           <svg
-            className="mx-auto h-16 w-16 text-gray-400"
+            className="mx-auto size-16 text-gray-400"
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"
@@ -33,6 +33,7 @@ export default function Error({ error }: { error: Error }) {
 
         <div className="space-y-3">
           <button
+            type="button"
             onClick={() => window.location.reload()}
             className="w-full rounded-lg bg-blue-600 px-4 py-2 text-white transition-colors hover:bg-blue-700"
           >

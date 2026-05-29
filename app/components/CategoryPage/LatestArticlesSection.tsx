@@ -86,7 +86,7 @@ function LatestArticleItem({ article }: { article: Article }) {
                   <time dateTime={article.publishedAt}>{dateLabel}</time>
                 ) : null}
                 <div className="flex items-center gap-1 font-sans text-neutral-500">
-                  <Clock className="h-3 w-3" />
+                  <Clock className="size-3" />
                   <span>{article.readTime}</span>
                 </div>
               </div>

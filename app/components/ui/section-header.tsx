@@ -15,6 +15,39 @@ interface SectionHeaderProps {
     | "gradient-fade";
 }
 
+interface SectionHeaderAccentProps {
+  accentStyle: SectionHeaderProps["accentStyle"];
+  variant: SectionHeaderProps["variant"];
+}
+
+function SectionHeaderAccent({
+  accentStyle = "gradient-fade",
+  variant = "light",
+}: SectionHeaderAccentProps) {
+  switch (accentStyle) {
+    case "geometric-square":
+      return <div className="size-2 bg-red-600 dark:bg-slate-100" />;
+    case "small-dot":
+      return (
+        <span
+          className={`size-1.5 shrink-0 ${
+            variant === "dark" ? "bg-white" : "bg-neutral-900"
+          }`}
+          aria-hidden
+        />
+      );
+    case "red-gradient":
+      return (
+        <div className="h-0.5 w-full bg-gradient-to-r from-red-600 to-transparent" />
+      );
+    case "gradient-fade":
+    default:
+      return (
+        <div className="h-1 w-24 bg-gradient-to-r from-red-600 to-slate-900/0 dark:from-slate-100 dark:to-slate-100/0" />
+      );
+  }
+}
+
 export function SectionHeader({
   title,
   subtitle,
@@ -31,31 +64,6 @@ export function SectionHeader({
     href && "cursor-pointer",
   );
 
-  const renderAccent = () => {
-    switch (accentStyle) {
-      case "geometric-square":
-        return <div className="h-2 w-2 bg-red-600 dark:bg-slate-100" />;
-      case "small-dot":
-        return (
-          <span
-            className={`h-1.5 w-1.5 shrink-0 ${
-              variant === "dark" ? "bg-white" : "bg-neutral-900"
-            }`}
-            aria-hidden
-          />
-        );
-      case "red-gradient":
-        return (
-          <div className="h-0.5 w-full bg-gradient-to-r from-red-600 to-transparent" />
-        );
-      case "gradient-fade":
-      default:
-        return (
-          <div className="h-1 w-24 bg-gradient-to-r from-red-600 to-slate-900/0 dark:from-slate-100 dark:to-slate-100/0" />
-        );
-    }
-  };
-
   const isInlineAccent =
     accentStyle === "geometric-square" || accentStyle === "small-dot";
 
@@ -67,7 +75,7 @@ export function SectionHeader({
     const content = (
       <div className="mb-6 flex w-full flex-col items-start gap-3">
         <div className={`flex items-center ${rowGap}`}>
-          {renderAccent()}
+          <SectionHeaderAccent accentStyle={accentStyle} variant={variant} />
           <h2
             className={cn(
               fontSize,
@@ -111,7 +119,7 @@ export function SectionHeader({
       >
         {title}
       </h2>
-      {renderAccent()}
+      <SectionHeaderAccent accentStyle={accentStyle} variant={variant} />
     </div>
   );
 

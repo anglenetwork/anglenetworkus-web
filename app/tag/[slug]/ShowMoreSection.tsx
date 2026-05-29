@@ -100,7 +100,7 @@ export default function ShowMoreSection({
             ) : (
               <>
                 Show more
-                <ChevronDown className="h-4 w-4" />
+                <ChevronDown className="size-4" />
               </>
             )}
           </Button>

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { CompleteProfileModal } from "../components/CompleteProfileModal";
@@ -27,7 +27,7 @@ function formatDateOfBirth(dob: string) {
   });
 }
 
-export default function ProfileDetailsClient({
+function ProfileDetailsClientContent({
   userId,
   email,
   profile,
@@ -38,40 +38,32 @@ export default function ProfileDetailsClient({
   profile: Profile | null;
   namePrefill?: { firstName: string | null; lastName: string | null };
 }) {
-  const router = useRouter();
-  const searchParams = useSearchParams();
-  const [showRequiredModal, setShowRequiredModal] = useState(false); // For first login
+  const { replace, refresh } = useRouter();
+  const { get } = useSearchParams();
+  const postLogin = get("post_login");
+  const isProfileIncomplete =
+    !profile?.first_name || !profile?.last_name || !profile?.date_of_birth;
+  const [showRequiredModal, setShowRequiredModal] = useState(
+    () => postLogin === "1" && isProfileIncomplete,
+  );
   const [showEditModal, setShowEditModal] = useState(false); // For edit button
-
-  // Check for post_login=1 and show modal if profile is incomplete
-  useEffect(() => {
-    const postLogin = searchParams.get("post_login");
-    const isProfileIncomplete =
-      !profile?.first_name || !profile?.last_name || !profile?.date_of_birth;
-
-    if (postLogin === "1" && isProfileIncomplete) {
-      setShowRequiredModal(true);
-    }
-  }, [searchParams, profile]);
 
   const handleRequiredModalClose = async () => {
     setShowRequiredModal(false);
     // Remove post_login=1 from URL
-    const params = new URLSearchParams(searchParams.toString());
+    const params = new URLSearchParams(window.location.search);
     params.delete("post_login");
     const newSearch = params.toString();
     const newPath = newSearch
       ? `/myprofile/profile-details?${newSearch}`
       : `/myprofile/profile-details`;
-    router.replace(newPath);
-    // Force server component re-fetch
-    router.refresh();
+    replace(newPath);
+    refresh();
   };
 
   const handleEditModalClose = () => {
     setShowEditModal(false);
-    // Refresh to get updated data
-    router.refresh();
+    refresh();
   };
 
   const handleEditModalCancel = () => {
@@ -117,9 +109,9 @@ export default function ProfileDetailsClient({
 
         <div className="space-y-8">
           <div>
-            <label className="mb-3 block font-sans font-semibold text-slate-900 text-sm">
+            <p className="mb-3 block font-sans font-semibold text-slate-900 text-sm">
               First Name
-            </label>
+            </p>
             <p className="font-sans text-slate-900">
               {profile?.first_name && profile.first_name.trim()
                 ? profile.first_name
@@ -128,9 +120,9 @@ export default function ProfileDetailsClient({
           </div>
 
           <div>
-            <label className="mb-3 block font-sans font-semibold text-slate-900 text-sm">
+            <p className="mb-3 block font-sans font-semibold text-slate-900 text-sm">
               Last Name
-            </label>
+            </p>
             <p className="font-sans text-slate-900">
               {profile?.last_name && profile.last_name.trim()
                 ? profile.last_name
@@ -139,9 +131,9 @@ export default function ProfileDetailsClient({
           </div>
 
           <div>
-            <label className="mb-3 block font-sans font-semibold text-slate-900 text-sm">
+            <p className="mb-3 block font-sans font-semibold text-slate-900 text-sm">
               Date of Birth
-            </label>
+            </p>
             <p className="font-sans text-slate-900">
               {profile?.date_of_birth
                 ? formatDateOfBirth(profile.date_of_birth)
@@ -150,9 +142,9 @@ export default function ProfileDetailsClient({
           </div>
 
           <div>
-            <label className="mb-3 block font-sans font-semibold text-slate-900 text-sm">
+            <p className="mb-3 block font-sans font-semibold text-slate-900 text-sm">
               Email Address
-            </label>
+            </p>
             <p className="font-sans text-slate-900">
               {email ?? "Not available"}
             </p>
@@ -169,5 +161,20 @@ export default function ProfileDetailsClient({
         </div>
       </div>
     </>
+  );
+}
+
+export default function ProfileDetailsClient(
+  props: {
+    userId: string;
+    email: string | null;
+    profile: Profile | null;
+    namePrefill?: { firstName: string | null; lastName: string | null };
+  },
+) {
+  return (
+    <Suspense fallback={null}>
+      <ProfileDetailsClientContent {...props} />
+    </Suspense>
   );
 }

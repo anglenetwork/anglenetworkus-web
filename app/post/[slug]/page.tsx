@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
-import { RenderPostPage, buildPostPageMetadata } from "./render-post-page";
+import { RenderPostPage } from "./render-post-page";
+import { buildPostPageMetadata } from "./post-page-metadata";
 import { sanityFetchStatic } from "@/sanity/lib/fetch";
 import { postPublishedSlugsQuery } from "@/sanity/lib/article-family-queries";
 

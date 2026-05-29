@@ -1,17 +1,16 @@
-"use client";
+import type { Metadata } from "next";
+import { staticPageMetadata } from "@/app/lib/seo/static-page-metadata";
+import MyProfilePageClient from "./my-profile-page-client";
 
-import { useEffect } from "react";
-import { useRouter } from "next/navigation";
-import { createClient } from "@/lib/supabase/client";
+export async function generateMetadata(): Promise<Metadata> {
+  return staticPageMetadata(
+  "My Profile",
+  "Manage your The Angle account, bookmarks, and newsletter preferences.",
+  "/myprofile",
+  { private: true },
+);
+}
 
 export default function MyProfilePage() {
-  const router = useRouter();
-  const supabase = createClient();
-
-  useEffect(() => {
-    // Redirect to profile-details by default
-    router.replace("/myprofile/profile-details");
-  }, [router]);
-
-  return null;
+  return <MyProfilePageClient />;
 }

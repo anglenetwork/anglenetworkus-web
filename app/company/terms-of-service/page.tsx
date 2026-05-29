@@ -1,5 +1,15 @@
+import type { Metadata } from "next";
 import { TermsOfServiceContent } from "@/lib/terms-of-service-setup/terms-of-service-content";
 import { termsOfServiceConfig } from "@/lib/terms-of-service-setup/terms-of-service-config";
+import { staticPageMetadata } from "@/app/lib/seo/static-page-metadata";
+
+export async function generateMetadata(): Promise<Metadata> {
+  return staticPageMetadata(
+  "Terms of Service",
+  "Terms and conditions for using The Angle website and services.",
+  "/company/terms-of-service",
+);
+}
 
 export default function TermsOfServicePage() {
   return (

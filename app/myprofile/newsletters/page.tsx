@@ -1,6 +1,17 @@
+import type { Metadata } from "next";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { NewsletterToggles } from "../components/NewsletterToggles";
 import { ProfileSectionHeader } from "../components/ProfileSectionHeader";
+import { staticPageMetadata } from "@/app/lib/seo/static-page-metadata";
+
+export async function generateMetadata(): Promise<Metadata> {
+  return staticPageMetadata(
+  "Newsletter Preferences",
+  "Choose which email newsletters you receive from The Angle.",
+  "/myprofile/newsletters",
+  { private: true },
+);
+}
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;

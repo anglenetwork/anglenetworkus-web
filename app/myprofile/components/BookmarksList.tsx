@@ -1,13 +1,13 @@
 "use client";
 
-import { useEffect, useState, useMemo } from "react";
+import { useState, useMemo } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { ChevronDown, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Skeleton } from "@/components/ui/skeleton";
 import { bookmarksListTitle } from "@/app/lib/typography/myprofile-page";
 
-interface Bookmark {
+export type BookmarkListItem = {
   id: number;
   article_id: string;
   article_slug: string | null;
@@ -20,32 +20,36 @@ interface Bookmark {
     src: string;
     alt: string;
   } | null;
-}
+};
 
-function bookmarkHref(bookmark: Bookmark): string {
+function bookmarkHref(bookmark: BookmarkListItem): string {
   if (bookmark.article_href) return bookmark.article_href;
   if (bookmark.article_slug) return `/post/${bookmark.article_slug}`;
   return "#";
 }
 
-interface BookmarksListProps {}
+const EMPTY_BOOKMARKS: BookmarkListItem[] = [];
 
-export function BookmarksList({}: BookmarksListProps) {
-  const [bookmarks, setBookmarks] = useState<Bookmark[]>([]);
-  const [loading, setLoading] = useState(true);
+interface BookmarksListProps {
+  initialBookmarks?: BookmarkListItem[];
+}
+
+export function BookmarksList({
+  initialBookmarks = EMPTY_BOOKMARKS,
+}: BookmarksListProps) {
+  const [bookmarks, setBookmarks] =
+    useState<BookmarkListItem[]>(initialBookmarks);
   const [sortBy, setSortBy] = useState<
     "saved-recently" | "latest-articles" | "oldest-articles"
   >("saved-recently");
   const [displayedCount, setDisplayedCount] = useState(10);
 
-  useEffect(() => {
-    fetchBookmarks();
-  }, []);
-
-  // Reset pagination when sort changes
-  useEffect(() => {
+  const handleSortChange = (
+    value: "saved-recently" | "latest-articles" | "oldest-articles",
+  ) => {
+    setSortBy(value);
     setDisplayedCount(10);
-  }, [sortBy]);
+  };
 
   // Sort bookmarks based on selected option
   const sortedBookmarks = useMemo(() => {
@@ -91,35 +95,6 @@ export function BookmarksList({}: BookmarksListProps) {
     return sortedBookmarks.slice(0, displayedCount);
   }, [sortedBookmarks, displayedCount]);
 
-  const fetchBookmarks = async () => {
-    try {
-      const res = await fetch("/api/bookmarks/list", {
-        method: "GET",
-        cache: "no-store",
-      });
-
-      if (res.status === 401) {
-        setBookmarks([]);
-        return;
-      }
-
-      const json = (await res.json().catch(() => ({}))) as any;
-
-      if (!res.ok) {
-        console.error("Error fetching bookmarks:", json?.error);
-        setBookmarks([]);
-        return;
-      }
-
-      setBookmarks(json?.bookmarks || []);
-    } catch (err) {
-      console.error("Error fetching bookmarks:", err);
-      setBookmarks([]);
-    } finally {
-      setLoading(false);
-    }
-  };
-
   const handleRemoveBookmark = async (bookmarkId: number) => {
     // Find the bookmark to get article_id for the toggle API
     const bookmark = bookmarks.find((b) => b.id === bookmarkId);
@@ -148,43 +123,6 @@ export function BookmarksList({}: BookmarksListProps) {
     }
   };
 
-  if (loading) {
-    return (
-      <div>
-        {/* Sort Dropdown Skeleton */}
-        <div className="mb-8 flex flex-row items-center gap-3">
-          <Skeleton className="h-5 w-16 bg-slate-200" />
-          <Skeleton className="h-10 w-48 rounded-lg bg-slate-200" />
-        </div>
-
-        {/* Bookmarks List Skeleton */}
-        <div className="space-y-6">
-          {[1, 2, 3, 4, 5].map((i) => (
-            <article
-              key={i}
-              className="flex flex-row gap-6 border-slate-200 border-b pb-6 last:border-b-0"
-            >
-              {/* Cover Image Skeleton */}
-              <div className="w-24 flex-shrink-0 xl:w-48">
-                <Skeleton className="h-16 w-full rounded-lg bg-slate-200 xl:h-32" />
-              </div>
-
-              {/* Article Info Skeleton */}
-              <div className="flex flex-1 flex-col justify-between">
-                <div>
-                  <Skeleton className="mb-2 h-6 w-full bg-slate-200" />
-                  <Skeleton className="mb-1 h-4 w-3/4 bg-slate-200" />
-                  <Skeleton className="h-3 w-1/2 bg-slate-200" />
-                </div>
-                <Skeleton className="h-8 w-20 rounded bg-slate-200" />
-              </div>
-            </article>
-          ))}
-        </div>
-      </div>
-    );
-  }
-
   const handleLoadMore = () => {
     setDisplayedCount((prev) => prev + 10);
   };
@@ -206,7 +144,7 @@ export function BookmarksList({}: BookmarksListProps) {
             id="sort"
             value={sortBy}
             onChange={(e) =>
-              setSortBy(
+              handleSortChange(
                 e.target.value as
                   | "saved-recently"
                   | "latest-articles"
@@ -219,7 +157,7 @@ export function BookmarksList({}: BookmarksListProps) {
             <option value="latest-articles">Latest Articles</option>
             <option value="oldest-articles">Oldest Articles</option>
           </select>
-          <ChevronDown className="pointer-events-none absolute top-1/2 right-2.5 h-4 w-4 -translate-y-1/2 transform text-slate-600" />
+          <ChevronDown className="pointer-events-none absolute top-1/2 right-2.5 size-4 -translate-y-1/2 transform text-slate-600" />
         </div>
       </div>
 
@@ -236,19 +174,17 @@ export function BookmarksList({}: BookmarksListProps) {
                 {bookmark.article_cover ? (
                   <Link href={bookmarkHref(bookmark)}>
                     <div className="relative aspect-[3/2] w-full overflow-hidden rounded-lg">
-                      {/* eslint-disable-next-line @next/next/no-img-element -- remote bookmark URLs; dimensions vary */}
-                      <img
+                      <Image
                         src={bookmark.article_cover.src}
                         alt={
                           bookmark.article_cover.alt ||
                           bookmark.article_title ||
                           "Article image"
                         }
-                        width={384}
-                        height={256}
-                        loading="lazy"
-                        decoding="async"
-                        className="h-full w-full object-cover"
+                        fill
+                        unoptimized
+                        sizes="(max-width: 1280px) 96px, 192px"
+                        className="object-cover"
                       />
                     </div>
                   </Link>
@@ -293,10 +229,11 @@ export function BookmarksList({}: BookmarksListProps) {
                   </Link>
                 </div>
                 <button
+                  type="button"
                   onClick={() => handleRemoveBookmark(bookmark.id)}
                   className="mt-0 flex w-fit items-center gap-2 font-medium font-sans text-red-600 text-sm transition-colors hover:text-red-700"
                 >
-                  <Trash2 className="h-4 w-4" />
+                  <Trash2 className="size-4" />
                   Remove
                 </button>
               </div>

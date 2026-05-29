@@ -40,7 +40,7 @@ function OpinionCard({ article }: { article: ArticleFamilyCard }) {
 
   return (
     // Outer card: image fills the full background; white panel floats over the lower-left
-    <article className="relative h-[460px] overflow-hidden rounded-2xl bg-black">
+    <article className="relative h-[460px] overflow-hidden rounded-2xl bg-neutral-950">
       {/* Full-bleed background image */}
       {coverData?.src && (
         <ImageRenderer
@@ -63,7 +63,7 @@ function OpinionCard({ article }: { article: ArticleFamilyCard }) {
         {/* Author row */}
         <div className="flex items-center gap-2">
           {avatarUrl ? (
-            <div className="relative h-8 w-8 flex-shrink-0 overflow-hidden rounded-full bg-neutral-200">
+            <div className="relative size-8 flex-shrink-0 overflow-hidden rounded-full bg-neutral-200">
               <ImageRenderer
                 src={avatarUrl}
                 alt={authorName}
@@ -76,7 +76,7 @@ function OpinionCard({ article }: { article: ArticleFamilyCard }) {
               />
             </div>
           ) : (
-            <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-neutral-900 font-bold text-[11px] text-white">
+            <div className="flex size-8 flex-shrink-0 items-center justify-center rounded-full bg-neutral-900 font-bold text-[11px] text-white">
               {authorInitial}
             </div>
           )}

@@ -94,6 +94,10 @@ export function FullScreenMenu({
   onFocusSearchHandled,
 }: FullScreenMenuProps) {
   const searchInputRef = useRef<HTMLInputElement>(null);
+  const onCloseRef = useRef(onClose);
+  const onFocusSearchHandledRef = useRef(onFocusSearchHandled);
+  onCloseRef.current = onClose;
+  onFocusSearchHandledRef.current = onFocusSearchHandled;
 
   const menuTags = useMemo(() => {
     const seen = new Set<string>();
@@ -109,7 +113,7 @@ export function FullScreenMenu({
     if (!isOpen) return;
 
     const handleEscKey = (event: KeyboardEvent) => {
-      if (event.key === "Escape") onClose();
+      if (event.key === "Escape") onCloseRef.current();
     };
 
     document.addEventListener("keydown", handleEscKey);
@@ -122,18 +126,18 @@ export function FullScreenMenu({
       document.body.style.overflow = "";
       document.body.style.paddingRight = "";
     };
-  }, [isOpen, onClose]);
+  }, [isOpen]);
 
   useEffect(() => {
     if (!isOpen || !focusSearchOnOpen) return;
 
     const frameId = requestAnimationFrame(() => {
       searchInputRef.current?.focus();
-      onFocusSearchHandled?.();
+      onFocusSearchHandledRef.current?.();
     });
 
     return () => cancelAnimationFrame(frameId);
-  }, [isOpen, focusSearchOnOpen, onFocusSearchHandled]);
+  }, [isOpen, focusSearchOnOpen]);
 
   return (
     <div
@@ -286,34 +290,30 @@ export function FullScreenMenu({
             }`}
             style={{ transitionDelay: isOpen ? "300ms" : "0ms" }}
           >
-            <a
-              href="#"
+            <span
               aria-label="Facebook"
               className="transition-colors hover:text-primary"
             >
-              <Facebook className="h-6 w-6" />
-            </a>
-            <a
-              href="#"
+              <Facebook className="size-6" />
+            </span>
+            <span
               aria-label="Twitter"
               className="transition-colors hover:text-primary"
             >
-              <Twitter className="h-6 w-6" />
-            </a>
-            <a
-              href="#"
+              <Twitter className="size-6" />
+            </span>
+            <span
               aria-label="Instagram"
               className="transition-colors hover:text-primary"
             >
-              <Instagram className="h-6 w-6" />
-            </a>
-            <a
-              href="#"
+              <Instagram className="size-6" />
+            </span>
+            <span
               aria-label="YouTube"
               className="transition-colors hover:text-primary"
             >
-              <Youtube className="h-6 w-6" />
-            </a>
+              <Youtube className="size-6" />
+            </span>
           </div>
 
           {/* Footer */}

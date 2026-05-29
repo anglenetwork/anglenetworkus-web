@@ -191,7 +191,7 @@ export const portableTextComponents: PortableTextComponents = {
               <iframe
                 src={src}
                 title={title || "Embedded video"}
-                className="absolute inset-0 h-full w-full rounded-lg"
+                className="absolute inset-0 size-full rounded-lg"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                 allowFullScreen
                 loading="lazy"

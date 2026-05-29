@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import type { Category, Tag } from "./site-shell/types";
 
 interface FooterProps {
@@ -8,7 +9,7 @@ interface FooterProps {
 
 export function Footer({ categories, tags }: FooterProps) {
   return (
-    <footer className="mt-0 bg-black py-12 font-sans text-white">
+    <footer className="mt-0 bg-neutral-950 py-12 font-sans text-white">
       <div className="mx-auto max-w-7xl px-4">
         <div className="grid grid-cols-1 gap-8 md:grid-cols-4">
           {/* Company Info */}
@@ -18,13 +19,13 @@ export function Footer({ categories, tags }: FooterProps) {
               className="inline-block transition-opacity hover:opacity-80"
             >
               <div className="mb-4 flex items-center gap-2">
-                <img
+                <Image
                   src="/black-logo.svg"
                   alt="The Angle Logo"
                   width={48}
                   height={48}
-                  className="flex-shrink-0"
-                  decoding="async"
+                  className="shrink-0"
+                  priority
                 />
                 <h3 className="font-bold font-sans text-4xl text-white tracking-tight">
                   The Angle
@@ -72,29 +73,19 @@ export function Footer({ categories, tags }: FooterProps) {
               ) : (
                 <>
                   <li>
-                    <Link href="#" className="text-gray-300 hover:text-white">
-                      Congress
-                    </Link>
+                    <span className="text-gray-300">Congress</span>
                   </li>
                   <li>
-                    <Link href="#" className="text-gray-300 hover:text-white">
-                      White House
-                    </Link>
+                    <span className="text-gray-300">White House</span>
                   </li>
                   <li>
-                    <Link href="#" className="text-gray-300 hover:text-white">
-                      Defense
-                    </Link>
+                    <span className="text-gray-300">Defense</span>
                   </li>
                   <li>
-                    <Link href="#" className="text-gray-300 hover:text-white">
-                      Energy
-                    </Link>
+                    <span className="text-gray-300">Energy</span>
                   </li>
                   <li>
-                    <Link href="#" className="text-gray-300 hover:text-white">
-                      Health Care
-                    </Link>
+                    <span className="text-gray-300">Health Care</span>
                   </li>
                 </>
               )}
@@ -119,29 +110,19 @@ export function Footer({ categories, tags }: FooterProps) {
               ) : (
                 <>
                   <li>
-                    <a href="#" className="text-gray-300 hover:text-white">
-                      POLITICO Pro
-                    </a>
+                    <span className="text-gray-300">POLITICO Pro</span>
                   </li>
                   <li>
-                    <a href="#" className="text-gray-300 hover:text-white">
-                      Playbook
-                    </a>
+                    <span className="text-gray-300">Playbook</span>
                   </li>
                   <li>
-                    <a href="#" className="text-gray-300 hover:text-white">
-                      Newsletters
-                    </a>
+                    <span className="text-gray-300">Newsletters</span>
                   </li>
                   <li>
-                    <a href="#" className="text-gray-300 hover:text-white">
-                      Magazine
-                    </a>
+                    <span className="text-gray-300">Magazine</span>
                   </li>
                   <li>
-                    <a href="#" className="text-gray-300 hover:text-white">
-                      Events
-                    </a>
+                    <span className="text-gray-300">Events</span>
                   </li>
                 </>
               )}
@@ -192,7 +173,7 @@ export function Footer({ categories, tags }: FooterProps) {
           <p className="text-gray-400 text-sm">
             © 2025 The Angle LLC. All rights reserved.
           </p>
-          <div className="mt-4 flex space-x-6 md:mt-0">
+          <div className="mt-4 flex gap-x-6 md:mt-0">
             <Link
               href="/company/privacy-policy"
               className="text-gray-400 text-sm hover:text-white"
@@ -205,9 +186,7 @@ export function Footer({ categories, tags }: FooterProps) {
             >
               Terms
             </Link>
-            <a href="#" className="text-gray-400 text-sm hover:text-white">
-              Cookies
-            </a>
+            <span className="text-gray-400 text-sm">Cookies</span>
           </div>
         </div>
       </div>
