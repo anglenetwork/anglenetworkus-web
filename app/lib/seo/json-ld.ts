@@ -92,10 +92,7 @@ export function buildArticleJsonLd(
   )}`;
   const image = buildArticleImagesJsonLd(article.cover, article.title, siteUrl);
 
-  const keywords =
-    article.tags?.length && article.tags.some((t) => t.title)
-      ? article.tags.map((t) => t.title).filter(Boolean)
-      : undefined;
+  const keywords = article.tags?.flatMap((t) => (t.title ? [t.title] : []));
 
   const description = article.excerpt?.trim() || undefined;
 

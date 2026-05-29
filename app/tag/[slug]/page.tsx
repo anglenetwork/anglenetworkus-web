@@ -16,7 +16,7 @@ import { logDevMetricsFallback } from "@/app/lib/article-family/metrics-dev-log"
 import { editorialTagArticleCountQuery } from "@/sanity/lib/article-family-queries";
 import * as demo from "@/sanity/lib/demo";
 import { getCachedSettings } from "@/app/lib/cached-settings";
-import { jsonLdScriptContent } from "@/app/lib/article-family/structured-data";
+import { JsonLdScript } from "@/app/components/seo/json-ld-script";
 import { buildBreadcrumbJsonLd } from "@/app/lib/seo/json-ld";
 import {
   buildTagPageMetadata,
@@ -193,12 +193,7 @@ export default async function TagPage({
 
   return (
     <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: jsonLdScriptContent(breadcrumbLd),
-        }}
-      />
+      <JsonLdScript data={breadcrumbLd} />
       <main className="min-h-screen bg-background py-4 md:py-8">
         <TagViewTracker tagSlug={slug} />
         <SitePageWidth>
@@ -265,7 +260,7 @@ export default async function TagPage({
 
             {/* Right Column - 40% */}
             <aside className="w-full pt-0 lg:w-[40%] lg:pt-10">
-              <div className="space-y-0 rounded-xl bg-black p-4">
+              <div className="space-y-0 rounded-xl bg-neutral-950 p-4">
                 {popularReads.slice(0, 4).map((post: any, index: number) => {
                   const coverData = getCoverImage(
                     post.cover as {

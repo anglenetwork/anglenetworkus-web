@@ -16,7 +16,7 @@ export function FeaturedArticlesSection({
   featuredArticles,
 }: FeaturedArticlesSectionProps) {
   return (
-    <section className="border-border border-b bg-black">
+    <section className="border-border border-b bg-neutral-950">
       <SitePageWidth className="py-12">
         <SectionHeader
           title="Featured"

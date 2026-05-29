@@ -1,7 +1,6 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import type { ReactNode } from "react";
 import { DeferUntilNearViewport } from "@/app/components/ui/defer-until-near-viewport";
 import { BelowFoldSectionPlaceholder } from "./below-fold-placeholder";
 import {
@@ -18,10 +17,7 @@ const HomepageBelowFoldSectionsLazy = dynamic(
   { ssr: false, loading: () => <BelowFoldSectionPlaceholder /> },
 );
 
-type HomepageBelowFoldLazyProps = HomepageBelowFoldSectionsProps & {
-  /** Server-rendered slot — rendered outside viewport defer for crawlable HTML. */
-  editorialRails?: ReactNode;
-};
+type HomepageBelowFoldLazyProps = HomepageBelowFoldSectionsProps;
 
 function belowFoldPlaceholder(hasFourthSection: boolean) {
   return (
@@ -36,13 +32,7 @@ function belowFoldPlaceholder(hasFourthSection: boolean) {
 
 /** Defers below-fold chunk download until the user scrolls near these sections. */
 export function HomepageBelowFoldLazy(props: HomepageBelowFoldLazyProps) {
-  const {
-    secondSection,
-    thirdSection,
-    fourthSection,
-    fifthSection,
-    editorialRails,
-  } = props;
+  const { secondSection, thirdSection, fourthSection, fifthSection } = props;
 
   return (
     <div className={HOMEPAGE_BELOW_FOLD_SECTION_GAP}>
@@ -58,7 +48,6 @@ export function HomepageBelowFoldLazy(props: HomepageBelowFoldLazyProps) {
           />
         </div>
       </DeferUntilNearViewport>
-      {editorialRails}
     </div>
   );
 }

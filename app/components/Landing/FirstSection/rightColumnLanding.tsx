@@ -82,7 +82,7 @@ export function RightColumnLanding({
             {mostRead.map((post, index) => (
               <article
                 key={post._id}
-                className="flex items-start justify-start space-x-3 pb-2 lg:justify-start"
+                className="flex items-start justify-start gap-x-3 pb-2 lg:justify-start"
               >
                 <span className={mostReadRankNumber}>{index + 1}</span>
                 <Link

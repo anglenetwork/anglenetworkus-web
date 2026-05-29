@@ -10,7 +10,13 @@ import {
   articleFamilyHeroTileTitle,
 } from "@/app/lib/typography/article-family-card";
 
-export type ArticleFamilyCardLayout = "compact" | "large" | "rail" | "heroTile";
+export type ArticleFamilyCardLayout =
+  | "compact"
+  | "large"
+  | "rail"
+  | "heroTile";
+
+export type ArticleFamilyCardVariant = "default" | "search";
 
 function typeLabel(
   t: CardModel["_type"],
@@ -45,40 +51,30 @@ function editorialKicker(
 export default function ArticleFamilyCard({
   article,
   layout = "compact",
-  showPostTypeBadge = false,
-  showAuthor = false,
-  showExcerpt = false,
-  hideExcerptOnMobile = false,
-  hideAuthorOnMobile = false,
-  hidePostTypeBadgeOnMobile = false,
-  enlargeMobileThumb = false,
-  showTypeMetadataInCompact = false,
+  variant = "default",
   kickerMode = "card",
   showDate = true,
   readTimeMinutes,
 }: {
   article: CardModel;
   layout?: ArticleFamilyCardLayout;
-  /** When true, `post` shows a "News" label (e.g. search / mixed feeds). */
-  showPostTypeBadge?: boolean;
-  showAuthor?: boolean;
-  showExcerpt?: boolean;
-  /** When true with showExcerpt, excerpt is hidden below md (search results mobile). */
-  hideExcerptOnMobile?: boolean;
-  /** When true with showAuthor, author line is hidden below md. */
-  hideAuthorOnMobile?: boolean;
-  /** When true, type kicker row is hidden below md (e.g. search shows type in status line). */
-  hidePostTypeBadgeOnMobile?: boolean;
-  /** When true, compact thumb is 20% larger below md. */
-  enlargeMobileThumb?: boolean;
-  /** Show analysisFocus in compact layout (e.g. search). */
-  showTypeMetadataInCompact?: boolean;
+  /** `search` enables the search-results card treatment (type badge, excerpt, mobile tweaks). */
+  variant?: ArticleFamilyCardVariant;
   /** `editorial` = category title first, then Opinion/Analysis (opinion rail). */
   kickerMode?: "card" | "editorial";
   showDate?: boolean;
   /** Used when `layout="heroTile"` (carousel tiles). */
   readTimeMinutes?: number;
 }) {
+  const isSearchVariant = variant === "search";
+  const showPostTypeBadge = isSearchVariant;
+  const showAuthor = isSearchVariant;
+  const showExcerpt = isSearchVariant;
+  const hideExcerptOnMobile = isSearchVariant;
+  const hideAuthorOnMobile = isSearchVariant;
+  const hidePostTypeBadgeOnMobile = isSearchVariant;
+  const enlargeMobileThumb = isSearchVariant;
+  const showTypeMetadataInCompact = isSearchVariant;
   const label = typeLabel(article._type, showPostTypeBadge);
   const imgMaxW =
     layout === "large"
@@ -115,7 +111,7 @@ export default function ArticleFamilyCard({
     return (
       <article className="group">
         <Link href={article.href} className="block">
-          <div className="relative h-[400px] w-full cursor-pointer overflow-hidden rounded-lg bg-black transition-opacity duration-200 hover:opacity-90">
+          <div className="relative h-[400px] w-full cursor-pointer overflow-hidden rounded-lg bg-neutral-950 transition-opacity duration-200 hover:opacity-90">
             <div className="absolute inset-0">
               <ImageRenderer
                 src={imgUrl || "/placeholder.svg"}

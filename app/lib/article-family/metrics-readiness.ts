@@ -94,22 +94,13 @@ async function probeRelation(
 export async function checkArticleMetricsReadiness(): Promise<ArticleMetricsReadiness> {
   const issues: string[] = [];
 
-  const hasDailyTable = await probeRelation(
-    "article_metrics_daily",
-    issues,
-    "Daily metrics table",
-  );
-  const hasTotalsTable = await probeRelation(
-    "article_metrics_totals",
-    issues,
-    "Totals table",
-  );
-  const hasRankingsView = await probeRelation(
-    "article_metrics_rankings",
-    issues,
-    "Rankings view",
-  );
-  const hasIncrementFunction = await probeIncrementFunction(issues);
+  const [hasDailyTable, hasTotalsTable, hasRankingsView, hasIncrementFunction] =
+    await Promise.all([
+      probeRelation("article_metrics_daily", issues, "Daily metrics table"),
+      probeRelation("article_metrics_totals", issues, "Totals table"),
+      probeRelation("article_metrics_rankings", issues, "Rankings view"),
+      probeIncrementFunction(issues),
+    ]);
 
   const ready =
     hasDailyTable && hasTotalsTable && hasRankingsView && hasIncrementFunction;
