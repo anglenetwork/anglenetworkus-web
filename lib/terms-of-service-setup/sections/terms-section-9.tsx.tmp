@@ -1,0 +1,11 @@
+/* eslint-disable react/no-unescaped-entities -- legal prose */
+import Link from "next/link";
+import {
+  termsOfServiceConfig,
+  getCompanyAddress,
+  getContactInfo,
+} from "../terms-of-service-config";
+
+const config = termsOfServiceConfig;
+const contact = getContactInfo();
+
