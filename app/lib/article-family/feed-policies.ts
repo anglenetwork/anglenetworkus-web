@@ -57,3 +57,10 @@ export const FEED_RELATED_EDITORIAL_TYPES = [
 export const FEED_SPONSORED_ONLY_TYPES = [
   "sponsored",
 ] as const satisfies readonly ArticleFamilyDocType[];
+
+/** Build a GROQ `_type in [...]` literal from feed policy constants. */
+export function groqTypeInList(
+  types: readonly ArticleFamilyDocType[],
+): string {
+  return types.map((type) => `"${type}"`).join(", ");
+}

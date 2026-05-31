@@ -1,7 +1,5 @@
 export { CategoryPage } from "./CategoryPage";
 export { CategoryHeader } from "./CategoryHeader";
-export { default as CategoryContent } from "./CategoryContent";
-export { default as CategorySidebar } from "./CategorySidebar";
 export { FeaturedArticlesSection } from "./FeaturedArticlesSection";
 export { MostReadSection } from "./MostReadSection";
 export { FeatureHero } from "./FeatureHero";
