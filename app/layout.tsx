@@ -5,6 +5,7 @@ import type { Metadata } from "next";
 import { Suspense } from "react";
 import { toPlainText, type PortableTextBlock } from "next-sanity";
 import { draftMode, headers } from "next/headers";
+import { VisualEditing } from "next-sanity/visual-editing";
 import { publicSans } from "@/app/lib/fonts/sans";
 
 import { SiteShell } from "./components/layout/site-shell";
@@ -79,6 +80,7 @@ export default async function RootLayout({
           {isDraftMode && (
             <Suspense fallback={null}>
               <DraftModeShell />
+              <VisualEditing />
             </Suspense>
           )}
           {isStudioRoute ? (
