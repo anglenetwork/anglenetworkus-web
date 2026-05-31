@@ -182,4 +182,5 @@ export function TermsSection11a() { return (<>
           attorneys' fees and costs unless the arbitrator awards otherwise under
           applicable law.
         </p>
+      </section>
 </>); }
