@@ -8,11 +8,11 @@ import StudioClient from "./StudioClient";
 
 export async function generateMetadata(): Promise<Metadata> {
   return staticPageMetadata(
-  "Sanity Studio",
-  "Content management studio for The Angle editorial team.",
-  "/studio",
-  { private: true },
-);
+    "Sanity Studio",
+    "Content management studio for The Angle editorial team.",
+    "/studio",
+    { private: true },
+  );
 }
 
 // Must be dynamic to check session on each request

@@ -25,15 +25,12 @@ export async function RenderPostPage({
   );
 
   const tagsForSuggested =
-    article.tags?.reduce<Array<{ name: string; slug: string }>>(
-      (acc, tag) => {
-        if (tag.title && tag.slug) {
-          acc.push({ name: tag.title, slug: tag.slug });
-        }
-        return acc;
-      },
-      [],
-    ) ?? [];
+    article.tags?.reduce<Array<{ name: string; slug: string }>>((acc, tag) => {
+      if (tag.title && tag.slug) {
+        acc.push({ name: tag.title, slug: tag.slug });
+      }
+      return acc;
+    }, []) ?? [];
 
   const categoryName = article.category?.title || undefined;
   const categoryHref = article.category?.slug

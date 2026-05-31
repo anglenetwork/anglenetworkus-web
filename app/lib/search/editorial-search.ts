@@ -1,5 +1,9 @@
+import { FEED_SEARCH_EDITORIAL_TYPES } from "../article-family/feed-policies";
+
 export type SortParam = "relevance" | "newest";
 export type TypeParam = "all" | "post" | "opinion" | "analysis" | "sponsored";
+
+const editorialSearchTypes = new Set<string>(FEED_SEARCH_EDITORIAL_TYPES);
 
 export function parseSort(raw: string | null): SortParam {
   const s = (raw || "relevance").toLowerCase();
@@ -10,13 +14,8 @@ export function parseSort(raw: string | null): SortParam {
 
 export function parseType(raw: string | null): TypeParam {
   const t = (raw || "all").toLowerCase();
-  if (
-    t === "post" ||
-    t === "opinion" ||
-    t === "analysis" ||
-    t === "sponsored"
-  ) {
-    return t;
+  if (editorialSearchTypes.has(t) || t === "sponsored") {
+    return t as Exclude<TypeParam, "all">;
   }
   return "all";
 }

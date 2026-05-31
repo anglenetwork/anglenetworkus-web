@@ -9,7 +9,9 @@ import {
 const config = termsOfServiceConfig;
 const contact = getContactInfo();
 
-export function TermsSection02() { return (<>
+export function TermsSection02() {
+  return (
+    <>
       {/* Section 2: Intellectual Property */}
       <section>
         <h2 className="mt-8 mb-4 font-sans font-semibold text-xl">
@@ -141,5 +143,6 @@ export function TermsSection02() { return (<>
           licensors.
         </p>
       </section>
-
-</>); }
+    </>
+  );
+}

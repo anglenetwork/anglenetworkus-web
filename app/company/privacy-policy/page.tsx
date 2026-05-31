@@ -5,10 +5,10 @@ import { staticPageMetadata } from "@/app/lib/seo/static-page-metadata";
 
 export async function generateMetadata(): Promise<Metadata> {
   return staticPageMetadata(
-  "Privacy Policy",
-  "How The Angle collects, uses, and protects your personal information.",
-  "/company/privacy-policy",
-);
+    "Privacy Policy",
+    "How The Angle collects, uses, and protects your personal information.",
+    "/company/privacy-policy",
+  );
 }
 
 export default function PrivacyPolicyPage() {

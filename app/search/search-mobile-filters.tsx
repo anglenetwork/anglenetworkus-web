@@ -107,7 +107,10 @@ export function SearchMobileFilters({
           </div>
         </DialogContent>
       </Dialog>
-      <Select value={sort} onValueChange={(value) => onSortChange(value as SortParam)}>
+      <Select
+        value={sort}
+        onValueChange={(value) => onSortChange(value as SortParam)}
+      >
         <SelectTrigger
           className="h-9 w-auto shrink-0 justify-start gap-2 rounded-lg px-3 font-sans [&>span]:hidden"
           aria-label={`Sort, ${sort === "newest" ? "Newest" : "Relevance"} selected`}

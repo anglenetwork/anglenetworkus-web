@@ -4,7 +4,7 @@ export interface Article {
   excerpt: string;
   author: string;
   publishedAt: string;
-  readTime: string;
+  readTime?: number | null;
   category: string;
   imageUrl?: string;
   imageAlt?: string;

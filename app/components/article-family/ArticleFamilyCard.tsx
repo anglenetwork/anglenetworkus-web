@@ -10,11 +10,7 @@ import {
   articleFamilyHeroTileTitle,
 } from "@/app/lib/typography/article-family-card";
 
-export type ArticleFamilyCardLayout =
-  | "compact"
-  | "large"
-  | "rail"
-  | "heroTile";
+export type ArticleFamilyCardLayout = "compact" | "large" | "rail" | "heroTile";
 
 export type ArticleFamilyCardVariant = "default" | "search";
 

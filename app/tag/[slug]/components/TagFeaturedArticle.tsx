@@ -1,6 +1,5 @@
 import Link from "next/link";
-import { ImageRenderer } from "@/app/components/ui/image-renderer";
-import { tagFeaturedTitle } from "@/app/lib/typography/tag-page";
+import { FeaturedArticleBlock } from "@/app/components/ui/featured-article-block";
 
 interface TagFeaturedArticleProps {
   image: string;
@@ -9,6 +8,7 @@ interface TagFeaturedArticleProps {
   title: string;
   slug: string;
   href?: string;
+  readTime?: string;
 }
 
 export function TagFeaturedArticle({
@@ -18,35 +18,18 @@ export function TagFeaturedArticle({
   title,
   slug,
   href,
+  readTime,
 }: TagFeaturedArticleProps) {
   return (
-    <article className="mb-8">
-      <Link href={href ?? `/post/${slug}`} className="group block">
-        <div className="relative aspect-video w-full overflow-hidden rounded-xl">
-          {image ? (
-            <ImageRenderer
-              src={image}
-              alt={imageAlt}
-              width={1200}
-              height={675}
-              fill
-              unoptimized={imageUnoptimized}
-              quality={75}
-              priority
-              fetchPriority="high"
-              sizes="(max-width: 1024px) 100vw, 60vw"
-              className="object-cover"
-            />
-          ) : (
-            <div className="flex size-full items-center justify-center bg-gray-200">
-              <span className="text-gray-400">No Image</span>
-            </div>
-          )}
-        </div>
-        <div className="mt-4">
-          <h1 className={tagFeaturedTitle}>{title}</h1>
-        </div>
-      </Link>
-    </article>
+    <FeaturedArticleBlock
+      image={image}
+      imageAlt={imageAlt}
+      imageUnoptimized={imageUnoptimized}
+      title={title}
+      href={href ?? `/post/${slug}`}
+      readTime={readTime}
+      priority
+      titleAs="h1"
+    />
   );
 }

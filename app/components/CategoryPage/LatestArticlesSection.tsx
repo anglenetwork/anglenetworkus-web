@@ -1,112 +1,57 @@
 "use client";
 
 import { useState } from "react";
-import { Card, CardContent } from "@/components/ui/card";
-import { Separator } from "@/app/components/ui/separator";
+import Link from "next/link";
+import { cn } from "@/lib/utils";
 import { SectionHeader } from "@/app/components/ui/section-header";
 import { Button } from "@/components/ui/button";
-import { Clock } from "lucide-react";
-import Link from "next/link";
 import { ImageRenderer } from "../ui/image-renderer";
-import { categoryLatestStoryLink } from "@/app/lib/typography/category-page";
-
-interface Article {
-  id: string;
-  title: string;
-  excerpt: string;
-  author: string;
-  publishedAt: string;
-  readTime: string;
-  category: string;
-  imageUrl?: string;
-  imageUnoptimized?: boolean;
-  imageWidth?: number;
-  imageHeight?: number;
-  imageBlurDataURL?: string;
-  slug: string;
-  href?: string;
-}
+import type { Article } from "./types";
+import { categorySecondaryRowTitle } from "@/app/lib/typography/second-section";
+import { ReadTimeLabel } from "@/app/components/ui/read-time-label";
 
 interface LatestArticlesSectionProps {
   latestArticles: Article[];
   layout: "mobile" | "desktop";
 }
 
-function formatArticleDateLabel(iso: string | undefined): string | null {
-  if (!iso) return null;
-  const d = new Date(iso);
-  if (Number.isNaN(d.getTime())) return null;
-  return d.toLocaleDateString("en-US", {
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-  });
-}
-
 function LatestArticleItem({ article }: { article: Article }) {
-  const dateLabel = formatArticleDateLabel(article.publishedAt);
+  const href = article.href ?? `/post/${article.slug}`;
+  const imageSrc =
+    article.imageUrl ||
+    "/placeholder.svg?height=200&width=300&query=news article";
 
   return (
     <article className="group">
-      <Card className="border-0 bg-transparent shadow-none transition-colors duration-200">
-        <CardContent className="p-0">
-          <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
-            {/* Image (optional) */}
-            {article.imageUrl && (
-              <div className="md:col-span-1">
-                <Link
-                  href={article.href ?? `/post/${article.slug}`}
-                  className="block"
-                  aria-label={`View image for article: ${article.title}`}
-                >
-                  <div className="relative aspect-[4/3] overflow-hidden rounded-lg bg-muted">
-                    <ImageRenderer
-                      src={article.imageUrl || "/placeholder.svg"}
-                      alt=""
-                      width={600}
-                      height={450}
-                      fill
-                      sizes="(min-width: 1024px) 33vw, 100vw"
-                      unoptimized={article.imageUnoptimized}
-                      className="object-cover"
-                    />
-                  </div>
-                </Link>
-              </div>
-            )}
-
-            {/* Content */}
-            <div
-              className={`${
-                article.imageUrl ? "md:col-span-2" : "md:col-span-3"
-              } space-y-3`}
-            >
-              <div className="flex items-center gap-4 font-sans text-muted-foreground text-sm">
-                {dateLabel ? (
-                  <time dateTime={article.publishedAt}>{dateLabel}</time>
-                ) : null}
-                <div className="flex items-center gap-1 font-sans text-neutral-500">
-                  <Clock className="size-3" />
-                  <span>{article.readTime}</span>
-                </div>
-              </div>
-
-              <h3 className="font-sans font-semibold text-2xl text-neutral-900 leading-snug tracking-tight">
-                <Link
-                  href={article.href ?? `/post/${article.slug}`}
-                  className={categoryLatestStoryLink}
-                >
-                  {article.title}
-                </Link>
-              </h3>
-
-              <p className="text-pretty font-sans text-muted-foreground text-sm leading-relaxed">
-                {article.excerpt}
-              </p>
-            </div>
+      <Link
+        href={href}
+        className="flex items-start gap-3"
+        aria-label={`Read article: ${article.title}`}
+      >
+        {article.imageUrl ? (
+          <div className="relative h-20 w-28 shrink-0 overflow-hidden rounded-sm bg-neutral-950">
+            <ImageRenderer
+              src={imageSrc}
+              alt={article.imageAlt?.trim() || article.title}
+              width={112}
+              height={80}
+              fill
+              sizes="112px"
+              unoptimized={article.imageUnoptimized}
+              className="object-cover object-center"
+            />
           </div>
-        </CardContent>
-      </Card>
+        ) : null}
+        <div className="min-w-0 flex-1">
+          <h3 className={categorySecondaryRowTitle.light}>{article.title}</h3>
+          {article.excerpt ? (
+            <p className="mt-2 line-clamp-2 text-pretty font-sans text-muted-foreground text-sm leading-relaxed">
+              {article.excerpt}
+            </p>
+          ) : null}
+          <ReadTimeLabel minutes={article.readTime} />
+        </div>
+      </Link>
     </article>
   );
 }
@@ -128,28 +73,26 @@ export function LatestArticlesSection({
     setDisplayedArticles((prev) => Math.min(prev + 5, latestArticles.length));
   };
 
-  // Shared content block
   const content = (
     <>
-      <SectionHeader
-        title="Latest Articles"
-        variant="light"
-        accentStyle="geometric-square"
-        size="large"
-      />
+      <SectionHeader title="Latest Articles" accentStyle="modern" />
 
-      <div className="space-y-8">
+      <div className="flex flex-col divide-y divide-dotted divide-neutral-300">
         {articlesToShow.map((article, index) => (
-          <div key={article.id}>
-            <LatestArticleItem article={article} />
-            {index < articlesToShow.length - 1 && (
-              <Separator className="mt-8" />
+          <div
+            key={article.id}
+            className={cn(
+              "py-4",
+              index === 0 && "pt-0",
+              !hasMoreArticles && index === articlesToShow.length - 1 && "pb-0",
             )}
+          >
+            <LatestArticleItem article={article} />
           </div>
         ))}
       </div>
 
-      {hasMoreArticles && (
+      {hasMoreArticles ? (
         <div className="mt-8 flex justify-center">
           <Button
             onClick={handleShowMore}
@@ -159,7 +102,7 @@ export function LatestArticlesSection({
             Show More
           </Button>
         </div>
-      )}
+      ) : null}
     </>
   );
 
@@ -167,6 +110,5 @@ export function LatestArticlesSection({
     return <section>{content}</section>;
   }
 
-  // desktop: content is wrapped by col-span-2 in parent
   return <section>{content}</section>;
 }

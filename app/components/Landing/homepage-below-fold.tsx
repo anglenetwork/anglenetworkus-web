@@ -3,6 +3,8 @@
 import dynamic from "next/dynamic";
 import type { ComponentProps } from "react";
 import { BelowFoldSectionPlaceholder } from "./below-fold-placeholder";
+import TestSection from "./TestSection/testSection";
+import SecondSectionAlternative from "./SecondSection/secondSectionAlternative";
 
 const SecondSection = dynamic(() => import("./SecondSection/secondSection"), {
   ssr: false,
@@ -46,6 +48,8 @@ export function HomepageBelowFoldSections({
   return (
     <>
       <SecondSection {...secondSection} />
+      <TestSection />
+      <SecondSectionAlternative />
       <ThirdSection {...thirdSection} />
       {fourthSection ? <FourthSection {...fourthSection} /> : null}
       <FifthSection {...fifthSection} />

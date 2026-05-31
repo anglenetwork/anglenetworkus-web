@@ -9,7 +9,9 @@ import {
 const config = termsOfServiceConfig;
 const contact = getContactInfo();
 
-export function TermsSection08() { return (<>
+export function TermsSection08() {
+  return (
+    <>
       {/* Section 8: DMCA */}
       <section>
         <h2 className="mt-8 mb-4 font-sans font-semibold text-xl">
@@ -204,4 +206,6 @@ export function TermsSection08() { return (<>
           so we can route your request appropriately.
         </p>
       </section>
-</>); }
+    </>
+  );
+}

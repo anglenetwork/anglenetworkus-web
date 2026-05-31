@@ -164,14 +164,12 @@ function ProfileDetailsClientContent({
   );
 }
 
-export default function ProfileDetailsClient(
-  props: {
-    userId: string;
-    email: string | null;
-    profile: Profile | null;
-    namePrefill?: { firstName: string | null; lastName: string | null };
-  },
-) {
+export default function ProfileDetailsClient(props: {
+  userId: string;
+  email: string | null;
+  profile: Profile | null;
+  namePrefill?: { firstName: string | null; lastName: string | null };
+}) {
   return (
     <Suspense fallback={null}>
       <ProfileDetailsClientContent {...props} />

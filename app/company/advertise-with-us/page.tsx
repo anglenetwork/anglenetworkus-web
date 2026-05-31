@@ -4,10 +4,10 @@ import { staticPageMetadata } from "@/app/lib/seo/static-page-metadata";
 
 export async function generateMetadata(): Promise<Metadata> {
   return staticPageMetadata(
-  "Advertise With Us",
-  "Partner with The Angle to reach engaged readers across news, opinion, and analysis.",
-  "/company/advertise-with-us",
-);
+    "Advertise With Us",
+    "Partner with The Angle to reach engaged readers across news, opinion, and analysis.",
+    "/company/advertise-with-us",
+  );
 }
 
 export default function AdvertiseWithUsPage() {

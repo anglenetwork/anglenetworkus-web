@@ -27,15 +27,16 @@ export function EditorialArticleLayout({
   return (
     <article className="mt-4 lg:mt-8">
       <header
-        className={cn("not-prose mb-2", NON_REGULAR_POST_CONTENT_MAX_WIDTH_CLASS)}
+        className={cn(
+          "not-prose mb-2",
+          NON_REGULAR_POST_CONTENT_MAX_WIDTH_CLASS,
+        )}
       >
         <div>
           <p className={cn("mb-2", nonRegularPostTypeLabel)}>
             {showOpinionChrome ? "Opinion" : "Analysis"}
           </p>
-          <h1 className={nonRegularPostTitle}>
-            {article.title || "Untitled"}
-          </h1>
+          <h1 className={nonRegularPostTitle}>{article.title || "Untitled"}</h1>
           {article.excerpt && (
             <p className={cn("mt-4 max-w-3xl", nonRegularPostExcerpt)}>
               {article.excerpt}

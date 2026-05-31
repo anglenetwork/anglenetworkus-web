@@ -18,7 +18,11 @@ import {
   relatedContentForOpinionQuery,
   relatedContentForPostQuery,
 } from "@/sanity/lib/article-family-queries";
-import type { ArticleFamily, ArticleFamilyCard, ArticleSidebarPost } from "./types";
+import type {
+  ArticleFamily,
+  ArticleFamilyCard,
+  ArticleSidebarPost,
+} from "./types";
 import { normalizeArticleFamilyCard } from "./normalize";
 import { articleFamilyHref } from "./routes";
 
@@ -44,6 +48,7 @@ function attachPostHref(
           : typeof r.publishedAt === "string"
             ? r.publishedAt
             : undefined,
+      readTime: typeof r.readTime === "number" ? r.readTime : null,
       author: r.author as SidebarArticleLink["author"],
       category: r.category as SidebarArticleLink["category"],
     });
@@ -127,6 +132,7 @@ export async function loadArticlePageSidebars(article: ArticleFamily) {
     excerpt: r.excerpt,
     cover: r.cover,
     date: r.date,
+    readTime: r.readTime ?? null,
     author: r.author ?? null,
     category: r.category ?? null,
   }));
@@ -175,6 +181,7 @@ export async function loadLatestInCategory(
     excerpt: r.excerpt,
     cover: r.cover,
     date: r.date,
+    readTime: r.readTime ?? null,
     author: r.author ?? null,
     category: r.category ?? null,
   }));

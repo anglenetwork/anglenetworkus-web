@@ -77,6 +77,7 @@ export function normalizeArticleFamily(raw: unknown): ArticleFamily | null {
     publishedAt,
     updatedAt,
     date,
+    readTime: typeof r.readTime === "number" ? r.readTime : null,
     seo: toSeo(r.seo),
     imageGallery: Array.isArray(r.imageGallery)
       ? (r.imageGallery as unknown[])

@@ -6,11 +6,11 @@ import { staticPageMetadata } from "@/app/lib/seo/static-page-metadata";
 
 export async function generateMetadata(): Promise<Metadata> {
   return staticPageMetadata(
-  "Profile Details",
-  "Manage your account profile and personal information.",
-  "/myprofile/profile-details",
-  { private: true },
-);
+    "Profile Details",
+    "Manage your account profile and personal information.",
+    "/myprofile/profile-details",
+    { private: true },
+  );
 }
 
 export const dynamic = "force-dynamic";

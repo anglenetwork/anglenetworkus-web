@@ -175,7 +175,7 @@ export function resolveEditorialImage(
 }
 
 /** Listing / carousel preset matching legacy `getCoverImage`. */
-export const LISTING_IMAGE_RESOLVE_OPTIONS = {
+const LISTING_IMAGE_RESOLVE_OPTIONS = {
   externalUnoptimized: "auto" as const,
   sanityQuality: 70,
 };

@@ -15,10 +15,7 @@ import { cn } from "@/lib/utils";
 import { createClient } from "@/lib/supabase/client";
 import type { User } from "@supabase/supabase-js";
 import { UserMenuSkeleton } from "./user-menu-skeleton";
-import {
-  initialUserMenuState,
-  userMenuReducer,
-} from "./user-menu-state";
+import { initialUserMenuState, userMenuReducer } from "./user-menu-state";
 
 /** `default` = filled sign-in button; `link` = shadcn link style. */
 export type SignInButtonVariant = "default" | "link";
@@ -80,9 +77,7 @@ function UserMenuSignInButton({
         "shrink-0",
         isLink &&
           "h-auto justify-start p-0 font-bold text-xl hover:text-primary",
-        isMobile &&
-          !isLink &&
-          "h-9 px-3 font-sans text-xs sm:px-4 sm:text-sm",
+        isMobile && !isLink && "h-9 px-3 font-sans text-xs sm:px-4 sm:text-sm",
       )}
     >
       <Link href="/signin" onClick={onSignInNavigate}>

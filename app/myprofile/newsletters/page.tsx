@@ -6,11 +6,11 @@ import { staticPageMetadata } from "@/app/lib/seo/static-page-metadata";
 
 export async function generateMetadata(): Promise<Metadata> {
   return staticPageMetadata(
-  "Newsletter Preferences",
-  "Choose which email newsletters you receive from The Angle.",
-  "/myprofile/newsletters",
-  { private: true },
-);
+    "Newsletter Preferences",
+    "Choose which email newsletters you receive from The Angle.",
+    "/myprofile/newsletters",
+    { private: true },
+  );
 }
 
 export const dynamic = "force-dynamic";

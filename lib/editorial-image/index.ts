@@ -12,7 +12,6 @@ export { normalizeExternalImageUrl } from "./normalize";
 export {
   resolveEditorialImage,
   resolveListingImage,
-  LISTING_IMAGE_RESOLVE_OPTIONS,
   type EditorialImageInput,
   type ResolveEditorialImageOptions,
   type ResolvedEditorialImage,

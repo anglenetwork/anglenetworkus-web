@@ -61,6 +61,7 @@ export type ArticleFamily = {
   updatedAt: string | null;
   /** Display date for legacy components (coalesce published/updated) */
   date: string;
+  readTime?: number | null;
   seo: ArticleFamilySeo | null;
   imageGallery?: unknown[] | null;
   category?: ArticleFamilyCategory | null;
@@ -90,6 +91,7 @@ export type ArticleSidebarPost = {
   excerpt?: string | null;
   cover?: unknown;
   date?: string;
+  readTime?: number | null;
   author?: ArticleFamilyAuthor | null;
   category?: ArticleFamilyCategory | null;
 };

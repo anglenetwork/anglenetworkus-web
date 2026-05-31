@@ -10,7 +10,5 @@ export const HOMEPAGE_THIRD_SECTION_CATEGORIES = {
 /** Left column: 1 featured hero only. */
 export const HOMEPAGE_THIRD_SECTION_LEFT_FETCH_LIMIT = 1;
 
-/**
- * Right column: 2 featured-image slots (indices [0] and [3]).
- */
+/** Right column: small thumbnail rows. */
 export const HOMEPAGE_THIRD_SECTION_RIGHT_FETCH_LIMIT = 4;

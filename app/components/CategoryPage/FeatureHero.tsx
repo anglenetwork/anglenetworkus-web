@@ -1,8 +1,10 @@
 import Link from "next/link";
+import { cn } from "@/lib/utils";
 import { ExcerptCreditCaption } from "@/app/helpers";
 import type { Article } from "./types";
 import { ImageRenderer } from "../ui/image-renderer";
-import { categoryFeatureHeroTitle } from "@/app/lib/typography/category-page";
+import { categoryFeaturedTitle } from "@/app/lib/typography/second-section";
+import { ReadTimeLabel } from "@/app/components/ui/read-time-label";
 
 interface FeatureHeroProps {
   article: Article;
@@ -10,42 +12,49 @@ interface FeatureHeroProps {
 }
 
 export function FeatureHero({ article, variant = "light" }: FeatureHeroProps) {
-  const textColor = variant === "dark" ? "text-white" : "text-neutral-900";
+  const href = article.href ?? `/post/${article.slug}`;
+  const imageSrc =
+    article.imageUrl ||
+    "/placeholder.svg?height=400&width=700&query=featured news story";
 
   return (
     <article className="group">
       <Link
-        href={article.href ?? `/post/${article.slug}`}
+        href={href}
         className="block"
         aria-label={`Read article: ${article.title}`}
       >
         <div
-          className={`relative mb-4 aspect-[16/9] overflow-hidden rounded-lg ${variant === "dark" ? "bg-black" : "bg-muted"}`}
+          className={cn(
+            "relative aspect-[16/9] w-full overflow-hidden rounded-sm",
+            variant === "dark" ? "bg-black" : "bg-neutral-950",
+          )}
         >
           <ImageRenderer
-            src={
-              article.imageUrl ||
-              "/placeholder.svg?height=400&width=700&query=featured news story"
-            }
+            src={imageSrc}
             alt={article.imageAlt?.trim() || article.title}
             width={1200}
             height={675}
             fill
-            sizes="(max-width: 1024px) 60vw, 100vw"
+            sizes="(max-width: 1024px) 100vw, 60vw"
             unoptimized={article.imageUnoptimized}
-            className="object-cover"
+            className="object-cover object-center"
             priority
           />
         </div>
-        <ExcerptCreditCaption
-          credit={article.imageCredit}
-          align="right"
-          variant="compact"
-        />
-        <h2 className={`${categoryFeatureHeroTitle} ${textColor}`}>
+      </Link>
+      <ExcerptCreditCaption
+        credit={article.imageCredit}
+        align="right"
+        variant="compact"
+        className={variant === "dark" ? "text-neutral-400" : undefined}
+      />
+      <Link href={href} className="group block">
+        <h2 className={cn("mt-4", categoryFeaturedTitle[variant])}>
           {article.title}
         </h2>
       </Link>
+      <ReadTimeLabel minutes={article.readTime} variant={variant} />
     </article>
   );
 }

@@ -9,7 +9,9 @@ import {
 const config = privacyPolicyConfig;
 const contact = getContactInfo();
 
-export function PrivacySection06() { return (<>
+export function PrivacySection06() {
+  return (
+    <>
       {/* Section 6: Cookies */}
       <section>
         <h2 className="mt-8 mb-4 font-sans font-semibold text-xl">
@@ -96,5 +98,6 @@ export function PrivacySection06() { return (<>
           help enforce your choices across the ad ecosystem.
         </p>
       </section>
-
-</>); }
+    </>
+  );
+}

@@ -13,14 +13,14 @@ type ValidationContext = {
 
 type ImageMediaParent = ValidationContext["parent"];
 
-export function hasImageMedia(parent: ImageMediaParent | undefined): boolean {
+function hasImageMedia(parent: ImageMediaParent | undefined): boolean {
   if (!parent) return false;
   if (parent.source === "external" && parent.externalUrl) return true;
   if (parent.source === "asset" && parent.image?.asset?._ref) return true;
   return false;
 }
 
-export function validateImageAttribution(
+function validateImageAttribution(
   parent: ImageMediaParent | undefined,
 ): true | string {
   if (!hasImageMedia(parent)) return true;

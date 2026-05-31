@@ -236,5 +236,3 @@ export function buildPersonJsonLd(args: {
   }
   return out;
 }
-
-export { buildPublisherJsonLd, buildNewsMediaOrganizationJsonLd };

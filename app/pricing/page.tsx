@@ -4,10 +4,10 @@ import PricingPageClient from "./pricing-page-client";
 
 export async function generateMetadata(): Promise<Metadata> {
   return staticPageMetadata(
-  "Pricing",
-  "Compare The Angle subscription plans and choose the tier that fits you.",
-  "/pricing",
-);
+    "Pricing",
+    "Compare The Angle subscription plans and choose the tier that fits you.",
+    "/pricing",
+  );
 }
 
 export default function PricingPage() {

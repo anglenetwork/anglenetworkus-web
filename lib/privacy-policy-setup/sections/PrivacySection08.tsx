@@ -9,7 +9,9 @@ import {
 const config = privacyPolicyConfig;
 const contact = getContactInfo();
 
-export function PrivacySection08() { return (<>
+export function PrivacySection08() {
+  return (
+    <>
       {/* Section 8: Sale/Sharing */}
       {config.features.targetedAdvertising && (
         <section>
@@ -59,5 +61,6 @@ export function PrivacySection08() { return (<>
           </p>
         </section>
       )}
-
-</>); }
+    </>
+  );
+}

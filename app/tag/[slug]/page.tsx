@@ -23,17 +23,12 @@ import {
   buildTagPageMetadata,
   finalizePublicMetadata,
 } from "@/app/lib/seo/metadata-builders";
-import { getCoverImage } from "@/sanity/lib/utils";
 import { articleFamilyHref } from "@/app/lib/article-family/routes";
 import type { ArticleFamilyDocType } from "@/app/lib/article-family/types";
-import { SectionHeader } from "@/app/components/ui/section-header";
 import { SitePageWidth } from "@/app/components/layout/site-page-width";
 import { trackTagView } from "@/app/lib/analytics/track-tag-view";
 import ShowMoreSection from "./ShowMoreSection";
-import { TagFeaturedArticle } from "./components/TagFeaturedArticle";
-import { TagArticleItem } from "./components/TagArticleItem";
-import { TagNewsItem } from "./components/TagNewsItem";
-import { TagTextNewsItem } from "./components/TagTextNewsItem";
+import { TagMainSection, type TagMainPost } from "./components/TagMainSection";
 
 // Revalidate this page every 60s
 export const revalidate = 60;
@@ -171,7 +166,7 @@ export default async function TagPage({
 
   after(() => trackTagView(slug));
 
-  const { tag, posts: rawPosts, popularReads } = data;
+  const { tag, posts: rawPosts } = data;
 
   const posts = (rawPosts as Record<string, unknown>[]).map((p) => ({
     ...p,
@@ -179,15 +174,11 @@ export default async function TagPage({
       ((p._type as ArticleFamilyDocType) || "post") as ArticleFamilyDocType,
       String(p.slug ?? "#"),
     ),
-  })) as Array<
-    Record<string, unknown> & {
-      href: string;
-      _id: string;
-      slug?: string | null;
-      title?: string | null;
-      cover?: unknown;
-    }
-  >;
+  })) as Array<TagMainPost & Record<string, unknown>>;
+
+  const featuredPost = posts[0];
+  const sidebarPosts = posts.slice(1, 5);
+  const remainingPosts = posts.slice(5);
 
   const breadcrumbLd = buildBreadcrumbJsonLd([
     { name: "Home", path: "/" },
@@ -199,118 +190,18 @@ export default async function TagPage({
       <JsonLdScript data={breadcrumbLd} />
       <main className="min-h-screen bg-background py-4 md:py-8">
         <SitePageWidth>
-          <div className="flex flex-col gap-8 lg:flex-row">
-            {/* Left Column - 60% */}
-            <div className="w-full lg:w-[60%]">
-              <SectionHeader
-                title={tag.title || "Tag"}
-                variant="light"
-                accentStyle="geometric-square"
-                size="large"
-              />
-
-              {/* Featured Article */}
-              {posts.length > 0 &&
-                (() => {
-                  const coverData = getCoverImage(
-                    posts[0].cover as {
-                      source?: "asset" | "external";
-                      externalUrl?: string | null;
-                      image?: any;
-                      alt?: string | null;
-                    } | null,
-                    posts[0].title || "Featured article",
-                  );
-                  return (
-                    <TagFeaturedArticle
-                      image={coverData?.src || ""}
-                      imageAlt={
-                        coverData?.alt || posts[0].title || "Featured article"
-                      }
-                      imageUnoptimized={coverData?.unoptimized}
-                      title={posts[0].title || "Untitled"}
-                      slug={posts[0].slug || "#"}
-                      href={posts[0].href}
-                    />
-                  );
-                })()}
-
-              <div className="space-y-2 divide-y divide-border border-t pt-4">
-                {posts.slice(1, 4).map((post) => {
-                  const coverData = getCoverImage(
-                    post.cover as {
-                      source?: "asset" | "external";
-                      externalUrl?: string | null;
-                      image?: any;
-                      alt?: string | null;
-                    } | null,
-                    post.title || "Untitled",
-                  );
-                  return (
-                    <TagArticleItem
-                      key={post._id}
-                      image={coverData?.src || "/placeholder.svg"}
-                      imageUnoptimized={coverData?.unoptimized}
-                      title={post.title || "Untitled"}
-                      slug={post.slug || "#"}
-                      href={post.href}
-                    />
-                  );
-                })}
-              </div>
-            </div>
-
-            {/* Right Column - 40% */}
-            <aside className="w-full pt-0 lg:w-[40%] lg:pt-10">
-              <div className="space-y-0 rounded-xl bg-neutral-950 p-4">
-                {popularReads.slice(0, 4).map((post: any, index: number) => {
-                  const coverData = getCoverImage(
-                    post.cover as {
-                      source?: "asset" | "external";
-                      externalUrl?: string | null;
-                      image?: any;
-                      alt?: string | null;
-                    } | null,
-                    post.title || "Untitled",
-                  );
-                  return (
-                    <div key={post._id}>
-                      <TagNewsItem
-                        image={coverData?.src || "/placeholder.svg"}
-                        imageUnoptimized={coverData?.unoptimized}
-                        title={post.title || "Untitled"}
-                        readTime={`${post.readTime || 3} MIN READ`}
-                        slug={post.slug || "#"}
-                      />
-                      {index < 3 && <div className="border-border border-b" />}
-                    </div>
-                  );
-                })}
-              </div>
-
-              <div className="mt-2 rounded-lg bg-neutral-100 p-8">
-                <SectionHeader
-                  title="More News"
-                  variant="light"
-                  accentStyle="geometric-square"
-                  size="large"
-                />
-                <div className="space-y-0 divide-y divide-border">
-                  {posts.slice(4, 8).map((post) => (
-                    <TagTextNewsItem
-                      key={post._id}
-                      title={post.title || "Untitled"}
-                      slug={post.slug || "#"}
-                      href={post.href}
-                    />
-                  ))}
-                </div>
-              </div>
-            </aside>
-          </div>
+          {featuredPost ? (
+            <TagMainSection
+              tagTitle={tag.title || "Tag"}
+              featuredPost={featuredPost}
+              sidebarPosts={sidebarPosts}
+            />
+          ) : null}
         </SitePageWidth>
 
-        <ShowMoreSection posts={posts as any} tagSlug={slug} />
+        {remainingPosts.length > 0 ? (
+          <ShowMoreSection posts={remainingPosts as any} tagSlug={slug} />
+        ) : null}
       </main>
     </>
   );

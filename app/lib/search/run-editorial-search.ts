@@ -27,7 +27,7 @@ import {
   type TypeParam,
 } from "@/app/lib/search/editorial-search";
 
-export const EDITORIAL_SEARCH_PAGE_SIZE = 10;
+const EDITORIAL_SEARCH_PAGE_SIZE = 10;
 
 export type EditorialSearchResult = {
   query: string;
@@ -93,9 +93,7 @@ export async function runEditorialSearch(args: {
   const qRaw = args.q.trim();
   const sort = parseSort(args.sort ?? null);
   const type = parseType(args.type ?? null);
-  const page = parsePage(
-    args.page == null ? null : String(args.page),
-  );
+  const page = parsePage(args.page == null ? null : String(args.page));
 
   if (!qRaw) {
     return {
@@ -124,7 +122,9 @@ export async function runEditorialSearch(args: {
 
   const total = typeof totalRaw === "number" ? totalRaw : 0;
   const totalPages =
-    total === 0 ? 0 : Math.max(1, Math.ceil(total / EDITORIAL_SEARCH_PAGE_SIZE));
+    total === 0
+      ? 0
+      : Math.max(1, Math.ceil(total / EDITORIAL_SEARCH_PAGE_SIZE));
 
   const results = (Array.isArray(rows) ? rows : [])
     .map((r: unknown) => normalizeArticleFamilyCard(r))

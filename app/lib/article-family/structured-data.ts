@@ -5,15 +5,13 @@ import {
   type BreadcrumbItem,
 } from "@/app/lib/seo/json-ld";
 import { buildPublisherJsonLd } from "@/app/lib/seo/publisher";
-import { getPublicSiteUrl } from "@/app/lib/seo/site-url";
-import { resolveOpenGraphImage } from "@/sanity/lib/utils";
 import type { SiteSettingsForSeo } from "@/app/lib/seo/metadata-builders";
 import { resolveSiteName } from "@/app/lib/seo/metadata-builders";
+import { getPublicSiteUrl } from "@/app/lib/seo/site-url";
+import { resolveOpenGraphImage } from "@/sanity/lib/utils";
 import { articleFamilyCanonicalHref } from "./routes";
 
-export function getArticleBreadcrumbItems(
-  article: ArticleFamily,
-): BreadcrumbItem[] {
+function getArticleBreadcrumbItems(article: ArticleFamily): BreadcrumbItem[] {
   const home: BreadcrumbItem = { name: "Home", path: "/" };
   const articlePath = articleFamilyCanonicalHref(article._type, article.slug);
   switch (article._type) {
@@ -52,7 +50,7 @@ export function getArticleBreadcrumbItems(
   }
 }
 
-export function buildPublisherForJsonLd(
+function buildPublisherForJsonLd(
   settings: SiteSettingsForSeo | null | undefined,
   demoTitle: string,
 ) {
@@ -66,10 +64,6 @@ export function buildPublisherForJsonLd(
     siteUrl,
     logoUrl: og?.url ?? null,
   });
-}
-
-export function jsonLdScriptContent(data: Record<string, unknown>): string {
-  return JSON.stringify(data);
 }
 
 export function buildArticlePageJsonLd(args: {

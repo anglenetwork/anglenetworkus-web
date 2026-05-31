@@ -9,7 +9,9 @@ import {
 const config = termsOfServiceConfig;
 const contact = getContactInfo();
 
-export function TermsSection05() { return (<>
+export function TermsSection05() {
+  return (
+    <>
       {/* Section 5: AI and Scraping Restrictions */}
       <section>
         <h2 className="mt-8 mb-4 font-sans font-semibold text-xl">
@@ -94,9 +96,10 @@ export function TermsSection05() { return (<>
             data harvesting, data mining, scraping, crawling, extraction,
             collection, or bulk use
           </strong>{" "}
-          of Site Elements, whether for AI-related purposes or otherwise, requires
-          our <strong>prior, explicit, written authorization</strong> (for
-          example, via a signed licensing agreement or written permission from{" "}
+          of Site Elements, whether for AI-related purposes or otherwise,
+          requires our <strong>prior, explicit, written authorization</strong>{" "}
+          (for example, via a signed licensing agreement or written permission
+          from{" "}
           <a
             href={`mailto:${contact.permissionsEmail}`}
             className="text-blue-600 hover:underline"
@@ -136,5 +139,6 @@ export function TermsSection05() { return (<>
           expose you to civil and/or criminal liability under applicable law.
         </p>
       </section>
-
-</>); }
+    </>
+  );
+}

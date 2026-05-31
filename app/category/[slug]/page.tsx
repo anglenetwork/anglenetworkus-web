@@ -137,7 +137,7 @@ export default async function CategoryPageRoute({
         post.date ??
         post._updatedAt ??
         "",
-      readTime: "5 min read",
+      readTime: typeof post.readTime === "number" ? post.readTime : null,
       category: post.category?.title || categoryName,
       imageUrl: coverData?.src,
       imageAlt: coverData?.alt,

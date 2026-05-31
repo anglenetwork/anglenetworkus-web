@@ -145,7 +145,9 @@ export function SubscriptionsCurrentPlan({
                     </AlertDialogTrigger>
                     <AlertDialogContent>
                       <AlertDialogHeader>
-                        <AlertDialogTitle>Cancel Subscription?</AlertDialogTitle>
+                        <AlertDialogTitle>
+                          Cancel Subscription?
+                        </AlertDialogTitle>
                         <AlertDialogDescription>
                           Your subscription will remain active until the end of
                           your current billing period ({validUntilText}).

@@ -49,13 +49,13 @@ function coreArticleQaClauses(): string {
   ].join(" || ");
 }
 
-export const postNeedsEditorialQaFilter = `_type == "post" && (${coreArticleQaClauses()} || !defined(category))`;
+const postNeedsEditorialQaFilter = `_type == "post" && (${coreArticleQaClauses()} || !defined(category))`;
 
-export const opinionNeedsEditorialQaFilter = `_type == "opinion" && (${coreArticleQaClauses()} || !defined(author))`;
+const opinionNeedsEditorialQaFilter = `_type == "opinion" && (${coreArticleQaClauses()} || !defined(author))`;
 
-export const analysisNeedsEditorialQaFilter = `_type == "analysis" && (${coreArticleQaClauses()} || !defined(category) || !defined(author) || !defined(analysisFocus) || analysisFocus == "")`;
+const analysisNeedsEditorialQaFilter = `_type == "analysis" && (${coreArticleQaClauses()} || !defined(category) || !defined(author) || !defined(analysisFocus) || analysisFocus == "")`;
 
-export const sponsoredNeedsDisclosureReviewFilter = `_type == "sponsored" && (!defined(sponsorAttribution) || !defined(sponsorAttribution.sponsorName) || sponsorAttribution.sponsorName == "" || !defined(sponsorAttribution.disclosure) || sponsorAttribution.disclosure == "")`;
+const sponsoredNeedsDisclosureReviewFilter = `_type == "sponsored" && (!defined(sponsorAttribution) || !defined(sponsorAttribution.sponsorName) || sponsorAttribution.sponsorName == "" || !defined(sponsorAttribution.disclosure) || sponsorAttribution.disclosure == "")`;
 
 export const editorialDeskStructure: StructureResolver = (S) => {
   const siteSettingsItem = S.listItem()

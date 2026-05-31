@@ -9,7 +9,9 @@ import {
 const config = termsOfServiceConfig;
 const contact = getContactInfo();
 
-export function TermsSection04() { return (<>
+export function TermsSection04() {
+  return (
+    <>
       {/* Section 4: User-Generated Content */}
       <section>
         <h2 className="mt-8 mb-4 font-sans font-semibold text-xl">
@@ -159,4 +161,6 @@ export function TermsSection04() { return (<>
           or use the reporting tools provided on the Services (if available).
         </p>
       </section>
-</>); }
+    </>
+  );
+}

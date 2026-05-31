@@ -4,7 +4,7 @@ import { articleTitleLink } from "./article-links";
 export const postSidebarListTitle = `mb-2 font-sans font-semibold text-[15px] text-neutral-900 leading-snug tracking-normal ${articleTitleLink}`;
 
 /** Post page — PostSelectedNewsAlt compact list title */
-export const postSidebarListTitleAlt = `line-clamp-2 font-sans font-semibold text-foreground text-sm leading-tight transition-colors duration-200 group-hover:text-primary ${articleTitleLink}`;
+const postSidebarListTitleAlt = `line-clamp-2 font-sans font-semibold text-foreground text-sm leading-tight transition-colors duration-200 group-hover:text-primary ${articleTitleLink}`;
 
 /** Post page — BottomArticleModule classic hero title */
 export const postRelatedClassicHeroTitle = `mt-4 text-start font-sans font-semibold text-2xl text-neutral-900 leading-snug tracking-tight md:text-3xl ${articleTitleLink}`;
