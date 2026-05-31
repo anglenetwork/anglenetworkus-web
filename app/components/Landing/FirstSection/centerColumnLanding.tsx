@@ -36,30 +36,28 @@ interface CenterColumnLandingProps {
   moreTopHeadlines: Post[];
 }
 
+function getCover(post: Post): {
+  src: string | null;
+  alt: string;
+  unoptimized: boolean;
+} {
+  const coverData = getCoverImage(post.cover, post.title);
+  if (!coverData) {
+    return { src: null, alt: post.title, unoptimized: false };
+  }
+
+  return {
+    src: coverData.src,
+    alt: coverData.alt,
+    unoptimized: coverData.unoptimized,
+  };
+}
+
 export function CenterColumnLanding({
   mainStory,
   relatedCategoryPosts,
   moreTopHeadlines,
 }: CenterColumnLandingProps) {
-  const getCover = (
-    post: Post,
-  ): {
-    src: string | null;
-    alt: string;
-    unoptimized: boolean;
-  } => {
-    const coverData = getCoverImage(post.cover, post.title);
-    if (!coverData) {
-      return { src: null, alt: post.title, unoptimized: false };
-    }
-
-    return {
-      src: coverData.src,
-      alt: coverData.alt,
-      unoptimized: coverData.unoptimized,
-    };
-  };
-
   return (
     <div className="lg:px-6">
       {/* <SectionHeader title="Top News" variant="light" accentStyle="small-dot" size="regular" /> */}

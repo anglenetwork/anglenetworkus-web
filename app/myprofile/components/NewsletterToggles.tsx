@@ -11,6 +11,16 @@ interface NewsletterPreferenceRow {
   enabled: boolean;
 }
 
+const NEWSLETTER_DESCRIPTIONS: Record<string, string> = {
+  daily_brief: "Latest news and updates delivered daily",
+  breaking_news: "Be the first to know about breaking news",
+  tech_weekly: "Weekly tech news and updates",
+};
+
+function getNewsletterDescription(key: string) {
+  return NEWSLETTER_DESCRIPTIONS[key] || "Newsletter updates";
+}
+
 export function NewsletterToggles() {
   const [preferences, setPreferences] = useState<Record<string, boolean>>({});
   const [loading, setLoading] = useState(true);
@@ -107,15 +117,6 @@ export function NewsletterToggles() {
       clearTimeout(t);
       setUpdating((prev) => ({ ...prev, [newsletterKey]: false }));
     }
-  };
-
-  const getNewsletterDescription = (key: string) => {
-    const descriptions: Record<string, string> = {
-      daily_brief: "Latest news and updates delivered daily",
-      breaking_news: "Be the first to know about breaking news",
-      tech_weekly: "Weekly tech news and updates",
-    };
-    return descriptions[key] || "Newsletter updates";
   };
 
   if (loading) {

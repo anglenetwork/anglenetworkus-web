@@ -16,8 +16,8 @@ import {
 import { SubscriptionsCurrentPlan } from "./subscriptions-current-plan";
 import {
   getNextTier,
-  SubscriptionsUpgradeSection,
-} from "./subscriptions-upgrade-section";
+} from "./subscriptions-upgrade-helpers";
+import { SubscriptionsUpgradeSection } from "./subscriptions-upgrade-section";
 import { SubscriptionsFaq } from "./subscriptions-faq";
 
 function SubscriptionsPageContent() {
