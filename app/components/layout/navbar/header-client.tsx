@@ -114,7 +114,6 @@ export function HeaderClient({ categories, tags, showsTags }: HeaderProps) {
 
       {isMenuOpen ? (
         <FullScreenMenu
-          isOpen
           categories={categories}
           tags={tags}
           showsTags={showsTags}

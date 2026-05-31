@@ -3,7 +3,7 @@
 import { Facebook, Twitter, Instagram, Youtube } from "lucide-react";
 import { SearchBar } from "../ui/search-bar";
 import Link from "next/link";
-import { useEffect, useMemo, useRef } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
 
 interface Category {
@@ -73,18 +73,16 @@ function EditorialShortcuts({
 }
 
 interface FullScreenMenuProps {
-  isOpen: boolean;
   categories: Category[];
   tags: Tag[];
   showsTags: Tag[];
   onClose: () => void;
-  headerOffset: number; // <— new prop: pixels to pad from top
+  headerOffset: number;
   focusSearchOnOpen?: boolean;
   onFocusSearchHandled?: () => void;
 }
 
 export function FullScreenMenu({
-  isOpen,
   categories,
   tags,
   showsTags,
@@ -94,10 +92,13 @@ export function FullScreenMenu({
   onFocusSearchHandled,
 }: FullScreenMenuProps) {
   const searchInputRef = useRef<HTMLInputElement>(null);
+  const dialogRef = useRef<HTMLDialogElement>(null);
   const onCloseRef = useRef(onClose);
   const onFocusSearchHandledRef = useRef(onFocusSearchHandled);
   onCloseRef.current = onClose;
   onFocusSearchHandledRef.current = onFocusSearchHandled;
+
+  const [visible, setVisible] = useState(false);
 
   const menuTags = useMemo(() => {
     const seen = new Set<string>();
@@ -108,52 +109,33 @@ export function FullScreenMenu({
     });
   }, [tags, showsTags]);
 
-  // Body scroll lock while open (dialog handles Escape + backdrop dismiss).
-  useEffect(() => {
-    if (!isOpen) return;
-
-    const sw = window.innerWidth - document.documentElement.clientWidth;
-    document.body.style.overflow = "hidden";
-    if (sw > 0) document.body.style.paddingRight = `${sw}px`;
-
-    return () => {
-      document.body.style.overflow = "";
-      document.body.style.paddingRight = "";
-    };
-  }, [isOpen]);
-
-  const dialogRef = useRef<HTMLDialogElement>(null);
-
   useEffect(() => {
     const dialog = dialogRef.current;
     if (!dialog) return;
 
-    if (isOpen) {
-      if (!dialog.open) {
-        dialog.showModal();
-      }
-      return;
-    }
-
-    if (dialog.open) {
-      dialog.close();
-    }
-  }, [isOpen]);
-
-  useEffect(() => {
-    const dialog = dialogRef.current;
-    if (!dialog) return;
+    dialog.showModal();
+    const frameId = requestAnimationFrame(() => setVisible(true));
 
     const handleDialogClose = () => {
       onCloseRef.current();
     };
 
     dialog.addEventListener("close", handleDialogClose);
-    return () => dialog.removeEventListener("close", handleDialogClose);
+
+    const sw = window.innerWidth - document.documentElement.clientWidth;
+    document.body.style.overflow = "hidden";
+    if (sw > 0) document.body.style.paddingRight = `${sw}px`;
+
+    return () => {
+      cancelAnimationFrame(frameId);
+      dialog.removeEventListener("close", handleDialogClose);
+      document.body.style.overflow = "";
+      document.body.style.paddingRight = "";
+    };
   }, []);
 
   useEffect(() => {
-    if (!isOpen || !focusSearchOnOpen) return;
+    if (!focusSearchOnOpen) return;
 
     const frameId = requestAnimationFrame(() => {
       searchInputRef.current?.focus();
@@ -161,60 +143,46 @@ export function FullScreenMenu({
     });
 
     return () => cancelAnimationFrame(frameId);
-  }, [isOpen, focusSearchOnOpen]);
+  }, [focusSearchOnOpen]);
 
   return (
     <dialog
       ref={dialogRef}
       aria-label="Navigation menu"
-      data-state={isOpen ? "open" : "closed"}
+      data-state="open"
       className={cn(
         "fixed inset-0 z-40 m-0 size-full max-h-none max-w-none overflow-hidden border-0 bg-background p-0 transition-all duration-500 ease-in-out backdrop:bg-black/40",
-        isOpen
+        visible
           ? "translate-y-0 opacity-100"
           : "pointer-events-none translate-y-full opacity-0",
       )}
       style={{ height: "100svh" }}
-      onClick={(event) => {
-        if (event.target === dialogRef.current) {
-          onCloseRef.current();
-        }
-      }}
     >
-      {/* Only this area can scroll; top padding = current header height */}
       <div
         className="h-full max-h-[100svh] overflow-y-auto overscroll-contain"
         style={{ paddingTop: `${headerOffset || 0}px` }}
-        onClick={(e) => e.stopPropagation()}
       >
         <div className="container mx-auto max-w-7xl md:py-6">
-          {/* Shared wrapper: search + nav same horizontal padding */}
           <div
-            className={`space-y-6 px-4 pb-4 transition-all duration-700 ease-out sm:px-6 sm:pb-6 md:space-y-12 lg:px-16 lg:pb-16 xl:px-0 xl:pb-0 ${
-              isOpen
+            className={cn(
+              "space-y-6 px-4 pb-4 transition-all duration-700 ease-out sm:px-6 sm:pb-6 md:space-y-12 lg:px-16 lg:pb-16 xl:px-0 xl:pb-0",
+              visible
                 ? "translate-y-0 pt-2 opacity-100 md:pt-0"
-                : "translate-y-8 opacity-0"
-            }`}
-            style={{ transitionDelay: isOpen ? "150ms" : "0ms" }}
-          >
-            {isOpen && (
-              <>
-                {/* Search */}
-                <div data-menu-state="open">
-                  <SearchBar
-                    placeholder="Search news, articles, topics and more"
-                    ariaLabel="search bar"
-                    onClose={onClose}
-                    inputRef={searchInputRef}
-                    inputId="menu-search-input"
-                  />
-                </div>
-              </>
+                : "translate-y-8 opacity-0",
             )}
+            style={{ transitionDelay: visible ? "150ms" : "0ms" }}
+          >
+            <div data-menu-state="open">
+              <SearchBar
+                placeholder="Search news, articles, topics and more"
+                ariaLabel="search bar"
+                onClose={onClose}
+                inputRef={searchInputRef}
+                inputId="menu-search-input"
+              />
+            </div>
 
-            {/* Navigation Sections */}
             <div className="grid grid-cols-1 gap-8 md:grid-cols-2 md:gap-12 lg:grid-cols-3">
-              {/* Main Sections - Dynamic Categories */}
               <div>
                 <nav className="flex flex-col gap-4">
                   {categories.length > 0 ? (
@@ -236,7 +204,6 @@ export function FullScreenMenu({
                 </nav>
               </div>
 
-              {/* Tags */}
               <div>
                 <nav className={menuNavListClass}>
                   {(menuTags.length > 0 ? menuTags : menuTagFallbacks).map(
@@ -258,7 +225,6 @@ export function FullScreenMenu({
                 />
               </div>
 
-              {/* Company */}
               <div>
                 <h3 className="mb-4 font-sans font-semibold text-lg text-red-600">
                   Company
@@ -298,10 +264,13 @@ export function FullScreenMenu({
           </div>
 
           <div
-            className={`hidden transition-all duration-700 ease-out xl:block ${
-              isOpen ? "translate-y-0 opacity-100" : "translate-y-8 opacity-0"
-            }`}
-            style={{ transitionDelay: isOpen ? "250ms" : "0ms" }}
+            className={cn(
+              "hidden transition-all duration-700 ease-out xl:block",
+              visible
+                ? "translate-y-0 opacity-100"
+                : "translate-y-8 opacity-0",
+            )}
+            style={{ transitionDelay: visible ? "250ms" : "0ms" }}
           >
             <EditorialShortcuts
               onClose={onClose}
@@ -309,12 +278,14 @@ export function FullScreenMenu({
             />
           </div>
 
-          {/* Social */}
           <div
-            className={`flex items-center gap-4 p-4 transition-all duration-700 ease-out sm:px-6 lg:px-16 xl:px-0 ${
-              isOpen ? "translate-y-0 opacity-100" : "translate-y-8 opacity-0"
-            }`}
-            style={{ transitionDelay: isOpen ? "300ms" : "0ms" }}
+            className={cn(
+              "flex items-center gap-4 p-4 transition-all duration-700 ease-out sm:px-6 lg:px-16 xl:px-0",
+              visible
+                ? "translate-y-0 opacity-100"
+                : "translate-y-8 opacity-0",
+            )}
+            style={{ transitionDelay: visible ? "300ms" : "0ms" }}
           >
             <span
               aria-label="Facebook"
@@ -342,12 +313,14 @@ export function FullScreenMenu({
             </span>
           </div>
 
-          {/* Footer */}
           <div
-            className={`space-y-2 px-4 pb-4 text-muted-foreground text-xs transition-all duration-700 ease-out sm:px-6 sm:pb-6 lg:px-16 lg:pb-16 xl:px-0 xl:pb-8 ${
-              isOpen ? "translate-y-0 opacity-100" : "translate-y-8 opacity-0"
-            }`}
-            style={{ transitionDelay: isOpen ? "400ms" : "0ms" }}
+            className={cn(
+              "space-y-2 px-4 pb-4 text-muted-foreground text-xs transition-all duration-700 ease-out sm:px-6 sm:pb-6 lg:px-16 lg:pb-16 xl:px-0 xl:pb-8",
+              visible
+                ? "translate-y-0 opacity-100"
+                : "translate-y-8 opacity-0",
+            )}
+            style={{ transitionDelay: visible ? "400ms" : "0ms" }}
           >
             <div className="flex flex-wrap gap-x-4 gap-y-2">
               <Link

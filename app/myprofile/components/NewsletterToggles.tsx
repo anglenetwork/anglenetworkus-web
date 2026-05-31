@@ -22,8 +22,10 @@ function getNewsletterDescription(key: string) {
 }
 
 export function NewsletterToggles() {
-  const [preferences, setPreferences] = useState<Record<string, boolean>>({});
-  const [loading, setLoading] = useState(true);
+  const [preferences, setPreferences] = useState<Record<
+    string,
+    boolean
+  > | null>(null);
   const [updating, setUpdating] = useState<Record<string, boolean>>({});
 
   const defaults = useMemo(() => {
@@ -33,8 +35,6 @@ export function NewsletterToggles() {
   }, []);
 
   const fetchPreferences = useCallback(async () => {
-    setLoading(true);
-
     try {
       const res = await fetch("/api/newsletters/list", {
         method: "GET",
@@ -46,7 +46,10 @@ export function NewsletterToggles() {
         return;
       }
 
-      const json = (await res.json().catch(() => ({}))) as any;
+      const json = (await res.json().catch(() => ({}))) as {
+        preferences?: NewsletterPreferenceRow[];
+        error?: string;
+      };
 
       if (!res.ok) {
         console.error("Error fetching newsletter preferences:", json?.error);
@@ -55,7 +58,7 @@ export function NewsletterToggles() {
       }
 
       const prefs = { ...defaults };
-      const rows: NewsletterPreferenceRow[] = json?.preferences || [];
+      const rows = json?.preferences || [];
 
       for (const row of rows) {
         prefs[row.newsletter_key] = !!row.enabled;
@@ -65,21 +68,21 @@ export function NewsletterToggles() {
     } catch (err) {
       console.error("Error fetching newsletter preferences:", err);
       setPreferences(defaults);
-    } finally {
-      setLoading(false);
     }
   }, [defaults]);
 
   useEffect(() => {
-    fetchPreferences();
+    void fetchPreferences();
   }, [fetchPreferences]);
+
+  const loading = preferences === null;
 
   const handleToggle = async (newsletterKey: string, enabled: boolean) => {
     // If a previous request got stuck, this guarantees we can click again later.
     setUpdating((prev) => ({ ...prev, [newsletterKey]: true }));
 
     // optimistic update
-    setPreferences((prev) => ({ ...prev, [newsletterKey]: enabled }));
+    setPreferences((prev) => ({ ...(prev ?? defaults), [newsletterKey]: enabled }));
 
     // optional safety timeout so "in flight" never lasts forever
     const controller = new AbortController();
@@ -150,7 +153,7 @@ export function NewsletterToggles() {
 
           <div className="ml-4 flex-shrink-0">
             <Switch
-              checked={!!preferences[newsletter.key]}
+              checked={!!preferences?.[newsletter.key]}
               onCheckedChange={(checked) =>
                 handleToggle(newsletter.key, checked)
               }
