@@ -18,21 +18,23 @@ export async function getSignInGalleryItems(): Promise<SignInGalleryItem[]> {
 
     if (!Array.isArray(posts)) return [];
 
-    return posts
-      .map((post: {
-        _id?: string;
-        title?: string;
-        slug?: string | null;
-        cover?: Parameters<typeof getCoverImage>[0];
-      }) => {
-        if (!post?._id || !post?.title) return null;
+    return (posts as unknown[])
+      .map((post) => {
+        if (!post || typeof post !== "object") return null;
+        const row = post as {
+          _id?: string;
+          title?: string | null;
+          slug?: string | null;
+          cover?: Parameters<typeof getCoverImage>[0];
+        };
+        if (!row._id || !row.title) return null;
 
-        const coverImage = getCoverImage(post.cover, post.title);
+        const coverImage = getCoverImage(row.cover, row.title);
 
         return {
-          id: post._id,
-          title: post.title,
-          slug: post.slug ?? null,
+          id: row._id,
+          title: row.title,
+          slug: row.slug ?? null,
           image: coverImage?.src ?? "/placeholder.svg",
           description: "",
         };

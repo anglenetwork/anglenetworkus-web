@@ -93,7 +93,9 @@ export async function runEditorialSearch(args: {
   const qRaw = args.q.trim();
   const sort = parseSort(args.sort ?? null);
   const type = parseType(args.type ?? null);
-  const page = parsePage(args.page ?? null);
+  const page = parsePage(
+    args.page == null ? null : String(args.page),
+  );
 
   if (!qRaw) {
     return {

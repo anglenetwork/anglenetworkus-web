@@ -13,7 +13,7 @@ interface BuildArticleImageOptions {
   externalUnoptimized?: boolean | "auto";
 }
 
-export function buildArticleImageData(
+function buildArticleImageData(
   input: ArticleImageSource | null | undefined,
   options: BuildArticleImageOptions,
 ): ResolvedArticleImage | null {
