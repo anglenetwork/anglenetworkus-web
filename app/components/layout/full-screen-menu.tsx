@@ -108,25 +108,49 @@ export function FullScreenMenu({
     });
   }, [tags, showsTags]);
 
-  // ESC + body scroll lock (only while open)
+  // Body scroll lock while open (dialog handles Escape + backdrop dismiss).
   useEffect(() => {
     if (!isOpen) return;
 
-    const handleEscKey = (event: KeyboardEvent) => {
-      if (event.key === "Escape") onCloseRef.current();
-    };
-
-    document.addEventListener("keydown", handleEscKey);
     const sw = window.innerWidth - document.documentElement.clientWidth;
     document.body.style.overflow = "hidden";
     if (sw > 0) document.body.style.paddingRight = `${sw}px`;
 
     return () => {
-      document.removeEventListener("keydown", handleEscKey);
       document.body.style.overflow = "";
       document.body.style.paddingRight = "";
     };
   }, [isOpen]);
+
+  const dialogRef = useRef<HTMLDialogElement>(null);
+
+  useEffect(() => {
+    const dialog = dialogRef.current;
+    if (!dialog) return;
+
+    if (isOpen) {
+      if (!dialog.open) {
+        dialog.showModal();
+      }
+      return;
+    }
+
+    if (dialog.open) {
+      dialog.close();
+    }
+  }, [isOpen]);
+
+  useEffect(() => {
+    const dialog = dialogRef.current;
+    if (!dialog) return;
+
+    const handleDialogClose = () => {
+      onCloseRef.current();
+    };
+
+    dialog.addEventListener("close", handleDialogClose);
+    return () => dialog.removeEventListener("close", handleDialogClose);
+  }, []);
 
   useEffect(() => {
     if (!isOpen || !focusSearchOnOpen) return;
@@ -140,20 +164,22 @@ export function FullScreenMenu({
   }, [isOpen, focusSearchOnOpen]);
 
   return (
-    <div
-      className={`fixed inset-0 z-40 overflow-hidden bg-background transition-all duration-500 ease-in-out ${
-        isOpen
-          ? "translate-y-0 opacity-100"
-          : "pointer-events-none translate-y-full opacity-0"
-      }`}
-      style={{ height: "100svh" }}
-      role="dialog"
+    <dialog
+      ref={dialogRef}
       aria-label="Navigation menu"
       data-state={isOpen ? "open" : "closed"}
-      {...(isOpen
-        ? { "aria-modal": true }
-        : { "aria-hidden": true, "aria-modal": false })}
-      onClick={onClose}
+      className={cn(
+        "fixed inset-0 z-40 m-0 size-full max-h-none max-w-none overflow-hidden border-0 bg-background p-0 transition-all duration-500 ease-in-out backdrop:bg-black/40",
+        isOpen
+          ? "translate-y-0 opacity-100"
+          : "pointer-events-none translate-y-full opacity-0",
+      )}
+      style={{ height: "100svh" }}
+      onClick={(event) => {
+        if (event.target === dialogRef.current) {
+          onCloseRef.current();
+        }
+      }}
     >
       {/* Only this area can scroll; top padding = current header height */}
       <div
@@ -343,6 +369,6 @@ export function FullScreenMenu({
           </div>
         </div>
       </div>
-    </div>
+    </dialog>
   );
 }
