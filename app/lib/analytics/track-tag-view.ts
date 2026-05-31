@@ -1,18 +1,25 @@
 import { createClient } from "next-sanity";
 import { apiVersion, dataset, projectId } from "@/sanity/lib/api";
-import { token } from "@/sanity/lib/token";
+import { writeToken } from "@/sanity/lib/token";
 
-const writeClient = createClient({
-  projectId,
-  dataset,
-  apiVersion,
-  token,
-  useCdn: false,
-});
+function getWriteClient() {
+  if (!writeToken) {
+    throw new Error("Missing SANITY_API_WRITE_TOKEN for analytics mutations");
+  }
+
+  return createClient({
+    projectId,
+    dataset,
+    apiVersion,
+    token: writeToken,
+    useCdn: false,
+  });
+}
 
 export async function trackTagView(tagSlug: string): Promise<void> {
   if (!tagSlug.trim()) return;
 
+  const writeClient = getWriteClient();
   const tag = await writeClient.fetch<{ _id: string; views?: number } | null>(
     `*[_type == "tag" && slug.current == $slug][0] { _id, views }`,
     { slug: tagSlug },
