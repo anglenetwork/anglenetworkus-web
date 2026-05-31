@@ -130,5 +130,4 @@ export function TermsSection11b() { return (<>
           law. This Section 11 survives termination of your account and/or your
           use of the Services.
         </p>
-      </section>
 </>); }

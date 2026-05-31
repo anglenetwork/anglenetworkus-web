@@ -1,12 +1,12 @@
 import type { PortableTextBlock } from "@portabletext/types";
 
-export const MIN_PARAGRAPHS_FOR_BODY_INSET = 4;
+const MIN_PARAGRAPHS_FOR_BODY_INSET = 4;
 
 type SplitBodyForInsetOptions = {
   minParagraphs?: number;
 };
 
-export type BodyInsetSplit = {
+type BodyInsetSplit = {
   before: PortableTextBlock[];
   after: PortableTextBlock[];
   shouldInsert: boolean;
