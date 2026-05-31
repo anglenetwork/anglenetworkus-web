@@ -1,12 +1,7 @@
-import {
-  normalizeExternalImageUrl,
-  resolveEditorialImage,
-} from "@/lib/editorial-image";
+import { resolveEditorialImage } from "@/lib/editorial-image";
 import { urlForImage } from "@/sanity/lib/image-url";
 import { DEFAULT_IMAGE_CAPTION } from "./constants";
 import type { ArticleImageSource, ResolvedArticleImage } from "./types";
-
-export { normalizeExternalImageUrl };
 
 interface BuildArticleImageOptions {
   fallbackAlt: string;

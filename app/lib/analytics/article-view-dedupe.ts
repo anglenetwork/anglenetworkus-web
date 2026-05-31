@@ -1,6 +1,6 @@
 const DEDUPE_MS = 30 * 60 * 1000;
 
-export function articleViewStorageKey(articleId: string) {
+function articleViewStorageKey(articleId: string) {
   return `article-viewed:${articleId}`;
 }
 
@@ -14,9 +14,7 @@ export function isWithinArticleViewDedupeWindow(articleId: string) {
     if (!raw) return false;
 
     const viewedAt = Number.parseInt(raw, 10);
-    return (
-      !Number.isNaN(viewedAt) && Date.now() - viewedAt < DEDUPE_MS
-    );
+    return !Number.isNaN(viewedAt) && Date.now() - viewedAt < DEDUPE_MS;
   } catch {
     return false;
   }

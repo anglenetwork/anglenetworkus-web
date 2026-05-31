@@ -148,7 +148,8 @@ export function LazyBackgroundVideo({
           loop
           muted
           playsInline
-          aria-hidden
+          tabIndex={-1}
+          aria-label="Decorative background video"
           className={`${className} ${showVideo ? "opacity-100" : "opacity-0"}`}
           src={attachedSrc ?? undefined}
           onError={handleVideoError}
