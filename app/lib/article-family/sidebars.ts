@@ -18,7 +18,7 @@ import {
   relatedContentForOpinionQuery,
   relatedContentForPostQuery,
 } from "@/sanity/lib/article-family-queries";
-import type { ArticleFamily, ArticleSidebarPost } from "./types";
+import type { ArticleFamily, ArticleFamilyCard, ArticleSidebarPost } from "./types";
 import { normalizeArticleFamilyCard } from "./normalize";
 import { articleFamilyHref } from "./routes";
 
@@ -113,9 +113,10 @@ export async function loadArticlePageSidebars(article: ArticleFamily) {
     relatedPromise,
   ]);
 
-  const relatedNorm = (relatedRaw || [])
-    .map((r: unknown) => normalizeArticleFamilyCard(r))
-    .filter((r): r is NonNullable<typeof r> => r != null);
+  const relatedRows: unknown[] = Array.isArray(relatedRaw) ? relatedRaw : [];
+  const relatedNorm = relatedRows
+    .map((r) => normalizeArticleFamilyCard(r))
+    .filter((r): r is ArticleFamilyCard => r != null);
 
   const relatedArticles: SidebarArticleLink[] = relatedNorm.map((r) => ({
     _id: r._id,
@@ -160,9 +161,10 @@ export async function loadLatestInCategory(
     },
   });
 
-  const normalized = (rows || [])
-    .map((r: unknown) => normalizeArticleFamilyCard(r))
-    .filter((r): r is NonNullable<typeof r> => r != null);
+  const categoryRows: unknown[] = Array.isArray(rows) ? rows : [];
+  const normalized = categoryRows
+    .map((r) => normalizeArticleFamilyCard(r))
+    .filter((r): r is ArticleFamilyCard => r != null);
 
   return normalized.map((r) => ({
     _id: r._id,
