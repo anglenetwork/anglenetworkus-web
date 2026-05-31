@@ -4,6 +4,7 @@ import { toPlainText, type PortableTextBlock } from "next-sanity";
 import ArticleFamilyCard from "@/app/components/article-family/ArticleFamilyCard";
 import { SitePageWidth } from "@/app/components/layout/site-page-width";
 import { normalizeArticleFamilyCard } from "@/app/lib/article-family/normalize";
+import type { ArticleFamilyCard as ArticleFamilyCardData } from "@/app/lib/article-family/types";
 import { JsonLdScript } from "@/app/components/seo/json-ld-script";
 import { getCachedSettings } from "@/app/lib/cached-settings";
 import {
@@ -74,9 +75,12 @@ export default async function AuthorPage({
     : "";
   const description = author.shortBio?.trim() || bioPlain || undefined;
 
-  const articles = (Array.isArray(author.articles) ? author.articles : [])
+  const rawArticles: unknown[] = Array.isArray(author.articles)
+    ? author.articles
+    : [];
+  const articles = rawArticles
     .map((raw) => normalizeArticleFamilyCard(raw))
-    .filter((a): a is NonNullable<typeof a> => a != null);
+    .filter((a): a is ArticleFamilyCardData => a != null);
 
   const sameAs = buildAuthorSameAsUrls({
     website: author.website,

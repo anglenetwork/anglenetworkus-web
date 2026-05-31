@@ -92,7 +92,7 @@ describe("CoverImageCarousel", () => {
     fireEvent.click(screen.getByRole("button", { name: "Go to image 2" }));
 
     expect(screen.getByText("Credit Two")).toBeInTheDocument();
-    expect(screen.getByText("Rights Two")).toBeInTheDocument();
+    expect(screen.getByText(/Rights Two/)).toBeInTheDocument();
     expect(screen.queryByText("Credit One")).not.toBeInTheDocument();
   });
 
