@@ -3,7 +3,7 @@ import Stripe from "stripe";
 
 let _stripe: Stripe | null = null;
 
-export const getStripe = (): Stripe => {
+const getStripe = (): Stripe => {
   if (!_stripe) {
     const secretKey = process.env.STRIPE_SECRET_KEY;
     if (!secretKey) {

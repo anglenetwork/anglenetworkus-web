@@ -1,10 +1,9 @@
 import Link from "next/link";
+import { cn } from "@/lib/utils";
 import type { Article } from "./types";
 import { ImageRenderer } from "../ui/image-renderer";
-import {
-  categoryFeatureSideDesktopTitle,
-  categoryFeatureSideTitle,
-} from "@/app/lib/typography/category-page";
+import { categorySecondaryRowTitle } from "@/app/lib/typography/second-section";
+import { ReadTimeLabel } from "@/app/components/ui/read-time-label";
 
 interface FeatureSideItemProps {
   article: Article;
@@ -15,69 +14,42 @@ export function FeatureSideItem({
   article,
   variant = "light",
 }: FeatureSideItemProps) {
-  const textColor = variant === "dark" ? "text-white" : "";
-  const desktopTextColor =
-    variant === "dark" ? "text-white" : "text-neutral-900";
-  const imageFrameClass =
-    variant === "dark"
-      ? "overflow-hidden rounded-lg bg-black"
-      : "overflow-hidden rounded-lg bg-muted";
+  const href = article.href ?? `/post/${article.slug}`;
+  const imageSrc =
+    article.imageUrl ||
+    "/placeholder.svg?height=200&width=300&query=news article";
 
   return (
     <article className="group">
       <Link
-        href={article.href ?? `/post/${article.slug}`}
+        href={href}
         className="block"
         aria-label={`Read article: ${article.title}`}
       >
-        {/* Mobile row style */}
-        <div className="flex gap-4 md:hidden">
-          <div className={`relative h-16 w-24 shrink-0 ${imageFrameClass}`}>
-            <ImageRenderer
-              src={
-                article.imageUrl ||
-                "/placeholder.svg?height=200&width=300&query=news article"
-              }
-              alt=""
-              width={96}
-              height={64}
-              fill
-              sizes="96px"
-              unoptimized={article.imageUnoptimized}
-              className="object-cover"
-            />
-          </div>
-          <div className="flex-1">
-            <h3 className={`${categoryFeatureSideTitle} ${textColor}`}>
-              {article.title}
-            </h3>
-          </div>
-        </div>
-
-        {/* Desktop card style */}
-        <div className="hidden md:block">
-          <div className={`relative mb-3 aspect-[4/3] ${imageFrameClass}`}>
-            <ImageRenderer
-              src={
-                article.imageUrl ||
-                "/placeholder.svg?height=200&width=300&query=news article"
-              }
-              alt=""
-              width={400}
-              height={300}
-              fill
-              sizes="(min-width: 1024px) 20vw, 50vw"
-              unoptimized={article.imageUnoptimized}
-              className="object-cover"
-            />
-          </div>
-          <h3
-            className={`${categoryFeatureSideDesktopTitle} ${desktopTextColor}`}
-          >
-            {article.title}
-          </h3>
+        <div
+          className={cn(
+            "relative aspect-[4/3] w-full overflow-hidden rounded-sm",
+            variant === "dark" ? "bg-black" : "bg-neutral-950",
+          )}
+        >
+          <ImageRenderer
+            src={imageSrc}
+            alt={article.imageAlt?.trim() || article.title}
+            width={400}
+            height={300}
+            fill
+            sizes="(max-width: 1024px) 100vw, 20vw"
+            unoptimized={article.imageUnoptimized}
+            className="object-cover object-center"
+          />
         </div>
       </Link>
+      <Link href={href} className="group block">
+        <h3 className={cn("mt-2", categorySecondaryRowTitle[variant])}>
+          {article.title}
+        </h3>
+      </Link>
+      <ReadTimeLabel minutes={article.readTime} variant={variant} />
     </article>
   );
 }

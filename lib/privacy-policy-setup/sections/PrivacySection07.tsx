@@ -9,7 +9,9 @@ import {
 const config = privacyPolicyConfig;
 const contact = getContactInfo();
 
-export function PrivacySection07() { return (<>
+export function PrivacySection07() {
+  return (
+    <>
       {/* Section 7: When We Share Information */}
       <section>
         <h2 className="mt-8 mb-4 font-sans font-semibold text-xl">
@@ -83,5 +85,6 @@ export function PrivacySection07() { return (<>
           </li>
         </ul>
       </section>
-
-</>); }
+    </>
+  );
+}

@@ -19,10 +19,7 @@ import {
   SearchResultsLoadingSkeleton,
 } from "./search-results-list";
 import { SearchResultsStatus } from "./search-results-status";
-import {
-  buildSearchPath,
-  createSearchHandlers,
-} from "./search-results-shared";
+import { buildSearchPath, createSearchHandlers } from "./search-results-shared";
 
 type FilterUiState = {
   typeFilterOpen: boolean;

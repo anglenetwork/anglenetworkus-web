@@ -1,7 +1,8 @@
 import Link from "next/link";
 import type { Article } from "./types";
+import { articleTitleLink } from "@/app/lib/typography/article-links";
 import { ImageRenderer } from "../ui/image-renderer";
-import { categoryMostReadStoryLink } from "@/app/lib/typography/category-page";
+import { ReadTimeLabel } from "@/app/components/ui/read-time-label";
 
 interface MostReadItemProps {
   article: Article;
@@ -36,18 +37,19 @@ export function MostReadItem({
         </Link>
       )}
       <div className="flex gap-4">
-        <div className="flex size-8 flex-shrink-0 items-center justify-center rounded-full bg-blue-100 font-sans font-semibold text-blue-700 text-sm">
+        <div className="flex size-8 shrink-0 items-center justify-center rounded-full bg-blue-100 font-sans font-semibold text-blue-700 text-sm">
           {index + 1}
         </div>
         <div className="flex-1 space-y-2">
           <h3 className="font-medium font-sans text-base text-neutral-900 leading-snug tracking-normal">
             <Link
               href={article.href ?? `/post/${article.slug}`}
-              className={categoryMostReadStoryLink}
+              className={articleTitleLink}
             >
               {article.title}
             </Link>
           </h3>
+          <ReadTimeLabel minutes={article.readTime} />
         </div>
       </div>
     </article>

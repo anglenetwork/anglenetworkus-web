@@ -38,7 +38,10 @@ export function ArticleTransparencySection({
             Methodology
           </h3>
           <p
-            className={cn("whitespace-pre-wrap", nonRegularPostTransparencyBody)}
+            className={cn(
+              "whitespace-pre-wrap",
+              nonRegularPostTransparencyBody,
+            )}
           >
             {methodologyNote}
           </p>
@@ -50,7 +53,10 @@ export function ArticleTransparencySection({
             Sources
           </h3>
           <p
-            className={cn("whitespace-pre-wrap", nonRegularPostTransparencyBody)}
+            className={cn(
+              "whitespace-pre-wrap",
+              nonRegularPostTransparencyBody,
+            )}
           >
             {sourcesNote}
           </p>

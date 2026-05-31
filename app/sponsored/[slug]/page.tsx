@@ -37,15 +37,12 @@ export default async function SponsoredArticlePage({
   if (!article) notFound();
 
   const tagsForSuggested =
-    article.tags?.reduce<Array<{ name: string; slug: string }>>(
-      (acc, tag) => {
-        if (tag.title && tag.slug) {
-          acc.push({ name: tag.title, slug: tag.slug });
-        }
-        return acc;
-      },
-      [],
-    ) ?? [];
+    article.tags?.reduce<Array<{ name: string; slug: string }>>((acc, tag) => {
+      if (tag.title && tag.slug) {
+        acc.push({ name: tag.title, slug: tag.slug });
+      }
+      return acc;
+    }, []) ?? [];
 
   return (
     <ArticleFamilyPage

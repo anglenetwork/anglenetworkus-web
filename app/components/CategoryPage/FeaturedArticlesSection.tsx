@@ -1,3 +1,4 @@
+import { cn } from "@/lib/utils";
 import { FeatureHero } from "./FeatureHero";
 import { FeatureSideItem } from "./FeatureSideItem";
 import { SectionHeader } from "@/app/components/ui/section-header";
@@ -12,63 +13,85 @@ interface FeaturedArticlesSectionProps {
   };
 }
 
+function SideArticleList({
+  articles,
+  variant,
+  className,
+}: {
+  articles: Article[];
+  variant: "light" | "dark";
+  className?: string;
+}) {
+  const divideClass =
+    variant === "dark" ? "divide-white/30" : "divide-neutral-300";
+
+  return (
+    <div
+      className={cn(
+        "flex flex-col divide-y divide-dotted",
+        divideClass,
+        className,
+      )}
+    >
+      {articles.map((article) => (
+        <div key={article.id} className="py-4 first:pt-0 last:pb-0">
+          <FeatureSideItem article={article} variant={variant} />
+        </div>
+      ))}
+    </div>
+  );
+}
+
 export function FeaturedArticlesSection({
   featuredArticles,
 }: FeaturedArticlesSectionProps) {
+  const variant = "dark" as const;
+  const sideArticles = [
+    ...featuredArticles.leftColumn,
+    ...featuredArticles.rightColumn,
+  ];
+
   return (
     <section className="border-border border-b bg-neutral-950">
       <SitePageWidth className="py-12">
         <SectionHeader
           title="Featured"
-          variant="dark"
-          accentStyle="geometric-square"
-          size="large"
+          variant={variant}
+          accentStyle="modern"
         />
-        {/* Mobile: center hero, then left, then right (stacked) */}
-        <div className="block space-y-8 md:hidden">
-          <div className="mb-12">
-            <FeatureHero
-              article={featuredArticles.centerArticle}
-              variant="dark"
-            />
-          </div>
 
-          <div className="space-y-6">
-            {featuredArticles.leftColumn.map((a) => (
-              <FeatureSideItem key={a.id} article={a} variant="dark" />
-            ))}
-          </div>
-
-          <div className="space-y-6">
-            {featuredArticles.rightColumn.map((a) => (
-              <FeatureSideItem key={a.id} article={a} variant="dark" />
-            ))}
-          </div>
+        <div className="lg:hidden">
+          <FeatureHero
+            article={featuredArticles.centerArticle}
+            variant={variant}
+          />
+          {sideArticles.length > 0 ? (
+            <div className="mt-8">
+              <SideArticleList articles={sideArticles} variant={variant} />
+            </div>
+          ) : null}
         </div>
 
-        {/* Desktop: 20% - 60% - 20% */}
-        {/* Reordered DOM: center first for proper heading hierarchy (h2 before h3) */}
-        <div className="hidden grid-cols-5 gap-8 md:grid">
-          {/* Center column first in DOM for proper h2 -> h3 hierarchy, visually positioned in center */}
-          <div className="order-2 col-span-3 col-start-2">
-            <FeatureHero
-              article={featuredArticles.centerArticle}
-              variant="dark"
+        <div className="hidden lg:grid lg:grid-cols-[1fr_3fr_1fr] lg:divide-x lg:divide-dotted lg:divide-white/30">
+          <div className="min-w-0 lg:px-6 lg:py-0">
+            <SideArticleList
+              articles={featuredArticles.leftColumn}
+              variant={variant}
             />
           </div>
 
-          {/* Left column - visually first, but appears after center in DOM */}
-          <div className="order-1 col-span-1 space-y-6">
-            {featuredArticles.leftColumn.map((a) => (
-              <FeatureSideItem key={a.id} article={a} variant="dark" />
-            ))}
+          <div className="min-w-0 lg:px-6">
+            <FeatureHero
+              article={featuredArticles.centerArticle}
+              variant={variant}
+            />
           </div>
 
-          {/* Right column - visually last */}
-          <div className="order-3 col-span-1 space-y-6">
-            {featuredArticles.rightColumn.map((a) => (
-              <FeatureSideItem key={a.id} article={a} variant="dark" />
-            ))}
+          <div className="min-w-0 lg:px-6 lg:py-0">
+            <SideArticleList
+              articles={featuredArticles.rightColumn}
+              variant={variant}
+            />
           </div>
         </div>
       </SitePageWidth>

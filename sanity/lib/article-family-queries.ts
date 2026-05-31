@@ -94,7 +94,7 @@ const articleFamilySeo = `
 `;
 
 /** Card tiles / list previews — no body, no heavy gallery */
-export const articleFamilyCardFragment = `
+const articleFamilyCardFragment = `
   _id,
   _type,
   "status": select(_originalId in path("drafts.**") => "draft", "published"),
@@ -102,6 +102,7 @@ export const articleFamilyCardFragment = `
   "tickerTitle": coalesce(tickerTitle, ""),
   "slug": slug.current,
   excerpt,
+  readTime,
   ${articleFamilyCover},
   publishedAt,
   updatedAt,
@@ -114,7 +115,7 @@ export const articleFamilyCardFragment = `
 export const articleFamilyListFragment = articleFamilyCardFragment;
 
 /** Full article page projection */
-export const articleFamilyPageFragment = `
+const articleFamilyPageFragment = `
   _id,
   _type,
   "status": select(_originalId in path("drafts.**") => "draft", "published"),
@@ -134,7 +135,7 @@ export const articleFamilyPageFragment = `
   ${articleFamilyImageGallery}
 `;
 
-export const ARTICLE_FAMILY_PUBLISHED = `
+const ARTICLE_FAMILY_PUBLISHED = `
   status == "published" &&
   defined(publishedAt) && publishedAt <= now()
 `;
@@ -203,7 +204,7 @@ export const sponsoredSlugsQuery = defineQuery(`
 
 // --- Feed helpers (hardcoded _type sets; sponsored excluded unless noted) ---
 
-export const standardNewsListQuery = defineQuery(`
+const standardNewsListQuery = defineQuery(`
   *[
     _type == "${GROQ_POST}" &&
     ${ARTICLE_FAMILY_PUBLISHED} &&
@@ -223,7 +224,7 @@ export const opinionListQuery = defineQuery(`
   }
 `);
 
-export const analysisListQuery = defineQuery(`
+const analysisListQuery = defineQuery(`
   *[
     _type == "${GROQ_ANALYSIS}" &&
     ${ARTICLE_FAMILY_PUBLISHED} &&
@@ -233,7 +234,7 @@ export const analysisListQuery = defineQuery(`
   }
 `);
 
-export const mixedEditorialListQuery = defineQuery(`
+const mixedEditorialListQuery = defineQuery(`
   *[
     _type in [${GROQ_MIXED_EDITORIAL}] &&
     ${ARTICLE_FAMILY_PUBLISHED} &&
@@ -480,7 +481,7 @@ export const relatedContentForAnalysisQuery = defineQuery(`
 `);
 
 /** Explicit opt-in: sponsored list only (never used as default editorial) */
-export const sponsoredListQuery = defineQuery(`
+const sponsoredListQuery = defineQuery(`
   *[
     _type == "${GROQ_SPONSORED}" &&
     ${ARTICLE_FAMILY_PUBLISHED} &&

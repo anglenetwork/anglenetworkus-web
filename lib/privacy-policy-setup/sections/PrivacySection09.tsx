@@ -9,7 +9,9 @@ import {
 const config = privacyPolicyConfig;
 const contact = getContactInfo();
 
-export function PrivacySection09() { return (<>
+export function PrivacySection09() {
+  return (
+    <>
       {/* Section 9: Your Rights */}
       <section>
         <h2 className="mt-8 mb-4 font-sans font-semibold text-xl">
@@ -140,5 +142,6 @@ export function PrivacySection09() { return (<>
           with the subject line "Privacy Request Appeal."
         </p>
       </section>
-
-</>); }
+    </>
+  );
+}

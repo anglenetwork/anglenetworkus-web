@@ -1,9 +1,10 @@
 import Link from "next/link";
-import { format, parseISO } from "date-fns";
+import { cn } from "@/lib/utils";
 import { getCoverImage } from "@/sanity/lib/utils";
 import { ImageRenderer } from "../ui/image-renderer";
 import type { ArticleSidebarPost } from "@/app/lib/article-family/types";
-import { postSidebarListTitle } from "@/app/lib/typography/post-page";
+import { categorySecondaryRowTitle } from "@/app/lib/typography/second-section";
+import { ReadTimeLabel } from "@/app/components/ui/read-time-label";
 
 interface PostSelectedNewsProps {
   latestNews: ArticleSidebarPost[];
@@ -17,16 +18,13 @@ export default function PostSelectedNews({
   if (!latestNews || latestNews.length === 0) return null;
 
   return (
-    <div className="mx-auto w-full max-w-md rounded-lg bg-white">
-      {/* Header */}
+    <div className="mx-auto w-full max-w-md">
       <h2 className="mb-6 font-bold font-sans text-foreground text-xl">
         {title}
       </h2>
 
-      {/* Articles List */}
-      <div className="space-y-4">
-        {latestNews.slice(0, 4).map((post: ArticleSidebarPost) => {
-          // Use smaller thumbnail (200px) for sidebar images to reduce file size
+      <div className="flex flex-col divide-y divide-dotted divide-neutral-300">
+        {latestNews.slice(0, 4).map((post: ArticleSidebarPost, index) => {
           const coverData = getCoverImage(
             post.cover as Parameters<typeof getCoverImage>[0],
             post.title || "Article image",
@@ -35,52 +33,46 @@ export default function PostSelectedNews({
           const imgUrl = coverData?.src ?? null;
 
           return (
-            <div key={post._id}>
+            <article
+              key={post._id}
+              className={cn(
+                "py-4",
+                index === 0 && "pt-0",
+                index === Math.min(latestNews.length, 4) - 1 && "pb-0",
+              )}
+            >
               <Link
                 href={post.href}
-                className="group flex cursor-pointer items-start gap-4 rounded-lg transition-colors duration-200"
+                className="group flex items-start gap-3"
+                aria-label={`Read article: ${post.title}`}
               >
-                {/* Article Image */}
-                <div className="flex-shrink-0">
-                  {imgUrl ? (
-                    <div className="relative h-[77px] w-24 overflow-hidden rounded-lg">
-                      <ImageRenderer
-                        src={imgUrl}
-                        alt={coverData?.alt || post.title || "Article image"}
-                        unoptimized={coverData?.unoptimized}
-                        className="object-cover object-center transition-opacity duration-200"
-                        width={96}
-                        height={77}
-                        quality={50}
-                        sizes="96px"
-                        fill
-                        // Lazy load sidebar images (below the fold)
-                      />
-                    </div>
-                  ) : (
-                    <div className="flex h-[77px] w-24 items-center justify-center rounded-lg bg-gray-200/80 font-sans text-[10px] text-gray-500">
-                      No Image
-                    </div>
-                  )}
-                </div>
-
-                {/* Article Content */}
                 <div className="min-w-0 flex-1">
-                  <h3 className={postSidebarListTitle}>{post.title}</h3>
-                  {post.date && (
-                    <p className="mt-1 font-sans text-neutral-500 text-xs">
-                      {(() => {
-                        try {
-                          return format(parseISO(post.date), "MMM dd, h:mm a");
-                        } catch {
-                          return "";
-                        }
-                      })()}
-                    </p>
-                  )}
+                  <h3 className={categorySecondaryRowTitle.light}>
+                    {post.title}
+                  </h3>
+                  <ReadTimeLabel minutes={post.readTime} />
                 </div>
+                {imgUrl ? (
+                  <div className="relative h-20 w-28 shrink-0 overflow-hidden rounded-sm bg-neutral-950">
+                    <ImageRenderer
+                      src={imgUrl}
+                      alt={coverData?.alt || post.title || "Article image"}
+                      unoptimized={coverData?.unoptimized}
+                      className="object-cover object-center"
+                      width={112}
+                      height={80}
+                      quality={50}
+                      sizes="112px"
+                      fill
+                    />
+                  </div>
+                ) : (
+                  <div className="flex h-20 w-28 shrink-0 items-center justify-center rounded-sm bg-neutral-200 font-sans text-[10px] text-neutral-500">
+                    No Image
+                  </div>
+                )}
               </Link>
-            </div>
+            </article>
           );
         })}
       </div>

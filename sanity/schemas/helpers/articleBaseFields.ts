@@ -121,10 +121,7 @@ export const articleBodyFields = [
 ];
 
 /** @deprecated Prefer `articleCoverGalleryFields` + `articleBodyFields` for ordering; kept for compatibility. */
-export const articleMediaFields = [
-  ...articleCoverGalleryFields,
-  ...articleBodyFields,
-];
+const articleMediaFields = [...articleCoverGalleryFields, ...articleBodyFields];
 
 export const articlePublishingFields = [
   defineField({
@@ -175,7 +172,7 @@ export const articleSeoField = defineField({
   type: "seo",
 });
 
-export const articleAuthorSeoFields = [articleAuthorField(), articleSeoField];
+const articleAuthorSeoFields = [articleAuthorField(), articleSeoField];
 
 /** Shared Studio copy for legacy Sanity view counters (Supabase is operational source of truth). */
 export const LEGACY_SANITY_VIEWS_METRICS_DESCRIPTION =

@@ -9,7 +9,9 @@ import {
 const config = termsOfServiceConfig;
 const contact = getContactInfo();
 
-export function TermsSection03() { return (<>
+export function TermsSection03() {
+  return (
+    <>
       {/* Section 3: Limited License for Personal Use */}
       <section>
         <h2 className="mt-8 mb-4 font-sans font-semibold text-xl">
@@ -129,5 +131,6 @@ export function TermsSection03() { return (<>
           (or the contact method we specify on the Services).
         </p>
       </section>
-
-</>); }
+    </>
+  );
+}

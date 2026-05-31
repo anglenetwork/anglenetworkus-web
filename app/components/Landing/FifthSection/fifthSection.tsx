@@ -143,8 +143,7 @@ export default function FifthSection({ categoriesData }: FifthSectionProps) {
       <SectionHeader
         title="Featured Stories"
         variant="light"
-        accentStyle="small-dot"
-        size="regular"
+        accentStyle="modern"
       />
 
       <div className="relative">

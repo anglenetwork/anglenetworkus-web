@@ -36,8 +36,3 @@ export async function createSupabaseServerClient(): Promise<SupabaseClient> {
     },
   });
 }
-
-// Legacy export for backward compatibility
-export async function createClient() {
-  return await createSupabaseServerClient();
-}

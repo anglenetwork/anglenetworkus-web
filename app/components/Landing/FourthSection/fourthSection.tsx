@@ -2,12 +2,15 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import { cn } from "@/lib/utils";
+import { ListingPhotoCredit } from "@/app/helpers";
 import { shouldRenderCarouselSlide } from "@/lib/carousel";
 import { resolveListingImage } from "@/lib/editorial-image";
 import { getCoverImage } from "@/sanity/lib/utils";
 import { SectionHeader } from "../../ui/section-header";
 import { ImageRenderer } from "../../ui/image-renderer";
-import { featuredColumnTitle } from "@/app/lib/typography/fourth-section";
+import { categoryFeaturedTitle } from "@/app/lib/typography/second-section";
+import { ReadTimeLabel } from "@/app/components/ui/read-time-label";
 
 interface GalleryImage {
   source?: "asset" | "external";
@@ -22,11 +25,15 @@ interface GalleryImage {
 interface Article {
   title: string;
   slug: string;
+  readTime?: number | null;
   cover?: {
     source?: "asset" | "external";
     externalUrl?: string | null;
     image?: any;
     alt?: string | null;
+    caption?: string | null;
+    creditAuthor?: string | null;
+    creditSource?: string | null;
   } | null;
   imageGallery?: Array<GalleryImage> | null;
   category?: {
@@ -39,9 +46,13 @@ interface FourthSectionProps {
   leftArticle: Article;
   centerArticle: Article;
   rightArticle: Article;
+  variant?: "light" | "dark";
 }
 
 const featuredImageSizes = "(max-width: 1024px) 100vw, 33vw";
+
+const featuredImageClassName =
+  "relative aspect-[16/9] w-full overflow-hidden rounded-sm bg-neutral-950";
 
 function listingGalleryImage(galleryImage: GalleryImage): {
   src: string;
@@ -56,9 +67,6 @@ function listingGalleryImage(galleryImage: GalleryImage): {
     unoptimized: resolved.unoptimized,
   };
 }
-
-const featuredImageClassName =
-  "relative w-full h-[10.5rem] md:h-60 rounded-lg overflow-hidden";
 
 function ArticleImageCarousel({
   coverImage,
@@ -86,7 +94,11 @@ function ArticleImageCarousel({
   if (allImages.length === 0) return null;
 
   return (
-    <Link href={`/post/${postSlug}`}>
+    <Link
+      href={`/post/${postSlug}`}
+      className="group block"
+      aria-label="View featured article images"
+    >
       <div className={featuredImageClassName}>
         {allImages.map((image, idx) => {
           if (!shouldRenderCarouselSlide(idx, currentIndex, allImages.length)) {
@@ -98,12 +110,12 @@ function ArticleImageCarousel({
               key={image.src}
               src={image.src}
               alt={image.alt}
-              width={600}
-              height={240}
+              width={800}
+              height={450}
               fill
               unoptimized={image.unoptimized}
               sizes={featuredImageSizes}
-              className={`absolute inset-0 object-cover transition-opacity duration-500 ${
+              className={`absolute inset-0 object-cover object-center transition-opacity duration-500 ${
                 idx === currentIndex ? "z-10 opacity-100" : "z-0 opacity-0"
               }`}
             />
@@ -153,25 +165,31 @@ function resolveArticleImages(article: Article) {
   return { coverData, galleryImagesData, hasGalleryImages };
 }
 
-function FeaturedColumn({ article }: { article: Article }) {
+function FeaturedColumn({
+  article,
+  variant = "light",
+}: {
+  article: Article;
+  variant?: "light" | "dark";
+}) {
   const { coverData, galleryImagesData, hasGalleryImages } =
     resolveArticleImages(article);
 
+  const categoryTitle = article.category?.title || "More Top Headlines";
+  const categoryHref = article.category?.slug
+    ? `/category/${article.category.slug}`
+    : undefined;
+
   return (
-    <div className="space-y-8">
+    <>
       <SectionHeader
-        title={article.category?.title || "More Top Headlines"}
-        variant="light"
-        accentStyle="small-dot"
-        size="regular"
-        href={
-          article.category?.slug
-            ? `/category/${article.category.slug}`
-            : undefined
-        }
+        title={categoryTitle}
+        href={categoryHref}
+        variant={variant}
+        accentStyle="modern"
       />
 
-      <article className="space-y-3">
+      <div>
         {hasGalleryImages ? (
           <ArticleImageCarousel
             coverImage={coverData}
@@ -179,26 +197,36 @@ function FeaturedColumn({ article }: { article: Article }) {
             postSlug={article.slug}
           />
         ) : coverData?.src ? (
-          <Link href={`/post/${article.slug}`}>
+          <Link
+            href={`/post/${article.slug}`}
+            className="group block"
+            aria-label={`Read article: ${article.title}`}
+          >
             <div className={featuredImageClassName}>
               <ImageRenderer
                 src={coverData.src}
                 alt={coverData.alt}
-                width={600}
-                height={240}
+                width={800}
+                height={450}
                 fill
                 unoptimized={coverData.unoptimized}
                 sizes={featuredImageSizes}
-                className="object-cover"
+                className="object-cover object-center"
               />
             </div>
           </Link>
         ) : null}
-        <Link href={`/post/${article.slug}`}>
-          <h2 className={featuredColumnTitle}>{article.title}</h2>
+
+        <ListingPhotoCredit cover={article.cover} align="right" />
+
+        <Link href={`/post/${article.slug}`} className="group block">
+          <h3 className={cn("mt-4", categoryFeaturedTitle[variant])}>
+            {article.title}
+          </h3>
         </Link>
-      </article>
-    </div>
+        <ReadTimeLabel minutes={article.readTime} variant={variant} />
+      </div>
+    </>
   );
 }
 
@@ -206,13 +234,32 @@ export default function FourthSection({
   leftArticle,
   centerArticle,
   rightArticle,
+  variant = "light",
 }: FourthSectionProps) {
+  const divideClass =
+    variant === "dark" ? "divide-white/30" : "divide-neutral-300";
+
   return (
-    <main className="bg-background text-foreground">
-      <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-        <FeaturedColumn article={leftArticle} />
-        <FeaturedColumn article={centerArticle} />
-        <FeaturedColumn article={rightArticle} />
+    <main
+      className={cn(
+        "rounded-lg",
+        variant === "dark" ? "bg-neutral-950" : "bg-background",
+      )}
+    >
+      <div
+        className={cn(
+          "grid grid-cols-1 divide-y divide-dotted lg:grid-cols-3 lg:divide-x lg:divide-y-0",
+          divideClass,
+        )}
+      >
+        {[leftArticle, centerArticle, rightArticle].map((article) => (
+          <article
+            key={article.slug}
+            className="space-y-4 py-6 first:pt-0 last:pb-0 lg:px-6 lg:py-0"
+          >
+            <FeaturedColumn article={article} variant={variant} />
+          </article>
+        ))}
       </div>
     </main>
   );

@@ -97,7 +97,7 @@ export function getWikimediaThumbnail(
  * @param maxWidth - Maximum width for optimization
  * @returns Optimized URL
  */
-export function getOptimizedImageUrl(
+function getOptimizedImageUrl(
   originalUrl: string,
   maxWidth: number = 1200,
 ): string {

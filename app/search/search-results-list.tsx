@@ -91,7 +91,10 @@ type SearchResultsErrorProps = {
   onRetry: () => void;
 };
 
-export function SearchResultsError({ message, onRetry }: SearchResultsErrorProps) {
+export function SearchResultsError({
+  message,
+  onRetry,
+}: SearchResultsErrorProps) {
   return (
     <div className="py-12 text-center">
       <p className="mb-4 text-red-500">{message}</p>

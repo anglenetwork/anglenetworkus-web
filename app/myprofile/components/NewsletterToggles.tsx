@@ -82,7 +82,10 @@ export function NewsletterToggles() {
     setUpdating((prev) => ({ ...prev, [newsletterKey]: true }));
 
     // optimistic update
-    setPreferences((prev) => ({ ...(prev ?? defaults), [newsletterKey]: enabled }));
+    setPreferences((prev) => ({
+      ...(prev ?? defaults),
+      [newsletterKey]: enabled,
+    }));
 
     // optional safety timeout so "in flight" never lasts forever
     const controller = new AbortController();

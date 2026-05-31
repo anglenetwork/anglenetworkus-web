@@ -16,6 +16,7 @@ const postFields = `
   "title": coalesce(title, "Untitled"),
   "slug": slug.current,
   excerpt,
+  readTime,
   // New cover (external or asset)
   cover{
     ${imageFieldsProjection}
@@ -79,6 +80,7 @@ const postFieldsHighlightedStories = `
   _id,
   "title": coalesce(title, "Untitled"),
   "slug": slug.current,
+  readTime,
   cover{
     ${imageFieldsProjection}
   },
@@ -96,19 +98,19 @@ const postFieldsHighlightedStories = `
  *  --------------------------- */
 export const settingsQuery = defineQuery(`*[_type == "settings"][0]`);
 
-export const heroQuery = defineQuery(`
+const heroQuery = defineQuery(`
   *[_type == "post" && defined(slug.current)] | order(coalesce(publishedAt, _updatedAt) desc, _updatedAt desc) [0] {
     ${postFields}
   }
 `);
 
-export const moreStoriesQuery = defineQuery(`
+const moreStoriesQuery = defineQuery(`
   *[_type == "post" && _id != $skip && defined(slug.current)] | order(coalesce(publishedAt, _updatedAt) desc, _updatedAt desc) [0...$limit] {
     ${postFields}
   }
 `);
 
-export const postQuery = defineQuery(`
+const postQuery = defineQuery(`
   *[_type == "post" && slug.current == $slug] [0] {
     ${postFields}
   }
@@ -122,7 +124,7 @@ const postFieldsLightweight = `
   "title": coalesce(title, "Untitled"),
   "slug": slug.current,
   excerpt,
-  // New cover (external or asset)
+  readTime,
   cover{
     ${imageFieldsProjection}
   },
@@ -162,7 +164,7 @@ const postFieldsLightweight = `
   ${imageGalleryFieldsProjection}
 `;
 
-export const indexQuery = defineQuery(`
+const indexQuery = defineQuery(`
   *[_type == "post"] | order(coalesce(publishedAt, _updatedAt) desc, _updatedAt desc) {
     ${postFieldsLightweight}
   }
@@ -234,7 +236,7 @@ export const homepageHeroRelatedByCategoryQuery = defineQuery(`
   }
 `);
 
-export const postQueryWithRelated = defineQuery(`
+const postQueryWithRelated = defineQuery(`
 {
   "post": *[_type == "post" && slug.current == $slug] | order(_updatedAt desc) [0] {
     ${postFields}
@@ -251,7 +253,7 @@ export const postQueryWithRelated = defineQuery(`
 }
 `);
 
-export const postQueryWithCategoryRelated = defineQuery(`
+const postQueryWithCategoryRelated = defineQuery(`
 {
   "post": *[_type == "post" && slug.current == $slug] | order(_updatedAt desc) [0] {
     ${postFields}
@@ -271,7 +273,7 @@ export const postQueryWithCategoryRelated = defineQuery(`
 }
 `);
 
-export const postSlugsQuery = defineQuery(`
+const postSlugsQuery = defineQuery(`
   *[_type == "post" && defined(slug.current)][].slug.current
 `);
 
@@ -288,6 +290,7 @@ export const latestNews4Query = `
   title,
   "slug": slug.current,
   excerpt, 
+  readTime,
   cover{
     ${imageFieldsProjection}
   },
@@ -304,7 +307,7 @@ export const popularReadsFallbackQuery = `
   defined(publishedAt) && publishedAt <= now() &&
   _id != $currentPostId
 ]{
-  _id, title, "slug": slug.current, excerpt, 
+  _id, title, "slug": slug.current, excerpt, readTime,
   cover{
     ${imageFieldsProjection}
   },
@@ -339,7 +342,7 @@ export const homepageMostReadFallbackQuery = `
 )[0...5]
 `;
 
-export const postBySlugQuery = defineQuery(`
+const postBySlugQuery = defineQuery(`
   *[_type == "post" && slug.current == $slug][0] {
     ${postFields}
   }
@@ -355,7 +358,7 @@ export const categorySlugsQuery = defineQuery(`
   *[_type == "category" && defined(slug.current)]{ "slug": slug.current, name, views }
 `);
 
-export const allCategoriesQuery = defineQuery(`
+const allCategoriesQuery = defineQuery(`
   *[_type == "category" && defined(slug.current)] | order(name asc) {
     "slug": slug.current,
     name,
@@ -417,7 +420,7 @@ export { articlesByTagEditorialQuery as postsByTagQuery } from "./article-family
 /** ---------------------------
  *  Authors / comments
  *  --------------------------- */
-export const authorQuery = defineQuery(`
+const authorQuery = defineQuery(`
   *[_type == "author" && slug.current == $slug][0] {
     name,
     picture,
@@ -431,7 +434,7 @@ export const authorSlugsQuery = defineQuery(`
   *[_type == "author" && defined(slug.current)][].slug.current
 `);
 
-export const commentsQuery = defineQuery(`
+const commentsQuery = defineQuery(`
   *[_type == "comment" && post->slug.current == $postSlug && approved == true] | order(_createdAt desc) {
     name, email, comment, _createdAt
   }
@@ -450,7 +453,7 @@ export const thirdLatestArticleQuery = defineQuery(`
   }
 `);
 
-export const thirdSectionQuery = defineQuery(`
+const thirdSectionQuery = defineQuery(`
   *[_type == "post" && category->slug.current == $categorySlug] | order(coalesce(publishedAt, _updatedAt) desc, _updatedAt desc) [0...4] {
     ${postFields}
   }
@@ -464,7 +467,7 @@ export const highlightedStoriesByCategoryQuery = defineQuery(`
   }
 `);
 
-export const mostReadQuery = defineQuery(`
+const mostReadQuery = defineQuery(`
   *[_type == "post"] | order(coalesce(publishedAt, _updatedAt) desc, _updatedAt desc) [0...5] {
     ${postFields}
   }
@@ -477,7 +480,7 @@ export const postsByIdsLightweightQuery = defineQuery(`
   }
 `);
 
-export const sixthSectionQuery = defineQuery(`
+const sixthSectionQuery = defineQuery(`
   *[_type == "post" && category->slug.current == $categorySlug] | order(coalesce(publishedAt, _updatedAt) desc, _updatedAt desc) [0...20] {
     ${postFields}
   }
@@ -662,7 +665,7 @@ export const searchEditorialCountSponsoredQuery = defineQuery(`
   ])
 `);
 
-export const eighthSectionQuery = defineQuery(`
+const eighthSectionQuery = defineQuery(`
   *[_type == "category" && slug.current in $categorySlugs] {
     "slug": slug.current,
     "name": name,
@@ -673,7 +676,7 @@ export const eighthSectionQuery = defineQuery(`
 `);
 
 // Query for fetching posts by their IDs (for bookmarks)
-export const postsByIdsQuery = defineQuery(`
+const postsByIdsQuery = defineQuery(`
   *[_type == "post" && _id in $ids] {
     _id,
     title,
@@ -697,7 +700,7 @@ export const mainHeadlinesQuery = defineQuery(`
   }
 `);
 
-export const secondSectionQuery = defineQuery(`
+const secondSectionQuery = defineQuery(`
   *[_type == "category" && slug.current in $categorySlugs] {
     "slug": slug.current,
     "name": name,

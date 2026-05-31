@@ -36,14 +36,17 @@ export async function listUserBookmarks(): Promise<UserBookmark[]> {
   if (error || !data?.length) return [];
 
   const articleIds = data.map((bookmark) => bookmark.article_id);
-  const articlesData: Record<string, {
-    _id?: string;
-    _type?: string;
-    title?: string;
-    slug?: string;
-    date?: string | null;
-    cover?: Parameters<typeof getCoverImage>[0];
-  }> = {};
+  const articlesData: Record<
+    string,
+    {
+      _id?: string;
+      _type?: string;
+      title?: string;
+      slug?: string;
+      date?: string | null;
+      cover?: Parameters<typeof getCoverImage>[0];
+    }
+  > = {};
 
   try {
     const articles = await sanityFetch({

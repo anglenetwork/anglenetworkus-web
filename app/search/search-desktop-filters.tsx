@@ -2,10 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import type { SortParam, TypeParam } from "@/app/lib/search/editorial-search";
-import {
-  TYPE_OPTIONS,
-  desktopFilterLinkClass,
-} from "./search-results-shared";
+import { TYPE_OPTIONS, desktopFilterLinkClass } from "./search-results-shared";
 
 type SearchDesktopFiltersProps = {
   sort: SortParam;

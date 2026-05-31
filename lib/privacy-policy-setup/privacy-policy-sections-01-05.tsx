@@ -294,7 +294,6 @@ export function PrivacyPolicySections01To05() {
           <li>Comply with legal obligations and respond to lawful requests</li>
         </ul>
       </section>
-
     </>
   );
 }

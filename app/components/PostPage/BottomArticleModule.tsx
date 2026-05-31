@@ -61,7 +61,7 @@ function ClassicRelatedArticles({ posts }: { posts: ArticleSidebarPost[] }) {
         <SectionHeader
           title="Related Articles"
           variant="light"
-          accentStyle="geometric-square"
+          accentStyle="small-dot"
           size="large"
         />
 

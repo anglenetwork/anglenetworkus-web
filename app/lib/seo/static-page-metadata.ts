@@ -12,7 +12,9 @@ export function staticPageMetadata(
   return {
     title: { absolute: title },
     description,
-    robots: options?.private ? robotsUtilityNoindex() : robotsIndexableArticle(),
+    robots: options?.private
+      ? robotsUtilityNoindex()
+      : robotsIndexableArticle(),
     alternates: { canonical },
   };
 }

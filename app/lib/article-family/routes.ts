@@ -1,14 +1,12 @@
 import type { ArticleFamilyDocType } from "./types";
-import { getPublicSiteUrl } from "@/app/lib/seo/site-url";
 
 /** Public path prefix per document type (post keeps existing /post/[slug] shape) */
-export const ARTICLE_FAMILY_ROUTE_PREFIX: Record<ArticleFamilyDocType, string> =
-  {
-    post: "/post",
-    opinion: "/opinion",
-    analysis: "/analysis",
-    sponsored: "/sponsored",
-  };
+const ARTICLE_FAMILY_ROUTE_PREFIX: Record<ArticleFamilyDocType, string> = {
+  post: "/post",
+  opinion: "/opinion",
+  analysis: "/analysis",
+  sponsored: "/sponsored",
+};
 
 export function articleFamilyCanonicalHref(
   type: ArticleFamilyDocType,
@@ -27,9 +25,4 @@ export function articleFamilyHref(
     return cleanHref;
   }
   return `${cleanHref}?id=${encodeURIComponent(options.id)}`;
-}
-
-/** @deprecated Prefer getPublicSiteUrl from @/app/lib/seo/site-url */
-export function getSiteUrl(): string {
-  return getPublicSiteUrl();
 }

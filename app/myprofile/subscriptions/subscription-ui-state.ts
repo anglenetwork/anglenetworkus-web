@@ -86,10 +86,7 @@ export function subscriptionUiReducer(
   }
 }
 
-export function getEffectiveTier(
-  tier: Tier,
-  validUntil: string | null,
-): Tier {
+export function getEffectiveTier(tier: Tier, validUntil: string | null): Tier {
   if (tier === "pro" && validUntil) {
     const until = new Date(validUntil);
     if (until < new Date()) {

@@ -40,27 +40,12 @@ export const FEED_SEARCH_EDITORIAL_TYPES = [
   "analysis",
 ] as const satisfies readonly ArticleFamilyDocType[];
 
-/**
- * Related content is type-specific (see relatedContentFor*Query in article-family-queries):
- * — post pages: post + analysis
- * — opinion pages: opinion only
- * — analysis pages: analysis + post (ranked)
- * — sponsored pages: no related editorial block
- */
-export const FEED_RELATED_EDITORIAL_TYPES = [
-  "post",
-  "opinion",
-  "analysis",
-] as const satisfies readonly ArticleFamilyDocType[];
-
 /** Explicit sponsored-only inclusion (use only where product intends sponsored surfaces) */
 export const FEED_SPONSORED_ONLY_TYPES = [
   "sponsored",
 ] as const satisfies readonly ArticleFamilyDocType[];
 
 /** Build a GROQ `_type in [...]` literal from feed policy constants. */
-export function groqTypeInList(
-  types: readonly ArticleFamilyDocType[],
-): string {
+export function groqTypeInList(types: readonly ArticleFamilyDocType[]): string {
   return types.map((type) => `"${type}"`).join(", ");
 }

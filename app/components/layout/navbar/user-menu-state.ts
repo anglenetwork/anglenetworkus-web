@@ -15,7 +15,11 @@ export type UserMenuState = {
 export type UserMenuAction =
   | { type: "session_loaded"; session: { user: User } | null }
   | { type: "session_sync"; session: { user: User } | null }
-  | { type: "profile_loaded"; firstName: string | null; lastName: string | null }
+  | {
+      type: "profile_loaded";
+      firstName: string | null;
+      lastName: string | null;
+    }
   | { type: "avatar_status"; status: AvatarImageStatus }
   | { type: "sign_out_start" }
   | { type: "sign_out_complete" }
@@ -31,10 +35,9 @@ export const initialUserMenuState: UserMenuState = {
   signingOut: false,
 };
 
-function avatarStateForUser(user: User | null): Pick<
-  UserMenuState,
-  "avatarUrl" | "avatarImageStatus"
-> {
+function avatarStateForUser(
+  user: User | null,
+): Pick<UserMenuState, "avatarUrl" | "avatarImageStatus"> {
   const avatarUrl =
     user?.user_metadata?.avatar_url || user?.user_metadata?.picture || null;
 

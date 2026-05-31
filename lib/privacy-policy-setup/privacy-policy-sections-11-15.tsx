@@ -118,7 +118,6 @@ export function PrivacyPolicySections11To15() {
           </p>
         </section>
       )}
-
     </>
   );
 }

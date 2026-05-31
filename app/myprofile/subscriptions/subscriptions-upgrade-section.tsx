@@ -42,8 +42,12 @@ export function SubscriptionsUpgradeSection({
             </div>
             <h3 className="mb-2 font-bold text-4xl">{nextTierInfo.name}</h3>
             <div className="mb-2 flex items-baseline gap-1">
-              <span className="font-semibold text-3xl">{nextTierInfo.price}</span>
-              <span className="text-muted-foreground">{nextTierInfo.period}</span>
+              <span className="font-semibold text-3xl">
+                {nextTierInfo.price}
+              </span>
+              <span className="text-muted-foreground">
+                {nextTierInfo.period}
+              </span>
             </div>
             <p className="mb-6 text-muted-foreground text-sm">
               {nextTierInfo.description}

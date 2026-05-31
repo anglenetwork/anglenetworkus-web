@@ -207,7 +207,9 @@ export default function SignInPageClient({
                 className="h-11 w-full border-2 font-sans"
               >
                 <Chrome className="mr-2 size-4" />
-                {state.isGoogleLoading ? "Connecting..." : "Continue with Google"}
+                {state.isGoogleLoading
+                  ? "Connecting..."
+                  : "Continue with Google"}
               </Button>
 
               {/* Divider */}

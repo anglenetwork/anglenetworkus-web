@@ -14,9 +14,7 @@ import {
   subscriptionUiReducer,
 } from "./subscription-ui-state";
 import { SubscriptionsCurrentPlan } from "./subscriptions-current-plan";
-import {
-  getNextTier,
-} from "./subscriptions-upgrade-helpers";
+import { getNextTier } from "./subscriptions-upgrade-helpers";
 import { SubscriptionsUpgradeSection } from "./subscriptions-upgrade-section";
 import { SubscriptionsFaq } from "./subscriptions-faq";
 

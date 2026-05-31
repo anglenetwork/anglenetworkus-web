@@ -9,7 +9,9 @@ import {
 const config = termsOfServiceConfig;
 const contact = getContactInfo();
 
-export function TermsSection09() { return (<>
+export function TermsSection09() {
+  return (
+    <>
       {/* Section 9: Liability Disclaimers */}
       <section>
         <h2 className="mt-8 mb-4 font-sans font-semibold text-xl">
@@ -103,4 +105,6 @@ export function TermsSection09() { return (<>
           applicable law.
         </p>
       </section>
-</>); }
+    </>
+  );
+}
