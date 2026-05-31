@@ -17,30 +17,20 @@ export async function createSupabaseServerClient(): Promise<SupabaseClient> {
     );
   }
 
-  // Next.js version differences: cookies() can be sync or async depending on version
-  const cookieStoreAny: any = cookies();
-  const cookieStore =
-    typeof cookieStoreAny?.then === "function"
-      ? await cookieStoreAny
-      : cookieStoreAny;
+  const cookieStore = await cookies();
 
   return createServerClient(supabaseUrl, supabaseAnonKey, {
     cookies: {
-      get(name: string) {
-        return cookieStore.get(name)?.value;
+      getAll() {
+        return cookieStore.getAll();
       },
-      set(name: string, value: string, options: any) {
+      setAll(cookiesToSet) {
         try {
-          cookieStore.set({ name, value, ...options });
+          cookiesToSet.forEach(({ name, value, options }) => {
+            cookieStore.set(name, value, options);
+          });
         } catch {
-          // Server Components can't set cookies. This is OK if you use middleware.
-        }
-      },
-      remove(name: string, options: any) {
-        try {
-          cookieStore.set({ name, value: "", ...options, maxAge: 0 });
-        } catch {
-          // Server Components can't set cookies. This is OK if you use middleware.
+          // Server Components can't set cookies. proxy.ts refreshes sessions.
         }
       },
     },
