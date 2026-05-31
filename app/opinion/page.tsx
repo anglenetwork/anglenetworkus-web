@@ -10,7 +10,7 @@ import ArticleFamilyIndexPage, {
 } from "@/app/components/article-family/ArticleFamilyIndexPage";
 import * as demo from "@/sanity/lib/demo";
 import { getCachedSettings } from "@/app/lib/cached-settings";
-import { jsonLdScriptContent } from "@/app/lib/article-family/structured-data";
+import { JsonLdScript } from "@/app/components/seo/json-ld-script";
 import { buildBreadcrumbJsonLd } from "@/app/lib/seo/json-ld";
 import {
   buildOpinionIndexMetadata,
@@ -73,12 +73,7 @@ export default async function OpinionIndexPage({
 
   return (
     <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: jsonLdScriptContent(breadcrumbLd),
-        }}
-      />
+      <JsonLdScript data={breadcrumbLd} />
       <ArticleFamilyIndexPage
         title="Opinion"
         description="The latest commentary and opinion from our editors and contributors."

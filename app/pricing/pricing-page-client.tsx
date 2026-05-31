@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
+import { useEffect, useMemo, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import PricingCard from "@/app/components/ui/pricing-card";
 import { Switch } from "@/components/ui/switch";
@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { createClient } from "@/lib/supabase/client";
 import { useSupabaseAuth } from "@/app/providers/SupabaseAuthProvider";
 import { type Tier } from "@/lib/subscriptions/tier";
+import { PRICING_DATA } from "@/lib/subscriptions/pricing-data";
 import type { PostgrestError } from "@supabase/supabase-js";
 
 export default function PricingPage() {
@@ -15,42 +16,17 @@ export default function PricingPage() {
   const supabase = useMemo(() => createClient(), []);
   const { ready: authReady } = useSupabaseAuth();
 
-  const [loading, setLoading] = useState(true);
   const [tier, setTier] = useState<Tier>("free");
   const [billingYearly, setBillingYearly] = useState(false); // OFF => monthly, ON => yearly
   const [checkoutLoading, setCheckoutLoading] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  const pricingData = {
-    monthly: {
-      starter: { price: null, pricingLabel: "Free", description: null },
-      professional: { price: 9.99, pricingLabel: null, description: null },
-      business: {
-        price: 299,
-        pricingLabel: null,
-        description: "Once",
-        periodLabel: "/once",
-      },
-    },
-    yearly: {
-      starter: { price: null, pricingLabel: "Free", description: null },
-      professional: { price: 99, pricingLabel: null, description: null },
-      business: {
-        price: 299,
-        pricingLabel: null,
-        description: "Once",
-        periodLabel: "/once",
-      },
-    },
-  };
-
   const currentPricing = billingYearly
-    ? pricingData.yearly
-    : pricingData.monthly;
+    ? PRICING_DATA.yearly
+    : PRICING_DATA.monthly;
 
-  async function loadSubscription() {
+  const loadSubscription = useCallback(async () => {
     if (!authReady) {
-      setLoading(false);
       return;
     }
 
@@ -73,18 +49,15 @@ export default function PricingPage() {
     } catch (e: unknown) {
       const msg =
         (e as PostgrestError)?.message ??
-        (e as any)?.message ??
+        (e as { message?: string })?.message ??
         "Failed to load subscription data.";
       setError(msg);
-    } finally {
-      setLoading(false);
     }
-  }
+  }, [authReady, supabase]);
 
   useEffect(() => {
-    loadSubscription();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [authReady]);
+    void loadSubscription();
+  }, [loadSubscription]);
 
   async function handleCheckout(
     tier: "pro" | "lifetime",
@@ -150,13 +123,13 @@ export default function PricingPage() {
       </div>
 
       {/* Error Message */}
-      {/* {error && (
-        <div className="max-w-4xl mx-auto px-4 mb-6">
-          <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
+      {error ? (
+        <div className="mx-auto mb-6 max-w-4xl px-4">
+          <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-red-700">
             {error}
           </div>
         </div>
-      )} */}
+      ) : null}
 
       {/* Pricing Cards */}
       <div className="mx-auto max-w-6xl px-4">

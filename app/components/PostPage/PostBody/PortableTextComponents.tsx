@@ -195,6 +195,7 @@ export const portableTextComponents: PortableTextComponents = {
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                 allowFullScreen
                 loading="lazy"
+                sandbox="allow-scripts allow-presentation allow-popups"
               />
             </div>
           </div>

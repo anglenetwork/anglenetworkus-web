@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useReducer } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import {
@@ -13,8 +13,11 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { createClient } from "@/lib/supabase/client";
-import type { User } from "@supabase/supabase-js";
 import { UserMenuSkeleton } from "./user-menu-skeleton";
+import {
+  initialUserMenuState,
+  userMenuReducer,
+} from "./user-menu-state";
 
 /** `default` = filled sign-in button; `link` = shadcn link style. */
 export type SignInButtonVariant = "default" | "link";
@@ -96,15 +99,16 @@ export function UserMenu({
   onSignInNavigate,
 }: UserMenuProps) {
   const supabase = useMemo(() => createClient(), []);
-  const [user, setUser] = useState<User | null>(null);
-  const [firstName, setFirstName] = useState<string | null>(null);
-  const [lastName, setLastName] = useState<string | null>(null);
-  const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
-  const [avatarImageStatus, setAvatarImageStatus] = useState<
-    "idle" | "loading" | "loaded" | "error"
-  >("idle");
-  const [loading, setLoading] = useState(true);
-  const [signingOut, setSigningOut] = useState(false);
+  const [state, dispatch] = useReducer(userMenuReducer, initialUserMenuState);
+  const {
+    user,
+    firstName,
+    lastName,
+    avatarUrl,
+    avatarImageStatus,
+    loading,
+    signingOut,
+  } = state;
   const { refresh, push } = useRouter();
 
   // Auth session — getSession for initial state; onAuthStateChange for updates only.
@@ -112,33 +116,16 @@ export function UserMenu({
   useEffect(() => {
     let mounted = true;
 
-    const syncUserFromSession = (session: { user: User } | null) => {
-      const nextUser = session?.user ?? null;
-      setUser(nextUser);
-      const nextAvatarUrl =
-        nextUser?.user_metadata?.avatar_url ||
-        nextUser?.user_metadata?.picture ||
-        null;
-      setAvatarUrl(nextAvatarUrl);
-      setAvatarImageStatus(nextAvatarUrl ? "loading" : "idle");
-      if (!nextUser) {
-        setFirstName(null);
-        setLastName(null);
-      }
-    };
-
     void supabase.auth.getSession().then(({ data: { session } }) => {
       if (!mounted) return;
-      syncUserFromSession(session);
-      setLoading(false);
+      dispatch({ type: "session_loaded", session });
     });
 
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((event, session) => {
       if (!mounted || event === "INITIAL_SESSION") return;
-      syncUserFromSession(session);
-      setLoading(false);
+      dispatch({ type: "session_sync", session });
     });
 
     return () => {
@@ -160,8 +147,11 @@ export function UserMenu({
       .maybeSingle()
       .then(({ data: profile }) => {
         if (!mounted) return;
-        setFirstName(profile?.first_name ?? null);
-        setLastName(profile?.last_name ?? null);
+        dispatch({
+          type: "profile_loaded",
+          firstName: profile?.first_name ?? null,
+          lastName: profile?.last_name ?? null,
+        });
       });
 
     return () => {
@@ -171,7 +161,7 @@ export function UserMenu({
 
   const handleSignOut = async () => {
     if (signingOut) return;
-    setSigningOut(true);
+    dispatch({ type: "sign_out_start" });
 
     const controller = new AbortController();
     const t = setTimeout(() => controller.abort(), 12000);
@@ -183,16 +173,13 @@ export function UserMenu({
         signal: controller.signal,
       });
 
-      const json = (await res.json().catch(() => ({}))) as any;
+      const json = (await res.json().catch(() => ({}))) as { error?: string };
 
       if (!res.ok) {
         console.error("Sign out failed:", json?.error || res.statusText);
       }
 
-      setUser(null);
-      setFirstName(null);
-      setLastName(null);
-      setAvatarUrl(null);
+      dispatch({ type: "signed_out" });
 
       refresh();
       push("/signin");
@@ -200,6 +187,7 @@ export function UserMenu({
       console.error("Error signing out:", err);
       try {
         await supabase.auth.signOut();
+        dispatch({ type: "signed_out" });
         refresh();
         push("/signin");
       } catch (e) {
@@ -207,7 +195,7 @@ export function UserMenu({
       }
     } finally {
       clearTimeout(t);
-      setSigningOut(false);
+      dispatch({ type: "sign_out_complete" });
     }
   };
 
@@ -269,7 +257,9 @@ export function UserMenu({
               <AvatarImage
                 src={avatarUrl}
                 alt={user.email || "User"}
-                onLoadingStatusChange={setAvatarImageStatus}
+                onLoadingStatusChange={(status) =>
+                  dispatch({ type: "avatar_status", status })
+                }
               />
             ) : null}
             <AvatarFallback className="bg-white font-sans text-neutral-700 text-xs">

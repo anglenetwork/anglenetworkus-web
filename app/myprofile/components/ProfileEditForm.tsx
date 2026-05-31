@@ -1,11 +1,16 @@
 "use client";
 
-import { useState } from "react";
+import { useReducer } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
+import {
+  createInitialProfileEditFormState,
+  profileEditFormReducer,
+  type ProfileFieldErrors,
+} from "./profile-edit-form-state";
 
 const profileInputClassName = (hasError: boolean) =>
   cn(
@@ -26,7 +31,7 @@ interface ProfileEditFormProps {
 }
 
 export function ProfileEditForm({
-  userId,
+  userId: _userId,
   initialFirstName,
   initialLastName,
   initialDateOfBirth,
@@ -36,35 +41,26 @@ export function ProfileEditForm({
   hideDateOfBirth = false,
   submitLabel = "Save Changes",
 }: ProfileEditFormProps) {
-  const [firstName, setFirstName] = useState(initialFirstName ?? "");
-  const [lastName, setLastName] = useState(initialLastName ?? "");
-  const [dateOfBirth, setDateOfBirth] = useState(initialDateOfBirth ?? "");
-  const [loading, setLoading] = useState(false);
-  const [message, setMessage] = useState<{
-    type: "success" | "error";
-    text: string;
-  } | null>(null);
-  const [fieldErrors, setFieldErrors] = useState<{
-    firstName?: string;
-    lastName?: string;
-    dateOfBirth?: string;
-  }>({});
+  const [state, dispatch] = useReducer(
+    profileEditFormReducer,
+    {
+      initialFirstName,
+      initialLastName,
+      initialDateOfBirth,
+    },
+    createInitialProfileEditFormState,
+  );
+  const { firstName, lastName, dateOfBirth, loading, message, fieldErrors } =
+    state;
 
   const { refresh } = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setLoading(true);
-    setMessage(null);
-    setFieldErrors({});
+    dispatch({ type: "submit_start" });
 
-    // Validate required fields if requireNames is true
     if (requireNames) {
-      const errors: {
-        firstName?: string;
-        lastName?: string;
-        dateOfBirth?: string;
-      } = {};
+      const errors: ProfileFieldErrors = {};
       if (!firstName.trim()) {
         errors.firstName = "First name is required";
       }
@@ -76,8 +72,7 @@ export function ProfileEditForm({
       }
 
       if (Object.keys(errors).length > 0) {
-        setFieldErrors(errors);
-        setLoading(false);
+        dispatch({ type: "submit_validation_failed", fieldErrors: errors });
         return;
       }
     }
@@ -92,7 +87,6 @@ export function ProfileEditForm({
         cache: "no-store",
         signal: controller.signal,
         body: JSON.stringify({
-          // userId kept in component but NOT needed/sent; server uses auth user id.
           firstName,
           lastName,
           dateOfBirth: hideDateOfBirth
@@ -103,51 +97,63 @@ export function ProfileEditForm({
         }),
       });
 
-      const json = (await res.json().catch(() => ({}))) as any;
+      const json = (await res.json().catch(() => ({}))) as { error?: string };
 
       if (res.status === 401) {
-        setMessage({
-          type: "error",
-          text: "You're not signed in anymore. Please sign in again.",
+        dispatch({
+          type: "submit_error",
+          message: {
+            type: "error",
+            text: "You're not signed in anymore. Please sign in again.",
+          },
         });
         return;
       }
 
       if (!res.ok) {
-        setMessage({
-          type: "error",
-          text: json?.error || "Failed to update profile. Please try again.",
+        dispatch({
+          type: "submit_error",
+          message: {
+            type: "error",
+            text: json?.error || "Failed to update profile. Please try again.",
+          },
         });
         return;
       }
 
-      setMessage({
-        type: "success",
-        text: "Profile updated successfully!",
+      dispatch({
+        type: "submit_success",
+        message: {
+          type: "success",
+          text: "Profile updated successfully!",
+        },
       });
 
-      // Call onUpdate callback if provided, otherwise refresh
       if (onUpdate) {
         setTimeout(() => onUpdate(), 500);
       } else {
         setTimeout(() => refresh(), 1000);
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const err = error as { name?: string; message?: string };
       const isAbort =
-        error?.name === "AbortError" ||
-        String(error?.message || "")
+        err?.name === "AbortError" ||
+        String(err?.message || "")
           .toLowerCase()
           .includes("aborted");
 
-      setMessage({
-        type: "error",
-        text: isAbort
-          ? "Request timed out. Please try again."
-          : error?.message || "Failed to update profile. Please try again.",
+      dispatch({
+        type: "submit_error",
+        message: {
+          type: "error",
+          text: isAbort
+            ? "Request timed out. Please try again."
+            : err?.message || "Failed to update profile. Please try again.",
+        },
       });
     } finally {
       clearTimeout(timeout);
-      setLoading(false);
+      dispatch({ type: "submit_end" });
     }
   };
 
@@ -167,9 +173,9 @@ export function ProfileEditForm({
             name="firstName"
             value={firstName}
             onChange={(e) => {
-              setFirstName(e.target.value);
+              dispatch({ type: "set_first_name", value: e.target.value });
               if (fieldErrors.firstName) {
-                setFieldErrors((prev) => ({ ...prev, firstName: undefined }));
+                dispatch({ type: "clear_field_error", field: "firstName" });
               }
             }}
             disabled={loading}
@@ -195,9 +201,9 @@ export function ProfileEditForm({
             name="lastName"
             value={lastName}
             onChange={(e) => {
-              setLastName(e.target.value);
+              dispatch({ type: "set_last_name", value: e.target.value });
               if (fieldErrors.lastName) {
-                setFieldErrors((prev) => ({ ...prev, lastName: undefined }));
+                dispatch({ type: "clear_field_error", field: "lastName" });
               }
             }}
             disabled={loading}
@@ -225,12 +231,9 @@ export function ProfileEditForm({
               name="dateOfBirth"
               value={dateOfBirth}
               onChange={(e) => {
-                setDateOfBirth(e.target.value);
+                dispatch({ type: "set_date_of_birth", value: e.target.value });
                 if (fieldErrors.dateOfBirth) {
-                  setFieldErrors((prev) => ({
-                    ...prev,
-                    dateOfBirth: undefined,
-                  }));
+                  dispatch({ type: "clear_field_error", field: "dateOfBirth" });
                 }
               }}
               disabled={loading}

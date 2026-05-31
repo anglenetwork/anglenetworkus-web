@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+import { after } from "next/server";
 import type { Metadata } from "next";
 import { sanityFetchStatic } from "@/sanity/lib/fetch";
 import {
@@ -17,12 +18,13 @@ import { articleFamilyHref } from "@/app/lib/article-family/routes";
 import type { ArticleFamilyDocType } from "@/app/lib/article-family/types";
 import * as demo from "@/sanity/lib/demo";
 import { getCachedSettings } from "@/app/lib/cached-settings";
-import { jsonLdScriptContent } from "@/app/lib/article-family/structured-data";
+import { JsonLdScript } from "@/app/components/seo/json-ld-script";
 import { buildBreadcrumbJsonLd } from "@/app/lib/seo/json-ld";
 import {
   buildCategoryPageMetadata,
   finalizePublicMetadata,
 } from "@/app/lib/seo/metadata-builders";
+import { trackCategoryView } from "@/app/lib/analytics/track-category-view";
 
 // Generate static params for SSG
 export async function generateStaticParams() {
@@ -110,6 +112,8 @@ export default async function CategoryPageRoute({
     notFound();
   }
 
+  after(() => trackCategoryView(slug));
+
   const categoryName =
     categoryData.name ||
     slug
@@ -181,12 +185,7 @@ export default async function CategoryPageRoute({
 
   return (
     <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: jsonLdScriptContent(breadcrumbLd),
-        }}
-      />
+      <JsonLdScript data={breadcrumbLd} />
       <CategoryPage
         categoryName={categoryName}
         hasPosts={hasPosts}

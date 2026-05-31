@@ -1,9 +1,29 @@
 import { defineQuery } from "next-sanity";
 import {
+  FEED_ANALYSIS_TYPES,
+  FEED_MIXED_EDITORIAL_TYPES,
+  FEED_OPINION_TYPES,
+  FEED_SPONSORED_ONLY_TYPES,
+  FEED_STANDARD_NEWS_TYPES,
+  FEED_TOPIC_CATEGORY_TAG_TYPES,
+  groqTypeInList,
+} from "@/app/lib/article-family/feed-policies";
+import {
   coverFieldsProjection,
   imageFieldsProjection,
   imageGalleryFieldsProjection,
 } from "./image-fields-projection";
+
+const GROQ_POST = FEED_STANDARD_NEWS_TYPES[0];
+const GROQ_OPINION = FEED_OPINION_TYPES[0];
+const GROQ_ANALYSIS = FEED_ANALYSIS_TYPES[0];
+const GROQ_SPONSORED = FEED_SPONSORED_ONLY_TYPES[0];
+const GROQ_MIXED_EDITORIAL = groqTypeInList(FEED_MIXED_EDITORIAL_TYPES);
+const GROQ_TOPIC_CATEGORY_TAG = groqTypeInList(FEED_TOPIC_CATEGORY_TAG_TYPES);
+const GROQ_BOOKMARK_HYDRATION = groqTypeInList([
+  ...FEED_MIXED_EDITORIAL_TYPES,
+  ...FEED_SPONSORED_ONLY_TYPES,
+]);
 
 /**
  * Shared GROQ projections for article-family documents.
@@ -149,7 +169,7 @@ export const articleFamilyPageByIdPreviewQuery = defineQuery(`
 
 /** Bookmark list hydration — all public article-family types by Sanity _id. */
 export const articleFamilyBookmarksByIdsQuery = defineQuery(`
-  *[_type in ["post", "opinion", "analysis", "sponsored"] && _id in $ids] {
+  *[_type in [${GROQ_BOOKMARK_HYDRATION}] && _id in $ids] {
     _id,
     _type,
     "title": coalesce(title, "Untitled"),
@@ -163,29 +183,29 @@ export const articleFamilyBookmarksByIdsQuery = defineQuery(`
 
 export const postPublishedSlugsQuery = defineQuery(`
   *[
-    _type == "post" &&
+    _type == "${GROQ_POST}" &&
     defined(slug.current) &&
     ${ARTICLE_FAMILY_PUBLISHED}
   ][].slug.current
 `);
 
 export const opinionSlugsQuery = defineQuery(`
-  *[_type == "opinion" && defined(slug.current)][].slug.current
+  *[_type == "${GROQ_OPINION}" && defined(slug.current)][].slug.current
 `);
 
 export const analysisSlugsQuery = defineQuery(`
-  *[_type == "analysis" && defined(slug.current)][].slug.current
+  *[_type == "${GROQ_ANALYSIS}" && defined(slug.current)][].slug.current
 `);
 
 export const sponsoredSlugsQuery = defineQuery(`
-  *[_type == "sponsored" && defined(slug.current)][].slug.current
+  *[_type == "${GROQ_SPONSORED}" && defined(slug.current)][].slug.current
 `);
 
 // --- Feed helpers (hardcoded _type sets; sponsored excluded unless noted) ---
 
 export const standardNewsListQuery = defineQuery(`
   *[
-    _type == "post" &&
+    _type == "${GROQ_POST}" &&
     ${ARTICLE_FAMILY_PUBLISHED} &&
     defined(slug.current)
   ] | order(coalesce(publishedAt, _updatedAt) desc, _updatedAt desc) [0...$limit] {
@@ -195,7 +215,7 @@ export const standardNewsListQuery = defineQuery(`
 
 export const opinionListQuery = defineQuery(`
   *[
-    _type == "opinion" &&
+    _type == "${GROQ_OPINION}" &&
     ${ARTICLE_FAMILY_PUBLISHED} &&
     defined(slug.current)
   ] | order(coalesce(publishedAt, _updatedAt) desc, _updatedAt desc) [0...$limit] {
@@ -205,7 +225,7 @@ export const opinionListQuery = defineQuery(`
 
 export const analysisListQuery = defineQuery(`
   *[
-    _type == "analysis" &&
+    _type == "${GROQ_ANALYSIS}" &&
     ${ARTICLE_FAMILY_PUBLISHED} &&
     defined(slug.current)
   ] | order(coalesce(publishedAt, _updatedAt) desc, _updatedAt desc) [0...$limit] {
@@ -215,7 +235,7 @@ export const analysisListQuery = defineQuery(`
 
 export const mixedEditorialListQuery = defineQuery(`
   *[
-    _type in ["post", "opinion", "analysis"] &&
+    _type in [${GROQ_MIXED_EDITORIAL}] &&
     ${ARTICLE_FAMILY_PUBLISHED} &&
     defined(slug.current)
   ] | order(coalesce(publishedAt, _updatedAt) desc, _updatedAt desc) [0...$limit] {
@@ -226,7 +246,7 @@ export const mixedEditorialListQuery = defineQuery(`
 /** Paginated opinion index (`/opinion`) */
 export const opinionIndexQuery = defineQuery(`
   *[
-    _type == "opinion" &&
+    _type == "${GROQ_OPINION}" &&
     ${ARTICLE_FAMILY_PUBLISHED} &&
     defined(slug.current)
   ] | order(coalesce(publishedAt, _updatedAt) desc, _updatedAt desc) [$start...$end] {
@@ -236,7 +256,7 @@ export const opinionIndexQuery = defineQuery(`
 
 export const opinionIndexCountQuery = defineQuery(`
   count(*[
-    _type == "opinion" &&
+    _type == "${GROQ_OPINION}" &&
     ${ARTICLE_FAMILY_PUBLISHED} &&
     defined(slug.current)
   ])
@@ -245,7 +265,7 @@ export const opinionIndexCountQuery = defineQuery(`
 /** Paginated analysis index (`/analysis`) */
 export const analysisIndexQuery = defineQuery(`
   *[
-    _type == "analysis" &&
+    _type == "${GROQ_ANALYSIS}" &&
     ${ARTICLE_FAMILY_PUBLISHED} &&
     defined(slug.current)
   ] | order(coalesce(publishedAt, _updatedAt) desc, _updatedAt desc) [$start...$end] {
@@ -255,7 +275,7 @@ export const analysisIndexQuery = defineQuery(`
 
 export const analysisIndexCountQuery = defineQuery(`
   count(*[
-    _type == "analysis" &&
+    _type == "${GROQ_ANALYSIS}" &&
     ${ARTICLE_FAMILY_PUBLISHED} &&
     defined(slug.current)
   ])
@@ -264,7 +284,7 @@ export const analysisIndexCountQuery = defineQuery(`
 /** Mixed editorial latest (`/latest`): post, opinion, analysis — no sponsored */
 export const latestEditorialIndexQuery = defineQuery(`
   *[
-    _type in ["post", "opinion", "analysis"] &&
+    _type in [${GROQ_MIXED_EDITORIAL}] &&
     ${ARTICLE_FAMILY_PUBLISHED} &&
     defined(slug.current)
   ] | order(coalesce(publishedAt, _updatedAt) desc, _updatedAt desc) [$start...$end] {
@@ -274,7 +294,7 @@ export const latestEditorialIndexQuery = defineQuery(`
 
 export const latestEditorialIndexCountQuery = defineQuery(`
   count(*[
-    _type in ["post", "opinion", "analysis"] &&
+    _type in [${GROQ_MIXED_EDITORIAL}] &&
     ${ARTICLE_FAMILY_PUBLISHED} &&
     defined(slug.current)
   ])
@@ -283,7 +303,7 @@ export const latestEditorialIndexCountQuery = defineQuery(`
 /** RSS / Atom feed — mixed editorial, canonical URLs only at render time */
 export const feedEditorialEntriesQuery = defineQuery(`
   *[
-    _type in ["post", "opinion", "analysis"] &&
+    _type in [${GROQ_MIXED_EDITORIAL}] &&
     ${ARTICLE_FAMILY_PUBLISHED} &&
     defined(slug.current)
   ] | order(coalesce(publishedAt, _updatedAt) desc) [0...40] {
@@ -309,7 +329,7 @@ export const authorPageQuery = defineQuery(`
     linkedin,
     instagram,
     "articles": *[
-      _type in ["post", "opinion", "analysis"] &&
+      _type in [${GROQ_MIXED_EDITORIAL}] &&
       author->slug.current == $slug &&
       ${ARTICLE_FAMILY_PUBLISHED} &&
       defined(slug.current)
@@ -324,7 +344,7 @@ export const sitemapAuthorSlugsQuery = defineQuery(`
     _type == "author" &&
     defined(slug.current) &&
     count(*[
-      _type in ["post", "opinion", "analysis"] &&
+      _type in [${GROQ_MIXED_EDITORIAL}] &&
       author->slug.current == ^.slug.current &&
       ${ARTICLE_FAMILY_PUBLISHED} &&
       defined(slug.current)
@@ -335,7 +355,7 @@ export const sitemapAuthorSlugsQuery = defineQuery(`
 /** Category/topic listing: post + analysis only (see FEED_TOPIC_CATEGORY_TAG_TYPES) */
 export const articlesByCategoryEditorialQuery = defineQuery(`
   *[
-    _type in ["post", "analysis"] &&
+    _type in [${GROQ_TOPIC_CATEGORY_TAG}] &&
     category->slug.current == $categorySlug &&
     ${ARTICLE_FAMILY_PUBLISHED} &&
     defined(slug.current)
@@ -347,7 +367,7 @@ export const articlesByCategoryEditorialQuery = defineQuery(`
 /** Category listing: `post` only (homepage Fifth Section — newest news, no analysis). */
 export const articlesByCategoryStandardPostsQuery = defineQuery(`
   *[
-    _type == "post" &&
+    _type == "${GROQ_POST}" &&
     category->slug.current == $categorySlug &&
     ${ARTICLE_FAMILY_PUBLISHED} &&
     defined(slug.current)
@@ -359,7 +379,7 @@ export const articlesByCategoryStandardPostsQuery = defineQuery(`
 /** Same filter/order as `articlesByCategoryStandardPostsQuery`, capped for homepage Fifth Section. */
 export const articlesByCategoryStandardPostsLimitedQuery = defineQuery(`
   *[
-    _type == "post" &&
+    _type == "${GROQ_POST}" &&
     category->slug.current == $categorySlug &&
     ${ARTICLE_FAMILY_PUBLISHED} &&
     defined(slug.current)
@@ -371,7 +391,7 @@ export const articlesByCategoryStandardPostsLimitedQuery = defineQuery(`
 /** Tag listing: post + analysis only */
 export const articlesByTagEditorialQuery = defineQuery(`
   *[
-    _type in ["post", "analysis"] &&
+    _type in [${GROQ_TOPIC_CATEGORY_TAG}] &&
     $tagSlug in tags[]->slug.current &&
     ${ARTICLE_FAMILY_PUBLISHED} &&
     defined(slug.current)
@@ -382,7 +402,7 @@ export const articlesByTagEditorialQuery = defineQuery(`
 
 export const editorialTagArticleCountQuery = defineQuery(`
   count(*[
-    _type in ["post", "analysis"] &&
+    _type in [${GROQ_TOPIC_CATEGORY_TAG}] &&
     $tagSlug in tags[]->slug.current &&
     ${ARTICLE_FAMILY_PUBLISHED} &&
     defined(slug.current)
@@ -395,7 +415,7 @@ export const editorialTagArticleCountQuery = defineQuery(`
  */
 export const latestInCategoryForRelatedQuery = defineQuery(`
   *[
-    _type in ["post", "analysis"] &&
+    _type in [${GROQ_TOPIC_CATEGORY_TAG}] &&
     ${ARTICLE_FAMILY_PUBLISHED} &&
     defined(slug.current) &&
     defined($categorySlug) && $categorySlug != "" &&
@@ -411,7 +431,7 @@ export const latestInCategoryForRelatedQuery = defineQuery(`
  */
 export const relatedContentForPostQuery = defineQuery(`
   *[
-    _type in ["post", "analysis"] &&
+    _type in [${GROQ_TOPIC_CATEGORY_TAG}] &&
     ${ARTICLE_FAMILY_PUBLISHED} &&
     defined(slug.current) &&
     slug.current != $slug &&
@@ -428,7 +448,7 @@ export const relatedContentForPostQuery = defineQuery(`
 /** Related on `opinion` pages: opinion only */
 export const relatedContentForOpinionQuery = defineQuery(`
   *[
-    _type == "opinion" &&
+    _type == "${GROQ_OPINION}" &&
     ${ARTICLE_FAMILY_PUBLISHED} &&
     defined(slug.current) &&
     slug.current != $slug &&
@@ -443,7 +463,7 @@ export const relatedContentForOpinionQuery = defineQuery(`
  */
 export const relatedContentForAnalysisQuery = defineQuery(`
   *[
-    _type in ["post", "analysis"] &&
+    _type in [${GROQ_TOPIC_CATEGORY_TAG}] &&
     ${ARTICLE_FAMILY_PUBLISHED} &&
     defined(slug.current) &&
     slug.current != $slug &&
@@ -451,10 +471,10 @@ export const relatedContentForAnalysisQuery = defineQuery(`
   ]{
     ${articleFamilyListFragment},
     "_rank": select(
-      _type == "analysis" && defined($categorySlug) && $categorySlug != "" && category->slug.current == $categorySlug => 4,
-      _type == "post" && defined($categorySlug) && $categorySlug != "" && category->slug.current == $categorySlug => 3,
-      _type == "analysis" => 2,
-      _type == "post" => 1
+      _type == "${GROQ_ANALYSIS}" && defined($categorySlug) && $categorySlug != "" && category->slug.current == $categorySlug => 4,
+      _type == "${GROQ_POST}" && defined($categorySlug) && $categorySlug != "" && category->slug.current == $categorySlug => 3,
+      _type == "${GROQ_ANALYSIS}" => 2,
+      _type == "${GROQ_POST}" => 1
     )
   } | order(_rank desc, publishedAt desc) [0...$limit]
 `);
@@ -462,7 +482,7 @@ export const relatedContentForAnalysisQuery = defineQuery(`
 /** Explicit opt-in: sponsored list only (never used as default editorial) */
 export const sponsoredListQuery = defineQuery(`
   *[
-    _type == "sponsored" &&
+    _type == "${GROQ_SPONSORED}" &&
     ${ARTICLE_FAMILY_PUBLISHED} &&
     defined(slug.current)
   ] | order(coalesce(publishedAt, _updatedAt) desc, _updatedAt desc) [0...$limit] {
@@ -473,7 +493,7 @@ export const sponsoredListQuery = defineQuery(`
 /** Sitemap: indexable article URLs only (post, opinion, analysis) */
 export const sitemapArticleFamilyEntriesQuery = defineQuery(`
   *[
-    _type in ["post", "opinion", "analysis"] &&
+    _type in [${GROQ_MIXED_EDITORIAL}] &&
     ${ARTICLE_FAMILY_PUBLISHED} &&
     defined(slug.current)
   ]{
@@ -490,7 +510,7 @@ export const sitemapCategorySlugsWithArticlesQuery = defineQuery(`
     _type == "category" &&
     defined(slug.current) &&
     count(*[
-      _type in ["post", "analysis"] &&
+      _type in [${GROQ_TOPIC_CATEGORY_TAG}] &&
       category->slug.current == ^.slug.current &&
       ${ARTICLE_FAMILY_PUBLISHED} &&
       defined(slug.current)
@@ -504,7 +524,7 @@ export const sitemapTagSlugsWithArticlesQuery = defineQuery(`
     _type == "tag" &&
     defined(slug.current) &&
     count(*[
-      _type in ["post", "analysis"] &&
+      _type in [${GROQ_TOPIC_CATEGORY_TAG}] &&
       ^.slug.current in tags[]->slug.current &&
       ${ARTICLE_FAMILY_PUBLISHED} &&
       defined(slug.current)
@@ -515,7 +535,7 @@ export const sitemapTagSlugsWithArticlesQuery = defineQuery(`
 /** News sitemap: post + analysis in last 48 hours */
 export const newsSitemapEntriesQuery = defineQuery(`
   *[
-    _type in ["post", "analysis"] &&
+    _type in [${GROQ_TOPIC_CATEGORY_TAG}] &&
     ${ARTICLE_FAMILY_PUBLISHED} &&
     defined(slug.current) &&
     publishedAt > $since

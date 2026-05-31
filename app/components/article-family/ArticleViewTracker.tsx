@@ -3,12 +3,11 @@
 import { useEffect, useRef } from "react";
 import type { ArticleFamilyDocType } from "@/app/lib/article-family/types";
 import { scheduleIdleTask } from "@/app/lib/schedule-idle";
-
-const DEDUPE_MS = 30 * 60 * 1000;
-
-function storageKey(articleId: string) {
-  return `article-viewed:${articleId}`;
-}
+import {
+  isAutomatedBrowser,
+  isWithinArticleViewDedupeWindow,
+  markArticleViewRecorded,
+} from "@/app/lib/analytics/article-view-dedupe";
 
 function sendView(articleId: string, articleType: ArticleFamilyDocType) {
   const payload = JSON.stringify({ articleId, articleType });
@@ -17,11 +16,7 @@ function sendView(articleId: string, articleType: ArticleFamilyDocType) {
   if (typeof navigator !== "undefined" && navigator.sendBeacon) {
     const blob = new Blob([payload], { type: "application/json" });
     if (navigator.sendBeacon(url, blob)) {
-      try {
-        localStorage.setItem(storageKey(articleId), String(Date.now()));
-      } catch {
-        /* ignore */
-      }
+      markArticleViewRecorded(articleId);
       return;
     }
   }
@@ -34,11 +29,7 @@ function sendView(articleId: string, articleType: ArticleFamilyDocType) {
   })
     .then((res) => {
       if (res.ok) {
-        try {
-          localStorage.setItem(storageKey(articleId), String(Date.now()));
-        } catch {
-          /* ignore */
-        }
+        markArticleViewRecorded(articleId);
       }
     })
     .catch(() => {
@@ -54,36 +45,28 @@ export default function ArticleViewTracker({
   articleType: ArticleFamilyDocType | undefined;
 }) {
   const sentRef = useRef(false);
+  const trackedArticleId = articleId?.trim();
+  const trackedArticleType = articleType;
 
   useEffect(() => {
-    if (sentRef.current) return;
-    if (!articleId?.trim() || !articleType) return;
+    if (sentRef.current || !trackedArticleId || !trackedArticleType) {
+      return;
+    }
 
-    if (typeof navigator !== "undefined" && navigator.webdriver === true) {
+    if (isAutomatedBrowser()) {
       return;
     }
 
     const cancel = scheduleIdleTask(() => {
       if (sentRef.current) return;
-
-      try {
-        const raw = localStorage.getItem(storageKey(articleId));
-        if (raw) {
-          const t = Number.parseInt(raw, 10);
-          if (!Number.isNaN(t) && Date.now() - t < DEDUPE_MS) {
-            return;
-          }
-        }
-      } catch {
-        /* proceed */
-      }
+      if (isWithinArticleViewDedupeWindow(trackedArticleId)) return;
 
       sentRef.current = true;
-      sendView(articleId.trim(), articleType);
+      sendView(trackedArticleId, trackedArticleType);
     });
 
     return cancel;
-  }, [articleId, articleType]);
+  }, [trackedArticleId, trackedArticleType]);
 
   return null;
 }

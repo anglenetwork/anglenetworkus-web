@@ -1,12 +1,21 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState, Suspense } from "react";
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  Suspense,
+} from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import { useSupabaseAuth } from "@/app/providers/SupabaseAuthProvider";
 import { type Tier } from "@/lib/subscriptions/tier";
 import { Button } from "@/components/ui/button";
+
+const MAX_POLL_ATTEMPTS = 30;
 
 function SubscriptionSuccessPageContent() {
   const { get } = useSearchParams();
@@ -16,11 +25,9 @@ function SubscriptionSuccessPageContent() {
 
   const [loading, setLoading] = useState(true);
   const [tier, setTier] = useState<Tier>("free");
-  const [polling, setPolling] = useState(true);
   const [pollAttempts, setPollAttempts] = useState(0);
   const [error, setError] = useState<string | null>(null);
-
-  const maxPollAttempts = 30; // 30 seconds max
+  const pollingActiveRef = useRef(true);
 
   const loadSubscription = useCallback(async () => {
     const { data, error } = await supabase
@@ -42,53 +49,58 @@ function SubscriptionSuccessPageContent() {
       return;
     }
 
-    // Initial load
+    pollingActiveRef.current = true;
+
     (async () => {
       try {
         const currentTier = await loadSubscription();
         setTier(currentTier);
         setLoading(false);
 
-        // If already upgraded, stop polling
         if (currentTier !== "free") {
-          setPolling(false);
-          return;
+          pollingActiveRef.current = false;
         }
       } catch (e: unknown) {
         const msg =
           (e as Error)?.message ?? "Failed to load subscription data.";
         setError(msg);
         setLoading(false);
-        setPolling(false);
+        pollingActiveRef.current = false;
       }
     })();
   }, [authReady, sessionId, loadSubscription]);
 
-  // Polling effect
+  const loadSubscriptionRef = useRef(loadSubscription);
+  loadSubscriptionRef.current = loadSubscription;
+
   useEffect(() => {
-    if (!polling || !authReady || tier !== "free") {
+    if (!authReady || tier !== "free" || !pollingActiveRef.current) {
       return;
     }
 
     const interval = setInterval(async () => {
-      try {
-        const currentTier = await loadSubscription();
-        setTier(currentTier);
-        setPollAttempts((prev) => prev + 1);
+      if (!pollingActiveRef.current) {
+        return;
+      }
 
-        // Stop polling if upgraded or max attempts reached
-        if (currentTier !== "free" || pollAttempts >= maxPollAttempts) {
-          setPolling(false);
-          clearInterval(interval);
-        }
+      try {
+        const currentTier = await loadSubscriptionRef.current();
+        setTier(currentTier);
+
+        setPollAttempts((prev) => {
+          const next = prev + 1;
+          if (currentTier !== "free" || next >= MAX_POLL_ATTEMPTS) {
+            pollingActiveRef.current = false;
+          }
+          return next;
+        });
       } catch (e: unknown) {
         console.error("Polling error:", e);
-        // Continue polling on error
       }
-    }, 1000); // Poll every 1 second
+    }, 1000);
 
     return () => clearInterval(interval);
-  }, [polling, authReady, tier, pollAttempts, loadSubscription]);
+  }, [authReady, tier]);
 
   if (!sessionId) {
     return (
@@ -119,7 +131,7 @@ function SubscriptionSuccessPageContent() {
   }
 
   const isUpgraded = tier !== "free";
-  const timeoutReached = pollAttempts >= maxPollAttempts;
+  const timeoutReached = pollAttempts >= MAX_POLL_ATTEMPTS;
 
   return (
     <div className="pt-10 font-sans">
