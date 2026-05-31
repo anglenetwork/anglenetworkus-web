@@ -1,4 +1,5 @@
 import { notFound, redirect } from "next/navigation";
+import { after } from "next/server";
 import type { Metadata } from "next";
 import { sanityFetch } from "@/sanity/lib/fetch";
 import { client } from "@/sanity/lib/client";
@@ -26,13 +27,13 @@ import { getCoverImage } from "@/sanity/lib/utils";
 import { articleFamilyHref } from "@/app/lib/article-family/routes";
 import type { ArticleFamilyDocType } from "@/app/lib/article-family/types";
 import { SectionHeader } from "@/app/components/ui/section-header";
+import { SitePageWidth } from "@/app/components/layout/site-page-width";
+import { trackTagView } from "@/app/lib/analytics/track-tag-view";
 import ShowMoreSection from "./ShowMoreSection";
-import TagViewTracker from "./TagViewTracker";
 import { TagFeaturedArticle } from "./components/TagFeaturedArticle";
 import { TagArticleItem } from "./components/TagArticleItem";
 import { TagNewsItem } from "./components/TagNewsItem";
 import { TagTextNewsItem } from "./components/TagTextNewsItem";
-import { SitePageWidth } from "@/app/components/layout/site-page-width";
 
 // Revalidate this page every 60s
 export const revalidate = 60;
@@ -168,6 +169,8 @@ export default async function TagPage({
     notFound();
   }
 
+  after(() => trackTagView(slug));
+
   const { tag, posts: rawPosts, popularReads } = data;
 
   const posts = (rawPosts as Record<string, unknown>[]).map((p) => ({
@@ -195,7 +198,6 @@ export default async function TagPage({
     <>
       <JsonLdScript data={breadcrumbLd} />
       <main className="min-h-screen bg-background py-4 md:py-8">
-        <TagViewTracker tagSlug={slug} />
         <SitePageWidth>
           <div className="flex flex-col gap-8 lg:flex-row">
             {/* Left Column - 60% */}

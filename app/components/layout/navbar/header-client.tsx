@@ -27,6 +27,15 @@ export function HeaderClient({ categories, tags, showsTags }: HeaderProps) {
   const lastHeightRef = useRef(0);
   const pathname = usePathname();
   const isDesktopNav = useMediaQuery(DESKTOP_NAV_QUERY);
+  const previousPathnameRef = useRef(pathname);
+
+  if (previousPathnameRef.current !== pathname) {
+    previousPathnameRef.current = pathname;
+    if (isMenuOpen) {
+      setIsMenuOpen(false);
+      setFocusSearchOnOpen(false);
+    }
+  }
 
   const measureHeaderHeight = useCallback(() => {
     if (!headerRef.current) return;
@@ -40,25 +49,22 @@ export function HeaderClient({ categories, tags, showsTags }: HeaderProps) {
     );
   }, []);
 
+  const measureHeaderHeightRef = useRef(measureHeaderHeight);
+  measureHeaderHeightRef.current = measureHeaderHeight;
+
   useEffect(() => {
     if (!isMenuOpen || !headerRef.current) return;
 
-    measureHeaderHeight();
-    const ro = new ResizeObserver(measureHeaderHeight);
+    const measure = () => measureHeaderHeightRef.current();
+    measure();
+    const ro = new ResizeObserver(measure);
     ro.observe(headerRef.current);
-    window.addEventListener("resize", measureHeaderHeight);
+    window.addEventListener("resize", measure);
     return () => {
       ro.disconnect();
-      window.removeEventListener("resize", measureHeaderHeight);
+      window.removeEventListener("resize", measure);
     };
-  }, [isMenuOpen, measureHeaderHeight]);
-
-  useEffect(() => {
-    if (!isMenuOpen) return;
-    setIsMenuOpen(false);
-    setFocusSearchOnOpen(false);
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- close menu on route change only
-  }, [pathname]);
+  }, [isMenuOpen]);
 
   const closeMenu = () => {
     setIsMenuOpen(false);

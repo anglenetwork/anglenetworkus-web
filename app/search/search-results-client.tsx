@@ -1,7 +1,7 @@
 "use client";
 
+import { Suspense, useCallback, useReducer, useTransition } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
-import { useCallback, useReducer, useTransition } from "react";
 import { SearchBar } from "@/app/components/ui/search-bar";
 import type { EditorialSearchResult } from "@/app/lib/search/run-editorial-search";
 import {
@@ -57,7 +57,7 @@ type SearchResultsClientProps = {
   error: string | null;
 };
 
-export function SearchResultsClient({
+function SearchResultsClientInner({
   payload,
   error,
 }: SearchResultsClientProps) {
@@ -179,5 +179,13 @@ export function SearchResultsClient({
         </div>
       )}
     </div>
+  );
+}
+
+export function SearchResultsClient(props: SearchResultsClientProps) {
+  return (
+    <Suspense fallback={<SearchResultsLoadingSkeleton />}>
+      <SearchResultsClientInner {...props} />
+    </Suspense>
   );
 }

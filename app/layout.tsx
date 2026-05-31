@@ -7,8 +7,9 @@ import { toPlainText, type PortableTextBlock } from "next-sanity";
 import { draftMode, headers } from "next/headers";
 import { publicSans } from "@/app/lib/fonts/sans";
 
-import { SiteShell } from "./components/layout";
+import { SiteShell } from "./components/layout/site-shell";
 import { DraftModeShell } from "./components/layout/draft-mode-shell";
+import { SanityLive } from "@/sanity/lib/fetch";
 
 import * as demo from "@/sanity/lib/demo";
 import { sanityFetch } from "@/sanity/lib/fetch";
@@ -92,6 +93,7 @@ export default async function RootLayout({
         {(process.env.NEXT_PUBLIC_VERCEL_ENV || process.env.VERCEL) && (
           <SpeedInsights />
         )}
+        {!isStudioRoute && <SanityLive />}
       </body>
     </html>
   );

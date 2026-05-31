@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { HeaderClient } from "../navbar";
+import { HeaderClient } from "../navbar/header-client";
 import { Footer } from "../footer";
 import type { SiteShellNav } from "./types";
 

@@ -1,16 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createClient } from "next-sanity";
-import { apiVersion, dataset, projectId } from "@/sanity/lib/api";
-import { token } from "@/sanity/lib/token";
-
-// Create a client with write permissions
-const writeClient = createClient({
-  projectId,
-  dataset,
-  apiVersion,
-  token,
-  useCdn: false,
-});
+import { trackTagView } from "@/app/lib/analytics/track-tag-view";
 
 export async function POST(request: NextRequest) {
   try {
@@ -23,27 +12,9 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Find the tag by slug
-    const tag = await writeClient.fetch(
-      `*[_type == "tag" && slug.current == $slug][0] { _id, views }`,
-      { slug },
-    );
+    await trackTagView(slug);
 
-    if (!tag) {
-      return NextResponse.json({ error: "Tag not found" }, { status: 404 });
-    }
-
-    // Increment the views count
-    const currentViews = tag.views || 0;
-    const newViews = currentViews + 1;
-
-    // Update the tag with the new views count
-    await writeClient.patch(tag._id).set({ views: newViews }).commit();
-
-    return NextResponse.json({
-      success: true,
-      views: newViews,
-    });
+    return NextResponse.json({ success: true });
   } catch (error) {
     console.error("Error tracking tag view:", error);
     return NextResponse.json(

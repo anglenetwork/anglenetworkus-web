@@ -10,7 +10,7 @@ import ArticleFamilyIndexPage, {
 } from "@/app/components/article-family/ArticleFamilyIndexPage";
 import * as demo from "@/sanity/lib/demo";
 import { getCachedSettings } from "@/app/lib/cached-settings";
-import { jsonLdScriptContent } from "@/app/lib/article-family/structured-data";
+import { JsonLdScript } from "@/app/components/seo/json-ld-script";
 import { buildBreadcrumbJsonLd } from "@/app/lib/seo/json-ld";
 import {
   buildAnalysisIndexMetadata,
@@ -73,12 +73,7 @@ export default async function AnalysisIndexPage({
 
   return (
     <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: jsonLdScriptContent(breadcrumbLd),
-        }}
-      />
+      <JsonLdScript data={breadcrumbLd} />
       <ArticleFamilyIndexPage
         title="Analysis"
         description="Deep dives, data, and context on the stories that matter."
