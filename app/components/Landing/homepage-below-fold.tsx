@@ -1,5 +1,6 @@
 "use client";
 
+import type { ReactNode } from "react";
 import dynamic from "next/dynamic";
 import type { ComponentProps } from "react";
 import { BelowFoldSectionPlaceholder } from "./below-fold-placeholder";
@@ -37,6 +38,7 @@ export type HomepageBelowFoldSectionsProps = {
   thirdSection: ThirdSectionProps;
   fourthSection: FourthSectionProps | null;
   fifthSection: FifthSectionProps;
+  opinion?: ReactNode;
 };
 
 export function HomepageBelowFoldSections({
@@ -44,6 +46,7 @@ export function HomepageBelowFoldSections({
   thirdSection,
   fourthSection,
   fifthSection,
+  opinion,
 }: HomepageBelowFoldSectionsProps) {
   return (
     <>
@@ -51,6 +54,7 @@ export function HomepageBelowFoldSections({
       <TestSection />
       <SecondSectionAlternative />
       <ThirdSection {...thirdSection} />
+      {opinion}
       {fourthSection ? <FourthSection {...fourthSection} /> : null}
       <FifthSection {...fifthSection} />
     </>
