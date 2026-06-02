@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { cn } from "@/lib/utils";
 import { sanityFetchStatic } from "@/sanity/lib/fetch";
 import { opinionListQuery } from "@/sanity/lib/article-family-queries";
 import { normalizeArticleFamilyCard } from "@/app/lib/article-family/normalize";
@@ -7,7 +6,7 @@ import { getCoverImage } from "@/sanity/lib/utils";
 import { SectionHeader } from "@/app/components/ui/section-header";
 import { ImageRenderer } from "@/app/components/ui/image-renderer";
 import type { ArticleFamilyCard } from "@/app/lib/article-family/types";
-import { articleTitleLink } from "@/app/lib/typography/article-links";
+import { categorySecondaryRowTitle } from "@/app/lib/typography/second-section";
 import { formatReadTimeLabel } from "@/app/lib/typography/tag-page";
 
 function OpinionColumnCard({ article }: { article: ArticleFamilyCard }) {
@@ -18,26 +17,22 @@ function OpinionColumnCard({ article }: { article: ArticleFamilyCard }) {
   const categoryLabel =
     article.category?.title?.toUpperCase() ?? "OPINION";
   const authorName = article.author?.name?.trim();
-  const readTimeLabel = formatReadTimeLabel(null);
-  const byline = [authorName, readTimeLabel].filter(Boolean).join(" · ");
+  const readTimeLabel = formatReadTimeLabel(article.readTime);
 
   return (
     <article className="py-6 first:pt-0 last:pb-0 lg:px-6 lg:py-0">
       <div className="flex items-start gap-3">
         <div className="flex min-w-0 flex-1 flex-col gap-2">
-          <p className="font-sans font-semibold text-neutral-900 text-xs uppercase tracking-wide">
+          <p className="font-sans font-semibold text-white/80 text-xs uppercase tracking-wide">
             {categoryLabel}
           </p>
-          <h3
-            className={cn(
-              "font-sans font-semibold text-base text-neutral-900 leading-snug tracking-normal md:text-base",
-              articleTitleLink,
-            )}
-          >
+          <h3 className={categorySecondaryRowTitle.dark}>
             <Link href={article.href}>{article.title}</Link>
           </h3>
-          {byline ? (
-            <p className="font-sans text-neutral-500 text-xs">{byline}</p>
+          {authorName || readTimeLabel ? (
+            <p className="font-sans text-neutral-400 text-xs">
+              {[authorName, readTimeLabel].filter(Boolean).join(" · ")}
+            </p>
           ) : null}
         </div>
         {coverData?.src ? (
@@ -80,8 +75,8 @@ export default async function EditorialRailsSection() {
     <section>
       <SectionHeader title="Opinion" accentStyle="modern" href="/opinion" />
 
-      <div className="rounded-lg bg-neutral-100 px-4 py-6 md:px-6 md:py-8">
-        <div className="grid grid-cols-1 divide-y divide-dotted divide-neutral-300 lg:grid-cols-3 lg:divide-x lg:divide-y-0">
+      <div className="rounded-lg bg-blue-950 px-4 py-6 md:px-6 md:py-8">
+        <div className="grid grid-cols-1 divide-y divide-dotted divide-white/30 lg:grid-cols-3 lg:divide-x lg:divide-y-0">
           {articles.map((article) => (
             <OpinionColumnCard key={article._id} article={article} />
           ))}

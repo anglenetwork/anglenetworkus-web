@@ -297,8 +297,8 @@ export default async function Page() {
                 : null
             }
             fifthSection={{ categoriesData: fifthSectionData as any }}
+            opinion={<EditorialRailsSection />}
           />
-          <EditorialRailsSection />
           {/* <PromoSection /> */}
         </div>
       </SitePageWidth>
