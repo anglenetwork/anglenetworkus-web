@@ -21,6 +21,7 @@ const eslintConfig = [
       "**/playwright-report/**",
       "**/test-results/**",
       "**/docs/audits/lighthouse-reports/**",
+      "**/.unlighthouse/**",
       "sanity.types.ts",
       "schema.json",
     ],

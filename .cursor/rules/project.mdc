@@ -1,0 +1,11 @@
+---
+description: Project defaults
+alwaysApply: true
+---
+
+- Read the root `AGENTS.md` first.
+- Do not read `docs/archive/**` unless explicitly requested.
+- Do not use or recreate removed skills unless explicitly requested.
+- Keep changes surgical and scoped.
+- Do not change UI, layout, styling, or runtime behavior unless requested.
+- Run relevant validation before final response.
