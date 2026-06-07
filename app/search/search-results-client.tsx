@@ -2,6 +2,7 @@
 
 import { Suspense, useCallback, useReducer, useTransition } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
+import { cn } from "@/lib/utils";
 import { SearchBar } from "@/app/components/ui/search-bar";
 import type { EditorialSearchResult } from "@/app/lib/search/run-editorial-search";
 import {
@@ -20,6 +21,10 @@ import {
 } from "./search-results-list";
 import { SearchResultsStatus } from "./search-results-status";
 import { buildSearchPath, createSearchHandlers } from "./search-results-shared";
+import {
+  searchPageIntro,
+  searchPageTitle,
+} from "@/app/lib/typography/search-page";
 
 type FilterUiState = {
   typeFilterOpen: boolean;
@@ -59,14 +64,13 @@ function SearchResultsClientInner({
   error,
 }: SearchResultsClientProps) {
   const searchParams = useSearchParams();
-  const { get } = searchParams;
   const { push, refresh } = useRouter();
   const [isPending, startTransition] = useTransition();
 
-  const q = (get("q") || "").trim();
-  const sort = parseSort(get("sort"));
-  const type = parseType(get("type"));
-  const page = parsePage(get("page"));
+  const q = (searchParams.get("q") || "").trim();
+  const sort = parseSort(searchParams.get("sort"));
+  const type = parseType(searchParams.get("type"));
+  const page = parsePage(searchParams.get("page"));
 
   const [filterUi, dispatchFilterUi] = useReducer(filterUiReducer, {
     typeFilterOpen: false,
@@ -119,8 +123,8 @@ function SearchResultsClientInner({
 
       {!q ? (
         <div className="py-12 text-center">
-          <h1 className="mb-4 font-bold font-sans text-2xl">Search</h1>
-          <p className="font-sans text-muted-foreground">
+          <h1 className={cn("mb-4 text-center", searchPageTitle)}>Search</h1>
+          <p className={searchPageIntro}>
             Enter a search term above to find articles.
           </p>
         </div>

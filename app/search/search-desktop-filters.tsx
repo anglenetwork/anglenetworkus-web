@@ -2,6 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import type { SortParam, TypeParam } from "@/app/lib/search/editorial-search";
+import { searchFilterLabel } from "@/app/lib/typography/search-page";
 import { TYPE_OPTIONS, desktopFilterLinkClass } from "./search-results-shared";
 
 type SearchDesktopFiltersProps = {
@@ -20,9 +21,7 @@ export function SearchDesktopFilters({
   return (
     <div className="hidden flex-col gap-8 xl:flex xl:flex-row xl:flex-wrap xl:items-center xl:justify-start">
       <div className="flex flex-row flex-wrap items-center gap-2">
-        <span className="font-sans font-semibold text-muted-foreground text-sm">
-          Type
-        </span>
+        <span className={searchFilterLabel}>Type</span>
         {TYPE_OPTIONS.map(([value, label]) => {
           const isActive = type === value;
           return (
@@ -39,9 +38,7 @@ export function SearchDesktopFilters({
         })}
       </div>
       <div className="flex flex-wrap items-center gap-2">
-        <span className="font-sans font-semibold text-muted-foreground text-sm">
-          Sort
-        </span>
+        <span className={searchFilterLabel}>Sort</span>
         <Button
           type="button"
           variant={sort === "relevance" ? "default" : "outline"}

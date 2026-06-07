@@ -4,6 +4,10 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { User, Bookmark, CreditCard, Mail } from "lucide-react";
 import { cn } from "@/lib/utils";
+import {
+  profileSidebarNavLink,
+  profileSidebarNavLinkMobile,
+} from "@/app/lib/typography/myprofile-page";
 
 const navigation = [
   { name: "Profile", href: "/myprofile/profile-details", icon: User },
@@ -36,7 +40,7 @@ export function ProfileSidebar() {
                   href={item.href}
                   prefetch={false}
                   className={cn(
-                    "flex items-center gap-3 rounded-lg px-4 py-3 font-medium font-sans text-base text-black transition-colors",
+                    profileSidebarNavLink,
                     isActive ? "bg-accent" : "hover:bg-accent",
                   )}
                 >
@@ -63,7 +67,7 @@ export function ProfileSidebar() {
                 href={item.href}
                 prefetch={false}
                 className={cn(
-                  "flex flex-shrink-0 items-center gap-2 whitespace-nowrap rounded-lg px-3 py-2 font-medium font-sans text-black text-xs transition-colors",
+                  profileSidebarNavLinkMobile,
                   isActive ? "bg-accent" : "hover:bg-accent",
                 )}
               >

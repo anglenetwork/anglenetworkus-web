@@ -7,15 +7,17 @@ import { SectionHeader } from "@/app/components/ui/section-header";
 import { ImageRenderer } from "@/app/components/ui/image-renderer";
 import type { ArticleFamilyCard } from "@/app/lib/article-family/types";
 import { categorySecondaryRowTitle } from "@/app/lib/typography/second-section";
-import { formatReadTimeLabel } from "@/app/lib/typography/tag-page";
+import {
+  formatReadTimeLabel,
+  readTimeLabelClassName,
+} from "@/app/lib/typography/read-time";
 
 function OpinionColumnCard({ article }: { article: ArticleFamilyCard }) {
   const coverData = getCoverImage(
     article.cover as Parameters<typeof getCoverImage>[0],
     article.title || "Article image",
   );
-  const categoryLabel =
-    article.category?.title?.toUpperCase() ?? "OPINION";
+  const categoryLabel = article.category?.title?.toUpperCase() ?? "OPINION";
   const authorName = article.author?.name?.trim();
   const readTimeLabel = formatReadTimeLabel(article.readTime);
 
@@ -30,7 +32,7 @@ function OpinionColumnCard({ article }: { article: ArticleFamilyCard }) {
             <Link href={article.href}>{article.title}</Link>
           </h3>
           {authorName || readTimeLabel ? (
-            <p className="font-sans text-neutral-400 text-xs">
+            <p className={readTimeLabelClassName("inline")}>
               {[authorName, readTimeLabel].filter(Boolean).join(" · ")}
             </p>
           ) : null}
@@ -75,7 +77,7 @@ export default async function EditorialRailsSection() {
     <section>
       <SectionHeader title="Opinion" accentStyle="modern" href="/opinion" />
 
-      <div className="rounded-lg bg-blue-950 px-4 py-6 md:px-6 md:py-8">
+      <div className="rounded-lg bg-blue-800 px-4 py-6 md:px-6 md:py-8">
         <div className="grid grid-cols-1 divide-y divide-dotted divide-white/30 lg:grid-cols-3 lg:divide-x lg:divide-y-0">
           {articles.map((article) => (
             <OpinionColumnCard key={article._id} article={article} />

@@ -4,8 +4,6 @@ import type { ReactNode } from "react";
 import dynamic from "next/dynamic";
 import type { ComponentProps } from "react";
 import { BelowFoldSectionPlaceholder } from "./below-fold-placeholder";
-import TestSection from "./TestSection/testSection";
-import SecondSectionAlternative from "./SecondSection/secondSectionAlternative";
 
 const SecondSection = dynamic(() => import("./SecondSection/secondSection"), {
   ssr: false,
@@ -27,10 +25,25 @@ const FifthSection = dynamic(() => import("./FifthSection/fifthSection"), {
   loading: () => <BelowFoldSectionPlaceholder />,
 });
 
+const SixthSection = dynamic(() => import("./SixthSection/sixthSection"), {
+  ssr: false,
+  loading: () => <BelowFoldSectionPlaceholder />,
+});
+
+const SeventhSection = dynamic(
+  () => import("./SeventhSection/seventhSection"),
+  {
+    ssr: false,
+    loading: () => <BelowFoldSectionPlaceholder />,
+  },
+);
+
 type SecondSectionProps = ComponentProps<typeof SecondSection>;
 type ThirdSectionProps = ComponentProps<typeof ThirdSection>;
 type FourthSectionProps = ComponentProps<typeof FourthSection>;
 type FifthSectionProps = ComponentProps<typeof FifthSection>;
+type SixthSectionProps = ComponentProps<typeof SixthSection>;
+type SeventhSectionProps = ComponentProps<typeof SeventhSection>;
 
 /** Below-fold homepage sections in scroll order (matches section N file names). */
 export type HomepageBelowFoldSectionsProps = {
@@ -38,6 +51,8 @@ export type HomepageBelowFoldSectionsProps = {
   thirdSection: ThirdSectionProps;
   fourthSection: FourthSectionProps | null;
   fifthSection: FifthSectionProps;
+  sixthSection: SixthSectionProps | null;
+  seventhSection: SeventhSectionProps;
   opinion?: ReactNode;
 };
 
@@ -46,27 +61,33 @@ export function HomepageBelowFoldSections({
   thirdSection,
   fourthSection,
   fifthSection,
+  sixthSection,
+  seventhSection,
   opinion,
 }: HomepageBelowFoldSectionsProps) {
   return (
     <>
       <SecondSection {...secondSection} />
-      <TestSection />
-      <SecondSectionAlternative />
       <ThirdSection {...thirdSection} />
-      {opinion}
       {fourthSection ? <FourthSection {...fourthSection} /> : null}
       <FifthSection {...fifthSection} />
+      {opinion}
+      {sixthSection ? <SixthSection {...sixthSection} /> : null}
+      <SeventhSection {...seventhSection} />
     </>
   );
 }
 
 export type HomepageBelowFoldTopProps = Pick<
   HomepageBelowFoldSectionsProps,
-  "secondSection" | "thirdSection" | "fourthSection"
+  | "secondSection"
+  | "thirdSection"
+  | "fourthSection"
+  | "fifthSection"
+  | "sixthSection"
 >;
 
 export type HomepageBelowFoldBottomProps = Pick<
   HomepageBelowFoldSectionsProps,
-  "fifthSection"
+  "seventhSection"
 >;

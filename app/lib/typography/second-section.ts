@@ -2,7 +2,7 @@ import { articleTitleLink } from "./article-links";
 
 /** SecondSection — category column: lead story title */
 export const categoryFeaturedTitle = {
-  light: `font-semibold font-sans text-xl text-neutral-900 leading-snug tracking-tight md:text-2xl ${articleTitleLink}`,
+  light: `font-semibold font-sans text-xl text-neutral-900 leading-snug tracking-tight md:text-xl ${articleTitleLink}`,
   dark: `font-semibold font-sans text-xl leading-snug tracking-tight text-white md:text-2xl ${articleTitleLink}`,
 } as const;
 

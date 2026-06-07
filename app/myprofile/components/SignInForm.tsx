@@ -4,7 +4,14 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { cn } from "@/lib/utils";
 import { createClient } from "@/lib/supabase/client";
+import {
+  profileButtonPrimary,
+  profileFormMessageError,
+  profileFormMessageSuccess,
+  profileSignInLabel,
+} from "@/app/lib/typography/myprofile-page";
 
 export function SignInForm() {
   const [email, setEmail] = useState("");
@@ -51,10 +58,7 @@ export function SignInForm() {
     <form onSubmit={handleSignIn} className="space-y-6">
       {/* Email Input */}
       <div className="space-y-2">
-        <label
-          htmlFor="email"
-          className="font-medium font-sans text-foreground text-sm"
-        >
+        <label htmlFor="email" className={profileSignInLabel}>
           Email
         </label>
         <Input
@@ -72,9 +76,11 @@ export function SignInForm() {
       {/* Message Display */}
       {message && (
         <div
-          className={`font-sans text-sm ${
-            message.type === "error" ? "text-red-600" : "text-green-600"
-          }`}
+          className={
+            message.type === "error"
+              ? profileFormMessageError
+              : profileFormMessageSuccess
+          }
         >
           {message.text}
         </div>
@@ -84,7 +90,7 @@ export function SignInForm() {
       <Button
         type="submit"
         disabled={loading}
-        className="h-11 w-full bg-foreground font-sans text-background hover:bg-foreground/90"
+        className={cn("h-11 w-full", profileButtonPrimary)}
       >
         {loading ? "Sending..." : "Send magic link"}
       </Button>

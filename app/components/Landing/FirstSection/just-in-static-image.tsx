@@ -20,7 +20,7 @@ export function JustInStaticImage({
   return (
     <div className="mb-3 block">
       <Link href={`/post/${postSlug}`}>
-        <div className="relative h-56 w-full overflow-hidden rounded-sm md:h-60">
+        <div className="relative aspect-[16/9] w-full overflow-hidden rounded-sm bg-neutral-950 md:aspect-auto md:h-60">
           <ImageRenderer
             src={image.src}
             alt={image.alt}
@@ -30,7 +30,7 @@ export function JustInStaticImage({
             unoptimized={image.unoptimized}
             quality={55}
             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 100vw, 300px"
-            className="rounded-sm object-cover"
+            className="object-cover object-center"
           />
           {(breakingNews || developingStory) && (
             <div className="absolute bottom-3 left-3 z-10">

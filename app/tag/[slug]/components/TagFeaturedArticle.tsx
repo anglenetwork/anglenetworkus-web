@@ -8,7 +8,7 @@ interface TagFeaturedArticleProps {
   title: string;
   slug: string;
   href?: string;
-  readTime?: string;
+  readTimeMinutes?: number | null;
 }
 
 export function TagFeaturedArticle({
@@ -18,7 +18,7 @@ export function TagFeaturedArticle({
   title,
   slug,
   href,
-  readTime,
+  readTimeMinutes,
 }: TagFeaturedArticleProps) {
   return (
     <FeaturedArticleBlock
@@ -27,7 +27,7 @@ export function TagFeaturedArticle({
       imageUnoptimized={imageUnoptimized}
       title={title}
       href={href ?? `/post/${slug}`}
-      readTime={readTime}
+      readTimeMinutes={readTimeMinutes}
       priority
       titleAs="h1"
     />

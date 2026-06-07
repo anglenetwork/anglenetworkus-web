@@ -60,21 +60,11 @@ export default async function ProfileDetailsPage() {
     return null;
   }
 
-  // Log the user UID
-  console.log("User UID:", user.id);
-
-  const { data: profileData, error: profileError } = await supabase
+  const { data: profileData } = await supabase
     .from("profiles")
     .select("first_name, last_name, date_of_birth")
     .eq("id", user.id)
     .maybeSingle();
-
-  // Log the query result
-  console.log("Profile query result:", {
-    data: profileData,
-    error: profileError,
-    queryUserId: user.id,
-  });
 
   // Get name prefill from auth metadata (for modal)
   const namePrefill = getNamePrefillFromAuthUser(user);

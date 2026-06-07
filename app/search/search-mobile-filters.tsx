@@ -17,6 +17,11 @@ import {
   SelectTrigger,
 } from "@/components/ui/select";
 import type { SortParam, TypeParam } from "@/app/lib/search/editorial-search";
+import {
+  searchMobileDialogTitle,
+  searchMobileFilterOption,
+  searchMobileFilterOptionActive,
+} from "@/app/lib/typography/search-page";
 import { ArrowDownUp, ListFilter, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { TYPE_OPTIONS } from "./search-results-shared";
@@ -62,7 +67,7 @@ export function SearchMobileFilters({
         >
           <div className="flex items-center px-6 py-4">
             <div className="size-12 shrink-0" aria-hidden />
-            <DialogTitle className="flex-1 text-center font-semibold text-xl leading-none">
+            <DialogTitle className={searchMobileDialogTitle}>
               Filter by type
             </DialogTitle>
             <DialogClose className="flex size-12 shrink-0 items-center justify-center rounded-md opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2">
@@ -86,8 +91,9 @@ export function SearchMobileFilters({
                   <Label
                     htmlFor={`search-type-${value}`}
                     className={cn(
-                      "cursor-pointer font-normal text-lg leading-snug",
-                      pendingType === value && "text-red-600",
+                      pendingType === value
+                        ? searchMobileFilterOptionActive
+                        : searchMobileFilterOption,
                     )}
                   >
                     {label}

@@ -2,7 +2,12 @@ import { sanityFetchStatic } from "@/sanity/lib/fetch";
 import {
   thirdLatestArticleQuery,
   fourthSectionQuery,
+  homepageThirdSectionByTagQuery,
 } from "@/sanity/lib/queries";
+import {
+  HOMEPAGE_THIRD_SECTION_TAGS,
+  type HomepageThirdSectionArticle,
+} from "./homepage-third-section";
 
 /** Homepage second section: category columns (e.g. Tech, Business, Entertainment). */
 export async function getSecondSectionData(slugs: string[], titles: string[]) {
@@ -28,8 +33,46 @@ export async function getSecondSectionData(slugs: string[], titles: string[]) {
   }));
 }
 
-/** Homepage fifth section: featured-stories carousel (one card per category). */
-export async function getFifthSectionData() {
+type ThirdSectionPostRow = {
+  _id: string;
+  title: string;
+  slug: string;
+  readTime?: number | null;
+};
+
+/** Homepage third section: latest post for each configured tag. */
+export async function getThirdSectionData(): Promise<
+  HomepageThirdSectionArticle[]
+> {
+  const rows: HomepageThirdSectionArticle[] = [];
+  const usedIds: string[] = [];
+
+  for (const tag of HOMEPAGE_THIRD_SECTION_TAGS) {
+    const post = await sanityFetchStatic({
+      query: homepageThirdSectionByTagQuery,
+      params: { tagSlug: tag.slug, excludeIds: usedIds },
+      tag: `homepage.third-section.${tag.slug}`,
+    });
+
+    const row = post as ThirdSectionPostRow | null;
+    if (!row?.slug) continue;
+
+    usedIds.push(row._id);
+    rows.push({
+      tagSlug: tag.slug,
+      tagTitle: tag.title,
+      _id: row._id,
+      title: row.title,
+      slug: row.slug,
+      readTime: row.readTime ?? null,
+    });
+  }
+
+  return rows;
+}
+
+/** Homepage seventh section: featured-stories carousel (one card per category). */
+export async function getSeventhSectionData() {
   const [
     politicsThirdArticle,
     internationalThirdArticle,

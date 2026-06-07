@@ -14,12 +14,20 @@ import { createClient } from "@/lib/supabase/client";
 import { useSupabaseAuth } from "@/app/providers/SupabaseAuthProvider";
 import { type Tier } from "@/lib/subscriptions/tier";
 import { Button } from "@/components/ui/button";
+import {
+  profileAlertErrorBody,
+  profileAlertErrorTitle,
+  profileSuccessBody,
+  profileSuccessMeta,
+  profileSuccessTitle,
+  profileSubscriptionLoading,
+} from "@/app/lib/typography/myprofile-page";
 
 const MAX_POLL_ATTEMPTS = 30;
 
 function SubscriptionSuccessPageContent() {
-  const { get } = useSearchParams();
-  const sessionId = get("session_id");
+  const searchParams = useSearchParams();
+  const sessionId = searchParams.get("session_id");
   const supabase = useMemo(() => createClient(), []);
   const { ready: authReady } = useSupabaseAuth();
 
@@ -106,8 +114,10 @@ function SubscriptionSuccessPageContent() {
     return (
       <div className="pt-10 font-sans">
         <div className="mb-8 rounded-lg border border-red-200 bg-red-50 p-6">
-          <h2 className="mb-2 font-bold text-red-900 text-xl">Error</h2>
-          <p className="text-red-700">Missing session ID. Please try again.</p>
+          <h2 className={profileAlertErrorTitle}>Error</h2>
+          <p className={profileAlertErrorBody}>
+            Missing session ID. Please try again.
+          </p>
           <Link href="/myprofile/subscriptions">
             <Button className="mt-4">Back to Subscriptions</Button>
           </Link>
@@ -120,8 +130,8 @@ function SubscriptionSuccessPageContent() {
     return (
       <div className="pt-10 font-sans">
         <div className="mb-8 rounded-lg border border-red-200 bg-red-50 p-6">
-          <h2 className="mb-2 font-bold text-red-900 text-xl">Error</h2>
-          <p className="text-red-700">{error}</p>
+          <h2 className={profileAlertErrorTitle}>Error</h2>
+          <p className={profileAlertErrorBody}>{error}</p>
           <Link href="/myprofile/subscriptions">
             <Button className="mt-4">Back to Subscriptions</Button>
           </Link>
@@ -137,13 +147,11 @@ function SubscriptionSuccessPageContent() {
     <div className="pt-10 font-sans">
       <div className="mb-8 w-full space-y-4 rounded-lg bg-gray-100 p-6">
         {loading ? (
-          <div className="text-gray-600 text-sm">Loading…</div>
+          <div className={profileSubscriptionLoading}>Loading…</div>
         ) : isUpgraded ? (
           <>
-            <h2 className="mb-2 font-bold text-2xl text-gray-900">
-              Payment Successful!
-            </h2>
-            <p className="text-gray-700">
+            <h2 className={profileSuccessTitle}>Payment Successful!</h2>
+            <p className={profileSuccessBody}>
               Your subscription has been updated. You now have access to the{" "}
               <strong>{tier.toUpperCase()}</strong> tier.
             </p>
@@ -153,14 +161,12 @@ function SubscriptionSuccessPageContent() {
           </>
         ) : timeoutReached ? (
           <>
-            <h2 className="mb-2 font-bold text-2xl text-gray-900">
-              Payment Received
-            </h2>
-            <p className="text-gray-700">
+            <h2 className={profileSuccessTitle}>Payment Received</h2>
+            <p className={profileSuccessBody}>
               Your payment was successful, but we&apos;re still processing your
               subscription update. This usually takes just a few seconds.
             </p>
-            <p className="mt-2 text-gray-600 text-sm">
+            <p className={profileSuccessMeta}>
               Your subscription will be active shortly. You can check your
               subscription status below.
             </p>
@@ -170,15 +176,13 @@ function SubscriptionSuccessPageContent() {
           </>
         ) : (
           <>
-            <h2 className="mb-2 font-bold text-2xl text-gray-900">
-              Payment Received
-            </h2>
-            <p className="text-gray-700">
+            <h2 className={profileSuccessTitle}>Payment Received</h2>
+            <p className={profileSuccessBody}>
               Payment received, updating your account…
             </p>
             <div className="mt-4 flex items-center gap-2">
               <div className="size-4 animate-spin rounded-full border-indigo-600 border-b-2"></div>
-              <span className="text-gray-600 text-sm">
+              <span className={profileSuccessMeta}>
                 Please wait while we process your subscription
               </span>
             </div>

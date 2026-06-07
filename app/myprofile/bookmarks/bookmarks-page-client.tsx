@@ -15,7 +15,7 @@ export default function BookmarksPageClient({
     <div>
       <ProfileSectionHeader
         title="Bookmarks"
-        description="Your saved articles in one place."
+        description="Your saved articles in one place"
       />
       <BookmarksList initialBookmarks={initialBookmarks} />
     </div>

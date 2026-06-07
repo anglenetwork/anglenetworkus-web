@@ -3,6 +3,10 @@
 import { useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  profileCardBody,
+  profileCardTitle,
+} from "@/app/lib/typography/myprofile-page";
 
 export default function Error({
   error,
@@ -19,12 +23,12 @@ export default function Error({
     <div className="mx-auto max-w-2xl px-4 py-8 xl:py-12">
       <Card>
         <CardHeader>
-          <CardTitle className="font-sans text-2xl">
+          <CardTitle className={profileCardTitle}>
             Something went wrong
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-          <p className="font-sans text-muted-foreground">
+          <p className={profileCardBody}>
             An error happened while loading this profile section. Try again.
           </p>
 

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { NewsletterToggles } from "../components/NewsletterToggles";
 import { ProfileSectionHeader } from "../components/ProfileSectionHeader";
+import { profileNewsletterNote } from "@/app/lib/typography/myprofile-page";
 import { staticPageMetadata } from "@/app/lib/seo/static-page-metadata";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -34,7 +35,7 @@ export default async function NewslettersPage() {
       <NewsletterToggles />
 
       <div className="mt-12 rounded-lg border border-slate-200 bg-slate-50 p-4">
-        <p className="font-sans text-slate-700 text-sm">
+        <p className={profileNewsletterNote}>
           You can manage your email preferences at any time. We&apos;ll only
           send you the newsletters you&apos;ve opted in to receive.
         </p>

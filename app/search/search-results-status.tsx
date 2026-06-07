@@ -1,4 +1,8 @@
 import type { TypeParam } from "@/app/lib/search/editorial-search";
+import {
+  searchResultsStatus,
+  searchResultsStatusEmphasis,
+} from "@/app/lib/typography/search-page";
 import { TYPE_POSTS_LABEL } from "./search-results-shared";
 
 type SearchResultsStatusProps = {
@@ -23,23 +27,28 @@ export function SearchResultsStatus({
   const typePostsLabel = TYPE_POSTS_LABEL[type];
 
   return (
-    <p className="font-sans text-foreground text-sm">
+    <p className={searchResultsStatus}>
       {error ? (
-        <span className="text-red-600">Search could not be completed.</span>
+        <span className="font-medium text-red-600">
+          Search could not be completed.
+        </span>
       ) : isPending ? (
         <>
-          Searching for <span className="font-semibold">{query}</span> in{" "}
+          Searching for{" "}
+          <span className={searchResultsStatusEmphasis}>{query}</span> in{" "}
           {typePostsLabel} posts
         </>
       ) : total > 0 ? (
         <>
           Displaying {startIdx}–{endIdx} of {total} results for{" "}
-          <span className="font-semibold">{query}</span> in {typePostsLabel}{" "}
-          posts
+          <span className={searchResultsStatusEmphasis}>{query}</span> in{" "}
+          {typePostsLabel} posts
         </>
       ) : (
         <>
-          No results for &ldquo;{query}&rdquo; in {typePostsLabel} posts
+          No results for &ldquo;
+          <span className={searchResultsStatusEmphasis}>{query}</span>
+          &rdquo; in {typePostsLabel} posts
         </>
       )}
     </p>

@@ -132,44 +132,56 @@ export default defineType({
   preview: {
     select: {
       title: "title",
+      legacyName: "name",
       slug: "slug.current",
       emoji: "emoji",
       featured: "featured",
       hidden: "hidden",
       order: "order",
       deprecated: "deprecated",
-      redirect: "redirectTo.title",
-      alias0: "aliases[0]",
-      alias1: "aliases[1]",
+      redirectTitle: "redirectTo.title",
     },
     prepare(selection) {
       const {
         title,
+        legacyName,
         slug,
         emoji,
         featured,
         hidden,
         order,
         deprecated,
-        redirect,
-        alias0,
-        alias1,
-      } = selection as any;
-      const aliasBits = [alias0, alias1].filter(Boolean);
-      const aliasStr =
-        aliasBits.length > 0 ? `aka ${aliasBits.join(", ")}` : null;
+        redirectTitle,
+      } = selection as {
+        title?: string;
+        legacyName?: string;
+        slug?: string;
+        emoji?: string;
+        featured?: boolean;
+        hidden?: boolean;
+        order?: number;
+        deprecated?: boolean;
+        redirectTitle?: string;
+      };
+
+      const label =
+        title?.trim() || legacyName?.trim() || slug || "Untitled tag";
       const flags = [
-        featured ? "★ featured" : null,
+        featured ? "featured" : null,
         hidden ? "hidden" : null,
-        deprecated ? (redirect ? `→ ${redirect}` : "deprecated") : null,
+        deprecated
+          ? redirectTitle
+            ? `redirects to ${redirectTitle}`
+            : "deprecated"
+          : null,
         typeof order === "number" ? `#${order}` : null,
       ]
         .filter(Boolean)
         .join(" · ");
 
       return {
-        title: `${emoji ? `${emoji} ` : ""}${title}`,
-        subtitle: [slug, aliasStr, flags].filter(Boolean).join(" · "),
+        title: emoji ? `${emoji} ${label}` : label,
+        subtitle: [slug, flags].filter(Boolean).join(" · "),
       };
     },
   },

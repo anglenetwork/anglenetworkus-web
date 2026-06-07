@@ -1,192 +1,201 @@
-"use client";
-
-import { useRef } from "react";
-import { Button } from "@/components/ui/button";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import Link from "next/link";
+import { cn } from "@/lib/utils";
+import type { ArticleFamilyCard } from "@/app/lib/article-family/types";
+import { ListingPhotoCredit } from "@/app/helpers";
+import { getCoverImage } from "@/sanity/lib/utils";
 import { SectionHeader } from "../../ui/section-header";
-import ArticleFamilyCard from "@/app/components/article-family/ArticleFamilyCard";
-import { articleFamilyHref } from "@/app/lib/article-family/routes";
-import type { ArticleFamilyCard as CardModel } from "@/app/lib/article-family/types";
+import { ImageRenderer } from "../../ui/image-renderer";
+import {
+  categoryFeaturedTitle,
+  categorySecondaryRowTitle,
+} from "@/app/lib/typography/second-section";
+import { ReadTimeLabel } from "@/app/components/ui/read-time-label";
 
-interface Post {
-  _id: string;
-  title: string | null;
-  slug: string | null;
-  excerpt?: string | null;
-  cover?: {
-    source?: "asset" | "external";
-    externalUrl?: string | null;
-    image?: any;
-    alt?: string | null;
-    imageSource?: string | null;
-  } | null;
-  date: string;
-  author?: {
-    name: string;
-    picture?: any;
-  } | null;
-  category?: {
-    title: string | null;
-    slug: string | null;
-  } | null;
-  readTime?: number | null;
-}
-
-interface CategoryData {
-  slug: string | null;
-  name: string | null;
-  thirdArticle: Post | null;
+export interface FifthSectionCategoryConfig {
+  slug: string;
+  title: string;
 }
 
 interface FifthSectionProps {
-  categoriesData?: CategoryData[];
+  leftColumnPosts: ArticleFamilyCard[];
+  rightColumnPosts: ArticleFamilyCard[];
+  leftCategory: FifthSectionCategoryConfig;
+  rightCategory: FifthSectionCategoryConfig;
+  variant?: "light" | "dark";
 }
 
-function postToCard(post: Post, categoryLabel: string): CardModel {
-  const slug = post.slug || "";
-  const catTitle = post.category?.title?.trim() || categoryLabel;
-  const catSlug = post.category?.slug?.trim() || "news";
-  return {
-    _id: post._id,
-    _type: "post",
-    title: post.title || "Untitled",
-    tickerTitle: post.title || "Untitled",
-    excerpt: post.excerpt ?? null,
-    slug,
-    href: slug ? articleFamilyHref("post", slug) : "#",
-    cover: post.cover ?? null,
-    body: null,
-    author: post.author
-      ? { name: post.author.name, picture: post.author.picture }
-      : null,
-    publishedAt: post.date || null,
-    updatedAt: null,
-    date: post.date,
-    seo: null,
-    category: { title: catTitle, slug: catSlug },
-    tags: null,
-  };
+function getImageData(
+  cover: ArticleFamilyCard["cover"],
+  fallbackTitle: string,
+) {
+  return getCoverImage(
+    cover as Parameters<typeof getCoverImage>[0],
+    fallbackTitle,
+  );
 }
 
-function fallbackCard(): CardModel {
-  return {
-    _id: "fallback-1",
-    _type: "post",
-    title: "Sample Article Title",
-    tickerTitle: "Sample Article Title",
-    excerpt:
-      "This is a sample article description to test the component rendering.",
-    slug: "",
-    href: "#",
-    cover: null,
-    body: null,
-    author: { name: "Sample Author" },
-    publishedAt: null,
-    updatedAt: null,
-    date: new Date().toISOString(),
-    seo: null,
-    category: { title: "Sample Category", slug: "sample" },
-    tags: null,
-  };
-}
+function SmallArticleRow({
+  article,
+  variant,
+}: {
+  article: ArticleFamilyCard;
+  variant: "light" | "dark";
+}) {
+  if (!article.slug || !article.href) return null;
 
-export default function FifthSection({ categoriesData }: FifthSectionProps) {
-  const scrollContainerRef = useRef<HTMLDivElement>(null);
-
-  const rows =
-    categoriesData?.flatMap((category) => {
-      if (!category.thirdArticle || !category.thirdArticle.slug) {
-        return [];
-      }
-      return [
-        {
-          id: category.thirdArticle._id,
-          categoryName: category.name || "Uncategorized",
-          post: category.thirdArticle,
-          readTime: category.thirdArticle.readTime || 5,
-        },
-      ];
-    }) ?? [];
-
-  const displayRows =
-    rows.length > 0
-      ? rows
-      : [
-          {
-            id: "fallback-1",
-            categoryName: "Sample Category",
-            post: null as Post | null,
-            readTime: 5,
-          },
-        ];
-
-  const scrollLeft = () => {
-    if (scrollContainerRef.current) {
-      scrollContainerRef.current.scrollBy({
-        left: -344,
-        behavior: "smooth",
-      });
-    }
-  };
-
-  const scrollRight = () => {
-    if (scrollContainerRef.current) {
-      scrollContainerRef.current.scrollBy({
-        left: 344,
-        behavior: "smooth",
-      });
-    }
-  };
+  const coverData = getImageData(
+    article.cover,
+    article.title || "Article image",
+  );
 
   return (
-    <div className="bg-white">
-      <SectionHeader
-        title="Featured Stories"
-        variant="light"
-        accentStyle="modern"
-      />
-
-      <div className="relative">
-        <Button
-          variant="outline"
-          size="icon"
-          aria-label="Scroll left"
-          className="absolute top-1/2 left-0 z-10 -translate-y-1/2 bg-white shadow-lg hover:bg-gray-50"
-          onClick={scrollLeft}
-        >
-          <ChevronLeft className="size-4" />
-        </Button>
-
-        <Button
-          variant="outline"
-          size="icon"
-          aria-label="Scroll right"
-          className="absolute top-1/2 right-0 z-10 -translate-y-1/2 bg-white shadow-lg hover:bg-gray-50"
-          onClick={scrollRight}
-        >
-          <ChevronRight className="size-4" />
-        </Button>
-
-        <div
-          ref={scrollContainerRef}
-          className="scrollbar-hide flex gap-6 overflow-x-auto px-12"
-        >
-          {displayRows.map((row) => {
-            const card = row.post
-              ? postToCard(row.post, row.categoryName)
-              : fallbackCard();
-            return (
-              <div key={row.id} className="w-[300px] flex-shrink-0">
-                <ArticleFamilyCard
-                  article={card}
-                  layout="heroTile"
-                  readTimeMinutes={row.readTime}
-                />
-              </div>
-            );
-          })}
-        </div>
+    <Link
+      href={article.href}
+      className="group flex items-start gap-3"
+      aria-label={`Read article: ${article.title}`}
+      data-article-category-slug={article.category?.slug ?? ""}
+    >
+      <div className="min-w-0 flex-1">
+        <h3 className={categorySecondaryRowTitle[variant]}>
+          {article.title || "Untitled"}
+        </h3>
+        <ReadTimeLabel minutes={article.readTime} variant={variant} />
       </div>
-    </div>
+      {coverData?.src ? (
+        <div className="relative h-20 w-28 shrink-0 overflow-hidden rounded-sm bg-neutral-950">
+          <ImageRenderer
+            src={coverData.src}
+            alt={coverData.alt}
+            width={112}
+            height={80}
+            fill
+            unoptimized={coverData.unoptimized}
+            sizes="112px"
+            className="object-cover object-center"
+          />
+        </div>
+      ) : null}
+    </Link>
+  );
+}
+
+export default function FifthSection({
+  leftColumnPosts,
+  rightColumnPosts,
+  leftCategory,
+  rightCategory,
+  variant = "light",
+}: FifthSectionProps) {
+  const leftForColumn = leftColumnPosts.filter(
+    (p) => p.category?.slug === leftCategory.slug,
+  );
+  const rightForColumn = rightColumnPosts.filter(
+    (p) => p.category?.slug === rightCategory.slug,
+  );
+
+  const mainArticle = leftForColumn[0];
+
+  if (!mainArticle && rightForColumn.length === 0) {
+    return null;
+  }
+
+  const divideClass =
+    variant === "dark" ? "divide-white/30" : "divide-neutral-300";
+
+  return (
+    <main
+      className={cn(
+        "rounded-lg",
+        variant === "dark" ? "bg-neutral-950" : "bg-background",
+      )}
+    >
+      <div
+        className={cn(
+          "grid grid-cols-1 divide-y divide-dotted lg:grid-cols-12 lg:divide-x lg:divide-y-0",
+          divideClass,
+        )}
+      >
+        <article
+          className="space-y-4 py-6 first:pt-0 last:pb-0 lg:col-span-7 lg:px-6 lg:py-0"
+          data-fifth-column="left"
+          data-expected-category-slug={leftCategory.slug}
+        >
+          <SectionHeader
+            title={leftCategory.title}
+            href={`/category/${leftCategory.slug}`}
+            variant={variant}
+            accentStyle="modern"
+          />
+
+          {mainArticle?.slug && mainArticle.href && (
+            <div>
+              <Link
+                href={mainArticle.href}
+                className="group block"
+                aria-label={`Read article: ${mainArticle.title || "Featured article"}`}
+                data-article-category-slug={mainArticle.category?.slug ?? ""}
+              >
+                <div className="relative aspect-[16/9] w-full overflow-hidden rounded-sm bg-neutral-950">
+                  {(() => {
+                    const coverData = getImageData(
+                      mainArticle.cover,
+                      mainArticle.title || "Featured article",
+                    );
+                    if (!coverData) return null;
+                    return (
+                      <ImageRenderer
+                        src={coverData.src}
+                        alt={coverData.alt}
+                        width={800}
+                        height={450}
+                        fill
+                        unoptimized={coverData.unoptimized}
+                        sizes="(max-width: 1024px) 100vw, 58vw"
+                        className="object-cover object-center"
+                      />
+                    );
+                  })()}
+                </div>
+              </Link>
+              <ListingPhotoCredit cover={mainArticle.cover} align="right" />
+              <Link href={mainArticle.href} className="group block">
+                <h3 className={cn("mt-4", categoryFeaturedTitle[variant])}>
+                  {mainArticle.title || "Untitled"}
+                </h3>
+              </Link>
+              <ReadTimeLabel minutes={mainArticle.readTime} variant={variant} />
+            </div>
+          )}
+        </article>
+
+        <article
+          className="space-y-4 py-6 last:pb-0 lg:col-span-5 lg:px-6 lg:py-0"
+          data-fifth-column="right"
+          data-expected-category-slug={rightCategory.slug}
+        >
+          <SectionHeader
+            title={rightCategory.title}
+            href={`/category/${rightCategory.slug}`}
+            variant={variant}
+            accentStyle="modern"
+          />
+
+          <div
+            className={cn("flex flex-col divide-y divide-dotted", divideClass)}
+          >
+            {rightForColumn.map((article, index) =>
+              article?.slug && article.href ? (
+                <div
+                  key={article._id ?? index}
+                  className="py-4 first:pt-0 last:pb-0"
+                >
+                  <SmallArticleRow article={article} variant={variant} />
+                </div>
+              ) : null,
+            )}
+          </div>
+        </article>
+      </div>
+    </main>
   );
 }

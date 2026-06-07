@@ -110,17 +110,13 @@ export function FullScreenMenu({
   }, [tags, showsTags]);
 
   useEffect(() => {
-    const dialog = dialogRef.current;
-    if (!dialog) return;
-
-    dialog.showModal();
     const frameId = requestAnimationFrame(() => setVisible(true));
 
-    const handleDialogClose = () => {
-      onCloseRef.current();
+    const handleEscKey = (event: KeyboardEvent) => {
+      if (event.key === "Escape") onCloseRef.current();
     };
 
-    dialog.addEventListener("close", handleDialogClose);
+    document.addEventListener("keydown", handleEscKey);
 
     const sw = window.innerWidth - document.documentElement.clientWidth;
     document.body.style.overflow = "hidden";
@@ -128,7 +124,7 @@ export function FullScreenMenu({
 
     return () => {
       cancelAnimationFrame(frameId);
-      dialog.removeEventListener("close", handleDialogClose);
+      document.removeEventListener("keydown", handleEscKey);
       document.body.style.overflow = "";
       document.body.style.paddingRight = "";
     };
@@ -148,10 +144,12 @@ export function FullScreenMenu({
   return (
     <dialog
       ref={dialogRef}
+      open
+      aria-modal="true"
       aria-label="Navigation menu"
       data-state="open"
       className={cn(
-        "fixed inset-0 z-40 m-0 size-full max-h-none max-w-none overflow-hidden border-0 bg-background p-0 transition-all duration-500 ease-in-out backdrop:bg-black/40",
+        "fixed inset-0 z-40 m-0 size-full max-h-none max-w-none overflow-hidden border-0 bg-background p-0 transition-all duration-500 ease-in-out",
         visible
           ? "translate-y-0 opacity-100"
           : "pointer-events-none translate-y-full opacity-0",

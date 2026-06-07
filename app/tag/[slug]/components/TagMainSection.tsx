@@ -1,6 +1,5 @@
 import { SectionHeader } from "@/app/components/ui/section-header";
 import { getCoverImage } from "@/sanity/lib/utils";
-import { formatReadTimeLabel } from "@/app/lib/typography/tag-page";
 import { TagFeaturedArticle } from "./TagFeaturedArticle";
 import { TagNewsItem } from "./TagNewsItem";
 
@@ -22,10 +21,6 @@ interface TagMainSectionProps {
   tagTitle: string;
   featuredPost: TagMainPost;
   sidebarPosts: TagMainPost[];
-}
-
-function formatReadTime(minutes?: number | null) {
-  return formatReadTimeLabel(minutes);
 }
 
 export function TagMainSection({
@@ -53,7 +48,7 @@ export function TagMainSection({
             title={featuredPost.title || "Untitled"}
             slug={featuredPost.slug || "#"}
             href={featuredPost.href}
-            readTime={formatReadTime(featuredPost.readTime)}
+            readTimeMinutes={featuredPost.readTime}
           />
         </div>
 
@@ -81,7 +76,7 @@ export function TagMainSection({
                       imageAlt={coverData?.alt || post.title || "Untitled"}
                       imageUnoptimized={coverData?.unoptimized}
                       title={post.title || "Untitled"}
-                      readTime={formatReadTime(post.readTime)}
+                      readTimeMinutes={post.readTime}
                       slug={post.slug || "#"}
                       href={post.href}
                     />

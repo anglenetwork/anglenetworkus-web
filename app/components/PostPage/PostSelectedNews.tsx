@@ -3,7 +3,10 @@ import { cn } from "@/lib/utils";
 import { getCoverImage } from "@/sanity/lib/utils";
 import { ImageRenderer } from "../ui/image-renderer";
 import type { ArticleSidebarPost } from "@/app/lib/article-family/types";
-import { categorySecondaryRowTitle } from "@/app/lib/typography/second-section";
+import {
+  postSidebarListTitle,
+  postSidebarSectionTitle,
+} from "@/app/lib/typography/post-page";
 import { ReadTimeLabel } from "@/app/components/ui/read-time-label";
 
 interface PostSelectedNewsProps {
@@ -19,9 +22,7 @@ export default function PostSelectedNews({
 
   return (
     <div className="mx-auto w-full max-w-md">
-      <h2 className="mb-6 font-bold font-sans text-foreground text-xl">
-        {title}
-      </h2>
+      <h2 className={postSidebarSectionTitle}>{title}</h2>
 
       <div className="flex flex-col divide-y divide-dotted divide-neutral-300">
         {latestNews.slice(0, 4).map((post: ArticleSidebarPost, index) => {
@@ -47,9 +48,7 @@ export default function PostSelectedNews({
                 aria-label={`Read article: ${post.title}`}
               >
                 <div className="min-w-0 flex-1">
-                  <h3 className={categorySecondaryRowTitle.light}>
-                    {post.title}
-                  </h3>
+                  <h3 className={postSidebarListTitle}>{post.title}</h3>
                   <ReadTimeLabel minutes={post.readTime} />
                 </div>
                 {imgUrl ? (

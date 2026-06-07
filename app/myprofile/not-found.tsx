@@ -1,16 +1,20 @@
 import Link from "next/link";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import {
+  profileCardBody,
+  profileCardTitle,
+} from "@/app/lib/typography/myprofile-page";
 
 export default function NotFound() {
   return (
     <div className="mx-auto max-w-2xl px-4 py-8 xl:py-12">
       <Card>
         <CardHeader>
-          <CardTitle className="font-sans text-2xl">Page not found</CardTitle>
+          <CardTitle className={profileCardTitle}>Page not found</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-          <p className="font-sans text-muted-foreground">
+          <p className={profileCardBody}>
             This profile section doesn&apos;t exist.
           </p>
           <Button asChild className="font-sans">

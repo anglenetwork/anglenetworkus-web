@@ -9,6 +9,10 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
+import {
+  profileModalDescription,
+  profileModalTitle,
+} from "@/app/lib/typography/myprofile-page";
 import { ProfileEditForm } from "./ProfileEditForm";
 
 interface CompleteProfileModalProps {
@@ -87,10 +91,8 @@ export function CompleteProfileModal({
         }}
       >
         <DialogHeader className="text-left">
-          <DialogTitle className="font-sans font-semibold text-2xl text-slate-900">
-            {title}
-          </DialogTitle>
-          <DialogDescription className="font-sans text-slate-600">
+          <DialogTitle className={profileModalTitle}>{title}</DialogTitle>
+          <DialogDescription className={profileModalDescription}>
             {description}
           </DialogDescription>
         </DialogHeader>

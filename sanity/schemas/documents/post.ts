@@ -10,8 +10,6 @@ import {
   articlePublishingFields,
   articleSearchTextField,
   articleSeoField,
-  LEGACY_SANITY_VIEWS_METRICS_DESCRIPTION,
-  transitionalViewMetricsFields,
   withFieldGroup,
 } from "../helpers/articleBaseFields";
 
@@ -26,7 +24,7 @@ export default defineType({
   type: "document",
   description:
     "Standard reported news article for the main editorial news flow. " +
-    "Rankings and “most read” on the live site use Supabase article metrics, not legacy Sanity view fields below.",
+    "Rankings and “most read” on the live site use Supabase article metrics.",
   groups: [
     {
       name: ARTICLE_FIELD_GROUPS.core,
@@ -48,14 +46,6 @@ export default defineType({
       description: `${homepageRailExclusivity} Featured and priority below are separate boosts (not mutually exclusive with a rail).`,
       options: { collapsible: true, collapsed: false },
     },
-    {
-      name: "rankingMetrics",
-      title: "Legacy metrics (transitional)",
-      description:
-        LEGACY_SANITY_VIEWS_METRICS_DESCRIPTION +
-        " Do not use for editorial decisions; operational rankings use Supabase.",
-      options: { collapsible: true, collapsed: true },
-    },
   ],
   fields: [
     ...withFieldGroup(articleCoreMetadataFields, ARTICLE_FIELD_GROUPS.core),
@@ -67,7 +57,7 @@ export default defineType({
       group: ARTICLE_FIELD_GROUPS.typeSpecific,
       fieldset: "homepage",
       initialValue: false,
-      description: `Homepage hero rail — the lead story slot. ${homepageRailExclusivity}`,
+      description: "Homepage hero rail — the lead story slot. Center column.",
       validation: (rule) =>
         rule.custom((value, ctx) => {
           const doc = ctx.document as any;
@@ -93,7 +83,7 @@ export default defineType({
       group: ARTICLE_FIELD_GROUPS.typeSpecific,
       fieldset: "homepage",
       initialValue: false,
-      description: `Homepage “more top headlines” rail (Frontline). Same exclusivity rules as other primary rails. ${homepageRailExclusivity}`,
+      description: "Two top stories below Main headline.",
       validation: (rule) =>
         rule.custom((value, ctx) => {
           const doc = ctx.document as any;
@@ -122,7 +112,7 @@ export default defineType({
       group: ARTICLE_FIELD_GROUPS.typeSpecific,
       fieldset: "homepage",
       initialValue: false,
-      description: `Homepage right-hand headline rail. ${homepageRailExclusivity}`,
+      description: "Stories in the right column of the home page.",
       validation: (rule) =>
         rule.custom((value, ctx) => {
           const doc = ctx.document as any;
@@ -148,7 +138,7 @@ export default defineType({
       group: ARTICLE_FIELD_GROUPS.typeSpecific,
       fieldset: "homepage",
       initialValue: false,
-      description: `Homepage “Just In” rail. ${homepageRailExclusivity} Breaking / Developing flags only apply when Just In is on.`,
+      description: 'Homepage "Just In" rail. Left column on the landing page.',
       validation: (rule) =>
         rule.custom((value, ctx) => {
           const doc = ctx.document as any;
@@ -223,7 +213,7 @@ export default defineType({
       group: ARTICLE_FIELD_GROUPS.typeSpecific,
       fieldset: "homepage",
       description:
-        "Site-wide editorial boost (0–10) for curated rails and relevance-style surfaces—not the same as per-rail order above.",
+        "Editorial boost from 0 to 10. 10 = highest priority, 0 = no boost. Used alongside recency and Featured to rank stories on curated surfaces.",
       validation: (rule) => rule.min(0).max(10),
     }),
     defineField({
@@ -252,7 +242,7 @@ export default defineType({
         ],
       },
       description:
-        "Internal curation or badge flags only. Not a content-type system.",
+        "Optional. Internal curation or badge flags only—not a content-type system.",
     } as any),
 
     defineField({
@@ -281,9 +271,6 @@ export default defineType({
     ...withFieldGroup(articleBodyFields, ARTICLE_FIELD_GROUPS.body),
     ...withFieldGroup(articlePublishingFields, ARTICLE_FIELD_GROUPS.publishing),
 
-    ...transitionalViewMetricsFields.map((f) =>
-      defineField({ ...f, group: ARTICLE_FIELD_GROUPS.legacy } as any),
-    ),
     defineField({
       ...articleSearchTextField,
       group: ARTICLE_FIELD_GROUPS.legacy,

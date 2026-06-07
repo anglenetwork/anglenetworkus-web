@@ -22,7 +22,6 @@ import {
 import { getPublicSiteUrl } from "@/app/lib/seo/site-url";
 import { resolveOpenGraphImage } from "@/sanity/lib/utils";
 import {
-  homepageMostReadFallbackQuery,
   homepageHeroFrontlineQuery,
   homepageHeroJustInQuery,
   homepageHeroMainHeadlineQuery,
@@ -31,21 +30,20 @@ import {
   highlightedStoriesByCategoryQuery,
   newsTickerQuery,
   postsByCategoryStandardPostsLimitedQuery,
-  postsByIdsLightweightQuery,
 } from "@/sanity/lib/queries";
-import {
-  getMostReadPosts,
-  orderDocumentsByIds,
-} from "@/app/lib/article-family/metrics";
-import { logDevMetricsFallback } from "@/app/lib/article-family/metrics-dev-log";
 import { normalizeArticleFamilyCard } from "@/app/lib/article-family/normalize";
 import type { ArticleFamilyCard } from "@/app/lib/article-family/types";
-import { getFifthSectionData, getSecondSectionData } from "./lib/homepage";
 import {
-  HOMEPAGE_THIRD_SECTION_CATEGORIES,
-  HOMEPAGE_THIRD_SECTION_LEFT_FETCH_LIMIT,
-  HOMEPAGE_THIRD_SECTION_RIGHT_FETCH_LIMIT,
-} from "./lib/homepage-third-section";
+  getSeventhSectionData,
+  getSecondSectionData,
+  getThirdSectionData,
+} from "./lib/homepage";
+import { getFourthSectionData } from "./lib/homepage-fourth-section";
+import {
+  HOMEPAGE_FIFTH_SECTION_CATEGORIES,
+  HOMEPAGE_FIFTH_SECTION_LEFT_FETCH_LIMIT,
+  HOMEPAGE_FIFTH_SECTION_RIGHT_FETCH_LIMIT,
+} from "./lib/homepage-fifth-section";
 import { SitePageWidth } from "@/app/components/layout/site-page-width";
 
 type HeroPostWithCategory = {
@@ -54,7 +52,7 @@ type HeroPostWithCategory = {
   category?: { slug?: string | null } | null;
 };
 
-function thirdSectionCardsForCategory(
+function fifthSectionCardsForCategory(
   raw: unknown,
   categorySlug: string,
   maxRows: number,
@@ -70,34 +68,6 @@ function thirdSectionCardsForCategory(
         !!card.href &&
         card.category?.slug === categorySlug,
     );
-}
-
-async function loadHomepageMostReadPosts() {
-  try {
-    const ranked = await getMostReadPosts({ limit: 24 });
-    const hasActivity = ranked.some((r) => r.views7d > 0 || r.viewsAll > 0);
-    if (!ranked.length || !hasActivity) {
-      logDevMetricsFallback("homepage_most_read", "empty_or_no_activity");
-      return await sanityFetchStatic({ query: homepageMostReadFallbackQuery });
-    }
-    const ids = ranked.map((r) => r.articleId).slice(0, 5);
-    const raw = await sanityFetchStatic({
-      query: postsByIdsLightweightQuery,
-      params: { ids },
-    });
-    const ordered = orderDocumentsByIds(raw as { _id: string }[], ids);
-    if (ordered.length === 0) {
-      logDevMetricsFallback("homepage_most_read", "empty_or_no_activity");
-    }
-    return ordered.length > 0
-      ? ordered
-      : await sanityFetchStatic({
-          query: homepageMostReadFallbackQuery,
-        });
-  } catch {
-    logDevMetricsFallback("homepage_most_read", "infra_error");
-    return await sanityFetchStatic({ query: homepageMostReadFallbackQuery });
-  }
 }
 
 function PromoSectionPlaceholder() {
@@ -148,32 +118,25 @@ export default async function Page() {
   });
   //LANDING PAGE DATA FETCHING
   // 1) Fetch hero slices for FirstSection (server-side filtered/ranked in GROQ)
-  const [
-    justInPosts,
-    mainHeadlinePosts,
-    frontlinePosts,
-    rightHeadlinePosts,
-    mostReadPosts,
-  ] = await Promise.all([
-    sanityFetchStatic({
-      query: homepageHeroJustInQuery,
-      tag: "homepage.hero.just-in",
-    }),
-    sanityFetchStatic({
-      query: homepageHeroMainHeadlineQuery,
-      tag: "homepage.hero.main-headline",
-    }),
-    sanityFetchStatic({
-      query: homepageHeroFrontlineQuery,
-      tag: "homepage.hero.frontline",
-    }),
-    sanityFetchStatic({
-      query: homepageHeroRightHeadlineQuery,
-      tag: "homepage.hero.right-headline",
-    }),
-    // 2) Most read posts (Supabase metrics + Sanity cards; fallback recency)
-    loadHomepageMostReadPosts(),
-  ]);
+  const [justInPosts, mainHeadlinePosts, frontlinePosts, rightHeadlinePosts] =
+    await Promise.all([
+      sanityFetchStatic({
+        query: homepageHeroJustInQuery,
+        tag: "homepage.hero.just-in",
+      }),
+      sanityFetchStatic({
+        query: homepageHeroMainHeadlineQuery,
+        tag: "homepage.hero.main-headline",
+      }),
+      sanityFetchStatic({
+        query: homepageHeroFrontlineQuery,
+        tag: "homepage.hero.frontline",
+      }),
+      sanityFetchStatic({
+        query: homepageHeroRightHeadlineQuery,
+        tag: "homepage.hero.right-headline",
+      }),
+    ]);
 
   const mainStoryPost = (
     Array.isArray(mainHeadlinePosts) ? mainHeadlinePosts[0] : null
@@ -191,11 +154,11 @@ export default async function Page() {
         })
       : [];
 
-  // 3) Fetch posts for FourthSection (1 featured per column: US, Politics, Business)
+  // 3) Fetch posts for SixthSection (1 featured per column: US, Politics, Business)
   const [
-    fourthSectionLeftPosts,
-    fourthSectionCenterPosts,
-    fourthSectionRightPosts,
+    sixthSectionLeftPosts,
+    sixthSectionCenterPosts,
+    sixthSectionRightPosts,
   ] = await Promise.all([
     sanityFetchStatic({
       query: highlightedStoriesByCategoryQuery,
@@ -211,16 +174,18 @@ export default async function Page() {
     }),
   ]);
 
-  const fourthSectionLeftArticle = fourthSectionLeftPosts[0];
-  const fourthSectionCenterArticle = fourthSectionCenterPosts[0];
-  const fourthSectionRightArticle = fourthSectionRightPosts[0];
+  const sixthSectionLeftArticle = sixthSectionLeftPosts[0];
+  const sixthSectionCenterArticle = sixthSectionCenterPosts[0];
+  const sixthSectionRightArticle = sixthSectionRightPosts[0];
 
   const [
     newsTickerPosts,
     secondSectionData,
-    fifthSectionData,
-    thirdSectionLeftRaw,
-    thirdSectionRightRaw,
+    thirdSectionData,
+    fourthSectionData,
+    seventhSectionData,
+    fifthSectionLeftRaw,
+    fifthSectionRightRaw,
   ] = await Promise.all([
     sanityFetchStatic({
       query: newsTickerQuery,
@@ -229,34 +194,36 @@ export default async function Page() {
       ["tech", "business", "entertainment"],
       ["Tech", "Business", "Entertainment"],
     ),
-    getFifthSectionData(),
+    getThirdSectionData(),
+    getFourthSectionData(),
+    getSeventhSectionData(),
     sanityFetchStatic({
       query: postsByCategoryStandardPostsLimitedQuery,
       params: {
-        categorySlug: HOMEPAGE_THIRD_SECTION_CATEGORIES.left.slug,
-        limit: HOMEPAGE_THIRD_SECTION_LEFT_FETCH_LIMIT,
+        categorySlug: HOMEPAGE_FIFTH_SECTION_CATEGORIES.left.slug,
+        limit: HOMEPAGE_FIFTH_SECTION_LEFT_FETCH_LIMIT,
       },
-      tag: "homepage.third-section.left",
+      tag: "homepage.fifth-section.left",
     }),
     sanityFetchStatic({
       query: postsByCategoryStandardPostsLimitedQuery,
       params: {
-        categorySlug: HOMEPAGE_THIRD_SECTION_CATEGORIES.right.slug,
-        limit: HOMEPAGE_THIRD_SECTION_RIGHT_FETCH_LIMIT,
+        categorySlug: HOMEPAGE_FIFTH_SECTION_CATEGORIES.right.slug,
+        limit: HOMEPAGE_FIFTH_SECTION_RIGHT_FETCH_LIMIT,
       },
-      tag: "homepage.third-section.right",
+      tag: "homepage.fifth-section.right",
     }),
   ]);
 
-  const thirdSectionLeftCards = thirdSectionCardsForCategory(
-    thirdSectionLeftRaw,
-    HOMEPAGE_THIRD_SECTION_CATEGORIES.left.slug,
-    HOMEPAGE_THIRD_SECTION_LEFT_FETCH_LIMIT,
+  const fifthSectionLeftCards = fifthSectionCardsForCategory(
+    fifthSectionLeftRaw,
+    HOMEPAGE_FIFTH_SECTION_CATEGORIES.left.slug,
+    HOMEPAGE_FIFTH_SECTION_LEFT_FETCH_LIMIT,
   );
-  const thirdSectionRightCards = thirdSectionCardsForCategory(
-    thirdSectionRightRaw,
-    HOMEPAGE_THIRD_SECTION_CATEGORIES.right.slug,
-    HOMEPAGE_THIRD_SECTION_RIGHT_FETCH_LIMIT,
+  const fifthSectionRightCards = fifthSectionCardsForCategory(
+    fifthSectionRightRaw,
+    HOMEPAGE_FIFTH_SECTION_CATEGORIES.right.slug,
+    HOMEPAGE_FIFTH_SECTION_RIGHT_FETCH_LIMIT,
   );
 
   return (
@@ -272,31 +239,32 @@ export default async function Page() {
             relatedCategoryPosts={relatedCategoryPosts as any}
             moreTopHeadlines={frontlinePosts as any}
             sideStories={rightHeadlinePosts as any}
-            mostReadPosts={mostReadPosts as any}
           />
           <HomepageBelowFoldLazy
             secondSection={{
               variant: "light",
               categoriesData: secondSectionData as any,
             }}
-            thirdSection={{
-              leftColumnPosts: thirdSectionLeftCards,
-              rightColumnPosts: thirdSectionRightCards,
-              leftCategory: HOMEPAGE_THIRD_SECTION_CATEGORIES.left,
-              rightCategory: HOMEPAGE_THIRD_SECTION_CATEGORIES.right,
+            thirdSection={{ articles: thirdSectionData }}
+            fourthSection={fourthSectionData}
+            fifthSection={{
+              leftColumnPosts: fifthSectionLeftCards,
+              rightColumnPosts: fifthSectionRightCards,
+              leftCategory: HOMEPAGE_FIFTH_SECTION_CATEGORIES.left,
+              rightCategory: HOMEPAGE_FIFTH_SECTION_CATEGORIES.right,
             }}
-            fourthSection={
-              fourthSectionLeftArticle?.slug &&
-              fourthSectionCenterArticle?.slug &&
-              fourthSectionRightArticle?.slug
+            sixthSection={
+              sixthSectionLeftArticle?.slug &&
+              sixthSectionCenterArticle?.slug &&
+              sixthSectionRightArticle?.slug
                 ? {
-                    leftArticle: fourthSectionLeftArticle as any,
-                    centerArticle: fourthSectionCenterArticle as any,
-                    rightArticle: fourthSectionRightArticle as any,
+                    leftArticle: sixthSectionLeftArticle as any,
+                    centerArticle: sixthSectionCenterArticle as any,
+                    rightArticle: sixthSectionRightArticle as any,
                   }
                 : null
             }
-            fifthSection={{ categoriesData: fifthSectionData as any }}
+            seventhSection={{ categoriesData: seventhSectionData as any }}
             opinion={<EditorialRailsSection />}
           />
           {/* <PromoSection /> */}

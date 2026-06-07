@@ -294,8 +294,6 @@ Centralized helpers live under `app/lib/seo/` (site URL from `NEXT_PUBLIC_SITE_U
 
 **Application:** Server helpers in `app/lib/article-family/metrics.ts` read `article_metrics_rankings` and expose ranking helpers. Article pages send `POST /api/article-view` from `ArticleViewTracker` with a **30-minute** browser dedupe (`localStorage` key `article-viewed:${articleId}`). **Playwright and automation** are excluded via `navigator.webdriver === true` (no view requests).
 
-**Legacy Sanity fields:** `viewsAll` / `views30d` / `views7d` remain in the schema as **transitional only**; they do not drive application ranking or live metrics (Supabase is the operational source of truth).
-
 **Migration** — Apply `supabase-migrations/20260327_article_metrics.sql` to your Supabase project before backfill or verification.
 
 **Commands:**
@@ -305,7 +303,7 @@ npm run backfill:article-metrics
 npm run verify:article-metrics
 ```
 
-Backfill seeds `article_metrics_totals` from published article-family documents (legacy `viewsAll` on `post` only as an initial `views_all` when present). It does not write daily history or write back to Sanity. Verification is read-only and exits non-zero if readiness checks fail.
+Backfill seeds `article_metrics_totals` with zeroed rows for published article-family documents. It does not write daily history or write back to Sanity. Verification is read-only and exits non-zero if readiness checks fail.
 
 **Readiness:** `checkArticleMetricsReadiness()` in `app/lib/article-family/metrics-readiness.ts` probes tables, the rankings view, and the RPC without mutating data.
 

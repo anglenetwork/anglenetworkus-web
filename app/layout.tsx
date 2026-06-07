@@ -6,7 +6,7 @@ import { Suspense } from "react";
 import { toPlainText, type PortableTextBlock } from "next-sanity";
 import { draftMode, headers } from "next/headers";
 import { VisualEditing } from "next-sanity/visual-editing";
-import { publicSans } from "@/app/lib/fonts/sans";
+import { sansFont } from "@/app/lib/fonts/sans";
 
 import { SiteShell } from "./components/layout/site-shell";
 import { DraftModeShell } from "./components/layout/draft-mode-shell";
@@ -75,7 +75,7 @@ export default async function RootLayout({
           href="/feed.xml"
         />
       </head>
-      <body className={publicSans.variable}>
+      <body className={sansFont.variable}>
         <section className="min-h-screen">
           {isDraftMode && (
             <Suspense fallback={null}>

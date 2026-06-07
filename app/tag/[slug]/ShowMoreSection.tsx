@@ -8,6 +8,7 @@ import { SectionHeader } from "@/app/components/ui/section-header";
 import { ChevronDown } from "lucide-react";
 import { getCoverImage } from "@/sanity/lib/utils";
 import { SitePageWidth } from "@/app/components/layout/site-page-width";
+import { ReadTimeLabel } from "@/app/components/ui/read-time-label";
 import { tagShowMoreTitle } from "@/app/lib/typography/tag-page";
 
 interface Post {
@@ -74,7 +75,7 @@ export default function ShowMoreSection({
               imageUnoptimized={coverData?.unoptimized}
               title={post.title || "Untitled"}
               description={post.excerpt || ""}
-              readTime={`${post.readTime || 3} MIN READ`}
+              readTimeMinutes={post.readTime}
               slug={post.slug || "#"}
               href={post.href}
             />
@@ -110,7 +111,7 @@ function FullWidthArticle({
   imageUnoptimized,
   title,
   description,
-  readTime,
+  readTimeMinutes,
   slug,
   href,
 }: {
@@ -118,7 +119,7 @@ function FullWidthArticle({
   imageUnoptimized?: boolean;
   title: string;
   description: string;
-  readTime: string;
+  readTimeMinutes?: number | null;
   slug: string;
   href?: string;
 }) {
@@ -150,9 +151,7 @@ function FullWidthArticle({
         <p className="mt-2 text-pretty font-sans text-base text-muted-foreground leading-relaxed">
           {description}
         </p>
-        <p className="mt-3 font-sans font-semibold text-muted-foreground text-xs capitalize tracking-wide">
-          {readTime}
-        </p>
+        <ReadTimeLabel minutes={readTimeMinutes} variant="muted" />
       </div>
     </article>
   );
