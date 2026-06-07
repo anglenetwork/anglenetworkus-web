@@ -10,3 +10,5 @@ playwright-report/**
 test-results/**
 font-comparison/**
 .cursor/debug*.log
+sanity.types.ts
+schema.json

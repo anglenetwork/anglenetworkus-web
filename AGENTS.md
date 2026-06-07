@@ -14,6 +14,9 @@ Next.js App Router application using TypeScript, Tailwind, Sanity CMS, Supabase,
 - Prefer frontend-only changes unless backend changes are required to unblock the task.
 - Before implementing large changes, identify impacted files and provide a short plan.
 - Do not read archived docs unless explicitly asked.
+- Do not read `docs/audits/**` unless explicitly asked.
+- Do not read generated files like `sanity.types.ts` or `schema.json` unless explicitly required.
+- When working with Sanity types, prefer reading source schema/query files instead of generated output.
 - Do not reinstall or recreate skills unless explicitly asked.
 
 ## Important Paths
