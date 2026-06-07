@@ -1,7 +1,7 @@
 import Link from "next/link";
+import { cn } from "@/lib/utils";
 import { ListingPhotoCredit } from "@/app/helpers";
 import { getCoverImage } from "@/sanity/lib/utils";
-import { SectionHeader } from "../../ui/section-header";
 import { ImageRenderer } from "../../ui/image-renderer";
 import {
   mainHeadlineMobileTitle,
@@ -60,12 +60,10 @@ export function CenterColumnLanding({
 }: CenterColumnLandingProps) {
   return (
     <div className="lg:px-6">
-      {/* <SectionHeader title="Top News" variant="light" accentStyle="small-dot" size="regular" /> */}
-
       {/* Main Story */}
-      {mainStory.map((post, index) => (
+      {mainStory.map((post) => (
         <article key={post._id} className="mb-8">
-          <Link href={`/post/${post.slug}`} className="hover:text-red-600">
+          <Link href={`/post/${post.slug}`} className="group block">
             <h1 className={mainHeadlineMobileTitle}>{post.title}</h1>
           </Link>
 
@@ -74,20 +72,20 @@ export function CenterColumnLanding({
             if (!src) return null;
             return (
               <>
-                <Link href={`/post/${post.slug}`}>
+                <Link href={`/post/${post.slug}`} className="group block">
                   <div className="mb-2">
-                    <div className="relative aspect-[5/6] w-full overflow-hidden rounded-sm md:aspect-auto md:h-[500px]">
+                    <div className="relative aspect-[5/6] w-full overflow-hidden rounded-sm bg-neutral-950 md:aspect-auto md:h-[500px]">
                       <ImageRenderer
                         src={src}
                         alt={alt}
                         width={1000}
-                        height={563} // 1000 / 16 * 9 ≈ 562.5
+                        height={563}
                         unoptimized={unoptimized}
                         quality={70}
                         priority
                         fetchPriority="high"
                         sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 720px"
-                        className="rounded-sm object-cover object-center"
+                        className="object-cover object-center"
                         fill
                       />
                       {post.excerpt && (
@@ -105,135 +103,76 @@ export function CenterColumnLanding({
         </article>
       ))}
 
-      {/* MORE TOP HEADLINES */}
-      <div className="mb-8 space-y-4 md:mb-0 md:space-y-8">
-        <h2 className="sr-only">More Top Headlines</h2>
-
-        {/* Mobile: 3 stacked rows — thumbnail left, title right */}
-        <div className="flex flex-col gap-5 md:hidden">
-          {moreTopHeadlines.slice(0, 3).map((post) => {
-            const { src, alt, unoptimized } = getCover(post);
-            return (
-              <article key={post._id}>
-                <Link
-                  href={`/post/${post.slug}`}
-                  className="group flex items-start gap-3 hover:text-red-600"
-                >
-                  {src ? (
-                    <div className="relative h-16 w-24 shrink-0 overflow-hidden rounded-sm">
-                      <ImageRenderer
-                        src={src}
-                        alt={alt}
-                        width={96}
-                        height={64}
-                        unoptimized={unoptimized}
-                        quality={55}
-                        sizes="96px"
-                        className="object-cover"
-                        fill
-                      />
-                    </div>
-                  ) : (
-                    <div
-                      className="h-16 w-24 shrink-0 rounded-sm bg-neutral-200"
-                      aria-hidden
-                    />
-                  )}
-                  <h3 className={moreTopHeadlinesMobileTitle}>{post.title}</h3>
-                </Link>
-              </article>
-            );
-          })}
-        </div>
-
-        {/* md+: 2-column grid + third story */}
-        <div className="hidden md:block md:space-y-8">
-          <div className="grid grid-cols-2 gap-8">
-            {moreTopHeadlines.slice(0, 2).map((post) => (
-              <article key={post._id}>
-                {(() => {
-                  const { src, alt, unoptimized } = getCover(post);
-                  if (!src) return null;
-                  return (
-                    <>
-                      <Link href={`/post/${post.slug}`}>
-                        <div className="mb-2">
-                          <div className="relative h-[200px] w-full overflow-hidden rounded-sm">
-                            <ImageRenderer
-                              src={src}
-                              alt={alt}
-                              width={600}
-                              height={500}
-                              unoptimized={unoptimized}
-                              quality={55}
-                              sizes="(max-width: 640px) 100vw, (max-width: 768px) 100vw, (max-width: 1024px) 50vw, 500px"
-                              className="rounded-sm object-cover"
-                              fill
-                            />
-                          </div>
-                        </div>
-                      </Link>
-                      <ListingPhotoCredit
-                        cover={post.cover}
-                        align="right"
-                        className="hidden md:block"
-                      />
-                    </>
-                  );
-                })()}
-                <div>
+      {moreTopHeadlines.length > 0 ? (
+        <div className="mb-8 md:mb-0">
+          {/* Mobile: stacked rows — title left, thumb right */}
+          <div className="flex flex-col divide-y divide-dotted divide-neutral-300 md:hidden">
+            {moreTopHeadlines.map((post) => {
+              const { src, alt, unoptimized } = getCover(post);
+              return (
+                <article key={post._id} className="py-4 first:pt-0 last:pb-0">
                   <Link
                     href={`/post/${post.slug}`}
-                    className="hover:text-red-600"
+                    className="group flex items-start gap-3"
+                    aria-label={`Read article: ${post.title}`}
                   >
-                    <h3 className={moreTopHeadlinesGridTitle}>{post.title}</h3>
+                    <h3 className={moreTopHeadlinesMobileTitle}>
+                      {post.title}
+                    </h3>
+                    {src ? (
+                      <div className="relative h-20 w-28 shrink-0 overflow-hidden rounded-sm bg-neutral-950">
+                        <ImageRenderer
+                          src={src}
+                          alt={alt}
+                          width={112}
+                          height={80}
+                          unoptimized={unoptimized}
+                          quality={55}
+                          sizes="112px"
+                          className="object-cover object-center"
+                          fill
+                        />
+                      </div>
+                    ) : null}
                   </Link>
-                </div>
-              </article>
-            ))}
+                </article>
+              );
+            })}
           </div>
 
-          {/* Third story */}
-          {moreTopHeadlines[2] && (
-            <article>
-              {(() => {
-                const post = moreTopHeadlines[2];
-                const { src, alt, unoptimized } = getCover(post);
-                if (!src) return null;
-                return (
-                  <Link href={`/post/${post.slug}`}>
-                    <div className="mb-2">
-                      <div className="relative h-[200px] w-full overflow-hidden rounded-sm">
+          <div className="hidden md:grid md:grid-cols-2 md:gap-8">
+            {moreTopHeadlines.map((post) => {
+              const { src, alt, unoptimized } = getCover(post);
+              return (
+                <article key={post._id}>
+                  {src ? (
+                    <Link href={`/post/${post.slug}`} className="group block">
+                      <div className="relative aspect-[16/9] w-full overflow-hidden rounded-sm bg-neutral-950">
                         <ImageRenderer
                           src={src}
                           alt={alt}
                           width={600}
-                          height={400}
+                          height={338}
                           unoptimized={unoptimized}
                           quality={55}
-                          sizes="(max-width: 640px) 100vw, (max-width: 768px) 100vw, (max-width: 1024px) 50vw, 500px"
-                          className="rounded-sm object-cover"
+                          sizes="(max-width: 1280px) 50vw, 360px"
+                          className="object-cover object-center"
                           fill
                         />
                       </div>
-                    </div>
+                    </Link>
+                  ) : null}
+                  <Link href={`/post/${post.slug}`} className="group block">
+                    <h3 className={cn("mt-4", moreTopHeadlinesGridTitle)}>
+                      {post.title}
+                    </h3>
                   </Link>
-                );
-              })()}
-              <div>
-                <Link
-                  href={`/post/${moreTopHeadlines[2].slug}`}
-                  className="hover:text-red-600"
-                >
-                  <h3 className={moreTopHeadlinesGridTitle}>
-                    {moreTopHeadlines[2].title}
-                  </h3>
-                </Link>
-              </div>
-            </article>
-          )}
+                </article>
+              );
+            })}
+          </div>
         </div>
-      </div>
+      ) : null}
     </div>
   );
 }

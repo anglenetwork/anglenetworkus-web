@@ -14,6 +14,23 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { CheckCircle2, Zap, Users, Lock } from "lucide-react";
+import {
+  profileFormError,
+  profileSubscriptionEyebrow,
+  profileSubscriptionFeatureLabel,
+  profileSubscriptionFeatureText,
+  profileSubscriptionHeroSubtitle,
+  profileSubscriptionHeroTitle,
+  profileSubscriptionHeroTitleAccent,
+  profileSubscriptionMetaLabel,
+  profileSubscriptionMetaValue,
+  profileSubscriptionPlanPrice,
+  profileSubscriptionPriceAmount,
+  profileSubscriptionPricePeriod,
+  profileSubscriptionStatLabel,
+  profileSubscriptionStatValue,
+  profileSubscriptionWarning,
+} from "@/app/lib/typography/myprofile-page";
 
 function formatDate(iso: string) {
   try {
@@ -86,17 +103,15 @@ export function SubscriptionsCurrentPlan({
   return (
     <div className="mb-16">
       <div className="mb-8">
-        <span className="mb-4 inline-block rounded-full bg-primary/10 px-3 py-1 font-medium text-primary text-sm">
-          Current Plan
-        </span>
-        <h2 className="mb-2 font-bold text-4xl">
+        <span className={profileSubscriptionEyebrow}>Current Plan</span>
+        <h2 className={profileSubscriptionHeroTitle}>
           You&apos;re on the{" "}
-          <span className="text-red-500">
+          <span className={profileSubscriptionHeroTitleAccent}>
             {getTierDisplayName(originalTier)}
           </span>{" "}
           Plan
         </h2>
-        <p className="text-lg text-muted-foreground">
+        <p className={profileSubscriptionHeroSubtitle}>
           Manage your subscription and explore upgrade options
         </p>
       </div>
@@ -105,32 +120,30 @@ export function SubscriptionsCurrentPlan({
         <div className="grid gap-12 xl:grid-cols-3">
           <div>
             <div className="mb-8">
-              <p className="mb-2 text-muted-foreground text-sm uppercase tracking-wide">
-                Current Plan
-              </p>
-              <h3 className="mb-2 font-bold text-5xl">
+              <p className={profileSubscriptionMetaLabel}>Current Plan</p>
+              <h3 className={profileSubscriptionPlanPrice}>
                 {getTierDisplayName(originalTier)}
               </h3>
               <div className="mb-4 flex items-baseline gap-1">
-                <span className="font-semibold text-3xl">
+                <span className={profileSubscriptionPriceAmount}>
                   {getCurrentPlanPrice(originalTier, billingYearly)}
                 </span>
-                <span className="text-muted-foreground">
+                <span className={profileSubscriptionPricePeriod}>
                   {getCurrentPlanPeriod(originalTier, billingYearly)}
                 </span>
               </div>
-              <p className="mb-6 text-muted-foreground text-sm">
+              <p className="mb-6 font-sans text-neutral-400 text-sm">
                 Valid until{" "}
-                <span className="font-semibold text-foreground">
+                <span className={profileSubscriptionMetaValue}>
                   {validUntilText}
                 </span>
               </p>
               {status === "canceling" && validUntil && (
-                <p className="mb-4 text-orange-600 text-sm">
+                <p className={profileSubscriptionWarning}>
                   Your subscription will end on {validUntilText}.
                 </p>
               )}
-              {error && <p className="mb-4 text-red-600 text-sm">{error}</p>}
+              {error && <p className={profileFormError}>{error}</p>}
               <div className="flex flex-col gap-3 xl:flex-row">
                 {originalTier === "pro" && status !== "canceling" && (
                   <AlertDialog>
@@ -172,14 +185,16 @@ export function SubscriptionsCurrentPlan({
           </div>
 
           <div className="xl:col-span-2">
-            <p className="mb-6 font-semibold text-muted-foreground text-sm uppercase tracking-wide">
+            <p className={profileSubscriptionFeatureLabel}>
               What&apos;s Included
             </p>
             <div className="grid gap-4 xl:grid-cols-2">
               {getCurrentPlanFeatures(originalTier).map((feature) => (
                 <div key={feature} className="flex items-start gap-3">
                   <CheckCircle2 className="mt-0.5 size-5 flex-shrink-0 text-primary" />
-                  <span className="text-foreground text-sm">{feature}</span>
+                  <span className={profileSubscriptionFeatureText}>
+                    {feature}
+                  </span>
                 </div>
               ))}
             </div>
@@ -192,10 +207,8 @@ export function SubscriptionsCurrentPlan({
           <Card className="border border-border/60 bg-card/50 p-6">
             <div className="mb-4 flex items-start justify-between">
               <div>
-                <p className="mb-1 text-muted-foreground text-sm">
-                  Billing Cycle
-                </p>
-                <p className="font-bold text-2xl">
+                <p className={profileSubscriptionStatLabel}>Billing Cycle</p>
+                <p className={profileSubscriptionStatValue}>
                   {billingYearly ? "Yearly" : "Monthly"}
                 </p>
               </div>
@@ -206,8 +219,8 @@ export function SubscriptionsCurrentPlan({
           <Card className="border border-border/60 bg-card/50 p-6">
             <div className="mb-2 flex items-start justify-between">
               <div>
-                <p className="mb-1 text-muted-foreground text-sm">Status</p>
-                <p className="font-bold text-2xl capitalize">
+                <p className={profileSubscriptionStatLabel}>Status</p>
+                <p className={profileSubscriptionStatValue}>
                   {status === "canceling" ? "Canceling" : "Active"}
                 </p>
               </div>
@@ -218,8 +231,8 @@ export function SubscriptionsCurrentPlan({
           <Card className="border border-border/60 bg-card/50 p-6">
             <div className="mb-2 flex items-start justify-between">
               <div>
-                <p className="mb-1 text-muted-foreground text-sm">Plan Type</p>
-                <p className="font-bold text-2xl">Pro</p>
+                <p className={profileSubscriptionStatLabel}>Plan Type</p>
+                <p className={profileSubscriptionStatValue}>Pro</p>
               </div>
               <Lock className="size-5 text-primary/60" />
             </div>

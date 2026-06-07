@@ -173,39 +173,3 @@ export const articleSeoField = defineField({
 });
 
 const articleAuthorSeoFields = [articleAuthorField(), articleSeoField];
-
-/** Shared Studio copy for legacy Sanity view counters (Supabase is operational source of truth). */
-export const LEGACY_SANITY_VIEWS_METRICS_DESCRIPTION =
-  "Legacy transitional field (kept for migration only; do not use for new workflows). " +
-  "The application does not use these values for ranking, “most read” surfaces, or live metrics. " +
-  "Supabase article metrics (article_metrics_*) are the operational source of truth.";
-
-export const transitionalViewMetricsFields = [
-  defineField({
-    name: "viewsAll",
-    title: "Views (all time)",
-    type: "number",
-    fieldset: "rankingMetrics",
-    description: LEGACY_SANITY_VIEWS_METRICS_DESCRIPTION,
-    initialValue: 0,
-    readOnly: true,
-  }),
-  defineField({
-    name: "views30d",
-    title: "Views (30 days)",
-    type: "number",
-    fieldset: "rankingMetrics",
-    description: LEGACY_SANITY_VIEWS_METRICS_DESCRIPTION,
-    initialValue: 0,
-    readOnly: true,
-  }),
-  defineField({
-    name: "views7d",
-    title: "Views (7 days)",
-    type: "number",
-    fieldset: "rankingMetrics",
-    description: LEGACY_SANITY_VIEWS_METRICS_DESCRIPTION,
-    initialValue: 0,
-    readOnly: true,
-  }),
-];

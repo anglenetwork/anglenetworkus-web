@@ -2,6 +2,7 @@
 
 import { Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
 interface HamburgerButtonProps {
   isOpen: boolean;
@@ -21,22 +22,27 @@ export function HamburgerButton({
         size="sm"
         onClick={onClick}
         aria-label={isOpen ? "Close menu" : "Open menu"}
-        className="relative flex size-10 items-center justify-center rounded-full bg-transparent p-0 transition-all duration-500 ease-out"
+        className={cn(
+          "relative flex size-10 items-center justify-center rounded-full p-0 transition-all duration-500 ease-out",
+          isOpen ? "bg-black hover:bg-black" : "bg-transparent",
+        )}
       >
         <div className="relative flex size-5 items-center justify-center">
           <Menu
-            className={`absolute size-5 text-black transition-all duration-300 ease-in-out ${
+            className={cn(
+              "absolute size-5 text-black transition-all duration-300 ease-in-out",
               isOpen
                 ? "rotate-180 scale-0 opacity-0"
-                : "rotate-0 scale-100 opacity-100"
-            }`}
+                : "rotate-0 scale-100 opacity-100",
+            )}
           />
           <X
-            className={`absolute size-5 text-black transition-all duration-300 ease-in-out ${
+            className={cn(
+              "absolute size-5 text-white transition-all duration-300 ease-in-out",
               isOpen
                 ? "rotate-0 scale-100 opacity-100"
-                : "-rotate-180 scale-0 opacity-0"
-            }`}
+                : "-rotate-180 scale-0 opacity-0",
+            )}
           />
         </div>
       </Button>
@@ -49,22 +55,27 @@ export function HamburgerButton({
       size="sm"
       onClick={onClick}
       aria-label={isOpen ? "Close menu" : "Open menu"}
-      className="relative flex size-10 items-center justify-center rounded-full bg-transparent p-0 transition-all duration-500 ease-out lg:h-8 lg:w-8"
+      className={cn(
+        "relative flex size-10 items-center justify-center rounded-full p-0 transition-all duration-500 ease-out lg:h-8 lg:w-8",
+        isOpen ? "bg-black hover:bg-black" : "bg-transparent",
+      )}
     >
       <div className="relative flex size-5 items-center justify-center transition-all duration-500 ease-out lg:h-4 lg:w-4">
         <Menu
-          className={`absolute size-5 text-black transition-all duration-300 ease-in-out lg:h-4 lg:w-4 ${
+          className={cn(
+            "absolute size-5 text-black transition-all duration-300 ease-in-out lg:h-4 lg:w-4",
             isOpen
               ? "rotate-180 scale-0 opacity-0"
-              : "rotate-0 scale-100 opacity-100"
-          }`}
+              : "rotate-0 scale-100 opacity-100",
+          )}
         />
         <X
-          className={`absolute size-5 text-black transition-all duration-300 ease-in-out lg:h-4 lg:w-4 ${
+          className={cn(
+            "absolute size-5 text-white transition-all duration-300 ease-in-out lg:h-4 lg:w-4",
             isOpen
               ? "rotate-0 scale-100 opacity-100"
-              : "-rotate-180 scale-0 opacity-0"
-          }`}
+              : "-rotate-180 scale-0 opacity-0",
+          )}
         />
       </div>
     </Button>

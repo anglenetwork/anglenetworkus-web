@@ -1,14 +1,22 @@
 /**
- * Single source of truth for homepage third section category columns.
- * Slugs must match Sanity `category.slug.current`.
+ * Homepage third section: latest post per editorial tag.
+ * Slugs must match `scripts/seed-tags.mjs` (`slugify(title)`).
  */
-export const HOMEPAGE_THIRD_SECTION_CATEGORIES = {
-  left: { slug: "world", title: "World" },
-  right: { slug: "politics", title: "Politics" },
-} as const;
+export const HOMEPAGE_THIRD_SECTION_TAGS = [
+  { slug: "congress", title: "Congress" },
+  { slug: "artificial-intelligence", title: "Artificial Intelligence" },
+  { slug: "white-house", title: "White House" },
+  { slug: "china", title: "China" },
+] as const;
 
-/** Left column: 1 featured hero only. */
-export const HOMEPAGE_THIRD_SECTION_LEFT_FETCH_LIMIT = 1;
+export type HomepageThirdSectionTag =
+  (typeof HOMEPAGE_THIRD_SECTION_TAGS)[number];
 
-/** Right column: small thumbnail rows. */
-export const HOMEPAGE_THIRD_SECTION_RIGHT_FETCH_LIMIT = 4;
+export type HomepageThirdSectionArticle = {
+  tagSlug: HomepageThirdSectionTag["slug"];
+  tagTitle: HomepageThirdSectionTag["title"];
+  _id: string;
+  title: string;
+  slug: string;
+  readTime?: number | null;
+};

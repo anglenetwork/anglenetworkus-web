@@ -2,6 +2,7 @@ import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { SignInForm } from "./components/SignInForm";
 import { ProfileSidebar } from "./components/ProfileSidebar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { profileCardTitle } from "@/app/lib/typography/myprofile-page";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -21,7 +22,7 @@ export default async function MyProfileLayout({
       <div className="mx-auto max-w-2xl px-4 py-8 xl:py-12">
         <Card>
           <CardHeader>
-            <CardTitle className="font-sans text-2xl">Sign In</CardTitle>
+            <CardTitle className={profileCardTitle}>Sign In</CardTitle>
           </CardHeader>
           <CardContent>
             <SignInForm />

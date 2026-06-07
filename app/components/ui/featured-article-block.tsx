@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { ImageRenderer } from "@/app/components/ui/image-renderer";
+import { ReadTimeLabel } from "@/app/components/ui/read-time-label";
 import { categoryFeaturedTitle } from "@/app/lib/typography/second-section";
-import { tagReadTimeLabel } from "@/app/lib/typography/tag-page";
 import { cn } from "@/lib/utils";
 
 interface FeaturedArticleBlockProps {
@@ -10,7 +10,7 @@ interface FeaturedArticleBlockProps {
   imageUnoptimized?: boolean;
   title: string;
   href: string;
-  readTime?: string;
+  readTimeMinutes?: number | null;
   priority?: boolean;
   titleAs?: "h1" | "h2" | "h3";
   sizes?: string;
@@ -23,7 +23,7 @@ export function FeaturedArticleBlock({
   imageUnoptimized,
   title,
   href,
-  readTime,
+  readTimeMinutes,
   priority = false,
   titleAs: TitleTag = "h2",
   sizes = "(max-width: 1024px) 100vw, 66vw",
@@ -64,7 +64,7 @@ export function FeaturedArticleBlock({
           {title}
         </TitleTag>
       </Link>
-      {readTime ? <p className={tagReadTimeLabel}>{readTime}</p> : null}
+      <ReadTimeLabel minutes={readTimeMinutes} />
     </article>
   );
 }

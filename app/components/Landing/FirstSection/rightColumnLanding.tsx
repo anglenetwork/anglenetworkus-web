@@ -1,12 +1,8 @@
 import Link from "next/link";
+import { cn } from "@/lib/utils";
 import { getCoverImage } from "@/sanity/lib/utils";
-import { SectionHeader } from "../../ui/section-header";
 import { ImageRenderer } from "../../ui/image-renderer";
-import {
-  mostReadItemTitle,
-  mostReadRankNumber,
-  sideStoryTitle,
-} from "@/app/lib/typography/first-section";
+import { categoryFeaturedTitle } from "@/app/lib/typography/second-section";
 
 interface Post {
   _id: string;
@@ -27,74 +23,47 @@ interface Post {
 
 interface RightColumnLandingProps {
   sideStories: Post[];
-  mostRead: Post[];
 }
 
-export function RightColumnLanding({
-  sideStories,
-  mostRead,
-}: RightColumnLandingProps) {
+export function RightColumnLanding({ sideStories }: RightColumnLandingProps) {
   return (
     <div className="px-0 text-left md:px-4">
-      {sideStories.map((post, index) => (
-        <article key={post._id} className="mb-4">
-          {(() => {
-            const coverData = getCoverImage(post.cover, post.title);
-            if (!coverData) return null;
-            return (
-              <div className="mb-4">
-                <Link href={`/post/${post.slug}`}>
-                  <div className="relative h-48 w-full overflow-hidden rounded-sm">
+      <div className="flex flex-col divide-y divide-dotted divide-neutral-300">
+        {sideStories.map((post) => (
+          <article key={post._id} className="space-y-3 py-6 first:pt-0">
+            {(() => {
+              const coverData = getCoverImage(post.cover, post.title);
+              if (!coverData) return null;
+              return (
+                <Link href={`/post/${post.slug}`} className="group block">
+                  <div className="relative aspect-[16/9] w-full overflow-hidden rounded-sm bg-neutral-950">
                     <ImageRenderer
                       src={coverData.src}
                       alt={coverData.alt}
                       width={600}
-                      height={400}
+                      height={338}
                       unoptimized={coverData.unoptimized}
                       quality={55}
                       sizes="(max-width: 640px) 100vw, (max-width: 1024px) 100vw, 500px"
-                      className="rounded-sm object-cover"
+                      className="object-cover object-center"
                       fill
                     />
                   </div>
                 </Link>
-              </div>
-            );
-          })()}
-          <Link href={`/post/${post.slug}`} className="hover:text-red-600">
-            <h3 className={sideStoryTitle}>{post.title}</h3>
-          </Link>
-        </article>
-      ))}
-
-      {/* What Matters section */}
-      <div className="rounded-xl bg-neutral-200 p-8">
-        <SectionHeader
-          title="What Matters"
-          variant="light"
-          accentStyle="small-dot"
-          size="regular"
-        />
-
-        <div className="space-y-6">
-          {/* Numbered list of most read articles */}
-          <div className="space-y-4">
-            {mostRead.map((post, index) => (
-              <article
-                key={post._id}
-                className="flex items-start justify-start gap-x-3 pb-2 lg:justify-start"
+              );
+            })()}
+            <Link href={`/post/${post.slug}`} className="group block">
+              <h3
+                className={cn(
+                  categoryFeaturedTitle.light,
+                  "xl:text-lg xl:leading-snug",
+                )}
               >
-                <span className={mostReadRankNumber}>{index + 1}</span>
-                <Link
-                  href={`/post/${post.slug}`}
-                  className="hover:text-red-600"
-                >
-                  <h3 className={mostReadItemTitle}>{post.title}</h3>
-                </Link>
-              </article>
-            ))}
-          </div>
-        </div>
+                {post.title}
+              </h3>
+            </Link>
+          </article>
+        ))}
       </div>
     </div>
   );

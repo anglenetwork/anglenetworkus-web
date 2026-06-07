@@ -489,9 +489,6 @@ function buildPostDoc({
     updatedAt: schedule.updatedAt,
     priority: postIndex % 11,
     readTime: 3 + (postIndex % 8),
-    viewsAll: 1200 + postIndex * 73,
-    views30d: 340 + postIndex * 21,
-    views7d: 48 + postIndex * 5,
     author: authorRef,
     seo,
   };

@@ -2,19 +2,19 @@
 
 /** Regular post — category link above title */
 export const regularPostCategory =
-  "font-sans text-sm font-medium uppercase tracking-wider text-foreground text-red-700";
+  "font-sans text-sm font-medium uppercase tracking-wider text-foreground text-neutral-600";
 
 /** Regular post — page title (PostHeader h1) */
 export const regularPostTitle =
-  "font-sans text-2xl font-bold leading-tight tracking-tight text-neutral-900 sm:text-2xl sm:leading-tight md:text-3xl lg:text-5xl xl:leading-tight";
+  "font-sans text-2xl font-bold leading-tight tracking-tight text-neutral-900 sm:text-2xl sm:leading-tight md:text-3xl lg:text-5xl xl:font-semibold xl:leading-tight";
 
 /** Regular post — dek / excerpt */
 export const regularPostExcerpt =
-  "font-sans text-base font-normal leading-relaxed tracking-tight text-neutral-500 md:text-lg";
+  "font-sans text-base font-normal leading-relaxed tracking-wide text-neutral-500 md:text-base";
 
 /** Regular post — byline author name */
 export const regularPostMetaPrimary =
-  "font-sans text-sm font-semibold leading-snug text-neutral-700 sm:text-base";
+  "font-sans text-sm font-semibold leading-snug text-red-600 sm:text-base";
 
 /** Regular post — image epigraph (caption line under hero / in-body figures) */
 export const regularPostImageEpigraph =

@@ -4,11 +4,20 @@ import { format, parseISO } from "date-fns";
 import { getCoverImage } from "@/sanity/lib/utils";
 import { ImageRenderer } from "../ui/image-renderer";
 import type { ArticleFamilyCard as CardModel } from "@/app/lib/article-family/types";
+import { ReadTimeLabel } from "@/app/components/ui/read-time-label";
 import {
   articleFamilyCardTitle,
   articleFamilyCardTitleRail,
   articleFamilyHeroTileTitle,
 } from "@/app/lib/typography/article-family-card";
+import {
+  searchResultAuthor,
+  searchResultDate,
+  searchResultExcerpt,
+  searchResultSponsorLabel,
+  searchResultTitle,
+  searchResultTypeLabel,
+} from "@/app/lib/typography/search-page";
 
 export type ArticleFamilyCardLayout = "compact" | "large" | "rail" | "heroTile";
 
@@ -101,8 +110,6 @@ export default function ArticleFamilyCard({
     dateStr = "";
   }
 
-  const readMins = readTimeMinutes ?? 5;
-
   if (layout === "heroTile") {
     return (
       <article className="group">
@@ -124,9 +131,11 @@ export default function ArticleFamilyCard({
             <div className="absolute right-0 bottom-0 left-0 p-4 text-white">
               <h3 className={articleFamilyHeroTileTitle}>{article.title}</h3>
               <div className="flex items-center gap-2">
-                <span className="font-light font-sans text-xs">
-                  {readMins} min read
-                </span>
+                <ReadTimeLabel
+                  minutes={readTimeMinutes}
+                  variant="hero"
+                  as="span"
+                />
               </div>
             </div>
           </div>
@@ -150,8 +159,11 @@ export default function ArticleFamilyCard({
         ? "(max-width: 768px) 115px, 216px"
         : "(max-width: 768px) 96px, 216px";
   const linkGap = layout === "rail" ? "gap-3" : "gap-4";
-  const titleClass =
-    layout === "rail" ? articleFamilyCardTitleRail : articleFamilyCardTitle;
+  const titleClass = isSearchVariant
+    ? searchResultTitle
+    : layout === "rail"
+      ? articleFamilyCardTitleRail
+      : articleFamilyCardTitle;
 
   const editorialK = editorialKicker(article, label);
 
@@ -204,12 +216,24 @@ export default function ArticleFamilyCard({
               )}
             >
               {label && (
-                <span className="font-bold text-[10px] text-sectionAccent uppercase tracking-wider">
+                <span
+                  className={
+                    isSearchVariant
+                      ? searchResultTypeLabel
+                      : "font-bold text-[10px] text-sectionAccent uppercase tracking-wider"
+                  }
+                >
                   {label}
                 </span>
               )}
               {article._type === "sponsored" && sponsorName && (
-                <span className="font-semibold text-[10px] text-amber-800">
+                <span
+                  className={
+                    isSearchVariant
+                      ? searchResultSponsorLabel
+                      : "font-semibold text-[10px] text-amber-800"
+                  }
+                >
                   {sponsorName}
                 </span>
               )}
@@ -219,7 +243,7 @@ export default function ArticleFamilyCard({
           {showExcerpt && article.excerpt ? (
             <p
               className={cn(
-                "search-result-excerpt mb-2 line-clamp-3 font-sans text-neutral-700 text-sm leading-relaxed md:text-base",
+                searchResultExcerpt,
                 hideExcerptOnMobile && "max-md:hidden",
               )}
             >
@@ -229,7 +253,7 @@ export default function ArticleFamilyCard({
           {showAuthor && article.author?.name ? (
             <p
               className={cn(
-                "mb-1 font-sans text-neutral-600 text-xs",
+                searchResultAuthor,
                 hideAuthorOnMobile && "max-md:hidden",
               )}
             >
@@ -247,7 +271,15 @@ export default function ArticleFamilyCard({
             </p>
           )}
           {showDate && dateStr && (
-            <p className="mt-1 font-sans text-neutral-500 text-xs">{dateStr}</p>
+            <p
+              className={
+                isSearchVariant
+                  ? searchResultDate
+                  : "mt-1 font-sans text-neutral-500 text-xs"
+              }
+            >
+              {dateStr}
+            </p>
           )}
         </div>
       </Link>

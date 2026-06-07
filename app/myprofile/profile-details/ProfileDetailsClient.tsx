@@ -2,18 +2,29 @@
 
 import { useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import { Calendar, Mail, Pencil, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import {
+  profileButtonPrimary,
+  profileDetailsDisplayName,
+  profileDetailsEmail,
+  profileDetailsEmptyValue,
+  profileDetailsFieldValue,
+  profileSubscriptionEyebrow,
+  profileSubscriptionStatLabel,
+} from "@/app/lib/typography/myprofile-page";
 import { CompleteProfileModal } from "../components/CompleteProfileModal";
 import { ProfileSectionHeader } from "../components/ProfileSectionHeader";
+import { cn } from "@/lib/utils";
 
 interface Profile {
   first_name?: string | null;
   last_name?: string | null;
-  date_of_birth?: string | null; // "YYYY-MM-DD" from Supabase (date column)
+  date_of_birth?: string | null;
   email?: string | null;
 }
 
-// Safe formatter for YYYY-MM-DD without timezone shifting
 function formatDateOfBirth(dob: string) {
   const [y, m, d] = dob.split("-").map(Number);
   if (!y || !m || !d) return dob;
@@ -25,6 +36,43 @@ function formatDateOfBirth(dob: string) {
     day: "numeric",
     timeZone: "UTC",
   });
+}
+
+function getDisplayName(profile: Profile | null): string {
+  const first = profile?.first_name?.trim();
+  const last = profile?.last_name?.trim();
+  if (first && last) return `${first} ${last}`;
+  if (first) return first;
+  if (last) return last;
+  return "Your profile";
+}
+
+type ProfileField = {
+  label: string;
+  value: string | null;
+  icon: typeof User;
+};
+
+function ProfileFieldCard({ label, value, icon: Icon }: ProfileField) {
+  const isEmpty = !value;
+
+  return (
+    <Card className="border border-border/60 bg-card/50 p-5">
+      <div className="flex items-start justify-between gap-3">
+        <div className="min-w-0 flex-1">
+          <p className={profileSubscriptionStatLabel}>{label}</p>
+          <p
+            className={cn(
+              isEmpty ? profileDetailsEmptyValue : profileDetailsFieldValue,
+            )}
+          >
+            {isEmpty ? "Not set" : value}
+          </p>
+        </div>
+        <Icon className="mt-0.5 size-5 shrink-0 text-neutral-300" aria-hidden />
+      </div>
+    </Card>
+  );
 }
 
 function ProfileDetailsClientContent({
@@ -39,18 +87,17 @@ function ProfileDetailsClientContent({
   namePrefill?: { firstName: string | null; lastName: string | null };
 }) {
   const { replace, refresh } = useRouter();
-  const { get } = useSearchParams();
-  const postLogin = get("post_login");
+  const searchParams = useSearchParams();
+  const postLogin = searchParams.get("post_login");
   const isProfileIncomplete =
     !profile?.first_name || !profile?.last_name || !profile?.date_of_birth;
   const [showRequiredModal, setShowRequiredModal] = useState(
     () => postLogin === "1" && isProfileIncomplete,
   );
-  const [showEditModal, setShowEditModal] = useState(false); // For edit button
+  const [showEditModal, setShowEditModal] = useState(false);
 
   const handleRequiredModalClose = async () => {
     setShowRequiredModal(false);
-    // Remove post_login=1 from URL
     const params = new URLSearchParams(window.location.search);
     params.delete("post_login");
     const newSearch = params.toString();
@@ -66,13 +113,29 @@ function ProfileDetailsClientContent({
     refresh();
   };
 
-  const handleEditModalCancel = () => {
-    setShowEditModal(false);
-  };
+  const firstName = profile?.first_name?.trim() || null;
+  const lastName = profile?.last_name?.trim() || null;
+  const dateOfBirth = profile?.date_of_birth
+    ? formatDateOfBirth(profile.date_of_birth)
+    : null;
+
+  const fields: ProfileField[] = [
+    { label: "First Name", value: firstName, icon: User },
+    { label: "Last Name", value: lastName, icon: User },
+    {
+      label: "Date of Birth",
+      value: dateOfBirth,
+      icon: Calendar,
+    },
+    {
+      label: "Email Address",
+      value: email,
+      icon: Mail,
+    },
+  ];
 
   return (
     <>
-      {/* Required modal for first login */}
       <CompleteProfileModal
         open={showRequiredModal}
         onClose={handleRequiredModalClose}
@@ -86,7 +149,6 @@ function ProfileDetailsClientContent({
         submitLabel="Complete Profile"
       />
 
-      {/* Edit modal for regular editing */}
       <CompleteProfileModal
         open={showEditModal}
         onClose={handleEditModalClose}
@@ -98,7 +160,7 @@ function ProfileDetailsClientContent({
         title="Edit Profile"
         description="Update your personal information."
         submitLabel="Save Changes"
-        onCancel={handleEditModalCancel}
+        onCancel={() => setShowEditModal(false)}
       />
 
       <div>
@@ -107,58 +169,46 @@ function ProfileDetailsClientContent({
           description="Manage your personal information"
         />
 
-        <div className="space-y-8">
-          <div>
-            <p className="mb-3 block font-sans font-semibold text-slate-900 text-sm">
-              First Name
-            </p>
-            <p className="font-sans text-slate-900">
-              {profile?.first_name && profile.first_name.trim()
-                ? profile.first_name
-                : "Not set"}
-            </p>
-          </div>
-
-          <div>
-            <p className="mb-3 block font-sans font-semibold text-slate-900 text-sm">
-              Last Name
-            </p>
-            <p className="font-sans text-slate-900">
-              {profile?.last_name && profile.last_name.trim()
-                ? profile.last_name
-                : "Not set"}
-            </p>
-          </div>
-
-          <div>
-            <p className="mb-3 block font-sans font-semibold text-slate-900 text-sm">
-              Date of Birth
-            </p>
-            <p className="font-sans text-slate-900">
-              {profile?.date_of_birth
-                ? formatDateOfBirth(profile.date_of_birth)
-                : "Not set"}
-            </p>
-          </div>
-
-          <div>
-            <p className="mb-3 block font-sans font-semibold text-slate-900 text-sm">
-              Email Address
-            </p>
-            <p className="font-sans text-slate-900">
-              {email ?? "Not available"}
-            </p>
-          </div>
-
-          <div className="pt-4">
+        <Card className="border border-neutral-200 bg-gradient-to-br from-neutral-50 to-transparent p-6 xl:p-8">
+          <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+            <div>
+              <span className={profileSubscriptionEyebrow}>Account</span>
+              <h2 className={profileDetailsDisplayName}>
+                {getDisplayName(profile)}
+              </h2>
+              {email && <p className={profileDetailsEmail}>{email}</p>}
+            </div>
             <Button
-              className="bg-slate-900 font-sans text-white hover:bg-slate-800"
+              className={cn("shrink-0 gap-2", profileButtonPrimary)}
               onClick={() => setShowEditModal(true)}
             >
-              Edit
+              <Pencil className="size-4" aria-hidden />
+              Edit profile
             </Button>
           </div>
-        </div>
+
+          {isProfileIncomplete && (
+            <div className="mb-6 rounded-lg border border-red-600/20 bg-red-600/5 px-4 py-3">
+              <p className="font-medium font-sans text-neutral-900 text-sm">
+                Your profile is incomplete.{" "}
+                <button
+                  type="button"
+                  onClick={() => setShowEditModal(true)}
+                  className="font-semibold text-red-600 underline-offset-2 hover:underline"
+                >
+                  Add your details
+                </button>{" "}
+                to personalize your experience.
+              </p>
+            </div>
+          )}
+
+          <div className="grid gap-4 sm:grid-cols-2">
+            {fields.map((field) => (
+              <ProfileFieldCard key={field.label} {...field} />
+            ))}
+          </div>
+        </Card>
       </div>
     </>
   );

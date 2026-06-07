@@ -5,7 +5,6 @@ import { config } from "dotenv";
 import { fileURLToPath } from "url";
 import { dirname, join } from "path";
 import { checkArticleMetricsReadiness } from "./lib/article-metrics-readiness.mjs";
-import { initialViewsAllFromDoc } from "./lib/backfill-article-metrics-logic.mjs";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -43,8 +42,7 @@ const fetchPublishedArticles = `
   defined(publishedAt) && publishedAt <= now()
 ]{
   _id,
-  _type,
-  viewsAll
+  _type
 }
 `;
 
@@ -95,7 +93,6 @@ async function main() {
 
   let inserted = 0;
   let skipped = 0;
-  let postsFromLegacyViews = 0;
 
   for (const doc of docs || []) {
     const id = doc._id;
@@ -114,15 +111,12 @@ async function main() {
       continue;
     }
 
-    const viewsAll = initialViewsAllFromDoc(doc);
-    if (type === "post" && viewsAll > 0) postsFromLegacyViews += 1;
-
     const { error: insErr } = await supabase
       .from("article_metrics_totals")
       .insert({
         article_id: id,
         article_type: type,
-        views_all: viewsAll,
+        views_all: 0,
       });
 
     if (insErr) throw insErr;
@@ -133,10 +127,6 @@ async function main() {
   console.log("Published articles by type:", byType);
   console.log("Totals rows inserted:", inserted);
   console.log("Totals rows skipped (already present):", skipped);
-  console.log(
-    "Posts initialized with non-zero legacy viewsAll:",
-    postsFromLegacyViews,
-  );
 }
 
 main().catch((e) => {

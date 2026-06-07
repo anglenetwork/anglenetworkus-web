@@ -1,12 +1,10 @@
 import { articleTitleLink } from "./article-links";
 
-/** Tag page — read time label under titles */
-export const tagReadTimeLabel =
-  "mt-2 font-sans font-semibold text-neutral-400 text-xs uppercase tracking-wide";
-
-export function formatReadTimeLabel(minutes?: number | null): string {
-  return `${minutes || 3} MIN READ`;
-}
+export {
+  formatReadTimeLabel,
+  readTimeLabelClassName,
+  tagReadTimeLabel,
+} from "./read-time";
 
 /** Tag page — TagFeaturedArticle lead title */
 export const tagFeaturedTitle = `mt-2 text-start font-sans font-semibold text-2xl text-neutral-900 leading-snug tracking-tight md:text-3xl ${articleTitleLink}`;

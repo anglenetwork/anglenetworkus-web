@@ -19,12 +19,14 @@ const HomepageBelowFoldSectionsLazy = dynamic(
 
 type HomepageBelowFoldLazyProps = HomepageBelowFoldSectionsProps;
 
-function belowFoldPlaceholder(hasFourthSection: boolean) {
+function belowFoldPlaceholder(hasSixthSection: boolean) {
   return (
     <div className={HOMEPAGE_BELOW_FOLD_SECTION_GAP}>
       <BelowFoldSectionPlaceholder />
       <BelowFoldSectionPlaceholder />
-      {hasFourthSection ? <BelowFoldSectionPlaceholder /> : null}
+      <BelowFoldSectionPlaceholder />
+      <BelowFoldSectionPlaceholder />
+      {hasSixthSection ? <BelowFoldSectionPlaceholder /> : null}
       <BelowFoldSectionPlaceholder />
     </div>
   );
@@ -32,13 +34,20 @@ function belowFoldPlaceholder(hasFourthSection: boolean) {
 
 /** Defers below-fold chunk download until the user scrolls near these sections. */
 export function HomepageBelowFoldLazy(props: HomepageBelowFoldLazyProps) {
-  const { secondSection, thirdSection, fourthSection, fifthSection, opinion } =
-    props;
+  const {
+    secondSection,
+    thirdSection,
+    fourthSection,
+    fifthSection,
+    sixthSection,
+    seventhSection,
+    opinion,
+  } = props;
 
   return (
     <div className={HOMEPAGE_BELOW_FOLD_SECTION_GAP}>
       <DeferUntilNearViewport
-        fallback={belowFoldPlaceholder(fourthSection != null)}
+        fallback={belowFoldPlaceholder(sixthSection != null)}
       >
         <div className={HOMEPAGE_BELOW_FOLD_SECTION_GAP}>
           <HomepageBelowFoldSectionsLazy
@@ -46,6 +55,8 @@ export function HomepageBelowFoldLazy(props: HomepageBelowFoldLazyProps) {
             thirdSection={thirdSection}
             fourthSection={fourthSection}
             fifthSection={fifthSection}
+            sixthSection={sixthSection}
+            seventhSection={seventhSection}
             opinion={opinion}
           />
         </div>

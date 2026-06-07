@@ -37,9 +37,12 @@ type RankingRowDb = {
   article_type: string;
   views_all: number | string | null;
   views_7d: number | string | null;
+  views_3d?: number | string | null;
   views_30d: number | string | null;
   last_viewed_at: string | null;
 };
+
+export type MostReadWindowDays = 3 | 7;
 
 function mapRankingRow(row: RankingRowDb): ArticleRankingRow {
   return {
@@ -119,12 +122,45 @@ export async function getMostReadEditorial({
   }
 }
 
+function mapRankingRowFromWindow(
+  row: RankingRowDb,
+  windowDays: MostReadWindowDays,
+): ArticleRankingRow {
+  const viewsInWindow =
+    windowDays === 3 ? Number(row.views_3d ?? 0) : Number(row.views_7d ?? 0);
+  return {
+    articleId: row.article_id,
+    articleType: row.article_type as ArticleMetricType,
+    viewsAll: Number(row.views_all ?? 0),
+    views7d: viewsInWindow,
+    views30d: Number(row.views_30d ?? 0),
+    lastViewedAt: row.last_viewed_at,
+  };
+}
+
 export async function getMostReadPosts({
   limit,
+  windowDays = 7,
 }: {
   limit: number;
+  windowDays?: MostReadWindowDays;
 }): Promise<ArticleRankingRow[]> {
   try {
+    if (windowDays === 3) {
+      const { data, error } = await supabaseAdmin
+        .from("article_metrics_rankings_3d")
+        .select("article_id, article_type, views_3d, last_viewed_at")
+        .eq("article_type", "post")
+        .order("views_3d", { ascending: false })
+        .order("last_viewed_at", { ascending: false, nullsFirst: false })
+        .limit(limit);
+
+      if (error) throw error;
+      return (data ?? []).map((row) =>
+        mapRankingRowFromWindow(row as RankingRowDb, 3),
+      );
+    }
+
     const { data, error } = await supabaseAdmin
       .from("article_metrics_rankings")
       .select(

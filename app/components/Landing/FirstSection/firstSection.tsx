@@ -95,7 +95,6 @@ interface FirstSectionProps {
   relatedCategoryPosts: Post[];
   moreTopHeadlines: Post[];
   sideStories: Post[];
-  mostReadPosts: Post[];
 }
 
 function toCenterColumnPost(post: Post): PostForCenterColumn | null {
@@ -138,7 +137,6 @@ export function FirstSection({
   relatedCategoryPosts,
   moreTopHeadlines,
   sideStories,
-  mostReadPosts,
 }: FirstSectionProps) {
   const leftColumnJustIn = justInNews
     .filter((post): post is PostForLeftColumn => !!post.slug)
@@ -157,30 +155,12 @@ export function FirstSection({
   const moreTopHeadlinePosts = moreTopHeadlines
     .map(toCenterColumnPost)
     .filter((post): post is PostForCenterColumn => post !== null)
-    .slice(0, 5);
+    .slice(0, 2);
 
   const rightColumnSideStories = sideStories
     .map(toRightColumnPost)
     .filter((post): post is PostForRightColumn => post !== null)
     .slice(0, 2);
-
-  const mostRead = mostReadPosts.reduce<PostForRightColumn[]>((acc, post) => {
-    if (
-      !post.slug ||
-      (post.category && (!post.category.title || !post.category.slug))
-    ) {
-      return acc;
-    }
-    if (acc.length >= 5) return acc;
-    acc.push({
-      _id: post._id,
-      title: post.title,
-      slug: post.slug,
-      cover: post.cover,
-      author: post.author,
-    });
-    return acc;
-  }, []);
 
   const mainStoryPost = mainStoryPosts[0];
 
@@ -188,10 +168,7 @@ export function FirstSection({
     <main className="w-full">
       {mainStoryPost?.title && mainStoryPost?.slug && (
         <div className="mb-6 hidden lg:block">
-          <Link
-            href={`/post/${mainStoryPost.slug}`}
-            className="block hover:text-red-600"
-          >
+          <Link href={`/post/${mainStoryPost.slug}`} className="group block">
             <h1 className={mainHeadlineDesktopTitle}>{mainStoryPost.title}</h1>
           </Link>
         </div>
@@ -210,10 +187,7 @@ export function FirstSection({
           />
         </div>
         <div className="order-3 lg:order-3 lg:col-span-6">
-          <RightColumnLanding
-            sideStories={rightColumnSideStories}
-            mostRead={mostRead}
-          />
+          <RightColumnLanding sideStories={rightColumnSideStories} />
         </div>
       </div>
     </main>

@@ -4,7 +4,7 @@ import { resolveListingImage } from "@/lib/editorial-image";
 import { getCoverImage } from "@/sanity/lib/utils";
 import { SectionHeader } from "../../ui/section-header";
 import {
-  justInPrimaryTitle,
+  firstSectionFeaturedStoryTitle,
   justInSecondaryTitle,
 } from "@/app/lib/typography/first-section";
 import type { JustInCarouselImage } from "./just-in-image-carousel";
@@ -73,15 +73,10 @@ interface LeftColumnLandingProps {
 
 export function LeftColumnLanding({ justInNews }: LeftColumnLandingProps) {
   return (
-    <div className="px-0 text-left md:px-4 lg:sticky lg:top-20 lg:h-auto lg:overflow-hidden">
-      <SectionHeader
-        title="Just in"
-        variant="light"
-        accentStyle="small-dot"
-        size="regular"
-      />
+    <div className="mb-8 px-0 text-left md:px-4 lg:sticky lg:top-20 lg:mb-0 lg:h-auto lg:overflow-hidden">
+      <SectionHeader title="Just in" variant="light" accentStyle="modern" />
 
-      <div className="space-y-6">
+      <div className="flex flex-col divide-y divide-dotted divide-neutral-300">
         {justInNews.map((post, index) => {
           const isFirstArticle = index === 0;
           const carouselImages = isFirstArticle
@@ -93,7 +88,7 @@ export function LeftColumnLanding({ justInNews }: LeftColumnLandingProps) {
           return (
             <article
               key={post._id}
-              className={`${index < justInNews.length - 1 ? "border-neutral-200 border-b" : ""} pb-4`}
+              className="space-y-3 py-4 first:pt-0 last:pb-0"
             >
               {showCarousel ? (
                 <JustInCarouselLoader
@@ -110,10 +105,12 @@ export function LeftColumnLanding({ justInNews }: LeftColumnLandingProps) {
                   developingStory={post.developingStory}
                 />
               ) : null}
-              <Link href={`/post/${post.slug}`} className="hover:text-red-600">
+              <Link href={`/post/${post.slug}`} className="group block">
                 <h3
                   className={
-                    isFirstArticle ? justInPrimaryTitle : justInSecondaryTitle
+                    isFirstArticle
+                      ? firstSectionFeaturedStoryTitle
+                      : justInSecondaryTitle
                   }
                 >
                   {post.title}

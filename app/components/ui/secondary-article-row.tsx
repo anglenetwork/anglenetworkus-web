@@ -1,14 +1,14 @@
 import Link from "next/link";
 import { ImageRenderer } from "@/app/components/ui/image-renderer";
+import { ReadTimeLabel } from "@/app/components/ui/read-time-label";
 import { categorySecondaryRowTitle } from "@/app/lib/typography/second-section";
-import { tagReadTimeLabel } from "@/app/lib/typography/tag-page";
 
 interface SecondaryArticleRowProps {
   image: string;
   imageAlt?: string;
   imageUnoptimized?: boolean;
   title: string;
-  readTime: string;
+  readTimeMinutes?: number | null;
   href: string;
 }
 
@@ -17,7 +17,7 @@ export function SecondaryArticleRow({
   imageAlt,
   imageUnoptimized,
   title,
-  readTime,
+  readTimeMinutes,
   href,
 }: SecondaryArticleRowProps) {
   return (
@@ -27,7 +27,7 @@ export function SecondaryArticleRow({
           <Link href={href} className="block">
             <h3 className={categorySecondaryRowTitle.light}>{title}</h3>
           </Link>
-          <p className={tagReadTimeLabel}>{readTime}</p>
+          <ReadTimeLabel minutes={readTimeMinutes} />
         </div>
         <Link
           href={href}
@@ -41,7 +41,6 @@ export function SecondaryArticleRow({
             height={80}
             fill
             unoptimized={imageUnoptimized}
-            quality={60}
             sizes="112px"
             className="object-cover object-center"
           />

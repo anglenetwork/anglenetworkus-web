@@ -2140,27 +2140,6 @@
         },
         "optional": true
       },
-      "viewsAll": {
-        "type": "objectAttribute",
-        "value": {
-          "type": "number"
-        },
-        "optional": true
-      },
-      "views30d": {
-        "type": "objectAttribute",
-        "value": {
-          "type": "number"
-        },
-        "optional": true
-      },
-      "views7d": {
-        "type": "objectAttribute",
-        "value": {
-          "type": "number"
-        },
-        "optional": true
-      },
       "searchText": {
         "type": "objectAttribute",
         "value": {

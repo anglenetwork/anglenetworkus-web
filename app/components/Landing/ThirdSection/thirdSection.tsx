@@ -1,201 +1,65 @@
 import Link from "next/link";
 import { cn } from "@/lib/utils";
-import type { ArticleFamilyCard } from "@/app/lib/article-family/types";
-import { ListingPhotoCredit } from "@/app/helpers";
-import { getCoverImage } from "@/sanity/lib/utils";
-import { SectionHeader } from "../../ui/section-header";
-import { ImageRenderer } from "../../ui/image-renderer";
-import {
-  categoryFeaturedTitle,
-  categorySecondaryRowTitle,
-} from "@/app/lib/typography/second-section";
+import { articleTitleLink } from "@/app/lib/typography/article-links";
+import type { HomepageThirdSectionArticle } from "@/app/lib/homepage-third-section";
 import { ReadTimeLabel } from "@/app/components/ui/read-time-label";
 
-export interface ThirdSectionCategoryConfig {
-  slug: string;
-  title: string;
-}
-
 interface ThirdSectionProps {
-  leftColumnPosts: ArticleFamilyCard[];
-  rightColumnPosts: ArticleFamilyCard[];
-  leftCategory: ThirdSectionCategoryConfig;
-  rightCategory: ThirdSectionCategoryConfig;
-  variant?: "light" | "dark";
+  articles: HomepageThirdSectionArticle[];
 }
 
-function getImageData(
-  cover: ArticleFamilyCard["cover"],
-  fallbackTitle: string,
-) {
-  return getCoverImage(
-    cover as Parameters<typeof getCoverImage>[0],
-    fallbackTitle,
-  );
-}
+const GRID_COLS: Record<number, string> = {
+  1: "lg:grid-cols-1",
+  2: "lg:grid-cols-2",
+  3: "lg:grid-cols-3",
+  4: "lg:grid-cols-4",
+};
 
-function SmallArticleRow({
-  article,
-  variant,
-}: {
-  article: ArticleFamilyCard;
-  variant: "light" | "dark";
-}) {
-  if (!article.slug || !article.href) return null;
-
-  const coverData = getImageData(
-    article.cover,
-    article.title || "Article image",
-  );
-
-  return (
-    <Link
-      href={article.href}
-      className="group flex items-start gap-3"
-      aria-label={`Read article: ${article.title}`}
-      data-article-category-slug={article.category?.slug ?? ""}
-    >
-      <div className="min-w-0 flex-1">
-        <h3 className={categorySecondaryRowTitle[variant]}>
-          {article.title || "Untitled"}
-        </h3>
-        <ReadTimeLabel minutes={article.readTime} variant={variant} />
-      </div>
-      {coverData?.src ? (
-        <div className="relative h-20 w-28 shrink-0 overflow-hidden rounded-sm bg-neutral-950">
-          <ImageRenderer
-            src={coverData.src}
-            alt={coverData.alt}
-            width={112}
-            height={80}
-            fill
-            unoptimized={coverData.unoptimized}
-            sizes="112px"
-            className="object-cover object-center"
-          />
-        </div>
-      ) : null}
-    </Link>
-  );
-}
-
-export default function ThirdSection({
-  leftColumnPosts,
-  rightColumnPosts,
-  leftCategory,
-  rightCategory,
-  variant = "light",
-}: ThirdSectionProps) {
-  const leftForColumn = leftColumnPosts.filter(
-    (p) => p.category?.slug === leftCategory.slug,
-  );
-  const rightForColumn = rightColumnPosts.filter(
-    (p) => p.category?.slug === rightCategory.slug,
-  );
-
-  const mainArticle = leftForColumn[0];
-
-  if (!mainArticle && rightForColumn.length === 0) {
+export default function ThirdSection({ articles }: ThirdSectionProps) {
+  if (articles.length === 0) {
     return null;
   }
 
-  const divideClass =
-    variant === "dark" ? "divide-white/30" : "divide-neutral-300";
-
   return (
-    <main
-      className={cn(
-        "rounded-lg",
-        variant === "dark" ? "bg-neutral-950" : "bg-background",
-      )}
+    <section
+      aria-label="Top tag headlines"
+      className="rounded-lg bg-neutral-100 px-4 py-6 md:px-6 md:py-8"
     >
       <div
         className={cn(
-          "grid grid-cols-1 divide-y divide-dotted lg:grid-cols-12 lg:divide-x lg:divide-y-0",
-          divideClass,
+          "grid grid-cols-1 divide-y divide-dotted divide-neutral-300 lg:divide-x lg:divide-y-0",
+          GRID_COLS[articles.length] ?? "lg:grid-cols-4",
         )}
       >
-        <article
-          className="space-y-4 py-6 first:pt-0 last:pb-0 lg:col-span-7 lg:px-6 lg:py-0"
-          data-third-column="left"
-          data-expected-category-slug={leftCategory.slug}
-        >
-          <SectionHeader
-            title={leftCategory.title}
-            href={`/category/${leftCategory.slug}`}
-            variant={variant}
-            accentStyle="modern"
-          />
-
-          {mainArticle?.slug && mainArticle.href && (
-            <div>
-              <Link
-                href={mainArticle.href}
-                className="group block"
-                aria-label={`Read article: ${mainArticle.title || "Featured article"}`}
-                data-article-category-slug={mainArticle.category?.slug ?? ""}
-              >
-                <div className="relative aspect-[16/9] w-full overflow-hidden rounded-sm bg-neutral-950">
-                  {(() => {
-                    const coverData = getImageData(
-                      mainArticle.cover,
-                      mainArticle.title || "Featured article",
-                    );
-                    if (!coverData) return null;
-                    return (
-                      <ImageRenderer
-                        src={coverData.src}
-                        alt={coverData.alt}
-                        width={800}
-                        height={450}
-                        fill
-                        unoptimized={coverData.unoptimized}
-                        sizes="(max-width: 1024px) 100vw, 58vw"
-                        className="object-cover object-center"
-                      />
-                    );
-                  })()}
-                </div>
-              </Link>
-              <ListingPhotoCredit cover={mainArticle.cover} align="right" />
-              <Link href={mainArticle.href} className="group block">
-                <h3 className={cn("mt-4", categoryFeaturedTitle[variant])}>
-                  {mainArticle.title || "Untitled"}
-                </h3>
-              </Link>
-              <ReadTimeLabel minutes={mainArticle.readTime} variant={variant} />
-            </div>
-          )}
-        </article>
-
-        <article
-          className="space-y-4 py-6 last:pb-0 lg:col-span-5 lg:px-6 lg:py-0"
-          data-third-column="right"
-          data-expected-category-slug={rightCategory.slug}
-        >
-          <SectionHeader
-            title={rightCategory.title}
-            href={`/category/${rightCategory.slug}`}
-            variant={variant}
-            accentStyle="modern"
-          />
-
-          <div
-            className={cn("flex flex-col divide-y divide-dotted", divideClass)}
+        {articles.map((article) => (
+          <article
+            key={article.tagSlug}
+            className="flex flex-col gap-2 py-6 first:pt-0 last:pb-0 lg:px-6 lg:py-0"
           >
-            {rightForColumn.map((article, index) =>
-              article?.slug && article.href ? (
-                <div
-                  key={article._id ?? index}
-                  className="py-4 first:pt-0 last:pb-0"
-                >
-                  <SmallArticleRow article={article} variant={variant} />
-                </div>
-              ) : null,
-            )}
-          </div>
-        </article>
+            <Link
+              href={`/tag/${article.tagSlug}`}
+              className="group/tag w-fit font-sans font-semibold text-neutral-900 text-xs uppercase tracking-wide hover:opacity-70"
+            >
+              {article.tagTitle}
+            </Link>
+            <Link
+              href={`/post/${article.slug}`}
+              className="group block"
+              aria-label={`Read article: ${article.title}`}
+            >
+              <h3
+                className={cn(
+                  "font-sans font-semibold text-base text-neutral-900 leading-snug tracking-normal md:text-base",
+                  articleTitleLink,
+                )}
+              >
+                {article.title}
+              </h3>
+            </Link>
+            <ReadTimeLabel minutes={article.readTime} />
+          </article>
+        ))}
       </div>
-    </main>
+    </section>
   );
 }

@@ -5,8 +5,8 @@ import { useSearchParams } from "next/navigation";
 import { Suspense } from "react";
 
 function LoginForm() {
-  const { get } = useSearchParams();
-  const callbackUrl = get("callbackUrl") || "/studio";
+  const searchParams = useSearchParams();
+  const callbackUrl = searchParams.get("callbackUrl") || "/studio";
 
   return (
     <main className="flex min-h-screen items-center justify-center bg-background">

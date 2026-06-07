@@ -5,6 +5,10 @@ import { Mail } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
 import { Skeleton } from "@/components/ui/skeleton";
 import { AVAILABLE_NEWSLETTERS } from "@/lib/constants/newsletters";
+import {
+  profileNewsletterDescription,
+  profileNewsletterTitle,
+} from "@/app/lib/typography/myprofile-page";
 
 interface NewsletterPreferenceRow {
   newsletter_key: string;
@@ -145,10 +149,8 @@ export function NewsletterToggles() {
           <div className="flex flex-1 items-start gap-4">
             <Mail className="mt-0.5 size-5 flex-shrink-0 text-slate-600" />
             <div>
-              <h3 className="font-sans font-semibold text-slate-900">
-                {newsletter.label}
-              </h3>
-              <p className="mt-0.5 font-sans text-slate-600 text-sm">
+              <h3 className={profileNewsletterTitle}>{newsletter.label}</h3>
+              <p className={profileNewsletterDescription}>
                 {getNewsletterDescription(newsletter.key)}
               </p>
             </div>

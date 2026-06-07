@@ -43,7 +43,7 @@ export function JustInImageCarousel({
   return (
     <div className="mb-3 block">
       <Link href={`/post/${postSlug}`}>
-        <div className="relative h-56 w-full overflow-hidden rounded-sm md:h-60">
+        <div className="relative aspect-[16/9] w-full overflow-hidden rounded-sm bg-neutral-950 md:aspect-auto md:h-60">
           {images.map((image, idx) => {
             if (!shouldRenderCarouselSlide(idx, currentIndex, images.length)) {
               return null;
@@ -60,7 +60,7 @@ export function JustInImageCarousel({
                 unoptimized={image.unoptimized}
                 quality={55}
                 sizes="(max-width: 640px) 100vw, (max-width: 1024px) 100vw, 300px"
-                className={`rounded-sm object-cover transition-opacity duration-500 ${
+                className={`absolute inset-0 object-cover object-center transition-opacity duration-500 ${
                   idx === currentIndex ? "z-10 opacity-100" : "z-0 opacity-0"
                 }`}
               />

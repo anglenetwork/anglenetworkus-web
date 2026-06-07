@@ -1,29 +1,32 @@
 import { cn } from "@/lib/utils";
 import {
   formatReadTimeLabel,
-  tagReadTimeLabel,
-} from "@/app/lib/typography/tag-page";
+  readTimeLabelClassName,
+  resolveReadTimeLabelVariant,
+  type ReadTimeLabelVariant,
+} from "@/app/lib/typography/read-time";
 
 interface ReadTimeLabelProps {
   minutes?: number | null;
-  variant?: "light" | "dark";
+  variant?: ReadTimeLabelVariant | "light";
   className?: string;
+  as?: "p" | "span";
 }
 
 export function ReadTimeLabel({
   minutes,
-  variant = "light",
+  variant = "default",
   className,
+  as: Component = "p",
 }: ReadTimeLabelProps) {
   return (
-    <p
+    <Component
       className={cn(
-        tagReadTimeLabel,
-        variant === "dark" ? "text-neutral-400" : "text-neutral-400",
+        readTimeLabelClassName(resolveReadTimeLabelVariant(variant)),
         className,
       )}
     >
       {formatReadTimeLabel(minutes)}
-    </p>
+    </Component>
   );
 }

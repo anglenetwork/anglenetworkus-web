@@ -204,7 +204,7 @@ export const homepageHeroFrontlineQuery = defineQuery(`
   ] | order(
     dateTime(coalesce(publishedAt, _updatedAt)) desc,
     dateTime(_updatedAt) desc
-  )[0...3] {
+  )[0...2] {
     ${postFieldsLightweight}
   }
 `);
@@ -321,25 +321,32 @@ export const popularReadsFallbackQuery = `
 )[0...4]
 `;
 
-/** Homepage most-read fallback (no current-article exclusion). */
-export const homepageMostReadFallbackQuery = `
+/** Fourth-section Most Read fallback when metrics are unavailable. */
+export const homepageFourthSectionMostReadFallbackQuery = `
 *[
   _type == "post" &&
   status == "published" &&
   defined(publishedAt) && publishedAt <= now()
 ]{
-  _id, title, "slug": slug.current, excerpt, 
-  cover{
-    ${imageFieldsProjection}
-  },
+  _id,
+  title,
+  "slug": slug.current,
+  readTime,
   publishedAt,
-  priority, featured,
+  priority,
+  featured,
+  "category": select(
+    defined(category->name) && defined(category->slug.current) => {
+      "title": category->name,
+      "slug": category->slug.current
+    }
+  ),
   "recencyBoost": select(publishedAt > dateTime(now()) - 60*60*24*14 => 1.5, 0),
   "editorialBoost": (coalesce(priority, 0) * 0.3) + select(featured == true => 0.4, 0)
 } | order(
   (recencyBoost + editorialBoost) desc,
   publishedAt desc
-)[0...5]
+)[0...4]
 `;
 
 const postBySlugQuery = defineQuery(`
@@ -447,6 +454,17 @@ export const fourthSectionQuery = defineQuery(`
   }
 `);
 
+/** Homepage fourth section: Tech rail (2 featured + 4 secondary; right column is Latest feed). */
+export const homepageFourthSectionTechQuery = defineQuery(`
+  *[
+    _type == "post" &&
+    category->slug.current == $categorySlug &&
+    defined(slug.current)
+  ] | order(coalesce(publishedAt, _updatedAt) desc, _updatedAt desc) [0...6] {
+    ${postFieldsLightweight}
+  }
+`);
+
 export const thirdLatestArticleQuery = defineQuery(`
   *[_type == "post" && category->slug.current == $categorySlug] | order(coalesce(publishedAt, _updatedAt) desc, _updatedAt desc) [2...3] {
     ${postFields}
@@ -459,7 +477,22 @@ const thirdSectionQuery = defineQuery(`
   }
 `);
 
-/** Homepage ThirdSection: latest featured post per category (1 per column). */
+/** Homepage ThirdSection: latest post per tag (Congress, AI, White House, China). */
+export const homepageThirdSectionByTagQuery = defineQuery(`
+  *[
+    _type == "post" &&
+    defined(slug.current) &&
+    $tagSlug in tags[]->slug.current &&
+    !(_id in $excludeIds)
+  ] | order(coalesce(publishedAt, _updatedAt) desc, _updatedAt desc) [0] {
+    _id,
+    "title": coalesce(title, "Untitled"),
+    "slug": slug.current,
+    readTime
+  }
+`);
+
+/** Homepage SixthSection: latest featured post per category (1 per column). */
 export const highlightedStoriesByCategoryQuery = defineQuery(`
   *[_type == "post" && category->slug.current == $categorySlug]
   | order(coalesce(publishedAt, _updatedAt) desc, _updatedAt desc) [0...1] {

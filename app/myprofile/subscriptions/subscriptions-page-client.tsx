@@ -17,13 +17,14 @@ import { SubscriptionsCurrentPlan } from "./subscriptions-current-plan";
 import { getNextTier } from "./subscriptions-upgrade-helpers";
 import { SubscriptionsUpgradeSection } from "./subscriptions-upgrade-section";
 import { SubscriptionsFaq } from "./subscriptions-faq";
+import { profileSubscriptionLoading } from "@/app/lib/typography/myprofile-page";
 
 function SubscriptionsPageContent() {
   const supabase = useMemo(() => createClient(), []);
   const { ready: authReady } = useSupabaseAuth();
   const { replace } = useRouter();
-  const { get } = useSearchParams();
-  const checkoutCanceled = get("canceled") === "1";
+  const searchParams = useSearchParams();
+  const checkoutCanceled = searchParams.get("canceled") === "1";
 
   const [state, dispatch] = useReducer(
     subscriptionUiReducer,
@@ -157,7 +158,7 @@ function SubscriptionsPageContent() {
         />
         {state.loading ? (
           <div className="py-16 text-center">
-            <div className="text-muted-foreground">
+            <div className={profileSubscriptionLoading}>
               Loading subscription data…
             </div>
           </div>

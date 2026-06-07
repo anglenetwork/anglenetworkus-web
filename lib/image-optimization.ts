@@ -39,24 +39,13 @@ export function getWikimediaThumbnail(
     // Check if already a thumbnail
     // Format: /wikipedia/commons/thumb/{hash}/{filename}/{width}px-{filename}
     if (pathParts[commonsIndex + 1] === "thumb") {
-      // Already a thumbnail - extract and update width
-      const thumbParts = pathParts.slice(commonsIndex + 2); // Skip 'commons', 'thumb'
-      if (thumbParts.length >= 2) {
-        const lastPart = thumbParts[thumbParts.length - 1];
-        const widthMatch = lastPart.match(/^(\d+)px-(.+)$/);
-        if (widthMatch) {
-          // Replace width in existing thumbnail
-          thumbParts[thumbParts.length - 1] =
-            `${cappedWidth}px-${widthMatch[2]}`;
-          url.pathname =
-            "/" +
-            pathParts.slice(0, commonsIndex + 2).join("/") +
-            "/" +
-            thumbParts.join("/");
-          return url.toString();
-        }
-      }
-      return originalUrl; // Already optimized but can't parse, return as-is
+      // Already a pre-generated Wikimedia thumbnail — return as-is.
+      //
+      // Wikimedia only pre-generates thumbnails at specific widths per file.
+      // Requesting a different width (even smaller) returns 400 if Wikimedia
+      // hasn't generated that exact size. Since the stored URL is already a
+      // working thumbnail, keep it unchanged rather than risk a broken image.
+      return originalUrl;
     }
 
     // Convert full-size to thumbnail

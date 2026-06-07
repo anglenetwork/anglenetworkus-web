@@ -1,16 +1,16 @@
 import { test, expect } from "@playwright/test";
 
 /**
- * Third section: DOM must expose category slugs (data-third-column / data-article-category-slug).
+ * Fifth section: DOM must expose category slugs (data-fifth-column / data-article-category-slug).
  */
-test.describe("Homepage third section category DOM", () => {
+test.describe("Homepage fifth section category DOM", () => {
   test("left column article links carry world; right column carries politics", async ({
     page,
   }) => {
     await page.goto("/");
 
-    const left = page.locator('[data-third-column="left"]');
-    const right = page.locator('[data-third-column="right"]');
+    const left = page.locator('[data-fifth-column="left"]');
+    const right = page.locator('[data-fifth-column="right"]');
 
     await expect(left).toHaveAttribute("data-expected-category-slug", "world");
     await expect(right).toHaveAttribute(

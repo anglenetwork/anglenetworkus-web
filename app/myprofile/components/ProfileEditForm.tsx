@@ -7,6 +7,15 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
 import {
+  profileButtonPrimary,
+  profileButtonSecondary,
+  profileFormError,
+  profileFormInput,
+  profileFormLabel,
+  profileFormMessageError,
+  profileFormMessageSuccess,
+} from "@/app/lib/typography/myprofile-page";
+import {
   createInitialProfileEditFormState,
   profileEditFormReducer,
   type ProfileFieldErrors,
@@ -14,7 +23,7 @@ import {
 
 const profileInputClassName = (hasError: boolean) =>
   cn(
-    "w-full max-w-xl font-sans focus-visible:border-slate-900 focus-visible:ring-0 focus-visible:ring-offset-0",
+    profileFormInput,
     hasError && "border-red-500 focus-visible:border-red-500",
   );
 
@@ -161,10 +170,7 @@ export function ProfileEditForm({
     <form onSubmit={handleSubmit} className="flex min-h-0 flex-1 flex-col">
       <div className="min-h-0 flex-1 space-y-8 overflow-y-auto p-1">
         <div>
-          <Label
-            htmlFor="firstName"
-            className="mb-3 block font-sans font-semibold text-slate-900 text-sm"
-          >
+          <Label htmlFor="firstName" className={profileFormLabel}>
             First Name {requireNames && <span className="text-red-500">*</span>}
           </Label>
           <Input
@@ -182,17 +188,12 @@ export function ProfileEditForm({
             className={profileInputClassName(Boolean(fieldErrors.firstName))}
           />
           {fieldErrors.firstName && (
-            <p className="mt-1 font-sans text-red-500 text-sm">
-              {fieldErrors.firstName}
-            </p>
+            <p className={profileFormError}>{fieldErrors.firstName}</p>
           )}
         </div>
 
         <div>
-          <Label
-            htmlFor="lastName"
-            className="mb-3 block font-sans font-semibold text-slate-900 text-sm"
-          >
+          <Label htmlFor="lastName" className={profileFormLabel}>
             Last Name {requireNames && <span className="text-red-500">*</span>}
           </Label>
           <Input
@@ -210,18 +211,13 @@ export function ProfileEditForm({
             className={profileInputClassName(Boolean(fieldErrors.lastName))}
           />
           {fieldErrors.lastName && (
-            <p className="mt-1 font-sans text-red-500 text-sm">
-              {fieldErrors.lastName}
-            </p>
+            <p className={profileFormError}>{fieldErrors.lastName}</p>
           )}
         </div>
 
         {!hideDateOfBirth && (
           <div>
-            <Label
-              htmlFor="dateOfBirth"
-              className="mb-3 block font-sans font-semibold text-slate-900 text-sm"
-            >
+            <Label htmlFor="dateOfBirth" className={profileFormLabel}>
               Date of Birth{" "}
               {requireNames && <span className="text-red-500">*</span>}
             </Label>
@@ -242,18 +238,18 @@ export function ProfileEditForm({
               )}
             />
             {fieldErrors.dateOfBirth && (
-              <p className="mt-1 font-sans text-red-500 text-sm">
-                {fieldErrors.dateOfBirth}
-              </p>
+              <p className={profileFormError}>{fieldErrors.dateOfBirth}</p>
             )}
           </div>
         )}
 
         {message && (
           <div
-            className={`font-sans text-sm ${
-              message.type === "error" ? "text-red-600" : "text-green-600"
-            }`}
+            className={
+              message.type === "error"
+                ? profileFormMessageError
+                : profileFormMessageSuccess
+            }
           >
             {message.text}
           </div>
@@ -270,7 +266,7 @@ export function ProfileEditForm({
                 !lastName.trim() ||
                 (!hideDateOfBirth && !dateOfBirth.trim())))
           }
-          className="w-full bg-slate-900 font-sans text-white hover:bg-slate-800"
+          className={cn("w-full", profileButtonPrimary)}
         >
           {loading ? "Saving..." : submitLabel}
         </Button>
@@ -280,7 +276,7 @@ export function ProfileEditForm({
             onClick={onCancel}
             variant="outline"
             disabled={loading}
-            className="w-full border-slate-900 bg-transparent font-sans text-slate-900 hover:bg-slate-50"
+            className={cn("w-full", profileButtonSecondary)}
           >
             Cancel
           </Button>

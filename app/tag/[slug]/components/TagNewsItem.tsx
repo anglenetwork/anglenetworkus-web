@@ -5,7 +5,7 @@ interface TagNewsItemProps {
   imageAlt?: string;
   imageUnoptimized?: boolean;
   title: string;
-  readTime: string;
+  readTimeMinutes?: number | null;
   slug: string;
   href?: string;
 }
@@ -15,7 +15,7 @@ export function TagNewsItem({
   imageAlt,
   imageUnoptimized,
   title,
-  readTime,
+  readTimeMinutes,
   slug,
   href,
 }: TagNewsItemProps) {
@@ -25,7 +25,7 @@ export function TagNewsItem({
       imageAlt={imageAlt}
       imageUnoptimized={imageUnoptimized}
       title={title}
-      readTime={readTime}
+      readTimeMinutes={readTimeMinutes}
       href={href ?? `/post/${slug}`}
     />
   );

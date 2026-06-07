@@ -69,6 +69,20 @@ describe("getMostReadPosts", () => {
 
     expect(chain.eq).toHaveBeenCalledWith("article_type", "post");
   });
+
+  it("uses 3-day rankings view when windowDays is 3", async () => {
+    const chain = buildChain({ data: [], error: null });
+    vi.mocked(supabaseAdmin.from).mockReturnValue(chain as never);
+
+    await getMostReadPosts({ limit: 5, windowDays: 3 });
+
+    expect(supabaseAdmin.from).toHaveBeenCalledWith(
+      "article_metrics_rankings_3d",
+    );
+    expect(chain.order).toHaveBeenCalledWith("views_3d", {
+      ascending: false,
+    });
+  });
 });
 
 describe("sortIdsByRankingThenPublishedAt", () => {
