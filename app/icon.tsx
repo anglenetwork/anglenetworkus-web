@@ -7,11 +7,11 @@ export const size = {
 
 export const contentType = "image/png";
 
-const INSTRUMENT_SANS_BOLD_URL =
-  "https://fonts.gstatic.com/s/instrumentsans/v4/pximypc9vsFDm051Uf6KVwgkfoSxQ0GsQv8ToedPibnr-yp2JGEJOH9npSQi_gf1.ttf";
+const ARCHIVO_BOLD_URL =
+  "https://fonts.gstatic.com/s/archivo/v25/k3k6o8UDI-1M0wlSV9XAw6lQkqWY8Q82sJaRE-NWIDdgffTT0zRp8A.ttf";
 
 export default async function Icon() {
-  const instrumentSansBold = await fetch(INSTRUMENT_SANS_BOLD_URL).then((res) =>
+  const archivoBold = await fetch(ARCHIVO_BOLD_URL).then((res) =>
     res.arrayBuffer(),
   );
 
@@ -29,7 +29,7 @@ export default async function Icon() {
       >
         <div
           style={{
-            fontFamily: "Instrument Sans",
+            fontFamily: "Archivo",
             fontSize: 22,
             fontWeight: 700,
             color: "#000000",
@@ -44,8 +44,8 @@ export default async function Icon() {
       ...size,
       fonts: [
         {
-          name: "Instrument Sans",
-          data: instrumentSansBold,
+          name: "Archivo",
+          data: archivoBold,
           style: "normal",
           weight: 700,
         },

@@ -46,13 +46,13 @@ interface SixthSectionProps {
   leftArticle: Article;
   centerArticle: Article;
   rightArticle: Article;
-  variant?: "light" | "dark";
+  variant?: "news" | "dark";
 }
 
 const featuredImageSizes = "(max-width: 1024px) 100vw, 33vw";
 
 const featuredImageClassName =
-  "relative aspect-[16/9] w-full overflow-hidden rounded-sm bg-neutral-950";
+  "relative aspect-[16/9] w-full overflow-hidden rounded-sm bg-news-secondary";
 
 function listingGalleryImage(galleryImage: GalleryImage): {
   src: string;
@@ -167,10 +167,10 @@ function resolveArticleImages(article: Article) {
 
 function FeaturedColumn({
   article,
-  variant = "light",
+  variant = "news",
 }: {
   article: Article;
-  variant?: "light" | "dark";
+  variant?: "news" | "dark";
 }) {
   const { coverData, galleryImagesData, hasGalleryImages } =
     resolveArticleImages(article);
@@ -234,16 +234,16 @@ export default function SixthSection({
   leftArticle,
   centerArticle,
   rightArticle,
-  variant = "light",
+  variant = "news",
 }: SixthSectionProps) {
   const divideClass =
-    variant === "dark" ? "divide-white/30" : "divide-neutral-300";
+    variant === "dark" ? "divide-white/30" : "divide-news-border";
 
   return (
     <main
       className={cn(
         "rounded-lg",
-        variant === "dark" ? "bg-neutral-950" : "bg-background",
+        variant === "dark" ? "bg-news-secondary" : "bg-news-surface",
       )}
     >
       <div

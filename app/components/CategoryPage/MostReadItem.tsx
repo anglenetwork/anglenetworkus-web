@@ -37,11 +37,11 @@ export function MostReadItem({
         </Link>
       )}
       <div className="flex gap-4">
-        <div className="flex size-8 shrink-0 items-center justify-center rounded-full bg-blue-100 font-sans font-semibold text-blue-700 text-sm">
+        <div className="flex size-8 shrink-0 items-center justify-center rounded-full bg-white/15 font-sans font-semibold text-news-surface text-sm">
           {index + 1}
         </div>
         <div className="flex-1 space-y-2">
-          <h3 className="font-medium font-sans text-base text-neutral-900 leading-snug tracking-normal">
+          <h3 className="font-medium font-sans text-base text-news-surface leading-snug tracking-normal">
             <Link
               href={article.href ?? `/post/${article.slug}`}
               className={articleTitleLink}
@@ -49,7 +49,11 @@ export function MostReadItem({
               {article.title}
             </Link>
           </h3>
-          <ReadTimeLabel minutes={article.readTime} />
+          <ReadTimeLabel
+            minutes={article.readTime}
+            variant="hero"
+            className="text-news-surface"
+          />
         </div>
       </div>
     </article>

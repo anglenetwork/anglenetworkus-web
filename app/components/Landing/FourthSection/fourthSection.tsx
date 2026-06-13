@@ -24,8 +24,8 @@ function isExclusivePost(labels: string[] | null | undefined): boolean {
 function secondaryArticleCellClassName() {
   return cn(
     "py-6 lg:px-6",
-    "lg:border-neutral-300 lg:border-l lg:border-dotted",
-    "max-lg:border-neutral-300 max-lg:border-t max-lg:border-dotted",
+    "lg:border-news-border lg:border-l lg:border-dotted",
+    "max-lg:border-news-border max-lg:border-t max-lg:border-dotted",
     "max-lg:first:border-t-0",
     "lg:[&:nth-child(2n+1)]:border-l-0",
     "lg:[&:nth-child(n+3)]:border-t lg:[&:nth-child(n+3)]:border-dotted",
@@ -48,7 +48,7 @@ function FeaturedArticleCard({ article }: { article: FourthSectionTechPost }) {
           className="group block"
           aria-label={`Read article: ${article.title}`}
         >
-          <div className="relative aspect-[16/9] w-full overflow-hidden rounded-sm bg-neutral-950">
+          <div className="relative aspect-[16/9] w-full overflow-hidden rounded-sm bg-news-secondary">
             <ImageRenderer
               src={coverData.src}
               alt={coverData.alt}
@@ -65,7 +65,7 @@ function FeaturedArticleCard({ article }: { article: FourthSectionTechPost }) {
       <Link href={`/post/${article.slug}`} className="group block">
         <h3 className={cn("mt-4", techFeaturedTitle)}>{article.title}</h3>
       </Link>
-      <ReadTimeLabel minutes={article.readTime} />
+      <ReadTimeLabel minutes={article.readTime} variant="news" />
     </article>
   );
 }
@@ -90,10 +90,10 @@ function SecondaryArticleRow({ article }: { article: FourthSectionTechPost }) {
             <span className={techExclusiveBadge}>Exclusive</span>
           ) : null}
           <h3 className={techSecondaryTitle}>{article.title}</h3>
-          <ReadTimeLabel minutes={article.readTime} />
+          <ReadTimeLabel minutes={article.readTime} variant="news" />
         </div>
         {coverData?.src ? (
-          <div className="relative h-20 w-28 shrink-0 overflow-hidden rounded-sm bg-neutral-950">
+          <div className="relative h-20 w-28 shrink-0 overflow-hidden rounded-sm bg-news-secondary">
             <ImageRenderer
               src={coverData.src}
               alt={coverData.alt}
@@ -124,23 +124,24 @@ export default function FourthSection({
   }
 
   return (
-    <section aria-label={category.title} className="rounded-lg bg-background">
+    <section aria-label={category.title} className="rounded-lg bg-news-surface">
       <SectionHeader
         title={category.title}
         href={category.href}
+        variant="news"
         accentStyle="modern"
       />
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 lg:divide-x lg:divide-dotted lg:divide-neutral-300">
+      <div className="grid grid-cols-1 lg:grid-cols-3 lg:divide-x lg:divide-dotted lg:divide-news-border">
         <div className="lg:col-span-2">
-          <div className="grid grid-cols-1 divide-y divide-dotted divide-neutral-300 lg:grid-cols-2 lg:divide-x lg:divide-y-0">
+          <div className="grid grid-cols-1 divide-y divide-dotted divide-news-border lg:grid-cols-2 lg:divide-x lg:divide-y-0">
             {featured.map((article) => (
               <FeaturedArticleCard key={article._id} article={article} />
             ))}
           </div>
 
           {secondary.length > 0 ? (
-            <div className="grid grid-cols-1 border-neutral-300 border-t border-dotted lg:grid-cols-2">
+            <div className="grid grid-cols-1 border-news-border border-t border-dotted lg:grid-cols-2">
               {secondary.map((article) => (
                 <SecondaryArticleRow key={article._id} article={article} />
               ))}
@@ -149,7 +150,7 @@ export default function FourthSection({
         </div>
 
         {mostRead.length > 0 ? (
-          <div className="border-neutral-300 border-t border-dotted py-6 lg:border-t-0 lg:px-6 lg:py-6">
+          <div className="border-news-border border-t border-dotted py-6 lg:border-t-0 lg:px-6 lg:py-6">
             <MostReadFeed items={mostRead} />
           </div>
         ) : null}

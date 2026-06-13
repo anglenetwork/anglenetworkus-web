@@ -44,7 +44,7 @@ interface CategoryData {
 
 interface SecondSectionProps {
   categoriesData: CategoryData[];
-  variant?: "light" | "dark";
+  variant?: "news" | "dark";
 }
 
 function SecondSectionSecondaryRow({
@@ -52,7 +52,7 @@ function SecondSectionSecondaryRow({
   variant,
 }: {
   post: Post;
-  variant: "light" | "dark";
+  variant: "news" | "dark";
 }) {
   if (!post.slug) return null;
 
@@ -69,7 +69,7 @@ function SecondSectionSecondaryRow({
         <ReadTimeLabel minutes={post.readTime} variant={variant} />
       </div>
       {coverData?.src ? (
-        <div className="relative h-20 w-28 shrink-0 overflow-hidden rounded-sm bg-neutral-950">
+        <div className="relative h-20 w-28 shrink-0 overflow-hidden rounded-sm bg-news-secondary">
           <ImageRenderer
             src={coverData.src}
             alt={coverData.alt}
@@ -87,7 +87,7 @@ function SecondSectionSecondaryRow({
 
 export default function SecondSection({
   categoriesData,
-  variant = "light",
+  variant = "news",
 }: SecondSectionProps) {
   const validCategories = categoriesData.reduce<CategoryData[]>(
     (acc, category) => {
@@ -100,15 +100,15 @@ export default function SecondSection({
   );
 
   const dividerClass =
-    variant === "dark" ? "border-white/30" : "border-neutral-300";
+    variant === "dark" ? "border-white/30" : "border-news-border";
   const divideClass =
-    variant === "dark" ? "divide-white/30" : "divide-neutral-300";
+    variant === "dark" ? "divide-white/30" : "divide-news-border";
 
   return (
     <main
       className={cn(
         "rounded-lg",
-        variant === "dark" ? "bg-neutral-950" : "bg-background",
+        variant === "dark" ? "bg-news-secondary" : "bg-news-surface",
       )}
     >
       <div
@@ -146,7 +146,7 @@ export default function SecondSection({
                       className="group block"
                       aria-label={`Read article: ${mainPost.title || "Featured article"}`}
                     >
-                      <div className="relative aspect-[16/9] w-full overflow-hidden rounded-sm bg-neutral-950">
+                      <div className="relative aspect-[16/9] w-full overflow-hidden rounded-sm bg-news-secondary">
                         <ImageRenderer
                           src={coverData.src}
                           alt={coverData.alt}

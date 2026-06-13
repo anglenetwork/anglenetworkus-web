@@ -73,10 +73,10 @@ function fifthSectionCardsForCategory(
 function PromoSectionPlaceholder() {
   return (
     <div
-      className="relative h-96 w-full overflow-hidden rounded-md bg-neutral-900"
+      className="relative h-96 w-full overflow-hidden rounded-md bg-news-secondary"
       aria-hidden
     >
-      <div className="absolute inset-0 bg-gradient-to-br from-neutral-800 via-neutral-900 to-black" />
+      <div className="absolute inset-0 bg-gradient-to-br from-news-secondary via-news-secondary to-black" />
       <div className="absolute inset-0 bg-black/50" />
     </div>
   );
@@ -230,7 +230,7 @@ export default async function Page() {
     <>
       <JsonLdScript data={organizationLd} />
       <JsonLdScript data={websiteLd} />
-      <SitePageWidth>
+      <SitePageWidth className="bg-news-surface">
         <NewsTicker posts={newsTickerPosts as any} />
         <div className={`${HOMEPAGE_BELOW_FOLD_SECTION_GAP} pb-10 md:pb-14`}>
           <FirstSection
@@ -242,7 +242,7 @@ export default async function Page() {
           />
           <HomepageBelowFoldLazy
             secondSection={{
-              variant: "light",
+              variant: "news",
               categoriesData: secondSectionData as any,
             }}
             thirdSection={{ articles: thirdSectionData }}

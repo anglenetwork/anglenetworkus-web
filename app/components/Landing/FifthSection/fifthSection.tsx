@@ -5,6 +5,7 @@ import { ListingPhotoCredit } from "@/app/helpers";
 import { getCoverImage } from "@/sanity/lib/utils";
 import { SectionHeader } from "../../ui/section-header";
 import { ImageRenderer } from "../../ui/image-renderer";
+import { fifthSectionFeaturedOverlayTitle } from "@/app/lib/typography/fifth-section";
 import {
   categoryFeaturedTitle,
   categorySecondaryRowTitle,
@@ -21,8 +22,11 @@ interface FifthSectionProps {
   rightColumnPosts: ArticleFamilyCard[];
   leftCategory: FifthSectionCategoryConfig;
   rightCategory: FifthSectionCategoryConfig;
-  variant?: "light" | "dark";
+  variant?: "news" | "dark";
 }
+
+const featuredImageOverlayClassName =
+  "absolute inset-x-0 bottom-0 z-20 bg-gradient-to-t from-black/90 via-black/50 to-transparent px-4 pt-12 pb-4 md:px-6 md:pt-16 md:pb-6";
 
 function getImageData(
   cover: ArticleFamilyCard["cover"],
@@ -39,7 +43,7 @@ function SmallArticleRow({
   variant,
 }: {
   article: ArticleFamilyCard;
-  variant: "light" | "dark";
+  variant: "news" | "dark";
 }) {
   if (!article.slug || !article.href) return null;
 
@@ -62,7 +66,7 @@ function SmallArticleRow({
         <ReadTimeLabel minutes={article.readTime} variant={variant} />
       </div>
       {coverData?.src ? (
-        <div className="relative h-20 w-28 shrink-0 overflow-hidden rounded-sm bg-neutral-950">
+        <div className="relative h-20 w-28 shrink-0 overflow-hidden rounded-sm bg-news-secondary">
           <ImageRenderer
             src={coverData.src}
             alt={coverData.alt}
@@ -84,7 +88,7 @@ export default function FifthSection({
   rightColumnPosts,
   leftCategory,
   rightCategory,
-  variant = "light",
+  variant = "news",
 }: FifthSectionProps) {
   const leftForColumn = leftColumnPosts.filter(
     (p) => p.category?.slug === leftCategory.slug,
@@ -100,13 +104,13 @@ export default function FifthSection({
   }
 
   const divideClass =
-    variant === "dark" ? "divide-white/30" : "divide-neutral-300";
+    variant === "dark" ? "divide-white/30" : "divide-news-border";
 
   return (
     <main
       className={cn(
         "rounded-lg",
-        variant === "dark" ? "bg-neutral-950" : "bg-background",
+        variant === "dark" ? "bg-news-secondary" : "bg-news-surface",
       )}
     >
       <div
@@ -116,7 +120,7 @@ export default function FifthSection({
         )}
       >
         <article
-          className="space-y-4 py-6 first:pt-0 last:pb-0 lg:col-span-7 lg:px-6 lg:py-0"
+          className="space-y-4 py-6 first:pt-0 last:pb-0 lg:col-span-7 lg:px-6 lg:py-0 xl:col-span-8"
           data-fifth-column="left"
           data-expected-category-slug={leftCategory.slug}
         >
@@ -127,22 +131,22 @@ export default function FifthSection({
             accentStyle="modern"
           />
 
-          {mainArticle?.slug && mainArticle.href && (
-            <div>
-              <Link
-                href={mainArticle.href}
-                className="group block"
-                aria-label={`Read article: ${mainArticle.title || "Featured article"}`}
-                data-article-category-slug={mainArticle.category?.slug ?? ""}
-              >
-                <div className="relative aspect-[16/9] w-full overflow-hidden rounded-sm bg-neutral-950">
-                  {(() => {
-                    const coverData = getImageData(
-                      mainArticle.cover,
-                      mainArticle.title || "Featured article",
-                    );
-                    if (!coverData) return null;
-                    return (
+          {mainArticle?.slug && mainArticle.href && (() => {
+            const coverData = getImageData(
+              mainArticle.cover,
+              mainArticle.title || "Featured article",
+            );
+
+            return (
+              <div>
+                {coverData?.src ? (
+                  <Link
+                    href={mainArticle.href}
+                    className="group block"
+                    aria-label={`Read article: ${mainArticle.title || "Featured article"}`}
+                    data-article-category-slug={mainArticle.category?.slug ?? ""}
+                  >
+                    <div className="relative aspect-[16/9] w-full overflow-hidden rounded-sm bg-news-secondary xl:aspect-[3/2]">
                       <ImageRenderer
                         src={coverData.src}
                         alt={coverData.alt}
@@ -150,26 +154,36 @@ export default function FifthSection({
                         height={450}
                         fill
                         unoptimized={coverData.unoptimized}
-                        sizes="(max-width: 1024px) 100vw, 58vw"
-                        className="object-cover object-center"
+                        sizes="(max-width: 1024px) 100vw, (max-width: 1280px) 58vw, 66vw"
+                        className="absolute inset-0 z-0 object-cover object-center"
                       />
-                    );
-                  })()}
-                </div>
-              </Link>
-              <ListingPhotoCredit cover={mainArticle.cover} align="right" />
-              <Link href={mainArticle.href} className="group block">
-                <h3 className={cn("mt-4", categoryFeaturedTitle[variant])}>
-                  {mainArticle.title || "Untitled"}
-                </h3>
-              </Link>
-              <ReadTimeLabel minutes={mainArticle.readTime} variant={variant} />
-            </div>
-          )}
+                      <div className={featuredImageOverlayClassName}>
+                        <h3 className={fifthSectionFeaturedOverlayTitle}>
+                          {mainArticle.title || "Untitled"}
+                        </h3>
+                      </div>
+                    </div>
+                  </Link>
+                ) : null}
+                <ListingPhotoCredit cover={mainArticle.cover} align="right" />
+                {!coverData?.src ? (
+                  <Link href={mainArticle.href} className="group block">
+                    <h3 className={cn("mt-4", categoryFeaturedTitle[variant])}>
+                      {mainArticle.title || "Untitled"}
+                    </h3>
+                  </Link>
+                ) : null}
+                <ReadTimeLabel
+                  minutes={mainArticle.readTime}
+                  variant={variant}
+                />
+              </div>
+            );
+          })()}
         </article>
 
         <article
-          className="space-y-4 py-6 last:pb-0 lg:col-span-5 lg:px-6 lg:py-0"
+          className="space-y-4 py-6 last:pb-0 lg:col-span-5 lg:px-6 lg:py-0 xl:col-span-4"
           data-fifth-column="right"
           data-expected-category-slug={rightCategory.slug}
         >

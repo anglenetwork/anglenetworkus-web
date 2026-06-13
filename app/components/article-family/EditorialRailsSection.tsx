@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { cn } from "@/lib/utils";
 import { sanityFetchStatic } from "@/sanity/lib/fetch";
 import { opinionListQuery } from "@/sanity/lib/article-family-queries";
 import { normalizeArticleFamilyCard } from "@/app/lib/article-family/normalize";
@@ -25,14 +26,15 @@ function OpinionColumnCard({ article }: { article: ArticleFamilyCard }) {
     <article className="py-6 first:pt-0 last:pb-0 lg:px-6 lg:py-0">
       <div className="flex items-start gap-3">
         <div className="flex min-w-0 flex-1 flex-col gap-2">
-          <p className="font-sans font-semibold text-white/80 text-xs uppercase tracking-wide">
+          <p className="font-sans font-semibold text-news-primary text-xs uppercase tracking-wide">
             {categoryLabel}
           </p>
-          <h3 className={categorySecondaryRowTitle.dark}>
+          <h3 className={categorySecondaryRowTitle.light}>
             <Link href={article.href}>{article.title}</Link>
           </h3>
           {authorName || readTimeLabel ? (
-            <p className={readTimeLabelClassName("inline")}>
+            <p className={cn(readTimeLabelClassName("inline"), "text-black")}>
+              By{" "}
               {[authorName, readTimeLabel].filter(Boolean).join(" · ")}
             </p>
           ) : null}
@@ -40,7 +42,7 @@ function OpinionColumnCard({ article }: { article: ArticleFamilyCard }) {
         {coverData?.src ? (
           <Link
             href={article.href}
-            className="relative h-20 w-28 shrink-0 overflow-hidden rounded-sm bg-neutral-950"
+            className="relative h-20 w-28 shrink-0 overflow-hidden rounded-sm bg-news-secondary"
             aria-label={`Read article: ${article.title}`}
           >
             <ImageRenderer
@@ -75,9 +77,14 @@ export default async function EditorialRailsSection() {
 
   return (
     <section>
-      <SectionHeader title="Opinion" accentStyle="modern" href="/opinion" />
+      <SectionHeader
+        title="Opinion"
+        accentStyle="modern"
+        href="/opinion"
+        variant="news"
+      />
 
-      <div className="rounded-lg bg-blue-800 px-4 py-6 md:px-6 md:py-8">
+      <div className="rounded-lg bg-news-border px-4 py-6 md:px-6 md:py-8">
         <div className="grid grid-cols-1 divide-y divide-dotted divide-white/30 lg:grid-cols-3 lg:divide-x lg:divide-y-0">
           {articles.map((article) => (
             <OpinionColumnCard key={article._id} article={article} />

@@ -23,7 +23,7 @@ export function NewsTicker({ posts }: NewsTickerProps) {
   }
 
   return (
-    <nav className="w-full min-w-0 max-w-full bg-white">
+    <nav className="w-full min-w-0 max-w-full bg-news-surface">
       <NewsTickerShell itemCount={newsItems.length}>
         <NewsTickerTrack>
           {newsItems.map((item, index) => (
@@ -35,7 +35,7 @@ export function NewsTicker({ posts }: NewsTickerProps) {
                 {item.tickerTitle}
               </Link>
               {index < newsItems.length - 1 && (
-                <span className="text-muted-foreground">|</span>
+                <span className="text-news-muted">|</span>
               )}
             </div>
           ))}

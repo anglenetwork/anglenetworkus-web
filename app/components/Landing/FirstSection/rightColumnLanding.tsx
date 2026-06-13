@@ -28,7 +28,7 @@ interface RightColumnLandingProps {
 export function RightColumnLanding({ sideStories }: RightColumnLandingProps) {
   return (
     <div className="px-0 text-left md:px-4">
-      <div className="flex flex-col divide-y divide-dotted divide-neutral-300">
+      <div className="flex flex-col divide-y divide-dotted divide-news-border">
         {sideStories.map((post) => (
           <article key={post._id} className="space-y-3 py-6 first:pt-0">
             {(() => {
@@ -36,7 +36,7 @@ export function RightColumnLanding({ sideStories }: RightColumnLandingProps) {
               if (!coverData) return null;
               return (
                 <Link href={`/post/${post.slug}`} className="group block">
-                  <div className="relative aspect-[16/9] w-full overflow-hidden rounded-sm bg-neutral-950">
+                  <div className="relative aspect-[16/9] w-full overflow-hidden rounded-sm bg-news-secondary">
                     <ImageRenderer
                       src={coverData.src}
                       alt={coverData.alt}
@@ -55,7 +55,7 @@ export function RightColumnLanding({ sideStories }: RightColumnLandingProps) {
             <Link href={`/post/${post.slug}`} className="group block">
               <h3
                 className={cn(
-                  categoryFeaturedTitle.light,
+                  categoryFeaturedTitle.news,
                   "xl:text-lg xl:leading-snug",
                 )}
               >

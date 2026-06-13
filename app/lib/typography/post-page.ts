@@ -2,10 +2,10 @@ import { articleTitleLink } from "./article-links";
 
 /** Post page — Popular Reads / News for You section heading */
 export const postSidebarSectionTitle =
-  "mb-6 font-bold font-sans text-foreground text-xl";
+  "mb-6 font-bold font-sans text-foreground text-2xl";
 
 /** Post page — Popular Reads / News for You list item title */
-export const postSidebarListTitle = `font-bold font-sans text-base text-neutral-900 leading-snug tracking-tight ${articleTitleLink}`;
+export const postSidebarListTitle = `font-medium font-sans text-base text-neutral-900 leading-6 tracking-normal ${articleTitleLink}`;
 
 /** Post page — BottomArticleModule classic hero title */
 export const postRelatedClassicHeroTitle = `mt-4 text-start font-sans font-semibold text-2xl text-neutral-900 leading-snug tracking-tight md:text-3xl ${articleTitleLink}`;

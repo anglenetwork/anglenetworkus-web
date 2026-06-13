@@ -76,11 +76,11 @@ export default async function OpinionIndexPage({
       <JsonLdScript data={breadcrumbLd} />
       <ArticleFamilyIndexPage
         title="Opinion"
-        description="The latest commentary and opinion from our editors and contributors."
         articles={articles}
         page={page}
         total={total}
         basePath="/opinion"
+        variant="opinion"
       />
     </>
   );

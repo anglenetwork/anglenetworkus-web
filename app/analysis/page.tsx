@@ -19,14 +19,7 @@ import {
 
 export const revalidate = 60;
 
-export async function generateMetadata({
-  searchParams,
-}: {
-  searchParams: Promise<{ page?: string }>;
-}): Promise<Metadata> {
-  const sp = await searchParams;
-  const raw = parseInt(sp.page || "1", 10);
-  const page = Number.isFinite(raw) && raw >= 1 ? raw : 1;
+export async function generateMetadata(): Promise<Metadata> {
   const [settings, totalRaw] = await Promise.all([
     getCachedSettings(),
     sanityFetch({
@@ -35,26 +28,17 @@ export async function generateMetadata({
   ]);
   const total = typeof totalRaw === "number" ? totalRaw : 0;
   return finalizePublicMetadata(
-    buildAnalysisIndexMetadata(page, total, settings, demo.title),
+    buildAnalysisIndexMetadata(1, total, settings, demo.title),
   );
 }
 
-export default async function AnalysisIndexPage({
-  searchParams,
-}: {
-  searchParams: Promise<{ page?: string }>;
-}) {
-  const sp = await searchParams;
-  const raw = parseInt(sp.page || "1", 10);
-  const page = Number.isFinite(raw) && raw >= 1 ? raw : 1;
+export default async function AnalysisIndexPage() {
   const pageSize = articleFamilyIndexPageSize;
-  const start = (page - 1) * pageSize;
-  const end = start + pageSize;
 
   const [rows, totalRaw] = await Promise.all([
     sanityFetch({
       query: analysisIndexQuery,
-      params: { start, end },
+      params: { start: 0, end: pageSize },
     }),
     sanityFetch({
       query: analysisIndexCountQuery,
@@ -76,11 +60,11 @@ export default async function AnalysisIndexPage({
       <JsonLdScript data={breadcrumbLd} />
       <ArticleFamilyIndexPage
         title="Analysis"
-        description="Deep dives, data, and context on the stories that matter."
         articles={articles}
-        page={page}
+        page={1}
         total={total}
         basePath="/analysis"
+        variant="analysis"
       />
     </>
   );

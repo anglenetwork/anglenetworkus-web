@@ -7,7 +7,7 @@ import { ReadTimeLabel } from "@/app/components/ui/read-time-label";
 
 interface FeatureSideItemProps {
   article: Article;
-  variant?: "light" | "dark";
+  variant?: "light" | "news" | "dark";
 }
 
 export function FeatureSideItem({
@@ -29,7 +29,7 @@ export function FeatureSideItem({
         <div
           className={cn(
             "relative aspect-[4/3] w-full overflow-hidden rounded-sm",
-            variant === "dark" ? "bg-black" : "bg-neutral-950",
+            "bg-news-secondary",
           )}
         >
           <ImageRenderer
@@ -49,7 +49,11 @@ export function FeatureSideItem({
           {article.title}
         </h3>
       </Link>
-      <ReadTimeLabel minutes={article.readTime} variant={variant} />
+      <ReadTimeLabel
+        minutes={article.readTime}
+        variant={variant}
+        className={variant === "news" ? "text-neutral-600" : undefined}
+      />
     </article>
   );
 }

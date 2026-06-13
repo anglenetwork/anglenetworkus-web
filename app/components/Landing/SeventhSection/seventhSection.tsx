@@ -141,10 +141,10 @@ export default function SeventhSection({
   };
 
   return (
-    <div className="bg-white">
+    <div className="bg-news-surface">
       <SectionHeader
         title="Featured Stories"
-        variant="light"
+        variant="news"
         accentStyle="modern"
       />
 
@@ -153,7 +153,7 @@ export default function SeventhSection({
           variant="outline"
           size="icon"
           aria-label="Scroll left"
-          className="absolute top-1/2 left-0 z-10 -translate-y-1/2 bg-white shadow-lg hover:bg-gray-50"
+          className="absolute top-1/2 left-0 z-10 -translate-y-1/2 bg-news-surface shadow-lg hover:bg-news-background"
           onClick={scrollLeft}
         >
           <ChevronLeft className="size-4" />
@@ -163,7 +163,7 @@ export default function SeventhSection({
           variant="outline"
           size="icon"
           aria-label="Scroll right"
-          className="absolute top-1/2 right-0 z-10 -translate-y-1/2 bg-white shadow-lg hover:bg-gray-50"
+          className="absolute top-1/2 right-0 z-10 -translate-y-1/2 bg-news-surface shadow-lg hover:bg-news-background"
           onClick={scrollRight}
         >
           <ChevronRight className="size-4" />

@@ -8,7 +8,7 @@ import {
 
 interface ReadTimeLabelProps {
   minutes?: number | null;
-  variant?: ReadTimeLabelVariant | "light";
+  variant?: ReadTimeLabelVariant | "light" | "news";
   className?: string;
   as?: "p" | "span";
 }
