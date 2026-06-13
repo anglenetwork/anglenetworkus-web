@@ -29,7 +29,7 @@ function LatestArticleItem({ article }: { article: Article }) {
         aria-label={`Read article: ${article.title}`}
       >
         {article.imageUrl ? (
-          <div className="relative h-20 w-28 shrink-0 overflow-hidden rounded-sm bg-neutral-950">
+          <div className="relative h-20 w-28 shrink-0 overflow-hidden rounded-sm bg-news-secondary">
             <ImageRenderer
               src={imageSrc}
               alt={article.imageAlt?.trim() || article.title}
@@ -43,13 +43,13 @@ function LatestArticleItem({ article }: { article: Article }) {
           </div>
         ) : null}
         <div className="min-w-0 flex-1">
-          <h3 className={categorySecondaryRowTitle.light}>{article.title}</h3>
+          <h3 className={categorySecondaryRowTitle.news}>{article.title}</h3>
           {article.excerpt ? (
-            <p className="mt-2 line-clamp-2 text-pretty font-sans text-muted-foreground text-sm leading-relaxed">
+            <p className="mt-2 line-clamp-2 text-pretty font-sans text-news-muted text-sm leading-relaxed">
               {article.excerpt}
             </p>
           ) : null}
-          <ReadTimeLabel minutes={article.readTime} />
+          <ReadTimeLabel minutes={article.readTime} variant="news" />
         </div>
       </Link>
     </article>
@@ -60,7 +60,7 @@ export function LatestArticlesSection({
   latestArticles,
   layout,
 }: LatestArticlesSectionProps) {
-  const [displayedArticles, setDisplayedArticles] = useState(5);
+  const [displayedArticles, setDisplayedArticles] = useState(10);
 
   if (latestArticles.length === 0) {
     return null;
@@ -70,14 +70,14 @@ export function LatestArticlesSection({
   const hasMoreArticles = displayedArticles < latestArticles.length;
 
   const handleShowMore = () => {
-    setDisplayedArticles((prev) => Math.min(prev + 5, latestArticles.length));
+    setDisplayedArticles((prev) => Math.min(prev + 10, latestArticles.length));
   };
 
   const content = (
     <>
-      <SectionHeader title="Latest Articles" accentStyle="modern" />
+      <SectionHeader title="Latest Articles" accentStyle="modern" variant="news" />
 
-      <div className="flex flex-col divide-y divide-dotted divide-neutral-300">
+      <div className="flex flex-col divide-y divide-dotted divide-news-border">
         {articlesToShow.map((article, index) => (
           <div
             key={article.id}

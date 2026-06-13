@@ -1,9 +1,9 @@
-import { Instrument_Sans } from "next/font/google";
+import { Archivo } from "next/font/google";
 
 /** Primary UI sans (Tailwind `font-sans`). Preloaded — used on every route. */
-export const sansFont = Instrument_Sans({
+export const sansFont = Archivo({
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
+  weight: ["300", "400", "500", "600", "700"],
   variable: "--font-sans",
   display: "swap",
   preload: true,

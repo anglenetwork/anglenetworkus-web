@@ -74,7 +74,7 @@ export function CenterColumnLanding({
               <>
                 <Link href={`/post/${post.slug}`} className="group block">
                   <div className="mb-2">
-                    <div className="relative aspect-[5/6] w-full overflow-hidden rounded-sm bg-neutral-950 md:aspect-auto md:h-[500px]">
+                    <div className="relative aspect-[5/6] w-full overflow-hidden rounded-sm bg-news-secondary md:aspect-auto md:h-[500px]">
                       <ImageRenderer
                         src={src}
                         alt={alt}
@@ -106,7 +106,7 @@ export function CenterColumnLanding({
       {moreTopHeadlines.length > 0 ? (
         <div className="mb-8 md:mb-0">
           {/* Mobile: stacked rows — title left, thumb right */}
-          <div className="flex flex-col divide-y divide-dotted divide-neutral-300 md:hidden">
+          <div className="flex flex-col divide-y divide-dotted divide-news-border md:hidden">
             {moreTopHeadlines.map((post) => {
               const { src, alt, unoptimized } = getCover(post);
               return (
@@ -120,7 +120,7 @@ export function CenterColumnLanding({
                       {post.title}
                     </h3>
                     {src ? (
-                      <div className="relative h-20 w-28 shrink-0 overflow-hidden rounded-sm bg-neutral-950">
+                      <div className="relative h-20 w-28 shrink-0 overflow-hidden rounded-sm bg-news-secondary">
                         <ImageRenderer
                           src={src}
                           alt={alt}
@@ -147,7 +147,7 @@ export function CenterColumnLanding({
                 <article key={post._id}>
                   {src ? (
                     <Link href={`/post/${post.slug}`} className="group block">
-                      <div className="relative aspect-[16/9] w-full overflow-hidden rounded-sm bg-neutral-950">
+                      <div className="relative aspect-[16/9] w-full overflow-hidden rounded-sm bg-news-secondary">
                         <ImageRenderer
                           src={src}
                           alt={alt}

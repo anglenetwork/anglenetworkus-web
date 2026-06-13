@@ -24,7 +24,7 @@ export default function PostSelectedNews({
     <div className="mx-auto w-full max-w-md">
       <h2 className={postSidebarSectionTitle}>{title}</h2>
 
-      <div className="flex flex-col divide-y divide-dotted divide-neutral-300">
+      <div className="flex flex-col">
         {latestNews.slice(0, 4).map((post: ArticleSidebarPost, index) => {
           const coverData = getCoverImage(
             post.cover as Parameters<typeof getCoverImage>[0],
@@ -44,7 +44,7 @@ export default function PostSelectedNews({
             >
               <Link
                 href={post.href}
-                className="group flex items-start gap-3"
+                className="group flex items-start gap-3 xl:flex-row-reverse"
                 aria-label={`Read article: ${post.title}`}
               >
                 <div className="min-w-0 flex-1">

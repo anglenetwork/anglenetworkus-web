@@ -8,10 +8,15 @@ import { ReadTimeLabel } from "@/app/components/ui/read-time-label";
 
 interface FeatureHeroProps {
   article: Article;
-  variant?: "light" | "dark";
+  variant?: "light" | "news" | "dark";
+  emphasizeTitleOnXl?: boolean;
 }
 
-export function FeatureHero({ article, variant = "light" }: FeatureHeroProps) {
+export function FeatureHero({
+  article,
+  variant = "light",
+  emphasizeTitleOnXl = false,
+}: FeatureHeroProps) {
   const href = article.href ?? `/post/${article.slug}`;
   const imageSrc =
     article.imageUrl ||
@@ -27,7 +32,7 @@ export function FeatureHero({ article, variant = "light" }: FeatureHeroProps) {
         <div
           className={cn(
             "relative aspect-[16/9] w-full overflow-hidden rounded-sm",
-            variant === "dark" ? "bg-black" : "bg-neutral-950",
+            "bg-news-secondary",
           )}
         >
           <ImageRenderer
@@ -50,11 +55,21 @@ export function FeatureHero({ article, variant = "light" }: FeatureHeroProps) {
         className={variant === "dark" ? "text-neutral-400" : undefined}
       />
       <Link href={href} className="group block">
-        <h2 className={cn("mt-4", categoryFeaturedTitle[variant])}>
+        <h2
+          className={cn(
+            "mt-4",
+            categoryFeaturedTitle[variant],
+            emphasizeTitleOnXl && "xl:text-2xl xl:leading-snug",
+          )}
+        >
           {article.title}
         </h2>
       </Link>
-      <ReadTimeLabel minutes={article.readTime} variant={variant} />
+      <ReadTimeLabel
+        minutes={article.readTime}
+        variant={variant}
+        className={variant === "news" ? "text-neutral-600" : undefined}
+      />
     </article>
   );
 }

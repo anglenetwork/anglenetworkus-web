@@ -26,7 +26,7 @@ export function SuggestedTags({ tags }: SuggestedTagsProps) {
           <Link key={tag.slug} href={`/tag/${tag.slug}`}>
             <Badge
               variant="secondary"
-              className="cursor-pointer rounded-full border border-transparent bg-sectionAccent/10 px-4 py-2 font-medium font-sans text-sectionAccent text-sm uppercase transition-colors hover:border-sectionAccent hover:bg-sectionAccent/20 hover:text-black"
+              className="cursor-pointer rounded-full border border-transparent bg-gray-100 px-4 py-2 font-medium font-sans text-neutral-700 text-sm uppercase transition-colors hover:border-neutral-400 hover:bg-neutral-300 hover:text-black"
             >
               {tag.name}
             </Badge>

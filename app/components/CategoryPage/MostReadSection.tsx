@@ -10,8 +10,8 @@ interface MostReadSectionProps {
 export function MostReadSection({ articles }: MostReadSectionProps) {
   return (
     <section>
-      <SectionHeader title="Most Read" accentStyle="modern" />
-      <div className="space-y-6 rounded-lg bg-neutral-100 p-8">
+      <SectionHeader title="Most Read" accentStyle="modern" variant="news" />
+      <div className="space-y-4 rounded-lg bg-black p-8 text-news-surface">
         {articles.map((article, index) => (
           <div key={article.id}>
             <MostReadItem
@@ -19,7 +19,9 @@ export function MostReadSection({ articles }: MostReadSectionProps) {
               index={index}
               isFirst={index === 0}
             />
-            {index < articles.length - 1 && <Separator className="mt-6" />}
+            {index < articles.length - 1 && (
+              <Separator className="mt-4 bg-white/30" />
+            )}
           </div>
         ))}
       </div>

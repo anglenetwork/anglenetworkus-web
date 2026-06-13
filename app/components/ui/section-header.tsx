@@ -2,6 +2,7 @@ import Link from "next/link";
 import { sectionHeaderLink } from "@/app/lib/typography/article-links";
 import {
   modernSectionTitle,
+  modernSectionTitleLarge,
   smallDotSectionTitle,
   smallDotSectionTitleLarge,
 } from "@/app/lib/typography/section-header";
@@ -11,7 +12,7 @@ interface SectionHeaderProps {
   title: string;
   subtitle?: string;
   href?: string;
-  variant?: "light" | "dark";
+  variant?: "light" | "news" | "dark";
   size?: "regular" | "large";
   accentStyle?: "small-dot" | "modern";
 }
@@ -24,10 +25,12 @@ export function SectionHeader({
   accentStyle = "modern",
 }: SectionHeaderProps) {
   if (accentStyle === "modern") {
+    const titleClass =
+      size === "large"
+        ? modernSectionTitleLarge[variant]
+        : modernSectionTitle[variant];
     const titleEl = (
-      <h2
-        className={cn(modernSectionTitle[variant], href && sectionHeaderLink)}
-      >
+      <h2 className={cn(titleClass, href && sectionHeaderLink)}>
         {title}
       </h2>
     );
@@ -37,7 +40,12 @@ export function SectionHeader({
         <div className="mb-8">
           <Link
             href={href}
-            className="group block rounded-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-red-600 focus-visible:outline-offset-2"
+            className={cn(
+              "group block rounded-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2",
+              variant === "news"
+                ? "focus-visible:outline-news-primary"
+                : "focus-visible:outline-red-600",
+            )}
           >
             {titleEl}
           </Link>
@@ -53,7 +61,10 @@ export function SectionHeader({
       ? smallDotSectionTitleLarge[variant]
       : smallDotSectionTitle[variant];
   const linkWrapperClass = cn(
-    "group block rounded-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-red-600 focus-visible:outline-offset-2",
+    "group block rounded-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2",
+    variant === "news"
+      ? "focus-visible:outline-news-primary"
+      : "focus-visible:outline-red-600",
     href && "cursor-pointer",
   );
 
@@ -61,9 +72,14 @@ export function SectionHeader({
     <div className="mb-6 flex w-full flex-col items-start gap-3">
       <div className="flex items-center gap-2">
         <span
-          className={`size-1.5 shrink-0 ${
-            variant === "dark" ? "bg-white" : "bg-neutral-900"
-          }`}
+          className={cn(
+            "size-1.5 shrink-0",
+            variant === "dark"
+              ? "bg-white"
+              : variant === "news"
+                ? "bg-news-text"
+                : "bg-neutral-900",
+          )}
           aria-hidden
         />
         <h2 className={cn(titleClass, href && sectionHeaderLink)}>{title}</h2>

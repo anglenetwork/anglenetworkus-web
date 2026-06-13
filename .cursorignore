@@ -8,5 +8,4 @@ node_modules/**
 coverage/**
 playwright-report/**
 test-results/**
-font-comparison/**
 .cursor/debug*.log

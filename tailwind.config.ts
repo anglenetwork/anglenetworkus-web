@@ -1,4 +1,5 @@
 import type { Config } from "tailwindcss";
+import colors from "tailwindcss/colors";
 import typography from "@tailwindcss/typography";
 import tailwindcssAnimate from "tailwindcss-animate";
 
@@ -19,7 +20,7 @@ const config: Config = {
         24: "repeat(24, minmax(0, 1fr))",
       },
       fontFamily: {
-        /** Primary UI sans (Instrument Sans) */
+        /** Primary UI sans (Archivo) */
         sans: ["var(--font-sans)", "ui-sans-serif", "system-ui", "sans-serif"],
         /** Article body / long-form reading (Spectral) */
         body: ["var(--font-body)", "Georgia", "serif"],
@@ -73,6 +74,23 @@ const config: Config = {
         sectionAccent: "hsl(var(--section-accent))",
         editorialKicker: "hsl(var(--editorial-kicker))",
         link: "hsl(var(--text-link))",
+        /**
+         * Angle global semantic color tokens — Palette 2: Minimal Black + Signal Red.
+         * Reusable via bg-news-background, text-news-primary, border-news-border, etc.
+         * Landing page and legacy components are not wired to these yet.
+         */
+        news: {
+          background: colors.stone[50],
+          surface: colors.white,
+          text: colors.gray[900],
+          muted: colors.gray[500],
+          border: colors.gray[200],
+          primary: {
+            DEFAULT: colors.red[700],
+            soft: colors.red[100],
+          },
+          secondary: colors.gray[800],
+        },
       },
     },
   },
