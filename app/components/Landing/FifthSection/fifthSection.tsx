@@ -128,58 +128,76 @@ export default function FifthSection({
             title={leftCategory.title}
             href={`/category/${leftCategory.slug}`}
             variant={variant}
-            accentStyle="modern"
+            accentStyle="minimal"
+            icon="slash"
           />
 
-          {mainArticle?.slug && mainArticle.href && (() => {
-            const coverData = getImageData(
-              mainArticle.cover,
-              mainArticle.title || "Featured article",
-            );
+          {mainArticle?.slug &&
+            mainArticle.href &&
+            (() => {
+              const coverData = getImageData(
+                mainArticle.cover,
+                mainArticle.title || "Featured article",
+              );
 
-            return (
-              <div>
-                {coverData?.src ? (
-                  <Link
-                    href={mainArticle.href}
-                    className="group block"
-                    aria-label={`Read article: ${mainArticle.title || "Featured article"}`}
-                    data-article-category-slug={mainArticle.category?.slug ?? ""}
-                  >
-                    <div className="relative aspect-[16/9] w-full overflow-hidden rounded-sm bg-news-secondary xl:aspect-[3/2]">
-                      <ImageRenderer
-                        src={coverData.src}
-                        alt={coverData.alt}
-                        width={800}
-                        height={450}
-                        fill
-                        unoptimized={coverData.unoptimized}
-                        sizes="(max-width: 1024px) 100vw, (max-width: 1280px) 58vw, 66vw"
-                        className="absolute inset-0 z-0 object-cover object-center"
-                      />
-                      <div className={featuredImageOverlayClassName}>
-                        <h3 className={fifthSectionFeaturedOverlayTitle}>
+              return (
+                <div>
+                  {coverData?.src ? (
+                    <Link
+                      href={mainArticle.href}
+                      className="group block"
+                      aria-label={`Read article: ${mainArticle.title || "Featured article"}`}
+                      data-article-category-slug={
+                        mainArticle.category?.slug ?? ""
+                      }
+                    >
+                      <div className="relative aspect-[16/9] w-full overflow-hidden rounded-sm bg-news-secondary xl:aspect-[3/2]">
+                        <ImageRenderer
+                          src={coverData.src}
+                          alt={coverData.alt}
+                          width={800}
+                          height={450}
+                          fill
+                          unoptimized={coverData.unoptimized}
+                          sizes="(max-width: 1024px) 100vw, (max-width: 1280px) 58vw, 66vw"
+                          className="absolute inset-0 z-0 object-cover object-center"
+                        />
+                        <div className={featuredImageOverlayClassName}>
+                          <h3 className={fifthSectionFeaturedOverlayTitle}>
+                            {mainArticle.title || "Untitled"}
+                          </h3>
+                          <ReadTimeLabel
+                            minutes={mainArticle.readTime}
+                            variant="hero"
+                            as="span"
+                          />
+                        </div>
+                      </div>
+                    </Link>
+                  ) : null}
+                  <ListingPhotoCredit cover={mainArticle.cover} align="right" />
+                  {!coverData?.src ? (
+                    <>
+                      <Link href={mainArticle.href} className="group block">
+                        <h3
+                          className={cn(
+                            "mt-4",
+                            categoryFeaturedTitle[variant],
+                            "xl:text-3xl",
+                          )}
+                        >
                           {mainArticle.title || "Untitled"}
                         </h3>
-                      </div>
-                    </div>
-                  </Link>
-                ) : null}
-                <ListingPhotoCredit cover={mainArticle.cover} align="right" />
-                {!coverData?.src ? (
-                  <Link href={mainArticle.href} className="group block">
-                    <h3 className={cn("mt-4", categoryFeaturedTitle[variant])}>
-                      {mainArticle.title || "Untitled"}
-                    </h3>
-                  </Link>
-                ) : null}
-                <ReadTimeLabel
-                  minutes={mainArticle.readTime}
-                  variant={variant}
-                />
-              </div>
-            );
-          })()}
+                      </Link>
+                      <ReadTimeLabel
+                        minutes={mainArticle.readTime}
+                        variant={variant}
+                      />
+                    </>
+                  ) : null}
+                </div>
+              );
+            })()}
         </article>
 
         <article
@@ -191,7 +209,8 @@ export default function FifthSection({
             title={rightCategory.title}
             href={`/category/${rightCategory.slug}`}
             variant={variant}
-            accentStyle="modern"
+            accentStyle="minimal"
+            icon="slash"
           />
 
           <div

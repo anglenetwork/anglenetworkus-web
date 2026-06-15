@@ -4,6 +4,7 @@ import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { sanityFetch } from "@/sanity/lib/fetch";
 import { articleFamilyBookmarksByIdsQuery } from "@/sanity/lib/article-family-queries";
 import { getCoverImage } from "@/sanity/lib/utils";
+import type { ArticleFamilyBookmarksByIdsQueryResult } from "@/sanity.types";
 
 export type UserBookmark = {
   id: number;
@@ -38,14 +39,7 @@ export async function listUserBookmarks(): Promise<UserBookmark[]> {
   const articleIds = data.map((bookmark) => bookmark.article_id);
   const articlesData: Record<
     string,
-    {
-      _id?: string;
-      _type?: string;
-      title?: string;
-      slug?: string;
-      date?: string | null;
-      cover?: Parameters<typeof getCoverImage>[0];
-    }
+    ArticleFamilyBookmarksByIdsQueryResult[number]
   > = {};
 
   try {

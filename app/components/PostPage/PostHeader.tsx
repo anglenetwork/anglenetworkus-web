@@ -1,9 +1,8 @@
-import Link from "next/link";
 import {
-  regularPostCategory,
   regularPostExcerpt,
   regularPostTitle,
 } from "@/app/lib/typography/posts";
+import { SectionHeader } from "@/app/components/ui/section-header";
 import { cn } from "@/lib/utils";
 import { REGULAR_POST_BYLINE_ROW_CLASS } from "./PostBody/constants";
 import ArticleActions from "./PostBody/ArticleActions";
@@ -37,13 +36,14 @@ export default function PostHeader({
   return (
     <header className="not-prose mb-8">
       {category && (
-        <div className="mb-1">
-          <Link
+        <div className="[&>div]:mb-2">
+          <SectionHeader
+            title={category.title}
             href={`/category/${category.slug}`}
-            className={regularPostCategory}
-          >
-            {category.title}
-          </Link>
+            variant="news"
+            accentStyle="minimal"
+            icon="slash"
+          />
         </div>
       )}
 

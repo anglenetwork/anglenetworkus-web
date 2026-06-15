@@ -5,6 +5,7 @@ import { getCoverImage } from "@/sanity/lib/utils";
 import { ImageRenderer } from "../ui/image-renderer";
 import type { ArticleFamilyCard as CardModel } from "@/app/lib/article-family/types";
 import { ReadTimeLabel } from "@/app/components/ui/read-time-label";
+import { SectionHeader } from "@/app/components/ui/section-header";
 import {
   articleFamilyCardTitle,
   articleFamilyCardTitleRail,
@@ -16,7 +17,6 @@ import {
   searchResultExcerpt,
   searchResultSponsorLabel,
   searchResultTitle,
-  searchResultTypeLabel,
 } from "@/app/lib/typography/search-page";
 
 export type ArticleFamilyCardLayout = "compact" | "large" | "rail" | "heroTile";
@@ -51,6 +51,27 @@ function editorialKicker(
   if (article._type === "opinion") return "Opinion";
   if (article._type === "analysis") return "Analysis";
   return fallbackTypeLabel || "Trending";
+}
+
+function searchResultSectionKicker(
+  article: CardModel,
+  label: string | null,
+): { title: string; href?: string } | null {
+  const categoryTitle = article.category?.title?.trim();
+  const categorySlug = article.category?.slug?.trim();
+  if (categoryTitle && categorySlug) {
+    return { title: categoryTitle, href: `/category/${categorySlug}` };
+  }
+  if (!label) return null;
+
+  const href =
+    article._type === "opinion"
+      ? "/opinion"
+      : article._type === "analysis"
+        ? "/analysis"
+        : undefined;
+
+  return { title: label, href };
 }
 
 export default function ArticleFamilyCard({
@@ -167,42 +188,109 @@ export default function ArticleFamilyCard({
 
   const editorialK = editorialKicker(article, label);
 
+  const thumbnail = imgUrl ? (
+    <div className={thumbWrap}>
+      <ImageRenderer
+        src={imgUrl}
+        alt={coverData?.alt || article.title || "Article image"}
+        unoptimized={coverData?.unoptimized}
+        className="object-cover object-center transition-opacity duration-200"
+        width={thumbImageWidth}
+        height={thumbImageHeight}
+        quality={50}
+        sizes={thumbSizes}
+        fill
+      />
+    </div>
+  ) : (
+    <div
+      className={cn(
+        "flex items-center justify-center rounded-lg bg-gray-200/80 font-sans text-[10px] text-gray-500",
+        layout === "rail"
+          ? "h-[72px] w-24 rounded-[4px]"
+          : enlargeMobileThumb
+            ? "h-[92px] w-[115px] md:h-[174px] md:w-[216px]"
+            : "h-[77px] w-24 md:h-[174px] md:w-[216px]",
+      )}
+    >
+      No Image
+    </div>
+  );
+
+  if (isSearchVariant) {
+    const kicker = searchResultSectionKicker(article, label);
+
+    return (
+      <article className="group">
+        <div className={cn("flex items-start rounded-lg", linkGap)}>
+          <Link
+            href={article.href}
+            className="shrink-0"
+            aria-label={`Read article: ${article.title}`}
+          >
+            {thumbnail}
+          </Link>
+          <div className="min-w-0 flex-1">
+            {kicker ? (
+              <div className="[&>div]:mb-2">
+                <SectionHeader
+                  title={kicker.title}
+                  href={kicker.href}
+                  variant="news"
+                  accentStyle="minimal"
+                  icon="slash"
+                />
+              </div>
+            ) : null}
+            {article._type === "sponsored" && sponsorName ? (
+              <p className={cn(searchResultSponsorLabel, "mb-2")}>
+                {sponsorName}
+              </p>
+            ) : null}
+            <Link href={article.href} className="block">
+              <h3 className={titleClass}>{article.title}</h3>
+            </Link>
+            {showExcerpt && article.excerpt ? (
+              <p
+                className={cn(
+                  searchResultExcerpt,
+                  hideExcerptOnMobile && "max-md:hidden",
+                )}
+              >
+                {article.excerpt}
+              </p>
+            ) : null}
+            {showAuthor && article.author?.name ? (
+              <p
+                className={cn(
+                  searchResultAuthor,
+                  hideAuthorOnMobile && "max-md:hidden",
+                )}
+              >
+                {article.author.name}
+              </p>
+            ) : null}
+            {showAnalysisFocus && (
+              <p className="mb-1 line-clamp-2 text-neutral-600 text-xs">
+                {article.analysisFocus}
+              </p>
+            )}
+            {showDate && dateStr ? (
+              <p className={searchResultDate}>{dateStr}</p>
+            ) : null}
+          </div>
+        </div>
+      </article>
+    );
+  }
+
   return (
     <article className="group">
       <Link
         href={article.href}
         className={`flex cursor-pointer items-start rounded-lg transition-colors duration-200 ${linkGap}`}
       >
-        <div className="flex-shrink-0">
-          {imgUrl ? (
-            <div className={thumbWrap}>
-              <ImageRenderer
-                src={imgUrl}
-                alt={coverData?.alt || article.title || "Article image"}
-                unoptimized={coverData?.unoptimized}
-                className="object-cover object-center transition-opacity duration-200"
-                width={thumbImageWidth}
-                height={thumbImageHeight}
-                quality={50}
-                sizes={thumbSizes}
-                fill
-              />
-            </div>
-          ) : (
-            <div
-              className={cn(
-                "flex items-center justify-center rounded-lg bg-gray-200/80 font-sans text-[10px] text-gray-500",
-                layout === "rail"
-                  ? "h-[72px] w-24 rounded-[4px]"
-                  : enlargeMobileThumb
-                    ? "h-[92px] w-[115px] md:h-[174px] md:w-[216px]"
-                    : "h-[77px] w-24 md:h-[174px] md:w-[216px]",
-              )}
-            >
-              No Image
-            </div>
-          )}
-        </div>
+        <div className="flex-shrink-0">{thumbnail}</div>
         <div className="min-w-0 flex-1">
           {kickerMode === "editorial" ? (
             <p className="mb-1 font-bold font-sans text-[10px] text-editorialKicker uppercase tracking-wide">
@@ -216,24 +304,12 @@ export default function ArticleFamilyCard({
               )}
             >
               {label && (
-                <span
-                  className={
-                    isSearchVariant
-                      ? searchResultTypeLabel
-                      : "font-bold text-[10px] text-sectionAccent uppercase tracking-wider"
-                  }
-                >
+                <span className="font-bold text-[10px] text-sectionAccent uppercase tracking-wider">
                   {label}
                 </span>
               )}
               {article._type === "sponsored" && sponsorName && (
-                <span
-                  className={
-                    isSearchVariant
-                      ? searchResultSponsorLabel
-                      : "font-semibold text-[10px] text-amber-800"
-                  }
-                >
+                <span className="font-semibold text-[10px] text-amber-800">
                   {sponsorName}
                 </span>
               )}
@@ -271,15 +347,7 @@ export default function ArticleFamilyCard({
             </p>
           )}
           {showDate && dateStr && (
-            <p
-              className={
-                isSearchVariant
-                  ? searchResultDate
-                  : "mt-1 font-sans text-neutral-500 text-xs"
-              }
-            >
-              {dateStr}
-            </p>
+            <p className="mt-1 font-sans text-neutral-500 text-xs">{dateStr}</p>
           )}
         </div>
       </Link>

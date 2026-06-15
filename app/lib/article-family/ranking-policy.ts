@@ -10,7 +10,7 @@ export const POST_ONLY_RANKING_TYPES = ["post"] as const;
 export const DEFAULT_EDITORIAL_RANKING_WINDOW = "7d" as const;
 
 /** Fourth-section Most Read: standard posts by 7-day views. */
-export const HOMEPAGE_FOURTH_SECTION_MOST_READ_LIMIT = 4 as const;
+export const HOMEPAGE_FOURTH_SECTION_MOST_READ_LIMIT = 5 as const;
 
 export const RANKING_TIEBREAK_RULE =
   "last_viewed_at_then_published_at" as const;

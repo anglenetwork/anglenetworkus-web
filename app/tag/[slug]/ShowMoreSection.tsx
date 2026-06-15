@@ -60,7 +60,7 @@ export default function ShowMoreSection({
   };
 
   return (
-    <SitePageWidth className="mt-16">
+    <SitePageWidth className="mt-8">
       <SectionHeader title="In case you missed it..." accentStyle="modern" />
       <div className="space-y-0 divide-y divide-dotted divide-border border-b border-dotted">
         {visiblePosts.map((post) => {

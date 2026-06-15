@@ -11,4 +11,4 @@ export const HOMEPAGE_FIFTH_SECTION_CATEGORIES = {
 export const HOMEPAGE_FIFTH_SECTION_LEFT_FETCH_LIMIT = 1;
 
 /** Right column: small thumbnail rows. */
-export const HOMEPAGE_FIFTH_SECTION_RIGHT_FETCH_LIMIT = 4;
+export const HOMEPAGE_FIFTH_SECTION_RIGHT_FETCH_LIMIT = 5;

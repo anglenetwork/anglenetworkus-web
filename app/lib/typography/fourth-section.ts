@@ -19,4 +19,4 @@ export const mostReadFeedSeeAllLink =
   "font-bold font-sans text-base text-news-text leading-none tracking-normal";
 
 /** FourthSection — Most Read feed item headline */
-export const mostReadFeedHeadline = `font-semibold font-sans text-base text-news-text leading-snug tracking-tight md:text-lg ${homepageArticleTitleLink}`;
+export const mostReadFeedHeadline = `font-semibold font-sans text-lg text-news-text leading-snug tracking-normal md:text-base ${homepageArticleTitleLink}`;

@@ -35,7 +35,12 @@ export function TagMainSection({
 
   return (
     <section>
-      <SectionHeader title={tagTitle} accentStyle="modern" />
+      <SectionHeader
+        title={tagTitle}
+        accentStyle="modern"
+        size="large"
+        variant="news"
+      />
 
       <div className="grid grid-cols-1 gap-8 lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)] lg:gap-10">
         <div className="min-w-0">

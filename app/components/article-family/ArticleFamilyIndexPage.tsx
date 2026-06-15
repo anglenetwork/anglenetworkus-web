@@ -3,10 +3,7 @@ import { cn } from "@/lib/utils";
 import { ListingPhotoCredit } from "@/app/helpers";
 import ArticleFamilyCard from "./ArticleFamilyCard";
 import type { ArticleFamilyCard as CardModel } from "@/app/lib/article-family/types";
-import {
-  AnalysisAuthorLine,
-  AnalysisListSection,
-} from "./AnalysisRowCard";
+import { AnalysisAuthorLine, AnalysisListSection } from "./AnalysisRowCard";
 import AnalysisMoreSection from "./AnalysisMoreSection";
 import {
   ANALYSIS_HERO_COUNT,
@@ -95,7 +92,8 @@ function AnalysisLeadCard({
     article.cover as Parameters<typeof getCoverImage>[0],
     article.title || `Featured ${family}`,
   );
-  const featuredLabel = family === "opinion" ? "Featured opinion" : "Featured analysis";
+  const featuredLabel =
+    family === "opinion" ? "Featured opinion" : "Featured analysis";
 
   return (
     <article className="space-y-4">
@@ -181,10 +179,7 @@ function OpinionColumnCard({
 
   return (
     <article
-      className={cn(
-        "py-6 first:pt-0 last:pb-0",
-        padded && "lg:px-6 lg:py-0",
-      )}
+      className={cn("py-6 first:pt-0 last:pb-0", padded && "lg:px-6 lg:py-0")}
     >
       <Link
         href={article.href}
@@ -198,9 +193,7 @@ function OpinionColumnCard({
           article={article}
           className={cn(
             "relative shrink-0 overflow-hidden rounded-sm bg-neutral-950",
-            isFeatured
-              ? "aspect-[16/9] w-full"
-              : "h-20 w-28",
+            isFeatured ? "aspect-[16/9] w-full" : "h-20 w-28",
           )}
           sizes={isFeatured ? "(max-width: 1024px) 100vw, 33vw" : "112px"}
         />
@@ -265,10 +258,7 @@ function EditorialTwoColumnHero({
             <h2 className="mb-6 font-bold font-sans text-lg text-neutral-900 md:mb-8 md:text-xl">
               {sidebarTitle}
             </h2>
-            <AnalysisListSection
-              articles={sidebarArticles}
-              variant="sidebar"
-            />
+            <AnalysisListSection articles={sidebarArticles} variant="sidebar" />
           </div>
         ) : null}
       </div>
@@ -462,7 +452,11 @@ export default function ArticleFamilyIndexPage({
         <SectionHeader
           title={title}
           accentStyle="modern"
-          size={variant === "analysis" || variant === "opinion" ? "large" : "regular"}
+          size={
+            variant === "analysis" || variant === "opinion"
+              ? "large"
+              : "regular"
+          }
         />
         {description && variant !== "analysis" && variant !== "opinion" ? (
           <p className="-mt-5 max-w-2xl font-sans text-neutral-600 text-sm md:text-base">

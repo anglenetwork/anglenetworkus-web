@@ -30,6 +30,9 @@ import { trackTagView } from "@/app/lib/analytics/track-tag-view";
 import ShowMoreSection from "./ShowMoreSection";
 import { TagMainSection, type TagMainPost } from "./components/TagMainSection";
 
+/** Featured hero + sidebar rows in TagMainSection (1 featured + this many sidebar). */
+const TAG_MAIN_SIDEBAR_POST_COUNT = 5;
+
 // Revalidate this page every 60s
 export const revalidate = 60;
 
@@ -177,8 +180,8 @@ export default async function TagPage({
   })) as Array<TagMainPost & Record<string, unknown>>;
 
   const featuredPost = posts[0];
-  const sidebarPosts = posts.slice(1, 5);
-  const remainingPosts = posts.slice(5);
+  const sidebarPosts = posts.slice(1, 1 + TAG_MAIN_SIDEBAR_POST_COUNT);
+  const remainingPosts = posts.slice(1 + TAG_MAIN_SIDEBAR_POST_COUNT);
 
   const breadcrumbLd = buildBreadcrumbJsonLd([
     { name: "Home", path: "/" },

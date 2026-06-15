@@ -145,7 +145,8 @@ export default function SeventhSection({
       <SectionHeader
         title="Featured Stories"
         variant="news"
-        accentStyle="modern"
+        accentStyle="minimal"
+        icon="slash"
       />
 
       <div className="relative">

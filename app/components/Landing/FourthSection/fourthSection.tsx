@@ -129,7 +129,8 @@ export default function FourthSection({
         title={category.title}
         href={category.href}
         variant="news"
-        accentStyle="modern"
+        accentStyle="minimal"
+        icon="slash"
       />
 
       <div className="grid grid-cols-1 lg:grid-cols-3 lg:divide-x lg:divide-dotted lg:divide-news-border">
@@ -150,7 +151,7 @@ export default function FourthSection({
         </div>
 
         {mostRead.length > 0 ? (
-          <div className="border-news-border border-t border-dotted py-6 lg:border-t-0 lg:px-6 lg:py-6">
+          <div className="border-news-border border-t border-dotted bg-news-background py-6 lg:border-t-0 lg:px-6 lg:py-6">
             <MostReadFeed items={mostRead} />
           </div>
         ) : null}

@@ -7,7 +7,7 @@ import { SectionHeader } from "@/app/components/ui/section-header";
 import { Button } from "@/components/ui/button";
 import { ImageRenderer } from "../ui/image-renderer";
 import type { Article } from "./types";
-import { categorySecondaryRowTitle } from "@/app/lib/typography/second-section";
+import { categoryLatestArticleTitle } from "@/app/lib/typography/category-page";
 import { ReadTimeLabel } from "@/app/components/ui/read-time-label";
 
 interface LatestArticlesSectionProps {
@@ -43,7 +43,7 @@ function LatestArticleItem({ article }: { article: Article }) {
           </div>
         ) : null}
         <div className="min-w-0 flex-1">
-          <h3 className={categorySecondaryRowTitle.news}>{article.title}</h3>
+          <h3 className={categoryLatestArticleTitle}>{article.title}</h3>
           {article.excerpt ? (
             <p className="mt-2 line-clamp-2 text-pretty font-sans text-news-muted text-sm leading-relaxed">
               {article.excerpt}
@@ -75,7 +75,11 @@ export function LatestArticlesSection({
 
   const content = (
     <>
-      <SectionHeader title="Latest Articles" accentStyle="modern" variant="news" />
+      <SectionHeader
+        title="Latest Articles"
+        accentStyle="modern"
+        variant="news"
+      />
 
       <div className="flex flex-col divide-y divide-dotted divide-news-border">
         {articlesToShow.map((article, index) => (

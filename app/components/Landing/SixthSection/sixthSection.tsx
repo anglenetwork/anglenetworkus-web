@@ -186,7 +186,8 @@ function FeaturedColumn({
         title={categoryTitle}
         href={categoryHref}
         variant={variant}
-        accentStyle="modern"
+        accentStyle="minimal"
+        icon="slash"
       />
 
       <div>

@@ -10,9 +10,7 @@ export async function GET(request: NextRequest) {
     const rawLimit = parseInt(searchParams.get("limit") || "10", 10);
     const start = Number.isFinite(rawStart) && rawStart >= 0 ? rawStart : 0;
     const limit =
-      Number.isFinite(rawLimit) && rawLimit >= 1
-        ? Math.min(rawLimit, 20)
-        : 10;
+      Number.isFinite(rawLimit) && rawLimit >= 1 ? Math.min(rawLimit, 20) : 10;
     const end = start + limit;
 
     const rows = await sanityFetch({
@@ -22,7 +20,9 @@ export async function GET(request: NextRequest) {
 
     const articles = (Array.isArray(rows) ? rows : [])
       .map((row) => normalizeArticleFamilyCard(row))
-      .filter((article): article is NonNullable<typeof article> => article != null);
+      .filter(
+        (article): article is NonNullable<typeof article> => article != null,
+      );
 
     return NextResponse.json({ articles });
   } catch (error) {

@@ -14,6 +14,13 @@ export const modernSectionTitleLarge = {
   dark: "font-bold font-sans text-4xl text-white leading-tight tracking-tight md:text-5xl",
 } as const;
 
+/** SectionHeader minimal — uppercase base-size kicker title */
+export const minimalSectionTitle = {
+  light: "font-bold font-sans text-base uppercase tracking-normal text-black",
+  news: "font-bold font-sans text-base uppercase tracking-normal text-black",
+  dark: "font-bold font-sans text-base uppercase tracking-normal text-white",
+} as const;
+
 /** SectionHeader small-dot — uppercase kicker title (regular size) */
 export const smallDotSectionTitle = {
   light:
