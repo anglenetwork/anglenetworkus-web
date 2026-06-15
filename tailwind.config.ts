@@ -20,7 +20,7 @@ const config: Config = {
         24: "repeat(24, minmax(0, 1fr))",
       },
       fontFamily: {
-        /** Primary UI sans (Archivo) */
+        /** Primary UI sans (IBM Plex Sans) */
         sans: ["var(--font-sans)", "ui-sans-serif", "system-ui", "sans-serif"],
         /** Article body / long-form reading (Spectral) */
         body: ["var(--font-body)", "Georgia", "serif"],

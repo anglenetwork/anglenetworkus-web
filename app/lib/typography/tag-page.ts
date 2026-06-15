@@ -6,8 +6,9 @@ export {
   tagReadTimeLabel,
 } from "./read-time";
 
-/** Tag page — TagFeaturedArticle lead title */
-export const tagFeaturedTitle = `mt-2 text-start font-sans font-semibold text-2xl text-neutral-900 leading-snug tracking-tight md:text-3xl ${articleTitleLink}`;
+/** Tag page — TagFeaturedArticle lead title on image overlay */
+export const tagFeaturedOverlayTitle =
+  "line-clamp-4 font-sans text-xl font-semibold leading-snug tracking-tight text-white md:text-2xl xl:text-3xl";
 
 /** Tag page — TagArticleItem row with thumbnail */
 export const tagArticleRowTitle = `font-normal font-sans text-lg text-neutral-900 leading-normal tracking-normal ${articleTitleLink}`;
@@ -25,4 +26,4 @@ const tagSidebarTrendingTitle = `line-clamp-2 font-medium text-gray-900 text-sm 
 const tagPostListTitle = `mb-2 font-semibold text-gray-900 text-xl transition-colors hover:text-blue-600 ${articleTitleLink}`;
 
 /** Tag page — ShowMoreSection full-width row */
-export const tagShowMoreTitle = `font-sans font-semibold text-2xl text-neutral-900 leading-snug tracking-tight ${articleTitleLink}`;
+export const tagShowMoreTitle = `font-medium font-sans text-xl text-news-text leading-snug tracking-normal ${articleTitleLink}`;

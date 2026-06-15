@@ -346,7 +346,7 @@ export const homepageFourthSectionMostReadFallbackQuery = `
 } | order(
   (recencyBoost + editorialBoost) desc,
   publishedAt desc
-)[0...4]
+)[0...5]
 `;
 
 const postBySlugQuery = defineQuery(`

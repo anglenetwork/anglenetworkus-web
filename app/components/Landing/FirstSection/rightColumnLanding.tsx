@@ -1,8 +1,7 @@
 import Link from "next/link";
-import { cn } from "@/lib/utils";
 import { getCoverImage } from "@/sanity/lib/utils";
 import { ImageRenderer } from "../../ui/image-renderer";
-import { categoryFeaturedTitle } from "@/app/lib/typography/second-section";
+import { sideStoryTitle } from "@/app/lib/typography/first-section";
 
 interface Post {
   _id: string;
@@ -53,14 +52,7 @@ export function RightColumnLanding({ sideStories }: RightColumnLandingProps) {
               );
             })()}
             <Link href={`/post/${post.slug}`} className="group block">
-              <h3
-                className={cn(
-                  categoryFeaturedTitle.news,
-                  "xl:text-lg xl:leading-snug",
-                )}
-              >
-                {post.title}
-              </h3>
+              <h3 className={sideStoryTitle}>{post.title}</h3>
             </Link>
           </article>
         ))}

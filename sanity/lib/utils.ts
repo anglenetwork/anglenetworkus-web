@@ -50,7 +50,7 @@ const DEFAULT_ALT_TEXT =
 export function getCoverImage(
   cover:
     | {
-        source?: "asset" | "external";
+        source?: "asset" | "external" | null;
         externalUrl?: string | null;
         image?: SanityImageSource | null;
         alt?: string | null;

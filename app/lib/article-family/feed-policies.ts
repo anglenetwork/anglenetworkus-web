@@ -45,7 +45,18 @@ export const FEED_SPONSORED_ONLY_TYPES = [
   "sponsored",
 ] as const satisfies readonly ArticleFamilyDocType[];
 
-/** Build a GROQ `_type in [...]` literal from feed policy constants. */
-export function groqTypeInList(types: readonly ArticleFamilyDocType[]): string {
-  return types.map((type) => `"${type}"`).join(", ");
-}
+/**
+ * Static GROQ type literals for Sanity typegen.
+ * Must be plain string constants — no array access or runtime joins.
+ * Keep aligned with the FEED_*_TYPES arrays above.
+ */
+export const GROQ_TYPE_POST = "post" as const;
+export const GROQ_TYPE_OPINION = "opinion" as const;
+export const GROQ_TYPE_ANALYSIS = "analysis" as const;
+export const GROQ_TYPE_SPONSORED = "sponsored" as const;
+
+/** Comma-separated quoted types for `_type in [...]` GROQ filters. */
+export const GROQ_IN_MIXED_EDITORIAL_TYPES = '"post", "opinion", "analysis"';
+export const GROQ_IN_TOPIC_CATEGORY_TAG_TYPES = '"post", "analysis"';
+export const GROQ_IN_BOOKMARK_HYDRATION_TYPES =
+  '"post", "opinion", "analysis", "sponsored"';

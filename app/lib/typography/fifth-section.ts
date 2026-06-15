@@ -17,4 +17,4 @@ export const promoCtaButton =
 
 /** FifthSection — left column featured story title on image overlay */
 export const fifthSectionFeaturedOverlayTitle =
-  "line-clamp-4 font-sans text-xl font-semibold leading-snug tracking-tight text-white md:text-2xl";
+  "line-clamp-4 font-sans text-xl font-semibold leading-snug tracking-tight text-white md:text-2xl xl:text-3xl";

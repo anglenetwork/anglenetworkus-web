@@ -34,8 +34,7 @@ function OpinionColumnCard({ article }: { article: ArticleFamilyCard }) {
           </h3>
           {authorName || readTimeLabel ? (
             <p className={cn(readTimeLabelClassName("inline"), "text-black")}>
-              By{" "}
-              {[authorName, readTimeLabel].filter(Boolean).join(" · ")}
+              By {[authorName, readTimeLabel].filter(Boolean).join(" · ")}
             </p>
           ) : null}
         </div>
@@ -79,13 +78,14 @@ export default async function EditorialRailsSection() {
     <section>
       <SectionHeader
         title="Opinion"
-        accentStyle="modern"
+        accentStyle="minimal"
+        icon="slash"
         href="/opinion"
         variant="news"
       />
 
-      <div className="rounded-lg bg-news-border px-4 py-6 md:px-6 md:py-8">
-        <div className="grid grid-cols-1 divide-y divide-dotted divide-white/30 lg:grid-cols-3 lg:divide-x lg:divide-y-0">
+      <div className="rounded-lg bg-news-background px-4 py-6 md:px-6 md:py-8">
+        <div className="grid grid-cols-1 divide-y divide-dotted divide-news-border lg:grid-cols-3 lg:divide-x lg:divide-y-0">
           {articles.map((article) => (
             <OpinionColumnCard key={article._id} article={article} />
           ))}

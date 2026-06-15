@@ -3,11 +3,9 @@ import { cn } from "@/lib/utils";
 import { getCoverImage } from "@/sanity/lib/utils";
 import { ImageRenderer } from "../ui/image-renderer";
 import type { ArticleSidebarPost } from "@/app/lib/article-family/types";
-import {
-  postSidebarListTitle,
-  postSidebarSectionTitle,
-} from "@/app/lib/typography/post-page";
+import { postSidebarListTitle } from "@/app/lib/typography/post-page";
 import { ReadTimeLabel } from "@/app/components/ui/read-time-label";
+import { SectionHeader } from "@/app/components/ui/section-header";
 
 interface PostSelectedNewsProps {
   latestNews: ArticleSidebarPost[];
@@ -22,7 +20,12 @@ export default function PostSelectedNews({
 
   return (
     <div className="mx-auto w-full max-w-md">
-      <h2 className={postSidebarSectionTitle}>{title}</h2>
+      <SectionHeader
+        title={title}
+        variant="news"
+        accentStyle="minimal"
+        icon="arrow-up-right"
+      />
 
       <div className="flex flex-col">
         {latestNews.slice(0, 4).map((post: ArticleSidebarPost, index) => {

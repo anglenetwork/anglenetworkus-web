@@ -1,4 +1,3 @@
-/* eslint-disable react/no-unescaped-entities -- legal prose */
 import Link from "next/link";
 import {
   privacyPolicyConfig,
