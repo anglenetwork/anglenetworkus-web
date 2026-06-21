@@ -28,6 +28,8 @@ export interface CategoryPageProps {
   categoryDescription?: string;
   latestArticles: Article[];
   mostReadArticles: Article[];
+  headlineRowArticles?: Article[];
+  missedItArticles?: Article[];
   featuredArticles?: {
     leftColumn: Article[];
     centerArticle: Article;

@@ -12,6 +12,7 @@ export const REMOTE_PATTERN_HOSTS = [
   "commons.wikimedia.org",
   "pixabay.com",
   "cdn.pixabay.com",
+  "zmpglszxzgwsnvwhsxiv.supabase.co",
 ] as const;
 
 const WIKIMEDIA_HOST_RE = /(^|\.)upload\.wikimedia\.org$/;

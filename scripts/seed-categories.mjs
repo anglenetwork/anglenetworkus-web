@@ -1,4 +1,9 @@
 // scripts/seed-categories.mjs
+//
+// DEPRECATED: use news-ingestion taxonomy reseed instead.
+//   cd ../news-ingestion && npm run taxonomy:reseed:dry-run
+//   cd ../news-ingestion && npm run taxonomy:reseed
+// This legacy script deletes all posts before reseeding categories.
 import { createClient } from "@sanity/client";
 import { config } from "dotenv";
 import { fileURLToPath } from "url";

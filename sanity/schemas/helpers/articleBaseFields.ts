@@ -107,7 +107,8 @@ export const articleBodyFields = [
     name: "body",
     title: "Article Body",
     type: "blockContent",
-    description: "Canonical body content stream composed in reading order.",
+    description:
+      "Canonical body content stream composed in reading order. Use Tweet/X Embed blocks for social posts (paste URL + numeric ID); raw embed HTML is not supported.",
     validation: (rule) =>
       rule.custom((value, ctx) => {
         const doc = ctx.document as any;

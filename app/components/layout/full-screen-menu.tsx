@@ -5,6 +5,10 @@ import { SearchBar } from "../ui/search-bar";
 import Link from "next/link";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
+import {
+  CANONICAL_NAV_CATEGORIES,
+  CANONICAL_NAV_TAGS,
+} from "@/app/lib/nav/canonical-fallbacks";
 
 interface Category {
   slug: string;
@@ -23,20 +27,6 @@ const menuNavListClass = "flex flex-col gap-4";
 /** Tags and Company nav links */
 const menuSecondaryLinkClass =
   "font-medium font-sans text-lg transition-colors hover:text-primary xl:text-xl";
-
-const menuTagFallbacks = [
-  { slug: "video", title: "Video" },
-  { slug: "shop", title: "Shop" },
-  { slug: "health", title: "Health" },
-  { slug: "weather", title: "Weather" },
-  { slug: "sports", title: "Sports" },
-  { slug: "morning-news", title: "Morning News" },
-  { slug: "evening-report", title: "Evening Report" },
-  { slug: "weekend-edition", title: "Weekend Edition" },
-  { slug: "investigative-reports", title: "Investigative Reports" },
-  { slug: "special-coverage", title: "Special Coverage" },
-  { slug: "documentary-series", title: "Documentary Series" },
-] as const;
 
 function EditorialShortcuts({
   onClose,
@@ -108,6 +98,10 @@ export function FullScreenMenu({
       return true;
     });
   }, [tags, showsTags]);
+
+  const displayCategories =
+    categories.length > 0 ? categories : CANONICAL_NAV_CATEGORIES;
+  const displayTags = menuTags.length > 0 ? menuTags : CANONICAL_NAV_TAGS;
 
   useEffect(() => {
     const frameId = requestAnimationFrame(() => setVisible(true));
@@ -183,39 +177,31 @@ export function FullScreenMenu({
             <div className="grid grid-cols-1 gap-8 md:grid-cols-2 md:gap-12 lg:grid-cols-3">
               <div>
                 <nav className="flex flex-col gap-4">
-                  {categories.length > 0 ? (
-                    categories.map((category) => (
-                      <Link
-                        key={category.slug}
-                        href={`/category/${category.slug}`}
-                        onClick={onClose}
-                        className="font-bold font-sans text-2xl capitalize transition-colors hover:text-primary xl:text-3xl"
-                      >
-                        {category.name}
-                      </Link>
-                    ))
-                  ) : (
-                    <span className="text-muted-foreground">
-                      No categories available
-                    </span>
-                  )}
+                  {displayCategories.map((category) => (
+                    <Link
+                      key={category.slug}
+                      href={`/category/${category.slug}`}
+                      onClick={onClose}
+                      className="font-bold font-sans text-2xl capitalize transition-colors hover:text-primary xl:text-3xl"
+                    >
+                      {category.name}
+                    </Link>
+                  ))}
                 </nav>
               </div>
 
               <div>
                 <nav className={menuNavListClass}>
-                  {(menuTags.length > 0 ? menuTags : menuTagFallbacks).map(
-                    (tag) => (
-                      <Link
-                        key={tag.slug}
-                        href={menuTags.length > 0 ? `/tag/${tag.slug}` : "#"}
-                        onClick={onClose}
-                        className={menuSecondaryLinkClass}
-                      >
-                        {tag.title}
-                      </Link>
-                    ),
-                  )}
+                  {displayTags.map((tag) => (
+                    <Link
+                      key={tag.slug}
+                      href={`/tag/${tag.slug}`}
+                      onClick={onClose}
+                      className={menuSecondaryLinkClass}
+                    >
+                      {tag.title}
+                    </Link>
+                  ))}
                 </nav>
                 <EditorialShortcuts
                   onClose={onClose}

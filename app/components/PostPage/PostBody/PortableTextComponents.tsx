@@ -27,6 +27,7 @@ import {
 import ArticleImageFigure from "./ArticleImageFigure";
 import { buildBodyImageData } from "./media-utils";
 import { getVideoEmbedSrc } from "./video-utils";
+import { TweetEmbedBlock } from "./TweetEmbedBlock";
 import { cn } from "@/lib/utils";
 import type { ArticleImageSource, PortableTextBlockValue } from "./types";
 
@@ -205,6 +206,15 @@ export const portableTextComponents: PortableTextComponents = {
             </figcaption>
           )}
         </figure>
+      );
+    },
+    tweetEmbed: ({ value }: PortableTextComponentProps) => {
+      const tweetValue = asRecord(value);
+      return (
+        <TweetEmbedBlock
+          tweetId={asString(tweetValue.tweetId)}
+          caption={asString(tweetValue.caption)}
+        />
       );
     },
   },

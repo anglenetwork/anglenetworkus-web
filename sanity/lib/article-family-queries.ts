@@ -33,6 +33,13 @@ const articleFamilyBody = `
     _type == "editorialImage" => {
       ${imageFieldsProjection},
       layout
+    },
+    _type == "tweetEmbed" => {
+      _type,
+      _key,
+      url,
+      tweetId,
+      caption
     }
   }
 `;

@@ -3,12 +3,26 @@ import { FeatureHero } from "./FeatureHero";
 import { FeatureSideItem } from "./FeatureSideItem";
 import type { Article } from "./types";
 import { SitePageWidth } from "@/app/components/layout/site-page-width";
+import {
+  NewsHeadlineRow,
+  type NewsHeadlineRowItem,
+} from "@/app/components/ui/news-headline-row";
 
 interface FeaturedArticlesSectionProps {
   featuredArticles: {
     leftColumn: Article[];
     centerArticle: Article;
     rightColumn: Article[];
+  };
+  headlineRowArticles?: Article[];
+}
+
+function articleToHeadlineRowItem(article: Article): NewsHeadlineRowItem {
+  return {
+    id: article.id,
+    title: article.title,
+    href: article.href ?? `/post/${article.slug}`,
+    readTimeMinutes: article.readTime,
   };
 }
 
@@ -43,6 +57,7 @@ function SideArticleList({
 
 export function FeaturedArticlesSection({
   featuredArticles,
+  headlineRowArticles,
 }: FeaturedArticlesSectionProps) {
   const variant = "news" as const;
   const sideArticles = [
@@ -51,8 +66,8 @@ export function FeaturedArticlesSection({
   ];
 
   return (
-    <section className="border-news-border border-b bg-news-border">
-      <SitePageWidth className="py-12">
+    <section className="bg-news-surface">
+      <SitePageWidth className="py-6">
         <div className="lg:hidden">
           <FeatureHero
             article={featuredArticles.centerArticle}
@@ -89,6 +104,17 @@ export function FeaturedArticlesSection({
           </div>
         </div>
       </SitePageWidth>
+
+      {headlineRowArticles && headlineRowArticles.length > 0 ? (
+        <SitePageWidth className="mt-8">
+          <NewsHeadlineRow
+            items={headlineRowArticles.map(articleToHeadlineRowItem)}
+            columns={4}
+            variant="news"
+            ariaLabel="More category headlines"
+          />
+        </SitePageWidth>
+      ) : null}
     </section>
   );
 }

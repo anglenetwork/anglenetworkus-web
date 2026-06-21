@@ -27,11 +27,19 @@ import { articleFamilyHref } from "@/app/lib/article-family/routes";
 import type { ArticleFamilyDocType } from "@/app/lib/article-family/types";
 import { SitePageWidth } from "@/app/components/layout/site-page-width";
 import { trackTagView } from "@/app/lib/analytics/track-tag-view";
+import { getCoverImage } from "@/sanity/lib/utils";
+import {
+  NewsCardRowSection,
+  type NewsCardRowItem,
+} from "@/app/components/ui/news-card-row-section";
 import ShowMoreSection from "./ShowMoreSection";
 import { TagMainSection, type TagMainPost } from "./components/TagMainSection";
 
 /** Featured hero + sidebar rows in TagMainSection (1 featured + this many sidebar). */
 const TAG_MAIN_SIDEBAR_POST_COUNT = 5;
+
+/** Card row after the main tag block (same pattern as category pages). */
+const TAG_MISSED_IT_COUNT = 4;
 
 // Revalidate this page every 60s
 export const revalidate = 60;
@@ -154,6 +162,25 @@ async function getTagData(slug: string) {
   };
 }
 
+function postToNewsCardRowItem(
+  post: TagMainPost & Record<string, unknown>,
+): NewsCardRowItem {
+  const coverData = getCoverImage(
+    post.cover as Parameters<typeof getCoverImage>[0],
+    post.title || "Article image",
+  );
+
+  return {
+    id: post._id,
+    title: post.title || "Untitled",
+    href: post.href,
+    image: coverData?.src ?? "",
+    imageAlt: coverData?.alt,
+    imageUnoptimized: coverData?.unoptimized,
+    readTimeMinutes: post.readTime,
+  };
+}
+
 export default async function TagPage({
   params,
 }: {
@@ -181,7 +208,13 @@ export default async function TagPage({
 
   const featuredPost = posts[0];
   const sidebarPosts = posts.slice(1, 1 + TAG_MAIN_SIDEBAR_POST_COUNT);
-  const remainingPosts = posts.slice(1 + TAG_MAIN_SIDEBAR_POST_COUNT);
+  const missedItStart = 1 + TAG_MAIN_SIDEBAR_POST_COUNT;
+  const missedItPosts = posts.slice(
+    missedItStart,
+    missedItStart + TAG_MISSED_IT_COUNT,
+  );
+  const latestPosts = posts.slice(missedItStart + TAG_MISSED_IT_COUNT);
+  const tagTitle = tag.title || "Tag";
 
   const breadcrumbLd = buildBreadcrumbJsonLd([
     { name: "Home", path: "/" },
@@ -202,8 +235,22 @@ export default async function TagPage({
           ) : null}
         </SitePageWidth>
 
-        {remainingPosts.length > 0 ? (
-          <ShowMoreSection posts={remainingPosts as any} tagSlug={slug} />
+        {missedItPosts.length > 0 ? (
+          <SitePageWidth className="mt-8">
+            <NewsCardRowSection
+              title="In case you missed it"
+              items={missedItPosts.map(postToNewsCardRowItem)}
+              columns={4}
+              minItems={1}
+            />
+          </SitePageWidth>
+        ) : null}
+
+        {latestPosts.length > 0 ? (
+          <ShowMoreSection
+            posts={latestPosts as any}
+            tagTitle={tagTitle}
+          />
         ) : null}
       </main>
     </>

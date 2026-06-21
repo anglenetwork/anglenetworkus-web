@@ -4,7 +4,7 @@ import { HomepageBelowFoldLazy } from "./components/Landing/homepage-below-fold-
 import { HOMEPAGE_BELOW_FOLD_SECTION_GAP } from "./components/Landing/homepage-below-fold-spacing";
 import EditorialRailsSection from "./components/article-family/EditorialRailsSection";
 import { JsonLdScript } from "./components/seo/json-ld-script";
-import dynamic from "next/dynamic";
+import nextDynamic from "next/dynamic";
 import { toPlainText } from "next-sanity";
 import { sanityFetchStatic } from "@/sanity/lib/fetch";
 import * as demo from "@/sanity/lib/demo";
@@ -46,6 +46,8 @@ import {
 } from "./lib/homepage-fifth-section";
 import { SitePageWidth } from "@/app/components/layout/site-page-width";
 
+export const dynamic = "force-dynamic";
+
 type HeroPostWithCategory = {
   _id: string;
   slug?: string | null;
@@ -82,7 +84,7 @@ function PromoSectionPlaceholder() {
   );
 }
 
-const PromoSection = dynamic(
+const PromoSection = nextDynamic(
   () =>
     import("./components/ui/thirdSection").then((mod) => ({
       default: mod.ThirdSection,

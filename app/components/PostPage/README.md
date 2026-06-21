@@ -80,7 +80,7 @@ What we display
 Data source and algorithm
 
 - Source component: `app/post/[slug]/page.tsx`
-- Query: `postQueryWithCategoryRelated` from `sanity/lib/queries.ts`
+- Query: `relatedContentForPostQuery` from `sanity/lib/article-family-queries.ts`
   - Filters posts by the current post’s category
   - Excludes the current post
   - Orders by newest (date desc)
