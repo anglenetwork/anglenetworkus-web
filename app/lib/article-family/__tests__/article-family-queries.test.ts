@@ -88,4 +88,10 @@ describe("article family page GROQ", () => {
   it("sitemap author slugs requires published articles", () => {
     expect(sitemapAuthorSlugsQuery).toContain('status == "published"');
   });
+
+  it("article page body projection includes tweetEmbed fields", () => {
+    expect(articleFamilyPageBySlugQuery).toContain('_type == "tweetEmbed"');
+    expect(articleFamilyPageBySlugQuery).toContain("tweetId");
+    expect(articleFamilyPageBySlugQuery).toContain("caption");
+  });
 });

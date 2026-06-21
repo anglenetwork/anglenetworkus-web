@@ -4,8 +4,11 @@ import { getCoverImage } from "@/sanity/lib/utils";
 import { SectionHeader } from "../../ui/section-header";
 import { ImageRenderer } from "../../ui/image-renderer";
 import {
+  NewsCardRowCard,
+  type NewsCardRowItem,
+} from "../../ui/news-card-row-section";
+import {
   techExclusiveBadge,
-  techFeaturedTitle,
   techSecondaryTitle,
 } from "@/app/lib/typography/fourth-section";
 import { ReadTimeLabel } from "@/app/components/ui/read-time-label";
@@ -32,7 +35,9 @@ function secondaryArticleCellClassName() {
   );
 }
 
-function FeaturedArticleCard({ article }: { article: FourthSectionTechPost }) {
+function featuredPostToCardItem(
+  article: FourthSectionTechPost,
+): NewsCardRowItem | null {
   if (!article.slug) return null;
 
   const coverData = getCoverImage(
@@ -40,33 +45,28 @@ function FeaturedArticleCard({ article }: { article: FourthSectionTechPost }) {
     article.title || "Article image",
   );
 
+  return {
+    id: article._id,
+    title: article.title,
+    href: `/post/${article.slug}`,
+    image: coverData?.src ?? "",
+    imageAlt: coverData?.alt,
+    imageUnoptimized: coverData?.unoptimized,
+    readTimeMinutes: article.readTime,
+  };
+}
+
+function FeaturedArticleCard({ article }: { article: FourthSectionTechPost }) {
+  const item = featuredPostToCardItem(article);
+  if (!item) return null;
+
   return (
-    <article className="py-6 first:pt-0 max-lg:last:pb-0 lg:px-6 lg:pt-0 lg:pb-6">
-      {coverData?.src ? (
-        <Link
-          href={`/post/${article.slug}`}
-          className="group block"
-          aria-label={`Read article: ${article.title}`}
-        >
-          <div className="relative aspect-[16/9] w-full overflow-hidden rounded-sm bg-news-secondary">
-            <ImageRenderer
-              src={coverData.src}
-              alt={coverData.alt}
-              width={800}
-              height={450}
-              fill
-              unoptimized={coverData.unoptimized}
-              sizes="(max-width: 1024px) 100vw, 50vw"
-              className="object-cover object-center"
-            />
-          </div>
-        </Link>
-      ) : null}
-      <Link href={`/post/${article.slug}`} className="group block">
-        <h3 className={cn("mt-4", techFeaturedTitle)}>{article.title}</h3>
-      </Link>
-      <ReadTimeLabel minutes={article.readTime} variant="news" />
-    </article>
+    <NewsCardRowCard
+      item={item}
+      variant="news"
+      imageSizes="(max-width: 1024px) 100vw, 50vw"
+      className="py-6 first:pt-0 max-lg:last:pb-0 lg:px-6 lg:pt-0 lg:pb-6"
+    />
   );
 }
 

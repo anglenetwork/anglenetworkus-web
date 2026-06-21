@@ -1,4 +1,9 @@
 export const ANALYSIS_SIDEBAR_COUNT = 5;
-export const ANALYSIS_INITIAL_FETCH_SIZE = 10;
+export const ANALYSIS_MISSED_IT_COUNT = 4;
 export const ANALYSIS_MORE_BATCH_SIZE = 10;
 export const ANALYSIS_HERO_COUNT = 1 + ANALYSIS_SIDEBAR_COUNT;
+export const ANALYSIS_CONTENT_OFFSET =
+  ANALYSIS_HERO_COUNT + ANALYSIS_MISSED_IT_COUNT;
+/** Hero + missed-it row + first More Analysis batch (server-rendered). */
+export const ANALYSIS_INITIAL_FETCH_SIZE =
+  ANALYSIS_CONTENT_OFFSET + ANALYSIS_MORE_BATCH_SIZE;

@@ -39,5 +39,6 @@ export default defineType({
     defineArrayMember({ type: "pullQuote" }),
     defineArrayMember({ type: "articleDivider" }),
     defineArrayMember({ type: "videoEmbed" }),
+    defineArrayMember({ type: "tweetEmbed" }),
   ],
 });

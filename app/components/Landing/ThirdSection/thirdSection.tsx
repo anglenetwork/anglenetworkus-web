@@ -43,7 +43,7 @@ export default function ThirdSection({ articles }: ThirdSectionProps) {
               {article.tagTitle}
             </Link>
             <Link
-              href={`/post/${article.slug}`}
+              href={article.href}
               className="group block"
               aria-label={`Read article: ${article.title}`}
             >

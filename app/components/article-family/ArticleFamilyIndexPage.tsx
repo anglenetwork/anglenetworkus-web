@@ -7,6 +7,8 @@ import { AnalysisAuthorLine, AnalysisListSection } from "./AnalysisRowCard";
 import AnalysisMoreSection from "./AnalysisMoreSection";
 import {
   ANALYSIS_HERO_COUNT,
+  ANALYSIS_MISSED_IT_COUNT,
+  ANALYSIS_CONTENT_OFFSET,
   ANALYSIS_SIDEBAR_COUNT,
 } from "./analysis-index-constants";
 import {
@@ -23,6 +25,10 @@ import {
   categorySecondaryRowTitle,
 } from "@/app/lib/typography/second-section";
 import { fifthSectionFeaturedOverlayTitle } from "@/app/lib/typography/fifth-section";
+import {
+  NewsCardRowSection,
+  type NewsCardRowItem,
+} from "@/app/components/ui/news-card-row-section";
 
 const analysisLeadOverlayClassName =
   "absolute inset-x-0 bottom-0 z-20 bg-gradient-to-t from-black/95 via-black/65 to-transparent px-4 pt-16 pb-5 md:px-6 md:pt-20 md:pb-6";
@@ -266,6 +272,23 @@ function EditorialTwoColumnHero({
   );
 }
 
+function articleToNewsCardRowItem(article: CardModel): NewsCardRowItem {
+  const coverData = getCoverImage(
+    article.cover as Parameters<typeof getCoverImage>[0],
+    article.title || "Article image",
+  );
+
+  return {
+    id: article._id,
+    title: article.title || "Untitled",
+    href: article.href,
+    image: coverData?.src ?? "",
+    imageAlt: coverData?.alt,
+    imageUnoptimized: coverData?.unoptimized,
+    readTimeMinutes: article.readTime,
+  };
+}
+
 function AnalysisIndexModule({
   articles,
   total,
@@ -275,9 +298,13 @@ function AnalysisIndexModule({
 }) {
   const leadArticle = articles[0];
   const sidebarArticles = articles.slice(1, 1 + ANALYSIS_SIDEBAR_COUNT);
-  const initialMoreArticles = articles.slice(ANALYSIS_HERO_COUNT);
+  const missedItArticles = articles.slice(
+    ANALYSIS_HERO_COUNT,
+    ANALYSIS_HERO_COUNT + ANALYSIS_MISSED_IT_COUNT,
+  );
+  const initialMoreArticles = articles.slice(ANALYSIS_CONTENT_OFFSET);
   const showMoreSection =
-    initialMoreArticles.length > 0 || total > ANALYSIS_HERO_COUNT;
+    initialMoreArticles.length > 0 || total > ANALYSIS_CONTENT_OFFSET;
 
   return (
     <main className="space-y-8">
@@ -287,6 +314,14 @@ function AnalysisIndexModule({
         sidebarTitle="Latest Analysis"
         family="analysis"
       />
+      {missedItArticles.length > 0 ? (
+        <NewsCardRowSection
+          title="In case you missed it"
+          items={missedItArticles.map(articleToNewsCardRowItem)}
+          columns={4}
+          minItems={1}
+        />
+      ) : null}
       {showMoreSection ? (
         <section className="rounded-lg bg-background">
           <h2 className="mb-4 font-bold font-sans text-lg text-neutral-900 md:text-xl">

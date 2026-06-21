@@ -30,6 +30,7 @@ import editorialImage from "@/sanity/schemas/objects/editorialImage";
 import pullQuote from "@/sanity/schemas/objects/pullQuote";
 import articleDivider from "@/sanity/schemas/objects/articleDivider";
 import videoEmbed from "@/sanity/schemas/objects/videoEmbed";
+import tweetEmbed from "@/sanity/schemas/objects/tweetEmbed";
 import coverMedia from "@/sanity/schemas/objects/coverMedia";
 import galleryImageItem from "@/sanity/schemas/objects/galleryImageItem";
 import seo from "@/sanity/schemas/objects/seo";
@@ -66,6 +67,7 @@ export default defineConfig({
       pullQuote,
       articleDivider,
       videoEmbed,
+      tweetEmbed,
       seo,
       sponsorAttribution,
     ],

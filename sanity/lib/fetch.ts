@@ -1,5 +1,7 @@
 import type { ClientPerspective, QueryParams } from "next-sanity";
+import { draftMode } from "next/headers";
 
+import { authenticatedClient } from "@/sanity/lib/authenticated-client";
 import { liveSanityFetch, SanityLive } from "@/sanity/lib/live";
 
 export { SanityLive };
@@ -23,15 +25,28 @@ export async function sanityFetch<const QueryString extends string>({
   tags?: string[];
   requestTag?: string;
 }) {
-  const { data } = await liveSanityFetch({
-    query,
-    params,
-    perspective,
-    stega,
-    tags,
-    requestTag,
+  const resolvedParams = await params;
+  const { isEnabled: isPreview } = await draftMode();
+  const useLivePreview =
+    isPreview || perspective === "drafts" || perspective === "previewDrafts";
+
+  if (useLivePreview) {
+    const { data } = await liveSanityFetch({
+      query,
+      params: resolvedParams,
+      perspective: perspective ?? "drafts",
+      stega,
+      tags,
+      requestTag,
+    });
+    return data;
+  }
+
+  return authenticatedClient.fetch(query, resolvedParams, {
+    perspective: perspective ?? "published",
+    stega: stega ?? false,
+    ...(requestTag ? { tag: requestTag } : {}),
   });
-  return data;
 }
 
 /**
@@ -50,12 +65,10 @@ export async function sanityFetchStatic<const QueryString extends string>({
   tag?: string;
   requestTag?: string;
 }) {
-  const { data } = await liveSanityFetch({
-    query,
-    params,
+  const resolvedParams = await params;
+  return authenticatedClient.fetch(query, resolvedParams, {
     perspective: "published",
     stega: false,
-    requestTag: requestTag ?? tag,
+    ...(requestTag ?? tag ? { tag: requestTag ?? tag } : {}),
   });
-  return data;
 }

@@ -1,3 +1,5 @@
+import { articleFamilyHref } from "@/app/lib/article-family/routes";
+import type { ArticleFamilyDocType } from "@/app/lib/article-family/types";
 import { sanityFetchStatic } from "@/sanity/lib/fetch";
 import {
   thirdLatestArticleQuery,
@@ -8,6 +10,12 @@ import {
   HOMEPAGE_THIRD_SECTION_TAGS,
   type HomepageThirdSectionArticle,
 } from "./homepage-third-section";
+
+const HOMEPAGE_THIRD_SECTION_DOC_TYPES = new Set<ArticleFamilyDocType>([
+  "post",
+  "analysis",
+  "opinion",
+]);
 
 /** Homepage second section: category columns (e.g. Tech, Business, Entertainment). */
 export async function getSecondSectionData(slugs: string[], titles: string[]) {
@@ -35,10 +43,26 @@ export async function getSecondSectionData(slugs: string[], titles: string[]) {
 
 type ThirdSectionPostRow = {
   _id: string;
+  _type?: string;
   title: string;
   slug: string;
   readTime?: number | null;
 };
+
+function resolveThirdSectionHref(
+  row: ThirdSectionPostRow,
+): string | undefined {
+  const docType = row._type;
+  if (
+    !docType ||
+    !HOMEPAGE_THIRD_SECTION_DOC_TYPES.has(docType as ArticleFamilyDocType) ||
+    !row.slug
+  ) {
+    return undefined;
+  }
+
+  return articleFamilyHref(docType as ArticleFamilyDocType, row.slug);
+}
 
 /** Homepage third section: latest post for each configured tag. */
 export async function getThirdSectionData(): Promise<
@@ -55,7 +79,8 @@ export async function getThirdSectionData(): Promise<
     });
 
     const row = post as ThirdSectionPostRow | null;
-    if (!row?.slug) continue;
+    const href = row ? resolveThirdSectionHref(row) : undefined;
+    if (!row?.slug || !href) continue;
 
     usedIds.push(row._id);
     rows.push({
@@ -64,6 +89,7 @@ export async function getThirdSectionData(): Promise<
       _id: row._id,
       title: row.title,
       slug: row.slug,
+      href,
       readTime: row.readTime ?? null,
     });
   }
@@ -75,11 +101,11 @@ export async function getThirdSectionData(): Promise<
 export async function getSeventhSectionData() {
   const [
     politicsThirdArticle,
-    internationalThirdArticle,
+    worldThirdArticle,
     businessThirdArticle,
     usThirdArticle,
-    cultureThirdArticle,
-    healthThirdArticle,
+    entertainmentThirdArticle,
+    lifestyleThirdArticle,
   ] = await Promise.all([
     sanityFetchStatic({
       query: thirdLatestArticleQuery,
@@ -87,7 +113,7 @@ export async function getSeventhSectionData() {
     }),
     sanityFetchStatic({
       query: thirdLatestArticleQuery,
-      params: { categorySlug: "international" },
+      params: { categorySlug: "world" },
     }),
     sanityFetchStatic({
       query: thirdLatestArticleQuery,
@@ -99,11 +125,11 @@ export async function getSeventhSectionData() {
     }),
     sanityFetchStatic({
       query: thirdLatestArticleQuery,
-      params: { categorySlug: "culture" },
+      params: { categorySlug: "entertainment" },
     }),
     sanityFetchStatic({
       query: thirdLatestArticleQuery,
-      params: { categorySlug: "health" },
+      params: { categorySlug: "lifestyle" },
     }),
   ]);
 
@@ -114,9 +140,9 @@ export async function getSeventhSectionData() {
       thirdArticle: politicsThirdArticle[0] || null,
     },
     {
-      name: "International",
-      slug: "international",
-      thirdArticle: internationalThirdArticle[0] || null,
+      name: "World",
+      slug: "world",
+      thirdArticle: worldThirdArticle[0] || null,
     },
     {
       name: "Business",
@@ -129,14 +155,14 @@ export async function getSeventhSectionData() {
       thirdArticle: usThirdArticle[0] || null,
     },
     {
-      name: "Culture",
-      slug: "culture",
-      thirdArticle: cultureThirdArticle[0] || null,
+      name: "Entertainment",
+      slug: "entertainment",
+      thirdArticle: entertainmentThirdArticle[0] || null,
     },
     {
-      name: "Health",
-      slug: "health",
-      thirdArticle: healthThirdArticle[0] || null,
+      name: "Lifestyle",
+      slug: "lifestyle",
+      thirdArticle: lifestyleThirdArticle[0] || null,
     },
   ];
 }

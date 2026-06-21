@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import type { ArticleFamilyCard as CardModel } from "@/app/lib/article-family/types";
 import { AnalysisListSection } from "./AnalysisRowCard";
 import {
-  ANALYSIS_HERO_COUNT,
+  ANALYSIS_CONTENT_OFFSET,
   ANALYSIS_MORE_BATCH_SIZE,
 } from "./analysis-index-constants";
 
@@ -22,14 +22,14 @@ export default function AnalysisMoreSection({
   const [articles, setArticles] = useState(initialArticles);
   const [isLoading, setIsLoading] = useState(false);
 
-  const hasMore = ANALYSIS_HERO_COUNT + articles.length < total;
+  const hasMore = ANALYSIS_CONTENT_OFFSET + articles.length < total;
 
   const handleSeeMore = async () => {
     if (isLoading || !hasMore) return;
 
     setIsLoading(true);
     try {
-      const start = ANALYSIS_HERO_COUNT + articles.length;
+      const start = ANALYSIS_CONTENT_OFFSET + articles.length;
       const response = await fetch(
         `/api/analysis?start=${start}&limit=${ANALYSIS_MORE_BATCH_SIZE}`,
       );

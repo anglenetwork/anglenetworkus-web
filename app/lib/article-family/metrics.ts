@@ -35,14 +35,15 @@ function isArticleMetricType(t: string): t is ArticleMetricType {
 type RankingRowDb = {
   article_id: string;
   article_type: string;
-  views_all: number | string | null;
-  views_7d: number | string | null;
+  views_all?: number | string | null;
+  views_7d?: number | string | null;
+  views_10d?: number | string | null;
   views_3d?: number | string | null;
-  views_30d: number | string | null;
+  views_30d?: number | string | null;
   last_viewed_at: string | null;
 };
 
-export type MostReadWindowDays = 3 | 7;
+export type MostReadWindowDays = 3 | 7 | 10;
 
 function mapRankingRow(row: RankingRowDb): ArticleRankingRow {
   return {
@@ -201,6 +202,54 @@ export async function getMostReadByType({
   } catch {
     return [];
   }
+}
+
+/** Batch 10-day view counts for membership-filtered ranking (category / tag). */
+export async function fetch10DayViewsForArticleIds(
+  articleIds: string[],
+): Promise<Map<string, { views10d: number; lastViewedAt: string | null }>> {
+  if (articleIds.length === 0) return new Map();
+
+  try {
+    const { data, error } = await supabaseAdmin
+      .from("article_metrics_rankings_10d")
+      .select("article_id, views_10d, last_viewed_at")
+      .in("article_id", articleIds);
+
+    if (error) throw error;
+
+    const map = new Map<string, { views10d: number; lastViewedAt: string | null }>();
+    for (const row of data ?? []) {
+      const typed = row as RankingRowDb;
+      map.set(typed.article_id, {
+        views10d: Number(typed.views_10d ?? 0),
+        lastViewedAt: typed.last_viewed_at,
+      });
+    }
+    return map;
+  } catch {
+    return new Map();
+  }
+}
+
+export function sortIdsBy10DayViewsThenPublishedAt<
+  T extends { _id: string; publishedAt?: string | null },
+>(items: T[], views: Map<string, { views10d: number; lastViewedAt: string | null }>): T[] {
+  return items.toSorted((a, b) => {
+    const va = views.get(a._id)?.views10d ?? 0;
+    const vb = views.get(b._id)?.views10d ?? 0;
+    if (va !== vb) return vb - va;
+    const la = views.get(a._id)?.lastViewedAt
+      ? Date.parse(views.get(a._id)!.lastViewedAt!)
+      : 0;
+    const lb = views.get(b._id)?.lastViewedAt
+      ? Date.parse(views.get(b._id)!.lastViewedAt!)
+      : 0;
+    if (la !== lb) return lb - la;
+    const pa = a.publishedAt ? Date.parse(a.publishedAt) : 0;
+    const pb = b.publishedAt ? Date.parse(b.publishedAt) : 0;
+    return pb - pa;
+  });
 }
 
 /** Batch metrics for membership-filtered ranking (category / tag). */

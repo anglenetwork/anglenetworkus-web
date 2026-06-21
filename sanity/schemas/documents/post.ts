@@ -258,9 +258,29 @@ export default defineType({
       title: "Tags",
       type: "array",
       group: ARTICLE_FIELD_GROUPS.taxonomy,
-      of: [{ type: "reference", to: [{ type: "tag" }] }],
+      of: [
+        {
+          type: "reference",
+          to: [{ type: "tag" }],
+          options: {
+            filter: ({ document }: { document?: { category?: { _ref?: string } } }) => {
+              const categoryRef = document?.category?._ref;
+              if (!categoryRef) {
+                return {
+                  filter: '_type == "tag" && false',
+                  title: "Select a category first to choose tags.",
+                };
+              }
+              return {
+                filter: "category._ref == $categoryRef",
+                params: { categoryRef },
+              };
+            },
+          },
+        },
+      ],
       options: { layout: "tags" },
-      description: "Public topical keywords (tag docs only).",
+      description: "Only tags under the selected category are available.",
     } as any),
     defineField({
       ...articleAuthorField(),

@@ -5,9 +5,8 @@ import {
   analysisIndexCountQuery,
 } from "@/sanity/lib/article-family-queries";
 import { normalizeArticleFamilyCard } from "@/app/lib/article-family/normalize";
-import ArticleFamilyIndexPage, {
-  articleFamilyIndexPageSize,
-} from "@/app/components/article-family/ArticleFamilyIndexPage";
+import ArticleFamilyIndexPage from "@/app/components/article-family/ArticleFamilyIndexPage";
+import { ANALYSIS_INITIAL_FETCH_SIZE } from "@/app/components/article-family/analysis-index-constants";
 import * as demo from "@/sanity/lib/demo";
 import { getCachedSettings } from "@/app/lib/cached-settings";
 import { JsonLdScript } from "@/app/components/seo/json-ld-script";
@@ -33,7 +32,7 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function AnalysisIndexPage() {
-  const pageSize = articleFamilyIndexPageSize;
+  const pageSize = ANALYSIS_INITIAL_FETCH_SIZE;
 
   const [rows, totalRaw] = await Promise.all([
     sanityFetch({

@@ -1,4 +1,9 @@
-// scripts/seed-articles.mjs — one-shot seed for article-family documents.
+// DEPRECATED: Use news-ingestion Milestone 3 scripts instead.
+//   npm run milestone3:dry-run   (preview)
+//   npm run milestone3:reseed    (live; requires CONFIRM_SANITY_ARTICLE_RESEED=YES)
+// See news-ingestion/docs/articles-seed.md
+//
+// scripts/seed-articles.mjs — legacy one-shot seed for article-family documents.
 // Supports --per-category=N for category-scoped seeding targets.
 import { createClient } from "@sanity/client";
 import { config } from "dotenv";

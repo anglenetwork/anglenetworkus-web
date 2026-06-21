@@ -38,12 +38,12 @@ interface Post {
 
 interface ShowMoreSectionProps {
   posts: Post[];
-  tagSlug: string;
+  tagTitle: string;
 }
 
 export default function ShowMoreSection({
   posts,
-  tagSlug,
+  tagTitle,
 }: ShowMoreSectionProps) {
   const [visibleCount, setVisibleCount] = useState(10);
   const [isLoading, setIsLoading] = useState(false);
@@ -61,7 +61,10 @@ export default function ShowMoreSection({
 
   return (
     <SitePageWidth className="mt-8">
-      <SectionHeader title="In case you missed it..." accentStyle="modern" />
+      <SectionHeader
+        title={`Latest ${tagTitle} news`}
+        accentStyle="modern"
+      />
       <div className="space-y-0 divide-y divide-dotted divide-border border-b border-dotted">
         {visiblePosts.map((post) => {
           const coverData = getCoverImage(

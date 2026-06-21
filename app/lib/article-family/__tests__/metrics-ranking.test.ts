@@ -10,6 +10,7 @@ import { supabaseAdmin } from "@/lib/supabase/admin";
 import {
   getMostReadEditorial,
   getMostReadPosts,
+  sortIdsBy10DayViewsThenPublishedAt,
   sortIdsByRankingThenPublishedAt,
 } from "../metrics";
 import type { ArticleRankingRow } from "../metrics";
@@ -143,5 +144,24 @@ describe("sortIdsByRankingThenPublishedAt", () => {
 
     const sorted = sortIdsByRankingThenPublishedAt(items, metrics);
     expect(sorted.map((x) => x._id)).toEqual(["d", "c", "b", "a"]);
+  });
+});
+
+describe("sortIdsBy10DayViewsThenPublishedAt", () => {
+  it("orders by 10-day views desc, then last viewed, then publishedAt", () => {
+    const views = new Map([
+      ["a", { views10d: 1, lastViewedAt: null }],
+      ["b", { views10d: 5, lastViewedAt: "2020-01-02T00:00:00.000Z" }],
+      ["c", { views10d: 5, lastViewedAt: "2020-01-03T00:00:00.000Z" }],
+    ]);
+
+    const items = [
+      { _id: "a", publishedAt: "2020-01-05T00:00:00.000Z" },
+      { _id: "b", publishedAt: "2020-01-01T00:00:00.000Z" },
+      { _id: "c", publishedAt: "2020-01-01T00:00:00.000Z" },
+    ];
+
+    const sorted = sortIdsBy10DayViewsThenPublishedAt(items, views);
+    expect(sorted.map((item) => item._id)).toEqual(["c", "b", "a"]);
   });
 });

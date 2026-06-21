@@ -5,12 +5,18 @@ import { sanityFetchStatic } from "@/sanity/lib/fetch";
 import {
   categorySlugsQuery,
   postsByCategoryQuery,
-  categoryTickerQuery,
 } from "@/sanity/lib/queries";
 import {
-  fetchRankingRowsForArticleIds,
-  sortIdsByRankingThenPublishedAt,
+  fetch10DayViewsForArticleIds,
+  sortIdsBy10DayViewsThenPublishedAt,
 } from "@/app/lib/article-family/metrics";
+import {
+  buildCategoryFeaturedArticles,
+  buildCategoryHeadlineRowArticles,
+  buildCategoryLatestArticles,
+  buildCategoryMissedItArticles,
+  buildCategoryTickerPosts,
+} from "@/app/lib/category-page/layout-sections";
 import { CategoryPage } from "@/app/components/CategoryPage";
 import type { Article } from "@/app/components/CategoryPage/types";
 import { formatImageCredit, getCoverImage } from "@/sanity/lib/utils";
@@ -82,7 +88,7 @@ export default async function CategoryPageRoute({
 }) {
   const { slug } = await params;
 
-  const [categoryData, posts, categoryTickerPosts] = await Promise.all([
+  const [categoryData, posts] = await Promise.all([
     sanityFetchStatic({
       query: `*[_type == "category" && slug.current == $slug][0]{name, slug}`,
       params: { slug },
@@ -91,22 +97,18 @@ export default async function CategoryPageRoute({
       query: postsByCategoryQuery,
       params: { categorySlug: slug },
     }),
-    sanityFetchStatic({
-      query: categoryTickerQuery,
-      params: { categorySlug: slug },
-    }),
   ]);
 
   const postList = Array.isArray(posts) ? posts : [];
 
-  const metricsMap = await fetchRankingRowsForArticleIds(
+  const views10d = await fetch10DayViewsForArticleIds(
     postList.map((p: { _id: string }) => p._id),
   );
-  const mostViewedSorted = sortIdsByRankingThenPublishedAt(
+  const mostReadSorted = sortIdsBy10DayViewsThenPublishedAt(
     postList as { _id: string; publishedAt?: string | null }[],
-    metricsMap,
+    views10d,
   );
-  const mostViewed = mostViewedSorted.slice(0, 5);
+  const mostViewed = mostReadSorted.slice(0, 5);
 
   if (!categoryData) {
     notFound();
@@ -155,28 +157,27 @@ export default async function CategoryPageRoute({
   const n = postList.length;
   const hasPosts = n > 0;
 
-  const latestArticles =
-    n >= 5
-      ? postList.slice(5).map(transformPostToArticle)
-      : n >= 1
-        ? postList.map(transformPostToArticle)
-        : [];
+  const headlineRowArticles = buildCategoryHeadlineRowArticles(
+    postList,
+    transformPostToArticle,
+  );
 
-  let featuredArticles:
-    | {
-        leftColumn: Article[];
-        centerArticle: Article;
-        rightColumn: Article[];
-      }
-    | undefined = undefined;
+  const categoryTickerPosts = buildCategoryTickerPosts(postList);
 
-  if (n >= 5) {
-    featuredArticles = {
-      leftColumn: postList.slice(1, 3).map(transformPostToArticle),
-      centerArticle: transformPostToArticle(postList[0]),
-      rightColumn: postList.slice(3, 5).map(transformPostToArticle),
-    };
-  }
+  const missedItArticles = buildCategoryMissedItArticles(
+    postList,
+    transformPostToArticle,
+  );
+
+  const latestArticles = buildCategoryLatestArticles(
+    postList,
+    transformPostToArticle,
+  );
+
+  const featuredArticles = buildCategoryFeaturedArticles(
+    postList,
+    transformPostToArticle,
+  );
 
   const breadcrumbLd = buildBreadcrumbJsonLd([
     { name: "Home", path: "/" },
@@ -191,8 +192,10 @@ export default async function CategoryPageRoute({
         hasPosts={hasPosts}
         latestArticles={latestArticles}
         mostReadArticles={mostReadArticles}
+        headlineRowArticles={headlineRowArticles}
+        missedItArticles={missedItArticles}
         featuredArticles={featuredArticles}
-        categoryTickerPosts={categoryTickerPosts as any}
+        categoryTickerPosts={categoryTickerPosts}
       />
     </>
   );

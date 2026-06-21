@@ -35,6 +35,15 @@ export default defineType({
       },
       validation: (rule) => rule.required(),
     }),
+    defineField({
+      name: "category",
+      title: "Parent Category",
+      type: "reference",
+      to: [{ type: "category" }],
+      description:
+        "Parent category this tag belongs to. Tags are category-scoped.",
+      validation: (rule: any) => rule.required(),
+    } as any),
 
     // ---- Editorial metadata ----
     defineField({
@@ -134,6 +143,8 @@ export default defineType({
       title: "title",
       legacyName: "name",
       slug: "slug.current",
+      categoryName: "category.name",
+      categorySlug: "category.slug.current",
       emoji: "emoji",
       featured: "featured",
       hidden: "hidden",
@@ -146,6 +157,8 @@ export default defineType({
         title,
         legacyName,
         slug,
+        categoryName,
+        categorySlug,
         emoji,
         featured,
         hidden,
@@ -156,6 +169,8 @@ export default defineType({
         title?: string;
         legacyName?: string;
         slug?: string;
+        categoryName?: string;
+        categorySlug?: string;
         emoji?: string;
         featured?: boolean;
         hidden?: boolean;
@@ -166,6 +181,8 @@ export default defineType({
 
       const label =
         title?.trim() || legacyName?.trim() || slug || "Untitled tag";
+      const categoryLabel =
+        categoryName?.trim() || categorySlug?.trim() || "no category";
       const flags = [
         featured ? "featured" : null,
         hidden ? "hidden" : null,
@@ -181,7 +198,7 @@ export default defineType({
 
       return {
         title: emoji ? `${emoji} ${label}` : label,
-        subtitle: [slug, flags].filter(Boolean).join(" · "),
+        subtitle: [categoryLabel, slug, flags].filter(Boolean).join(" · "),
       };
     },
   },
