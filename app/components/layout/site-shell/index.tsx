@@ -2,55 +2,49 @@ import type { ReactNode } from "react";
 import { sanityFetchStatic } from "@/sanity/lib/fetch";
 import {
   categoriesByViewsQuery,
-  topTagsByViewsQuery,
-  showsTagsByViewsQuery,
+  navTagsWithCategoryQuery,
 } from "@/sanity/lib/queries";
 import { buildNavCategories } from "@/app/lib/nav/category-order";
+import {
+  buildNavMenuColumns,
+  type NavTagWithCategory,
+} from "@/app/lib/nav/menu-columns";
 import { SiteShellFrame } from "./site-shell-frame";
-import type { Tag } from "./types";
 
 interface SiteShellProps {
   children: ReactNode;
 }
 
 /**
- * Server half of the site shell. Loads the nav data (categories, top tags,
- * shows tags) from Sanity in parallel and passes it down to the client
- * frame which renders the global header/footer.
+ * Server half of the site shell. Loads nav categories and category-scoped
+ * tags from Sanity, then builds four menu columns for the full-screen menu.
  */
 export async function SiteShell({ children }: SiteShellProps) {
-  const [categoriesData, tagsData, showsTagsData] = await Promise.all([
+  const [categoriesData, tagsData] = await Promise.all([
     sanityFetchStatic({ query: categoriesByViewsQuery }),
-    sanityFetchStatic({ query: topTagsByViewsQuery }),
-    sanityFetchStatic({ query: showsTagsByViewsQuery }),
+    sanityFetchStatic({ query: navTagsWithCategoryQuery }),
   ]);
 
   const categories = buildNavCategories(categoriesData);
-  const tags = mapTags(tagsData);
-  const showsTags = mapTags(showsTagsData);
+  const tagRows = mapNavTags(tagsData);
+  const menuColumns = buildNavMenuColumns(categories, tagRows);
 
   return (
-    <SiteShellFrame categories={categories} tags={tags} showsTags={showsTags}>
+    <SiteShellFrame categories={categories} menuColumns={menuColumns}>
       {children}
     </SiteShellFrame>
   );
 }
 
-type TagRow = {
+type NavTagRow = {
   slug: string | null;
   title: string | null;
-  views: number | null;
+  categorySlug: string | null;
 };
 
-function mapTags(rows: TagRow[]): Tag[] {
-  return rows
-    .filter(
-      (tag): tag is TagRow & { slug: string; title: string } =>
-        tag.slug !== null && tag.title !== null,
-    )
-    .map((tag) => ({
-      slug: tag.slug,
-      title: tag.title,
-      views: tag.views ?? undefined,
-    }));
+function mapNavTags(rows: NavTagRow[]): NavTagWithCategory[] {
+  return rows.filter(
+    (tag): tag is NavTagRow & { slug: string; title: string; categorySlug: string } =>
+      tag.slug !== null && tag.title !== null && tag.categorySlug !== null,
+  );
 }

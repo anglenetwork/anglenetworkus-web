@@ -17,15 +17,16 @@ export type NewsCardRowItem = {
 };
 
 const GRID_COLUMNS = {
-  2: "lg:grid-cols-2",
-  3: "lg:grid-cols-3",
-  4: "lg:grid-cols-4",
+  2: "grid-cols-1 md:grid-cols-2",
+  3: "grid-cols-1 md:grid-cols-2 lg:grid-cols-3",
+  /** md: 2-up; lg+: full row of four (tablets in portrait stay 2-up). */
+  4: "grid-cols-1 md:grid-cols-2 lg:grid-cols-4",
 } as const;
 
 const IMAGE_SIZES = {
-  2: "(max-width: 1024px) 100vw, 50vw",
-  3: "(max-width: 1024px) 100vw, 33vw",
-  4: "(max-width: 1024px) 100vw, 25vw",
+  2: "(max-width: 768px) 100vw, 50vw",
+  3: "(max-width: 1024px) 50vw, 33vw",
+  4: "(max-width: 1024px) 50vw, 25vw",
 } as const;
 
 type NewsCardRowVariant = "news" | "dark";
@@ -148,12 +149,7 @@ export function NewsCardRowSection({
         size="regular"
       />
 
-      <div
-        className={cn(
-          "grid grid-cols-1 gap-6 sm:grid-cols-2",
-          GRID_COLUMNS[columns],
-        )}
-      >
+      <div className={cn("grid gap-6", GRID_COLUMNS[columns])}>
         {items.map((item) => (
           <NewsCardRowCard
             key={item.id}

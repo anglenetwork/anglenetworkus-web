@@ -2,8 +2,6 @@ import { defineField, defineType } from "sanity";
 
 import { extractTweetId, isTweetUrl } from "@/lib/tweets";
 
-const NUMERIC_TWEET_ID = /^\d+$/;
-
 export default defineType({
   name: "tweetEmbed",
   title: "Tweet/X Embed",
@@ -27,53 +25,23 @@ export default defineType({
           }),
     }),
     defineField({
-      name: "tweetId",
-      title: "Tweet ID",
-      type: "string",
-      description: "Numeric Tweet/X status ID.",
-      validation: (rule) =>
-        rule
-          .required()
-          .custom((value) => {
-            if (!value || typeof value !== "string") {
-              return "Tweet ID is required.";
-            }
-            if (!NUMERIC_TWEET_ID.test(value)) {
-              return "Tweet ID must contain digits only.";
-            }
-            return true;
-          }),
-    }),
-    defineField({
       name: "caption",
       title: "Caption",
       type: "string",
       description: "Optional editor note displayed below the embed.",
     }),
   ],
-  validation: (rule) =>
-    rule.custom((value) => {
-      if (!value || typeof value !== "object") return true;
-
-      const { url, tweetId } = value as { url?: string; tweetId?: string };
-      if (!url || !tweetId) return true;
-
-      const idFromUrl = extractTweetId(url);
-      if (idFromUrl && idFromUrl !== tweetId) {
-        return "Tweet ID must match the numeric ID in the URL.";
-      }
-
-      return true;
-    }),
   preview: {
     select: {
       url: "url",
-      tweetId: "tweetId",
     },
-    prepare({ url, tweetId }) {
+    prepare({ url }) {
+      const idFromUrl =
+        typeof url === "string" ? extractTweetId(url) : null;
+
       return {
         title: "Tweet/X Embed",
-        subtitle: url || tweetId || "",
+        subtitle: idFromUrl ? `${url} (ID: ${idFromUrl})` : url || "",
       };
     },
   },

@@ -73,7 +73,6 @@ const postFields = `
       _type,
       _key,
       url,
-      tweetId,
       caption
     }
   },
@@ -305,19 +304,47 @@ export const categoriesByViewsQuery = defineQuery(`
   }
 `);
 
-export const topTagsByViewsQuery = defineQuery(`
-  *[_type == "tag" && defined(slug.current)] | order(coalesce(views, 0) desc, title asc) [0...5] {
+export const navTagsWithCategoryQuery = defineQuery(`
+  *[
+    _type == "tag" &&
+    defined(slug.current) &&
+    defined(category->slug.current) &&
+    hidden != true &&
+    deprecated != true
+  ] | order(coalesce(order, 999) asc, title asc) {
     "slug": slug.current,
     title,
-    views
+    "categorySlug": category->slug.current
   }
 `);
 
-export const showsTagsByViewsQuery = defineQuery(`
-  *[_type == "tag" && defined(slug.current)] | order(coalesce(views, 0) desc, title asc) [5...11] {
+/** Tags Glimpse: up to four visible tags for a category page section. */
+export const tagsByCategorySlugQuery = defineQuery(`
+  *[
+    _type == "tag" &&
+    category->slug.current == $categorySlug &&
+    defined(slug.current) &&
+    hidden != true &&
+    deprecated != true
+  ] | order(coalesce(order, 999) asc, title asc) [0...4] {
     "slug": slug.current,
-    title,
-    views
+    title
+  }
+`);
+
+/** Tags Glimpse: latest post or analysis per tag (cover + gallery for featured column). */
+export const latestArticleByTagGlimpseQuery = defineQuery(`
+  *[
+    _type in ["post", "analysis"] &&
+    status == "published" &&
+    defined(slug.current) &&
+    defined(publishedAt) &&
+    publishedAt <= now() &&
+    $tagSlug in tags[]->slug.current &&
+    !(_id in $excludeIds)
+  ] | order(${homepagePublishedPostOrder}) [0...1] {
+    _type,
+    ${postFieldsHighlightedStories}
   }
 `);
 
@@ -427,7 +454,7 @@ export const categoryTickerQuery = defineQuery(`
     ${homepagePublishedPostFilter} &&
     category->slug.current == $categorySlug &&
     defined(tickerTitle)
-  ] | order(${homepagePublishedPostOrder}) [0...5] {
+  ] | order(${homepagePublishedPostOrder}) [0...4] {
     tickerTitle,
     "slug": slug.current
   }

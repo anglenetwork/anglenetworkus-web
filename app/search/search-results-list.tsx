@@ -2,6 +2,10 @@
 
 import { Button } from "@/components/ui/button";
 import ArticleFamilyCard from "@/app/components/article-family/ArticleFamilyCard";
+import {
+  ARTICLE_FEATURED_THREE_ROW_COUNT,
+  ArticleFeaturedThreeRow,
+} from "@/app/components/article-family/article-featured-three-row";
 import type { ArticleFamilyCard as CardModel } from "@/app/lib/article-family/types";
 import {
   searchEmptyMessage,
@@ -44,22 +48,40 @@ export function SearchResultsList({
   totalPages,
   onPageChange,
 }: SearchResultsListProps) {
+  const showFeaturedRow = page === 1 && results.length > 0;
+  const featuredResults = showFeaturedRow
+    ? results.slice(0, ARTICLE_FEATURED_THREE_ROW_COUNT)
+    : [];
+  const listResults = showFeaturedRow
+    ? results.slice(ARTICLE_FEATURED_THREE_ROW_COUNT)
+    : results;
+
   return (
     <>
-      <ul className="m-0 list-none space-y-4 p-0 md:space-y-6">
-        {results.map((article) => (
-          <li
-            key={article._id}
-            className="max-md:[&_.search-result-excerpt]:hidden"
-          >
-            <ArticleFamilyCard
-              article={article}
-              layout="compact"
-              variant="search"
-            />
-          </li>
-        ))}
-      </ul>
+      {showFeaturedRow ? (
+        <ArticleFeaturedThreeRow
+          articles={featuredResults}
+          ariaLabel="Top search results"
+          className="mb-8"
+        />
+      ) : null}
+
+      {listResults.length > 0 ? (
+        <ul className="m-0 list-none space-y-4 p-0 md:space-y-6">
+          {listResults.map((article) => (
+            <li
+              key={article._id}
+              className="max-md:[&_.search-result-excerpt]:hidden"
+            >
+              <ArticleFamilyCard
+                article={article}
+                layout="compact"
+                variant="search"
+              />
+            </li>
+          ))}
+        </ul>
+      ) : null}
 
       {totalPages > 1 ? (
         <div className="mt-12 flex items-center justify-center gap-4">

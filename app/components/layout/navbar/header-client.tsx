@@ -19,7 +19,7 @@ const FullScreenMenu = dynamic(
   { ssr: false },
 );
 
-export function HeaderClient({ categories, tags, showsTags }: HeaderProps) {
+export function HeaderClient({ categories, menuColumns }: HeaderProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [focusSearchOnOpen, setFocusSearchOnOpen] = useState(false);
   const [headerOffset, setHeaderOffset] = useState(0);
@@ -114,9 +114,7 @@ export function HeaderClient({ categories, tags, showsTags }: HeaderProps) {
 
       {isMenuOpen ? (
         <FullScreenMenu
-          categories={categories}
-          tags={tags}
-          showsTags={showsTags}
+          menuColumns={menuColumns}
           onClose={closeMenu}
           headerOffset={headerOffset}
           focusSearchOnOpen={focusSearchOnOpen}

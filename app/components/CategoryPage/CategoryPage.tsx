@@ -5,6 +5,7 @@ import { MostReadSection } from "./MostReadSection";
 import { CategoryArticlesEmptyState } from "./CategoryArticlesEmptyState";
 import type { Article, CategoryPageProps } from "./types";
 import { SitePageWidth } from "@/app/components/layout/site-page-width";
+import { TagsGlimpse } from "@/app/components/tags-glimpse";
 import {
   NewsCardRowSection,
   type NewsCardRowItem,
@@ -30,6 +31,7 @@ export function CategoryPage({
   mostReadArticles,
   headlineRowArticles,
   missedItArticles,
+  tagsGlimpse,
   featuredArticles,
   categoryTickerPosts,
 }: CategoryPageProps) {
@@ -46,6 +48,12 @@ export function CategoryPage({
           featuredArticles={featuredArticles}
           headlineRowArticles={headlineRowArticles}
         />
+      ) : null}
+
+      {tagsGlimpse && tagsGlimpse.length > 0 ? (
+        <SitePageWidth className="pt-12 pb-12 xl:pb-6">
+          <TagsGlimpse items={tagsGlimpse} />
+        </SitePageWidth>
       ) : null}
 
       {missedItArticles && missedItArticles.length > 0 ? (

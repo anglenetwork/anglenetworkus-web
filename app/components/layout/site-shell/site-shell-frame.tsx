@@ -13,14 +13,17 @@ interface SiteShellFrameProps extends SiteShellNav {
 export function SiteShellFrame({
   children,
   categories,
-  tags,
-  showsTags,
+  menuColumns,
 }: SiteShellFrameProps) {
+  const footerTags = menuColumns.flatMap((column) =>
+    column.categories.flatMap((category) => category.tags),
+  );
+
   return (
     <div className="min-h-screen bg-white">
-      <HeaderClient categories={categories} tags={tags} showsTags={showsTags} />
+      <HeaderClient categories={categories} menuColumns={menuColumns} />
       {children}
-      <Footer categories={categories} tags={tags} />
+      <Footer categories={categories} tags={footerTags} />
     </div>
   );
 }

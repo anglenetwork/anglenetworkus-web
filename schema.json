@@ -224,13 +224,6 @@
           },
           "optional": true
         },
-        "tweetId": {
-          "type": "objectAttribute",
-          "value": {
-            "type": "string"
-          },
-          "optional": true
-        },
         "caption": {
           "type": "objectAttribute",
           "value": {

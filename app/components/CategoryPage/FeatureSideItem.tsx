@@ -8,16 +8,60 @@ import { ReadTimeLabel } from "@/app/components/ui/read-time-label";
 interface FeatureSideItemProps {
   article: Article;
   variant?: "light" | "news" | "dark";
+  layout?: "stacked" | "compact";
 }
 
 export function FeatureSideItem({
   article,
   variant = "light",
+  layout = "stacked",
 }: FeatureSideItemProps) {
   const href = article.href ?? `/post/${article.slug}`;
   const imageSrc =
     article.imageUrl ||
     "/placeholder.svg?height=200&width=300&query=news article";
+  const readTimeClassName =
+    variant === "news" ? "text-neutral-600" : undefined;
+
+  if (layout === "compact") {
+    return (
+      <article className="group">
+        <div className="flex items-start gap-3">
+          <Link
+            href={href}
+            className={cn(
+              "relative h-20 w-28 shrink-0 overflow-hidden rounded-sm",
+              "bg-news-secondary",
+            )}
+            aria-label={`Read article: ${article.title}`}
+          >
+            <ImageRenderer
+              src={imageSrc}
+              alt={article.imageAlt?.trim() || article.title}
+              width={112}
+              height={80}
+              fill
+              sizes="112px"
+              unoptimized={article.imageUnoptimized}
+              className="object-cover object-center"
+            />
+          </Link>
+          <div className="min-w-0 flex-1">
+            <Link href={href} className="block">
+              <h3 className={categorySecondaryRowTitle[variant]}>
+                {article.title}
+              </h3>
+            </Link>
+            <ReadTimeLabel
+              minutes={article.readTime}
+              variant={variant}
+              className={readTimeClassName}
+            />
+          </div>
+        </div>
+      </article>
+    );
+  }
 
   return (
     <article className="group">
@@ -52,7 +96,7 @@ export function FeatureSideItem({
       <ReadTimeLabel
         minutes={article.readTime}
         variant={variant}
-        className={variant === "news" ? "text-neutral-600" : undefined}
+        className={readTimeClassName}
       />
     </article>
   );

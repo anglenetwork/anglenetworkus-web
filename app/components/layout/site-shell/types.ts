@@ -15,8 +15,9 @@ export interface Tag {
   views?: number;
 }
 
+export type { NavMenuColumn } from "@/app/lib/nav/menu-columns";
+
 export interface SiteShellNav {
   categories: Category[];
-  tags: Tag[];
-  showsTags: Tag[];
+  menuColumns: import("@/app/lib/nav/menu-columns").NavMenuColumn[];
 }
