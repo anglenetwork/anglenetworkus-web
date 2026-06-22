@@ -29,10 +29,12 @@ function articleToHeadlineRowItem(article: Article): NewsHeadlineRowItem {
 function SideArticleList({
   articles,
   variant,
+  layout = "stacked",
   className,
 }: {
   articles: Article[];
   variant: "light" | "news" | "dark";
+  layout?: "stacked" | "compact";
   className?: string;
 }) {
   const divideClass =
@@ -48,7 +50,11 @@ function SideArticleList({
     >
       {articles.map((article) => (
         <div key={article.id} className="py-4 first:pt-0 last:pb-0">
-          <FeatureSideItem article={article} variant={variant} />
+          <FeatureSideItem
+            article={article}
+            variant={variant}
+            layout={layout}
+          />
         </div>
       ))}
     </div>
@@ -68,19 +74,23 @@ export function FeaturedArticlesSection({
   return (
     <section className="bg-news-surface">
       <SitePageWidth className="py-6">
-        <div className="lg:hidden">
+        <div className="xl:hidden">
           <FeatureHero
             article={featuredArticles.centerArticle}
             variant={variant}
           />
           {sideArticles.length > 0 ? (
             <div className="mt-8">
-              <SideArticleList articles={sideArticles} variant={variant} />
+              <SideArticleList
+                articles={sideArticles}
+                variant={variant}
+                layout="compact"
+              />
             </div>
           ) : null}
         </div>
 
-        <div className="hidden grid-cols-[1fr_3fr_1fr] divide-x divide-dotted divide-news-border lg:grid">
+        <div className="hidden grid-cols-[1fr_3fr_1fr] divide-x divide-dotted divide-news-border xl:grid">
           <div className="min-w-0 px-6 py-0">
             <SideArticleList
               articles={featuredArticles.leftColumn}

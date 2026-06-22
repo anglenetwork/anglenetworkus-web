@@ -91,7 +91,8 @@ describe("article family page GROQ", () => {
 
   it("article page body projection includes tweetEmbed fields", () => {
     expect(articleFamilyPageBySlugQuery).toContain('_type == "tweetEmbed"');
-    expect(articleFamilyPageBySlugQuery).toContain("tweetId");
+    expect(articleFamilyPageBySlugQuery).toContain("url");
     expect(articleFamilyPageBySlugQuery).toContain("caption");
+    expect(articleFamilyPageBySlugQuery).not.toContain("tweetId");
   });
 });

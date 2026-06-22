@@ -7,30 +7,30 @@ vi.mock("react-tweet", () => ({
   ),
 }));
 
-import { TweetEmbedBlock, isValidTweetId } from "../TweetEmbedBlock";
+import { TweetEmbedBlock } from "../TweetEmbedBlock";
+
+const VALID_TWEET_URL =
+  "https://twitter.com/jack/status/1629307668568633344";
 
 afterEach(() => {
   cleanup();
 });
 
-describe("isValidTweetId", () => {
-  it("accepts numeric tweet IDs", () => {
-    expect(isValidTweetId("1629307668568633344")).toBe(true);
-  });
-
-  it("rejects missing or non-numeric IDs", () => {
-    expect(isValidTweetId(null)).toBe(false);
-    expect(isValidTweetId(undefined)).toBe(false);
-    expect(isValidTweetId("")).toBe(false);
-    expect(isValidTweetId("abc123")).toBe(false);
-  });
-});
-
 describe("TweetEmbedBlock", () => {
-  it("renders a tweet embed for a valid ID", () => {
-    render(<TweetEmbedBlock tweetId="1629307668568633344" />);
+  it("renders a tweet embed for a valid URL", () => {
+    render(<TweetEmbedBlock url={VALID_TWEET_URL} />);
 
     expect(screen.getByLabelText("Embedded post from X")).toBeInTheDocument();
+    expect(screen.getByTestId("mock-tweet")).toHaveTextContent(
+      "Tweet 1629307668568633344",
+    );
+  });
+
+  it("extracts the ID from a URL with query params", () => {
+    render(
+      <TweetEmbedBlock url={`${VALID_TWEET_URL}?s=20&t=abc`} />,
+    );
+
     expect(screen.getByTestId("mock-tweet")).toHaveTextContent(
       "Tweet 1629307668568633344",
     );
@@ -39,7 +39,7 @@ describe("TweetEmbedBlock", () => {
   it("renders an optional caption below the embed", () => {
     render(
       <TweetEmbedBlock
-        tweetId="1629307668568633344"
+        url={VALID_TWEET_URL}
         caption="  Editor note about this post.  "
       />,
     );
@@ -47,13 +47,15 @@ describe("TweetEmbedBlock", () => {
     expect(screen.getByText("Editor note about this post.")).toBeInTheDocument();
   });
 
-  it("renders nothing when tweet ID is missing or invalid", () => {
-    const { container: missing } = render(<TweetEmbedBlock tweetId={null} />);
-    expect(missing.firstChild).toBeNull();
+  it("renders nothing when URL is missing", () => {
+    const { container } = render(<TweetEmbedBlock url={null} />);
+    expect(container.firstChild).toBeNull();
+  });
 
-    const { container: invalid } = render(
-      <TweetEmbedBlock tweetId="not-numeric" />,
+  it("renders nothing for an invalid URL and does not crash", () => {
+    const { container } = render(
+      <TweetEmbedBlock url="https://example.com/not-a-tweet" />,
     );
-    expect(invalid.firstChild).toBeNull();
+    expect(container.firstChild).toBeNull();
   });
 });

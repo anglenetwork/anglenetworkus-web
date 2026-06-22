@@ -5,10 +5,10 @@ export const CATEGORY_FEATURED_COUNT = 5;
 export const CATEGORY_HEADLINE_ROW_OFFSET = CATEGORY_FEATURED_COUNT;
 export const CATEGORY_HEADLINE_ROW_COUNT = 4;
 
-/** Title ticker in the category header. */
+/** Title ticker in the category header (NewsTicker displays at most four). */
 export const CATEGORY_TICKER_OFFSET =
   CATEGORY_HEADLINE_ROW_OFFSET + CATEGORY_HEADLINE_ROW_COUNT;
-export const CATEGORY_TICKER_COUNT = 5;
+export const CATEGORY_TICKER_COUNT = 4;
 
 /** Image card row below the featured section. */
 export const CATEGORY_MISSED_IT_OFFSET =

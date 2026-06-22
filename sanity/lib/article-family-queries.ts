@@ -38,7 +38,6 @@ const articleFamilyBody = `
       _type,
       _key,
       url,
-      tweetId,
       caption
     }
   }

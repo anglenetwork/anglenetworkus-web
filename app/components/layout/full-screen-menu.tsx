@@ -1,34 +1,135 @@
 "use client";
 
-import { Facebook, Twitter, Instagram, Youtube } from "lucide-react";
+import { ChevronDown, Facebook, Twitter, Instagram, Youtube } from "lucide-react";
 import { SearchBar } from "../ui/search-bar";
 import Link from "next/link";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
+import * as AccordionPrimitive from "@radix-ui/react-accordion";
 import {
-  CANONICAL_NAV_CATEGORIES,
-  CANONICAL_NAV_TAGS,
-} from "@/app/lib/nav/canonical-fallbacks";
+  buildXlMenuGrid,
+  type NavMenuCategory,
+  type NavMenuColumn,
+} from "@/app/lib/nav/menu-columns";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+} from "@/components/ui/accordion";
 
-interface Category {
-  slug: string;
-  name: string;
-  views?: number;
-}
-
-interface Tag {
-  slug: string;
-  title: string;
-  views?: number;
-}
-
-const menuNavListClass = "flex flex-col gap-4";
-
-/** Tags and Company nav links */
+/** Tags nav links */
 const menuSecondaryLinkClass =
-  "font-medium font-sans text-lg transition-colors hover:text-primary xl:text-xl";
+  "font-normal font-sans text-lg transition-colors hover:text-primary xl:text-base";
 
-function EditorialShortcuts({
+const menuNavListClass = "mt-4 flex flex-col gap-2";
+const menuCategoryLinkClass =
+  "font-semibold font-sans text-2xl capitalize transition-colors hover:text-primary xl:text-2xl";
+
+const menuActionLinkClass =
+  "font-sans font-semibold text-lg transition-colors hover:text-primary";
+
+function MenuCategoryAccordion({
+  categories,
+  onClose,
+}: {
+  categories: NavMenuCategory[];
+  onClose: () => void;
+}) {
+  return (
+    <Accordion type="multiple" className="w-full">
+      {categories.map((category) => (
+        <AccordionItem
+          key={category.slug}
+          value={category.slug}
+          className="border-border border-b border-dotted"
+        >
+          <AccordionPrimitive.Header className="flex items-center justify-between">
+            <Link
+              href={`/category/${category.slug}`}
+              onClick={onClose}
+              className={cn(menuCategoryLinkClass, "shrink-0 py-3")}
+            >
+              {category.name}
+            </Link>
+            <AccordionPrimitive.Trigger
+              className={cn(
+                "flex flex-1 items-center justify-end py-3 pl-4 hover:no-underline",
+                "text-muted-foreground transition-colors hover:text-primary",
+                "[&[data-state=open]>svg]:rotate-180",
+              )}
+            >
+              <span className="sr-only">Show {category.name} tags</span>
+              <ChevronDown className="size-4 shrink-0 transition-transform duration-200" />
+            </AccordionPrimitive.Trigger>
+          </AccordionPrimitive.Header>
+          <AccordionContent>
+            {category.tags.length > 0 ? (
+              <nav
+                className={menuNavListClass}
+                aria-label={`${category.name} tags`}
+              >
+                {category.tags.map((tag) => (
+                  <Link
+                    key={tag.slug}
+                    href={`/tag/${tag.slug}`}
+                    onClick={onClose}
+                    className={menuSecondaryLinkClass}
+                  >
+                    {tag.title}
+                  </Link>
+                ))}
+              </nav>
+            ) : (
+              <Link
+                href={`/category/${category.slug}`}
+                onClick={onClose}
+                className={menuSecondaryLinkClass}
+              >
+                View {category.name}
+              </Link>
+            )}
+          </AccordionContent>
+        </AccordionItem>
+      ))}
+    </Accordion>
+  );
+}
+
+function MenuCategorySection({
+  category,
+  onClose,
+}: {
+  category: NavMenuCategory;
+  onClose: () => void;
+}) {
+  return (
+    <section>
+      <Link
+        href={`/category/${category.slug}`}
+        onClick={onClose}
+        className={menuCategoryLinkClass}
+      >
+        {category.name}
+      </Link>
+      {category.tags.length > 0 ? (
+        <nav className={menuNavListClass} aria-label={`${category.name} tags`}>
+          {category.tags.map((tag) => (
+            <Link
+              key={tag.slug}
+              href={`/tag/${tag.slug}`}
+              onClick={onClose}
+              className={menuSecondaryLinkClass}
+            >
+              {tag.title}
+            </Link>
+          ))}
+        </nav>
+      ) : null}
+    </section>
+  );
+}
+
+function MenuActionLinks({
   onClose,
   className,
 }: {
@@ -37,35 +138,28 @@ function EditorialShortcuts({
 }) {
   return (
     <div className={cn("flex flex-wrap gap-x-8 gap-y-3", className)}>
-      <Link
-        href="/opinion"
-        onClick={onClose}
-        className="font-sans font-semibold text-lg transition-colors hover:text-primary"
-      >
+      <Link href="/opinion" onClick={onClose} className={menuActionLinkClass}>
         Opinion
       </Link>
-      <Link
-        href="/analysis"
-        onClick={onClose}
-        className="font-sans font-semibold text-lg transition-colors hover:text-primary"
-      >
+      <Link href="/analysis" onClick={onClose} className={menuActionLinkClass}>
         Analysis
       </Link>
       <Link
-        href="/latest"
+        href="/company/advertise-with-us"
         onClick={onClose}
-        className="font-sans font-semibold text-lg transition-colors hover:text-primary"
+        className={menuActionLinkClass}
       >
-        Latest
+        Partner with us
+      </Link>
+      <Link href="/company/contact" onClick={onClose} className={menuActionLinkClass}>
+        Contact
       </Link>
     </div>
   );
 }
 
 interface FullScreenMenuProps {
-  categories: Category[];
-  tags: Tag[];
-  showsTags: Tag[];
+  menuColumns: NavMenuColumn[];
   onClose: () => void;
   headerOffset: number;
   focusSearchOnOpen?: boolean;
@@ -73,9 +167,7 @@ interface FullScreenMenuProps {
 }
 
 export function FullScreenMenu({
-  categories,
-  tags,
-  showsTags,
+  menuColumns,
   onClose,
   headerOffset,
   focusSearchOnOpen = false,
@@ -89,19 +181,11 @@ export function FullScreenMenu({
   onFocusSearchHandledRef.current = onFocusSearchHandled;
 
   const [visible, setVisible] = useState(false);
-
-  const menuTags = useMemo(() => {
-    const seen = new Set<string>();
-    return [...tags, ...showsTags].filter((tag) => {
-      if (seen.has(tag.slug)) return false;
-      seen.add(tag.slug);
-      return true;
-    });
-  }, [tags, showsTags]);
-
-  const displayCategories =
-    categories.length > 0 ? categories : CANONICAL_NAV_CATEGORIES;
-  const displayTags = menuTags.length > 0 ? menuTags : CANONICAL_NAV_TAGS;
+  const xlMenuRows = buildXlMenuGrid(menuColumns);
+  const menuCategories = useMemo(
+    () => menuColumns.flatMap((column) => column.categories),
+    [menuColumns],
+  );
 
   useEffect(() => {
     const frameId = requestAnimationFrame(() => setVisible(true));
@@ -174,89 +258,57 @@ export function FullScreenMenu({
               />
             </div>
 
-            <div className="grid grid-cols-1 gap-8 md:grid-cols-2 md:gap-12 lg:grid-cols-3">
-              <div>
-                <nav className="flex flex-col gap-4">
-                  {displayCategories.map((category) => (
-                    <Link
-                      key={category.slug}
-                      href={`/category/${category.slug}`}
-                      onClick={onClose}
-                      className="font-bold font-sans text-2xl capitalize transition-colors hover:text-primary xl:text-3xl"
-                    >
-                      {category.name}
-                    </Link>
-                  ))}
-                </nav>
-              </div>
-
-              <div>
-                <nav className={menuNavListClass}>
-                  {displayTags.map((tag) => (
-                    <Link
-                      key={tag.slug}
-                      href={`/tag/${tag.slug}`}
-                      onClick={onClose}
-                      className={menuSecondaryLinkClass}
-                    >
-                      {tag.title}
-                    </Link>
-                  ))}
-                </nav>
-                <EditorialShortcuts
-                  onClose={onClose}
-                  className="mt-8 border-border border-t pt-6 xl:hidden"
-                />
-              </div>
-
-              <div>
-                <h3 className="mb-4 font-sans font-semibold text-lg text-red-600">
-                  Company
-                </h3>
-                <nav className={menuNavListClass}>
-                  <Link
-                    href="/company/terms-of-service"
-                    onClick={onClose}
-                    className={menuSecondaryLinkClass}
-                  >
-                    Terms of Use
-                  </Link>
-                  <Link
-                    href="/company/privacy-policy"
-                    onClick={onClose}
-                    className={menuSecondaryLinkClass}
-                  >
-                    Privacy Policy
-                  </Link>
-                  <Link
-                    href="/company/advertise-with-us"
-                    onClick={onClose}
-                    className={menuSecondaryLinkClass}
-                  >
-                    Partner with us
-                  </Link>
-                  <Link
-                    href="/company/contact"
-                    onClick={onClose}
-                    className={menuSecondaryLinkClass}
-                  >
-                    Contact
-                  </Link>
-                </nav>
-              </div>
+            <div className="md:hidden">
+              <MenuCategoryAccordion
+                categories={menuCategories}
+                onClose={onClose}
+              />
             </div>
-          </div>
 
-          <div
-            className={cn(
-              "hidden transition-all duration-700 ease-out xl:block",
-              visible ? "translate-y-0 opacity-100" : "translate-y-8 opacity-0",
-            )}
-            style={{ transitionDelay: visible ? "250ms" : "0ms" }}
-          >
-            <EditorialShortcuts
+            <div className="hidden gap-12 md:grid md:grid-cols-2 lg:grid-cols-2 xl:hidden">
+              {menuColumns.map((column, columnIndex) => (
+                <div
+                  key={`menu-column-${columnIndex}`}
+                  className="flex flex-col gap-8"
+                >
+                  {column.categories.map((category) => (
+                    <MenuCategorySection
+                      key={category.slug}
+                      category={category}
+                      onClose={onClose}
+                    />
+                  ))}
+                </div>
+              ))}
+            </div>
+
+            <div
+              className="hidden gap-x-12 gap-y-8 xl:grid xl:grid-cols-5"
+              style={{
+                gridTemplateRows: `repeat(${xlMenuRows.length}, auto)`,
+              }}
+            >
+              {xlMenuRows.flatMap((row, rowIndex) =>
+                row.map((category, columnIndex) =>
+                  category ? (
+                    <MenuCategorySection
+                      key={category.slug}
+                      category={category}
+                      onClose={onClose}
+                    />
+                  ) : (
+                    <div
+                      key={`xl-menu-empty-${rowIndex}-${columnIndex}`}
+                      aria-hidden
+                    />
+                  ),
+                ),
+              )}
+            </div>
+
+            <MenuActionLinks
               onClose={onClose}
-              className="border-border border-b p-8 px-4 sm:px-6 lg:px-16 xl:px-0"
+              className="border-border border-t pt-6 md:pt-8"
             />
           </div>
 

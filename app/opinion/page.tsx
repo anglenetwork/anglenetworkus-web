@@ -5,9 +5,8 @@ import {
   opinionIndexCountQuery,
 } from "@/sanity/lib/article-family-queries";
 import { normalizeArticleFamilyCard } from "@/app/lib/article-family/normalize";
-import ArticleFamilyIndexPage, {
-  articleFamilyIndexPageSize,
-} from "@/app/components/article-family/ArticleFamilyIndexPage";
+import ArticleFamilyIndexPage from "@/app/components/article-family/ArticleFamilyIndexPage";
+import { OPINION_INITIAL_FETCH_SIZE } from "@/app/components/article-family/opinion-index-constants";
 import * as demo from "@/sanity/lib/demo";
 import { getCachedSettings } from "@/app/lib/cached-settings";
 import { JsonLdScript } from "@/app/components/seo/json-ld-script";
@@ -19,14 +18,7 @@ import {
 
 export const revalidate = 60;
 
-export async function generateMetadata({
-  searchParams,
-}: {
-  searchParams: Promise<{ page?: string }>;
-}): Promise<Metadata> {
-  const sp = await searchParams;
-  const raw = parseInt(sp.page || "1", 10);
-  const page = Number.isFinite(raw) && raw >= 1 ? raw : 1;
+export async function generateMetadata(): Promise<Metadata> {
   const [settings, totalRaw] = await Promise.all([
     getCachedSettings(),
     sanityFetch({
@@ -35,26 +27,17 @@ export async function generateMetadata({
   ]);
   const total = typeof totalRaw === "number" ? totalRaw : 0;
   return finalizePublicMetadata(
-    buildOpinionIndexMetadata(page, total, settings, demo.title),
+    buildOpinionIndexMetadata(1, total, settings, demo.title),
   );
 }
 
-export default async function OpinionIndexPage({
-  searchParams,
-}: {
-  searchParams: Promise<{ page?: string }>;
-}) {
-  const sp = await searchParams;
-  const raw = parseInt(sp.page || "1", 10);
-  const page = Number.isFinite(raw) && raw >= 1 ? raw : 1;
-  const pageSize = articleFamilyIndexPageSize;
-  const start = (page - 1) * pageSize;
-  const end = start + pageSize;
+export default async function OpinionIndexPage() {
+  const pageSize = OPINION_INITIAL_FETCH_SIZE;
 
   const [rows, totalRaw] = await Promise.all([
     sanityFetch({
       query: opinionIndexQuery,
-      params: { start, end },
+      params: { start: 0, end: pageSize },
     }),
     sanityFetch({
       query: opinionIndexCountQuery,
@@ -77,7 +60,7 @@ export default async function OpinionIndexPage({
       <ArticleFamilyIndexPage
         title="Opinion"
         articles={articles}
-        page={page}
+        page={1}
         total={total}
         basePath="/opinion"
         variant="opinion"

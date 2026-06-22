@@ -212,7 +212,7 @@ export const portableTextComponents: PortableTextComponents = {
       const tweetValue = asRecord(value);
       return (
         <TweetEmbedBlock
-          tweetId={asString(tweetValue.tweetId)}
+          url={asString(tweetValue.url)}
           caption={asString(tweetValue.caption)}
         />
       );

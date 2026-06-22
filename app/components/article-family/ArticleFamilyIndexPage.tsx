@@ -5,6 +5,7 @@ import ArticleFamilyCard from "./ArticleFamilyCard";
 import type { ArticleFamilyCard as CardModel } from "@/app/lib/article-family/types";
 import { AnalysisAuthorLine, AnalysisListSection } from "./AnalysisRowCard";
 import AnalysisMoreSection from "./AnalysisMoreSection";
+import OpinionMoreSection from "./OpinionMoreSection";
 import {
   ANALYSIS_HERO_COUNT,
   ANALYSIS_MISSED_IT_COUNT,
@@ -12,7 +13,7 @@ import {
   ANALYSIS_SIDEBAR_COUNT,
 } from "./analysis-index-constants";
 import {
-  OPINION_HERO_COUNT,
+  OPINION_CONTENT_OFFSET,
   OPINION_SIDEBAR_COUNT,
 } from "./opinion-index-constants";
 import { SitePageWidth } from "@/app/components/layout/site-page-width";
@@ -22,7 +23,6 @@ import { ReadTimeLabel } from "@/app/components/ui/read-time-label";
 import { getCoverImage } from "@/sanity/lib/utils";
 import {
   categoryFeaturedTitle,
-  categorySecondaryRowTitle,
 } from "@/app/lib/typography/second-section";
 import { fifthSectionFeaturedOverlayTitle } from "@/app/lib/typography/fifth-section";
 import {
@@ -172,56 +172,6 @@ function AnalysisLeadCard({
   );
 }
 
-function OpinionColumnCard({
-  article,
-  padded = true,
-  layout = "row",
-}: {
-  article: CardModel;
-  padded?: boolean;
-  layout?: "featured" | "row";
-}) {
-  const isFeatured = layout === "featured";
-
-  return (
-    <article
-      className={cn("py-6 first:pt-0 last:pb-0", padded && "lg:px-6 lg:py-0")}
-    >
-      <Link
-        href={article.href}
-        className={cn(
-          "group flex items-start gap-3",
-          isFeatured && "flex-col gap-4",
-        )}
-        aria-label={`Read article: ${article.title || "Opinion article"}`}
-      >
-        <ArticleImage
-          article={article}
-          className={cn(
-            "relative shrink-0 overflow-hidden rounded-sm bg-neutral-950",
-            isFeatured ? "aspect-[16/9] w-full" : "h-20 w-28",
-          )}
-          sizes={isFeatured ? "(max-width: 1024px) 100vw, 33vw" : "112px"}
-        />
-        <div className="flex min-w-0 flex-1 flex-col gap-2">
-          <h3 className={categorySecondaryRowTitle.light}>
-            {article.title || "Untitled"}
-          </h3>
-          <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
-            <AnalysisAuthorLine author={article.author} />
-            <ReadTimeLabel
-              minutes={article.readTime}
-              variant="default"
-              className="mt-0"
-              as="span"
-            />
-          </div>
-        </div>
-      </Link>
-    </article>
-  );
-}
-
 function EditorialTwoColumnHero({
   leadArticle,
   sidebarArticles,
@@ -339,58 +289,28 @@ function AnalysisIndexModule({
 
 function OpinionPageContent({
   articles,
-  safePage,
+  total,
 }: {
   articles: CardModel[];
-  safePage: number;
+  total: number;
 }) {
-  const gridArticles =
-    safePage === 1 ? articles.slice(OPINION_HERO_COUNT) : articles;
+  const initialMoreArticles = articles.slice(OPINION_CONTENT_OFFSET);
+  const showMoreSection =
+    initialMoreArticles.length > 0 || total > OPINION_CONTENT_OFFSET;
 
   return (
     <div className="mt-8 space-y-8">
-      {safePage === 1 ? (
-        <EditorialTwoColumnHero
-          leadArticle={articles[0]}
-          sidebarArticles={articles.slice(1, 1 + OPINION_SIDEBAR_COUNT)}
-          sidebarTitle="Latest Opinion"
-          family="opinion"
+      <EditorialTwoColumnHero
+        leadArticle={articles[0]}
+        sidebarArticles={articles.slice(1, 1 + OPINION_SIDEBAR_COUNT)}
+        sidebarTitle="Latest Opinion"
+        family="opinion"
+      />
+      {showMoreSection ? (
+        <OpinionMoreSection
+          initialArticles={initialMoreArticles}
+          total={total}
         />
-      ) : null}
-      {gridArticles.length > 0 ? (
-        <OpinionIndexModule articles={gridArticles} />
-      ) : null}
-    </div>
-  );
-}
-
-function OpinionIndexModule({ articles }: { articles: CardModel[] }) {
-  const topArticles = articles.slice(0, 3);
-  const remainingArticles = articles.slice(3);
-
-  return (
-    <div className="rounded-lg bg-neutral-100 px-4 py-6 md:px-6 md:py-8">
-      <div className="grid grid-cols-1 divide-y divide-dotted divide-neutral-500 lg:grid-cols-3 lg:divide-x lg:divide-y-0">
-        {topArticles.map((article) => (
-          <OpinionColumnCard
-            key={article._id}
-            article={article}
-            layout="featured"
-          />
-        ))}
-      </div>
-      {remainingArticles.length > 0 ? (
-        <div className="mt-6 border-neutral-500 border-t border-dotted pt-6">
-          <div className="flex flex-col divide-y divide-dotted divide-neutral-500">
-            {remainingArticles.map((article) => (
-              <OpinionColumnCard
-                key={article._id}
-                article={article}
-                padded={false}
-              />
-            ))}
-          </div>
-        </div>
       ) : null}
     </div>
   );
@@ -505,45 +425,12 @@ export default function ArticleFamilyIndexPage({
           No articles yet.
         </p>
       ) : variant === "opinion" ? (
-        <OpinionPageContent articles={articles} safePage={safePage} />
+        <OpinionPageContent articles={articles} total={total} />
       ) : (
         <div className="mt-8">
           <AnalysisIndexModule articles={articles} total={total} />
         </div>
       )}
-
-      {variant === "opinion" && totalPages > 1 ? (
-        <nav
-          className="mt-12 flex flex-wrap items-center justify-center gap-4"
-          aria-label="Pagination"
-        >
-          <Link
-            href={pageHref(basePath, safePage - 1)}
-            className={`rounded-lg border border-neutral-300 px-4 py-2 font-sans text-sm ${
-              safePage <= 1
-                ? "pointer-events-none opacity-40"
-                : "hover:bg-neutral-50"
-            }`}
-            aria-disabled={safePage <= 1}
-          >
-            Previous
-          </Link>
-          <span className="font-sans text-neutral-600 text-sm">
-            Page {safePage} of {totalPages}
-          </span>
-          <Link
-            href={pageHref(basePath, safePage + 1)}
-            className={`rounded-lg border border-neutral-300 px-4 py-2 font-sans text-sm ${
-              safePage >= totalPages
-                ? "pointer-events-none opacity-40"
-                : "hover:bg-neutral-50"
-            }`}
-            aria-disabled={safePage >= totalPages}
-          >
-            Next
-          </Link>
-        </nav>
-      ) : null}
     </SitePageWidth>
   );
 }

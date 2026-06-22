@@ -1,2 +1,7 @@
 export const OPINION_SIDEBAR_COUNT = 5;
+export const OPINION_MORE_BATCH_SIZE = 10;
 export const OPINION_HERO_COUNT = 1 + OPINION_SIDEBAR_COUNT;
+export const OPINION_CONTENT_OFFSET = OPINION_HERO_COUNT;
+/** Hero + first More Opinion batch (server-rendered). */
+export const OPINION_INITIAL_FETCH_SIZE =
+  OPINION_CONTENT_OFFSET + OPINION_MORE_BATCH_SIZE;

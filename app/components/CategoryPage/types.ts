@@ -1,3 +1,5 @@
+import type { TagsGlimpseItem } from "@/app/components/tags-glimpse";
+
 export interface Article {
   id: string;
   title: string;
@@ -30,6 +32,7 @@ export interface CategoryPageProps {
   mostReadArticles: Article[];
   headlineRowArticles?: Article[];
   missedItArticles?: Article[];
+  tagsGlimpse?: TagsGlimpseItem[];
   featuredArticles?: {
     leftColumn: Article[];
     centerArticle: Article;

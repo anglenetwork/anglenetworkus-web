@@ -23,9 +23,9 @@ describe("category page layout sections", () => {
   it("defines consecutive non-overlapping section offsets", () => {
     expect(CATEGORY_FEATURED_COUNT).toBe(5);
     expect(CATEGORY_HEADLINE_ROW_COUNT).toBe(4);
-    expect(CATEGORY_TICKER_COUNT).toBe(5);
+    expect(CATEGORY_TICKER_COUNT).toBe(4);
     expect(CATEGORY_MISSED_IT_COUNT).toBe(4);
-    expect(CATEGORY_CONTENT_OFFSET).toBe(18);
+    expect(CATEGORY_CONTENT_OFFSET).toBe(17);
   });
 
   it("uses five featured slots with the newest post centered", () => {
@@ -48,15 +48,23 @@ describe("category page layout sections", () => {
       "post-10",
       "post-11",
       "post-12",
-      "post-13",
     ]);
-    expect(missedIt.map((post) => post.id)).toEqual([14, 15, 16, 17]);
-    expect(latest.map((post) => post.id)).toEqual([18, 19, 20, 21, 22, 23]);
+    expect(missedIt.map((post) => post.id)).toEqual([13, 14, 15, 16]);
+    expect(latest.map((post) => post.id)).toEqual([17, 18, 19, 20, 21, 22, 23]);
   });
 
   it("returns empty latest list when all posts fit above it", () => {
     expect(
-      buildCategoryLatestArticles(posts.slice(0, 18), (post) => post),
+      buildCategoryLatestArticles(posts.slice(0, 17), (post) => post),
     ).toEqual([]);
+  });
+
+  it("includes the 14th post in missed-it (not lost after four ticker slots)", () => {
+    const missedIt = buildCategoryMissedItArticles(
+      posts.slice(0, 14),
+      (post) => post,
+    );
+
+    expect(missedIt.map((post) => post.id)).toEqual([13]);
   });
 });

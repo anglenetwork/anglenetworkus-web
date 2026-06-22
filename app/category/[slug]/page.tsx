@@ -31,6 +31,7 @@ import {
   finalizePublicMetadata,
 } from "@/app/lib/seo/metadata-builders";
 import { trackCategoryView } from "@/app/lib/analytics/track-category-view";
+import { getTagsGlimpseData } from "@/app/lib/tags-glimpse/get-tags-glimpse-data";
 
 // Generate static params for SSG
 export async function generateStaticParams() {
@@ -88,7 +89,7 @@ export default async function CategoryPageRoute({
 }) {
   const { slug } = await params;
 
-  const [categoryData, posts] = await Promise.all([
+  const [categoryData, posts, tagsGlimpse] = await Promise.all([
     sanityFetchStatic({
       query: `*[_type == "category" && slug.current == $slug][0]{name, slug}`,
       params: { slug },
@@ -97,6 +98,7 @@ export default async function CategoryPageRoute({
       query: postsByCategoryQuery,
       params: { categorySlug: slug },
     }),
+    getTagsGlimpseData(slug),
   ]);
 
   const postList = Array.isArray(posts) ? posts : [];
@@ -194,6 +196,7 @@ export default async function CategoryPageRoute({
         mostReadArticles={mostReadArticles}
         headlineRowArticles={headlineRowArticles}
         missedItArticles={missedItArticles}
+        tagsGlimpse={tagsGlimpse ?? undefined}
         featuredArticles={featuredArticles}
         categoryTickerPosts={categoryTickerPosts}
       />

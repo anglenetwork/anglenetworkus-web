@@ -1,19 +1,15 @@
 import { Tweet } from "react-tweet";
 import { regularPostBodyVideoCaption } from "@/app/lib/typography/posts";
-
-const NUMERIC_TWEET_ID = /^\d+$/;
-
-export function isValidTweetId(id: string | null | undefined): id is string {
-  return typeof id === "string" && NUMERIC_TWEET_ID.test(id);
-}
+import { extractTweetId } from "@/lib/tweets";
 
 type TweetEmbedBlockProps = {
-  tweetId?: string | null;
+  url?: string | null;
   caption?: string | null;
 };
 
-export function TweetEmbedBlock({ tweetId, caption }: TweetEmbedBlockProps) {
-  if (!isValidTweetId(tweetId)) return null;
+export function TweetEmbedBlock({ url, caption }: TweetEmbedBlockProps) {
+  const tweetId = url ? extractTweetId(url) : null;
+  if (!tweetId) return null;
 
   const trimmedCaption = caption?.trim();
 
