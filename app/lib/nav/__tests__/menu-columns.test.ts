@@ -1,5 +1,8 @@
 import { describe, expect, it } from "vitest";
-import { buildNavMenuColumns, buildXlMenuGrid } from "@/app/lib/nav/menu-columns";
+import {
+  buildNavMenuColumns,
+  buildXlMenuGrid,
+} from "@/app/lib/nav/menu-columns";
 
 describe("buildNavMenuColumns", () => {
   const categories = [

@@ -263,7 +263,11 @@ export default defineType({
           type: "reference",
           to: [{ type: "tag" }],
           options: {
-            filter: ({ document }: { document?: { category?: { _ref?: string } } }) => {
+            filter: ({
+              document,
+            }: {
+              document?: { category?: { _ref?: string } };
+            }) => {
               const categoryRef = document?.category?._ref;
               if (!categoryRef) {
                 return {

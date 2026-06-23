@@ -247,10 +247,7 @@ export default async function TagPage({
         ) : null}
 
         {latestPosts.length > 0 ? (
-          <ShowMoreSection
-            posts={latestPosts as any}
-            tagTitle={tagTitle}
-          />
+          <ShowMoreSection posts={latestPosts as any} tagTitle={tagTitle} />
         ) : null}
       </main>
     </>

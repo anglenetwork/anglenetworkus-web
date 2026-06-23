@@ -21,9 +21,7 @@ import { SectionHeader } from "@/app/components/ui/section-header";
 import { ImageRenderer } from "@/app/components/ui/image-renderer";
 import { ReadTimeLabel } from "@/app/components/ui/read-time-label";
 import { getCoverImage } from "@/sanity/lib/utils";
-import {
-  categoryFeaturedTitle,
-} from "@/app/lib/typography/second-section";
+import { categoryFeaturedTitle } from "@/app/lib/typography/second-section";
 import { fifthSectionFeaturedOverlayTitle } from "@/app/lib/typography/fifth-section";
 import {
   NewsCardRowSection,

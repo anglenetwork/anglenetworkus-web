@@ -318,7 +318,7 @@ export const navTagsWithCategoryQuery = defineQuery(`
   }
 `);
 
-/** Tags Glimpse: up to four visible tags for a category page section. */
+/** Tags Glimpse: candidate tags for a category page section (caller fills up to four with articles). */
 export const tagsByCategorySlugQuery = defineQuery(`
   *[
     _type == "tag" &&
@@ -326,7 +326,7 @@ export const tagsByCategorySlugQuery = defineQuery(`
     defined(slug.current) &&
     hidden != true &&
     deprecated != true
-  ] | order(coalesce(order, 999) asc, title asc) [0...4] {
+  ] | order(coalesce(order, 999) asc, title asc) [0...$tagLimit] {
     "slug": slug.current,
     title
   }

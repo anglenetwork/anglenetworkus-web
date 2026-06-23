@@ -2,10 +2,7 @@ import { notFound } from "next/navigation";
 import { after } from "next/server";
 import type { Metadata } from "next";
 import { sanityFetchStatic } from "@/sanity/lib/fetch";
-import {
-  categorySlugsQuery,
-  postsByCategoryQuery,
-} from "@/sanity/lib/queries";
+import { categorySlugsQuery, postsByCategoryQuery } from "@/sanity/lib/queries";
 import {
   fetch10DayViewsForArticleIds,
   sortIdsBy10DayViewsThenPublishedAt,

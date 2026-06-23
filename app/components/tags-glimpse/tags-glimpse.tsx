@@ -4,8 +4,7 @@ import { cn } from "@/lib/utils";
 import { FeaturedStoryColumn } from "@/app/components/ui/featured-story-column";
 import type { TagsGlimpseProps } from "./types";
 
-const IMAGE_SIZES =
-  "(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 25vw";
+const IMAGE_SIZES = "(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 25vw";
 
 const XL_GRID_COLS: Record<number, string> = {
   1: "xl:grid-cols-1",

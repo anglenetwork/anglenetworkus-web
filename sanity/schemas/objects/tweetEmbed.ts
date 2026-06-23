@@ -36,8 +36,7 @@ export default defineType({
       url: "url",
     },
     prepare({ url }) {
-      const idFromUrl =
-        typeof url === "string" ? extractTweetId(url) : null;
+      const idFromUrl = typeof url === "string" ? extractTweetId(url) : null;
 
       return {
         title: "Tweet/X Embed",

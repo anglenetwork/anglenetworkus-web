@@ -12,6 +12,12 @@ import {
   postsByIdsLightweightQuery,
 } from "@/sanity/lib/queries";
 import type { HomepageFourthSectionTechQueryResult } from "@/sanity.types";
+import {
+  selectFourthSectionMostReadPosts,
+  type FourthSectionMostReadPost,
+} from "./homepage-fourth-section/most-read-selection";
+
+export { selectFourthSectionMostReadPosts } from "./homepage-fourth-section/most-read-selection";
 
 export const HOMEPAGE_FOURTH_SECTION_CATEGORY = {
   slug: "tech",
@@ -25,18 +31,7 @@ export const HOMEPAGE_FOURTH_SECTION_SECONDARY_COUNT = 4;
 export type FourthSectionTechPost =
   HomepageFourthSectionTechQueryResult[number];
 
-export type HomepageFourthSectionMostReadPost = {
-  _id: string;
-  title: string;
-  slug: string | null;
-  readTime?: number | null;
-  publishedAt?: string | null;
-  date?: string | null;
-  category?: {
-    title: string | null;
-    slug: string | null;
-  } | null;
-};
+export type HomepageFourthSectionMostReadPost = FourthSectionMostReadPost;
 
 export type HomepageFourthSectionData = {
   category: typeof HOMEPAGE_FOURTH_SECTION_CATEGORY;
@@ -53,27 +48,15 @@ function normalizeMostReadPosts(
     : [];
 }
 
-function filterMostReadPosts(
-  posts: HomepageFourthSectionMostReadPost[] | null | undefined,
-): HomepageFourthSectionMostReadPost[] {
-  return normalizeMostReadPosts(posts).filter(
-    (post) =>
-      !!post.slug &&
-      (!post.category || (!!post.category.title && !!post.category.slug)),
-  );
-}
-
 function mostReadPostsToFeedItems(
   posts: HomepageFourthSectionMostReadPost[] | null | undefined,
 ): MostReadFeedItem[] {
-  return normalizeMostReadPosts(posts)
-    .filter((post) => !!post.slug)
-    .map((post) => ({
-      id: post._id,
-      title: post.title,
-      href: `/post/${post.slug}`,
-      readTimeMinutes: post.readTime ?? null,
-    }));
+  return selectFourthSectionMostReadPosts(posts).map((post) => ({
+    id: post._id,
+    title: post.title,
+    href: `/post/${post.slug}`,
+    readTimeMinutes: post.readTime ?? null,
+  }));
 }
 
 async function fetchMostReadFallback(): Promise<
@@ -111,26 +94,25 @@ async function loadFourthSectionMostReadPosts(): Promise<
         "homepage_fourth_section_most_read",
         "empty_or_no_activity",
       );
-      return fetchMostReadFallback();
+      return selectFourthSectionMostReadPosts(await fetchMostReadFallback());
     }
 
-    const ids = ranked
-      .map((r) => r.articleId)
-      .slice(0, HOMEPAGE_FOURTH_SECTION_MOST_READ_LIMIT);
+    const ids = ranked.map((r) => r.articleId).slice(0, 24);
     const ordered = await hydrateMostReadPostsByIds(ids);
+    const selected = selectFourthSectionMostReadPosts(ordered);
 
-    if (ordered.length === 0) {
+    if (selected.length === 0) {
       logDevMetricsFallback(
         "homepage_fourth_section_most_read",
         "empty_or_no_activity",
       );
-      return fetchMostReadFallback();
+      return selectFourthSectionMostReadPosts(await fetchMostReadFallback());
     }
 
-    return ordered;
+    return selected;
   } catch {
     logDevMetricsFallback("homepage_fourth_section_most_read", "infra_error");
-    return fetchMostReadFallback();
+    return selectFourthSectionMostReadPosts(await fetchMostReadFallback());
   }
 }
 
@@ -159,7 +141,7 @@ export async function getFourthSectionData(): Promise<HomepageFourthSectionData 
       HOMEPAGE_FOURTH_SECTION_SECONDARY_COUNT,
   );
 
-  const mostRead = mostReadPostsToFeedItems(filterMostReadPosts(mostReadPosts));
+  const mostRead = mostReadPostsToFeedItems(mostReadPosts);
 
   return {
     category: HOMEPAGE_FOURTH_SECTION_CATEGORY,

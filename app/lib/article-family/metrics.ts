@@ -218,7 +218,10 @@ export async function fetch10DayViewsForArticleIds(
 
     if (error) throw error;
 
-    const map = new Map<string, { views10d: number; lastViewedAt: string | null }>();
+    const map = new Map<
+      string,
+      { views10d: number; lastViewedAt: string | null }
+    >();
     for (const row of data ?? []) {
       const typed = row as RankingRowDb;
       map.set(typed.article_id, {
@@ -234,7 +237,10 @@ export async function fetch10DayViewsForArticleIds(
 
 export function sortIdsBy10DayViewsThenPublishedAt<
   T extends { _id: string; publishedAt?: string | null },
->(items: T[], views: Map<string, { views10d: number; lastViewedAt: string | null }>): T[] {
+>(
+  items: T[],
+  views: Map<string, { views10d: number; lastViewedAt: string | null }>,
+): T[] {
   return items.toSorted((a, b) => {
     const va = views.get(a._id)?.views10d ?? 0;
     const vb = views.get(b._id)?.views10d ?? 0;

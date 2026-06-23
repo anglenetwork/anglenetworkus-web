@@ -9,8 +9,7 @@ vi.mock("react-tweet", () => ({
 
 import { TweetEmbedBlock } from "../TweetEmbedBlock";
 
-const VALID_TWEET_URL =
-  "https://twitter.com/jack/status/1629307668568633344";
+const VALID_TWEET_URL = "https://twitter.com/jack/status/1629307668568633344";
 
 afterEach(() => {
   cleanup();
@@ -27,9 +26,7 @@ describe("TweetEmbedBlock", () => {
   });
 
   it("extracts the ID from a URL with query params", () => {
-    render(
-      <TweetEmbedBlock url={`${VALID_TWEET_URL}?s=20&t=abc`} />,
-    );
+    render(<TweetEmbedBlock url={`${VALID_TWEET_URL}?s=20&t=abc`} />);
 
     expect(screen.getByTestId("mock-tweet")).toHaveTextContent(
       "Tweet 1629307668568633344",
@@ -44,7 +41,9 @@ describe("TweetEmbedBlock", () => {
       />,
     );
 
-    expect(screen.getByText("Editor note about this post.")).toBeInTheDocument();
+    expect(
+      screen.getByText("Editor note about this post."),
+    ).toBeInTheDocument();
   });
 
   it("renders nothing when URL is missing", () => {

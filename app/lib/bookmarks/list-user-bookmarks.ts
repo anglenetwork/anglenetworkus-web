@@ -1,10 +1,12 @@
 import { articleFamilyCanonicalHref } from "@/app/lib/article-family/routes";
 import { isArticleFamilyDocType } from "@/app/lib/article-family/normalize";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
-import { sanityFetch } from "@/sanity/lib/fetch";
-import { articleFamilyBookmarksByIdsQuery } from "@/sanity/lib/article-family-queries";
 import { getCoverImage } from "@/sanity/lib/utils";
-import type { ArticleFamilyBookmarksByIdsQueryResult } from "@/sanity.types";
+import { hydrateBookmarkArticles } from "./hydrate-bookmark-articles";
+import {
+  publishedSanityDocumentId,
+  resolveBookmarkArticleTitle,
+} from "./bookmark-article-helpers";
 
 export type UserBookmark = {
   id: number;
@@ -30,37 +32,17 @@ export async function listUserBookmarks(): Promise<UserBookmark[]> {
 
   const { data, error } = await supabase
     .from("bookmarks")
-    .select("id, article_id, article_slug, created_at")
+    .select("id, article_id, article_slug, article_title, created_at")
     .eq("user_id", user.id)
     .order("created_at", { ascending: false });
 
   if (error || !data?.length) return [];
 
-  const articleIds = data.map((bookmark) => bookmark.article_id);
-  const articlesData: Record<
-    string,
-    ArticleFamilyBookmarksByIdsQueryResult[number]
-  > = {};
-
-  try {
-    const articles = await sanityFetch({
-      query: articleFamilyBookmarksByIdsQuery,
-      params: { ids: articleIds },
-    });
-
-    if (Array.isArray(articles)) {
-      for (const article of articles) {
-        if (article?._id) {
-          articlesData[article._id] = article;
-        }
-      }
-    }
-  } catch (sanityError) {
-    console.error("Error fetching articles from Sanity:", sanityError);
-  }
+  const articlesByPublishedId = await hydrateBookmarkArticles(data);
 
   return data.map((bookmark) => {
-    const article = articlesData[bookmark.article_id];
+    const article =
+      articlesByPublishedId[publishedSanityDocumentId(bookmark.article_id)];
     const coverImage = article?.cover
       ? getCoverImage(article.cover, article.title || "Article")
       : null;
@@ -84,7 +66,10 @@ export async function listUserBookmarks(): Promise<UserBookmark[]> {
       article_id: bookmark.article_id,
       article_slug: bookmark.article_slug,
       created_at: bookmark.created_at,
-      article_title: article?.title ?? null,
+      article_title: resolveBookmarkArticleTitle(
+        article?.title,
+        bookmark.article_title,
+      ),
       article_type: articleType,
       article_href: articleHref,
       article_date: article?.date ?? null,

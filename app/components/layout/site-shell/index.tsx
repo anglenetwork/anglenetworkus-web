@@ -44,7 +44,12 @@ type NavTagRow = {
 
 function mapNavTags(rows: NavTagRow[]): NavTagWithCategory[] {
   return rows.filter(
-    (tag): tag is NavTagRow & { slug: string; title: string; categorySlug: string } =>
-      tag.slug !== null && tag.title !== null && tag.categorySlug !== null,
+    (
+      tag,
+    ): tag is NavTagRow & {
+      slug: string;
+      title: string;
+      categorySlug: string;
+    } => tag.slug !== null && tag.title !== null && tag.categorySlug !== null,
   );
 }

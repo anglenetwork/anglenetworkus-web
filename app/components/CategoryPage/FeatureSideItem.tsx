@@ -20,8 +20,7 @@ export function FeatureSideItem({
   const imageSrc =
     article.imageUrl ||
     "/placeholder.svg?height=200&width=300&query=news article";
-  const readTimeClassName =
-    variant === "news" ? "text-neutral-600" : undefined;
+  const readTimeClassName = variant === "news" ? "text-neutral-600" : undefined;
 
   if (layout === "compact") {
     return (
