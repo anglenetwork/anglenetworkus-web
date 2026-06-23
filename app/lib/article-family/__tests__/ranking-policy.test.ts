@@ -1,6 +1,7 @@
 import { describe, it, expect } from "vitest";
 import {
   EDITORIAL_RANKING_TYPES,
+  HOMEPAGE_FOURTH_SECTION_MOST_READ_LIMIT,
   POST_ONLY_RANKING_TYPES,
   DEFAULT_EDITORIAL_RANKING_WINDOW,
   RANKING_TIEBREAK_RULE,
@@ -14,6 +15,7 @@ describe("ranking-policy constants", () => {
     expect(EDITORIAL_RANKING_TYPES).toEqual(["post", "opinion", "analysis"]);
     expect(POST_ONLY_RANKING_TYPES).toEqual(["post"]);
     expect(DEFAULT_EDITORIAL_RANKING_WINDOW).toBe("7d");
+    expect(HOMEPAGE_FOURTH_SECTION_MOST_READ_LIMIT).toBe(5);
     expect(RANKING_TIEBREAK_RULE).toBe("last_viewed_at_then_published_at");
   });
 });

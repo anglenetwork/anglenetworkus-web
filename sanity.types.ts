@@ -3470,8 +3470,102 @@ export type ArticleFamilyPageByIdPreviewQueryResult =
 
 // Source: sanity/lib/article-family-queries.ts
 // Variable: articleFamilyBookmarksByIdsQuery
-// Query: *[_type in ["post", "opinion", "analysis", "sponsored"] && _id in $ids] {    _id,    _type,    "title": coalesce(title, "Untitled"),    "slug": slug.current,    "date": coalesce(publishedAt, _updatedAt),    cover{        source,  externalUrl,  image,  "lqip": image.asset->metadata.lqip,  "dimensions": image.asset->metadata.dimensions { width, height },  alt,  "caption": coalesce(caption, epigraph),  creditAuthor,  "creditSource": coalesce(creditSource, creditProvider),  licenseOrRights    }  }
+// Query: *[_type in ["post", "opinion", "analysis", "sponsored"] && _id in $ids] {      _id,  _type,  "title": coalesce(title, "Untitled"),  "slug": slug.current,  "date": coalesce(publishedAt, _updatedAt),  cover{      source,  externalUrl,  image,  "lqip": image.asset->metadata.lqip,  "dimensions": image.asset->metadata.dimensions { width, height },  alt,  "caption": coalesce(caption, epigraph),  creditAuthor,  "creditSource": coalesce(creditSource, creditProvider),  licenseOrRights  }  }
 export type ArticleFamilyBookmarksByIdsQueryResult = Array<
+  | {
+      _id: string;
+      _type: "analysis";
+      title: string | "Untitled";
+      slug: string | null;
+      date: string;
+      cover: {
+        source: "asset" | "external" | null;
+        externalUrl: string | null;
+        image: Image1 | null;
+        lqip: string | null;
+        dimensions: {
+          width: number | null;
+          height: number | null;
+        } | null;
+        alt: string | null;
+        caption: string | null;
+        creditAuthor: string | null;
+        creditSource: string | null;
+        licenseOrRights: string | null;
+      } | null;
+    }
+  | {
+      _id: string;
+      _type: "opinion";
+      title: string | "Untitled";
+      slug: string | null;
+      date: string;
+      cover: {
+        source: "asset" | "external" | null;
+        externalUrl: string | null;
+        image: Image1 | null;
+        lqip: string | null;
+        dimensions: {
+          width: number | null;
+          height: number | null;
+        } | null;
+        alt: string | null;
+        caption: string | null;
+        creditAuthor: string | null;
+        creditSource: string | null;
+        licenseOrRights: string | null;
+      } | null;
+    }
+  | {
+      _id: string;
+      _type: "post";
+      title: string | "Untitled";
+      slug: string | null;
+      date: string;
+      cover: {
+        source: "asset" | "external" | null;
+        externalUrl: string | null;
+        image: Image1 | null;
+        lqip: string | null;
+        dimensions: {
+          width: number | null;
+          height: number | null;
+        } | null;
+        alt: string | null;
+        caption: string | null;
+        creditAuthor: string | null;
+        creditSource: string | null;
+        licenseOrRights: string | null;
+      } | null;
+    }
+  | {
+      _id: string;
+      _type: "sponsored";
+      title: string | "Untitled";
+      slug: string | null;
+      date: string;
+      cover: {
+        source: "asset" | "external" | null;
+        externalUrl: string | null;
+        image: Image1 | null;
+        lqip: string | null;
+        dimensions: {
+          width: number | null;
+          height: number | null;
+        } | null;
+        alt: string | null;
+        caption: string | null;
+        creditAuthor: string | null;
+        creditSource: string | null;
+        licenseOrRights: string | null;
+      } | null;
+    }
+>;
+
+// Source: sanity/lib/article-family-queries.ts
+// Variable: articleFamilyBookmarksBySlugsQuery
+// Query: *[_type in ["post", "opinion", "analysis", "sponsored"] && slug.current in $slugs] {      _id,  _type,  "title": coalesce(title, "Untitled"),  "slug": slug.current,  "date": coalesce(publishedAt, _updatedAt),  cover{      source,  externalUrl,  image,  "lqip": image.asset->metadata.lqip,  "dimensions": image.asset->metadata.dimensions { width, height },  alt,  "caption": coalesce(caption, epigraph),  creditAuthor,  "creditSource": coalesce(creditSource, creditProvider),  licenseOrRights  }  }
+export type ArticleFamilyBookmarksBySlugsQueryResult = Array<
   | {
       _id: string;
       _type: "analysis";
@@ -5714,7 +5808,7 @@ export type NavTagsWithCategoryQueryResult = Array<{
 
 // Source: sanity/lib/queries.ts
 // Variable: tagsByCategorySlugQuery
-// Query: *[    _type == "tag" &&    category->slug.current == $categorySlug &&    defined(slug.current) &&    hidden != true &&    deprecated != true  ] | order(coalesce(order, 999) asc, title asc) [0...4] {    "slug": slug.current,    title  }
+// Query: *[    _type == "tag" &&    category->slug.current == $categorySlug &&    defined(slug.current) &&    hidden != true &&    deprecated != true  ] | order(coalesce(order, 999) asc, title asc) [0...$tagLimit] {    "slug": slug.current,    title  }
 export type TagsByCategorySlugQueryResult = Array<{
   slug: string | null;
   title: string | null;
@@ -6430,7 +6524,8 @@ declare module "@sanity/client" {
     '\n  *[_type == $type && slug.current == $slug][0] {\n    \n  _id,\n  _type,\n  "status": select(_originalId in path("drafts.**") => "draft", "published"),\n  "title": coalesce(title, "Untitled"),\n  "tickerTitle": coalesce(tickerTitle, ""),\n  "slug": slug.current,\n  excerpt,\n  \n  cover{\n    \n  source,\n  externalUrl,\n  image,\n  "lqip": image.asset->metadata.lqip,\n  "dimensions": image.asset->metadata.dimensions { width, height },\n  alt,\n  "caption": coalesce(caption, epigraph),\n  creditAuthor,\n  "creditSource": coalesce(creditSource, creditProvider),\n  licenseOrRights\n\n  }\n,\n  publishedAt,\n  updatedAt,\n  "date": coalesce(publishedAt, _updatedAt),\n  \n  "author": select(\n    defined(author->name) => {\n      "name": coalesce(author->name, "Anonymous"),\n      "slug": author->slug.current,\n      "picture": author->picture\n    }\n  )\n,\n  \n  "category": select(\n    defined(category->name) && defined(category->slug.current) => {\n      "title": category->name,\n      "slug": category->slug.current\n    }\n  ),\n  "tags": tags[]->{\n    "title": coalesce(title, name),\n    "slug": slug.current\n  }\n,\n  \n  disclosure,\n  analysisFocus,\n  methodologyNote,\n  sourcesNote,\n  sponsorAttribution{\n    sponsorName,\n    sponsorUrl,\n    disclosure\n  }\n,\n  \n  seo{\n    title,\n    description,\n    canonicalUrl,\n    ogImage{\n      asset,\n      hotspot,\n      crop,\n      alt\n    }\n  }\n,\n  \n  "body": body[]{\n    ...,\n    _type == "editorialImage" => {\n      \n  source,\n  externalUrl,\n  image,\n  "lqip": image.asset->metadata.lqip,\n  "dimensions": image.asset->metadata.dimensions { width, height },\n  alt,\n  "caption": coalesce(caption, epigraph),\n  creditAuthor,\n  "creditSource": coalesce(creditSource, creditProvider),\n  licenseOrRights\n,\n      layout\n    },\n    _type == "tweetEmbed" => {\n      _type,\n      _key,\n      url,\n      caption\n    }\n  }\n,\n  \n  "imageGallery": imageGallery[]{\n    \n  source,\n  externalUrl,\n  image,\n  "lqip": image.asset->metadata.lqip,\n  "dimensions": image.asset->metadata.dimensions { width, height },\n  alt,\n  "caption": coalesce(caption, epigraph),\n  creditAuthor,\n  "creditSource": coalesce(creditSource, creditProvider),\n  licenseOrRights\n\n  }\n\n\n  }\n': ArticleFamilyPageBySlugPreviewQueryResult;
     '\n  *[_type == $type && _id == $id && slug.current == $slug && \n  status == "published" &&\n  defined(publishedAt) && publishedAt <= now()\n][0] {\n    \n  _id,\n  _type,\n  "status": select(_originalId in path("drafts.**") => "draft", "published"),\n  "title": coalesce(title, "Untitled"),\n  "tickerTitle": coalesce(tickerTitle, ""),\n  "slug": slug.current,\n  excerpt,\n  \n  cover{\n    \n  source,\n  externalUrl,\n  image,\n  "lqip": image.asset->metadata.lqip,\n  "dimensions": image.asset->metadata.dimensions { width, height },\n  alt,\n  "caption": coalesce(caption, epigraph),\n  creditAuthor,\n  "creditSource": coalesce(creditSource, creditProvider),\n  licenseOrRights\n\n  }\n,\n  publishedAt,\n  updatedAt,\n  "date": coalesce(publishedAt, _updatedAt),\n  \n  "author": select(\n    defined(author->name) => {\n      "name": coalesce(author->name, "Anonymous"),\n      "slug": author->slug.current,\n      "picture": author->picture\n    }\n  )\n,\n  \n  "category": select(\n    defined(category->name) && defined(category->slug.current) => {\n      "title": category->name,\n      "slug": category->slug.current\n    }\n  ),\n  "tags": tags[]->{\n    "title": coalesce(title, name),\n    "slug": slug.current\n  }\n,\n  \n  disclosure,\n  analysisFocus,\n  methodologyNote,\n  sourcesNote,\n  sponsorAttribution{\n    sponsorName,\n    sponsorUrl,\n    disclosure\n  }\n,\n  \n  seo{\n    title,\n    description,\n    canonicalUrl,\n    ogImage{\n      asset,\n      hotspot,\n      crop,\n      alt\n    }\n  }\n,\n  \n  "body": body[]{\n    ...,\n    _type == "editorialImage" => {\n      \n  source,\n  externalUrl,\n  image,\n  "lqip": image.asset->metadata.lqip,\n  "dimensions": image.asset->metadata.dimensions { width, height },\n  alt,\n  "caption": coalesce(caption, epigraph),\n  creditAuthor,\n  "creditSource": coalesce(creditSource, creditProvider),\n  licenseOrRights\n,\n      layout\n    },\n    _type == "tweetEmbed" => {\n      _type,\n      _key,\n      url,\n      caption\n    }\n  }\n,\n  \n  "imageGallery": imageGallery[]{\n    \n  source,\n  externalUrl,\n  image,\n  "lqip": image.asset->metadata.lqip,\n  "dimensions": image.asset->metadata.dimensions { width, height },\n  alt,\n  "caption": coalesce(caption, epigraph),\n  creditAuthor,\n  "creditSource": coalesce(creditSource, creditProvider),\n  licenseOrRights\n\n  }\n\n\n  }\n': ArticleFamilyPageByIdQueryResult;
     '\n  *[_type == $type && _id == $id && slug.current == $slug][0] {\n    \n  _id,\n  _type,\n  "status": select(_originalId in path("drafts.**") => "draft", "published"),\n  "title": coalesce(title, "Untitled"),\n  "tickerTitle": coalesce(tickerTitle, ""),\n  "slug": slug.current,\n  excerpt,\n  \n  cover{\n    \n  source,\n  externalUrl,\n  image,\n  "lqip": image.asset->metadata.lqip,\n  "dimensions": image.asset->metadata.dimensions { width, height },\n  alt,\n  "caption": coalesce(caption, epigraph),\n  creditAuthor,\n  "creditSource": coalesce(creditSource, creditProvider),\n  licenseOrRights\n\n  }\n,\n  publishedAt,\n  updatedAt,\n  "date": coalesce(publishedAt, _updatedAt),\n  \n  "author": select(\n    defined(author->name) => {\n      "name": coalesce(author->name, "Anonymous"),\n      "slug": author->slug.current,\n      "picture": author->picture\n    }\n  )\n,\n  \n  "category": select(\n    defined(category->name) && defined(category->slug.current) => {\n      "title": category->name,\n      "slug": category->slug.current\n    }\n  ),\n  "tags": tags[]->{\n    "title": coalesce(title, name),\n    "slug": slug.current\n  }\n,\n  \n  disclosure,\n  analysisFocus,\n  methodologyNote,\n  sourcesNote,\n  sponsorAttribution{\n    sponsorName,\n    sponsorUrl,\n    disclosure\n  }\n,\n  \n  seo{\n    title,\n    description,\n    canonicalUrl,\n    ogImage{\n      asset,\n      hotspot,\n      crop,\n      alt\n    }\n  }\n,\n  \n  "body": body[]{\n    ...,\n    _type == "editorialImage" => {\n      \n  source,\n  externalUrl,\n  image,\n  "lqip": image.asset->metadata.lqip,\n  "dimensions": image.asset->metadata.dimensions { width, height },\n  alt,\n  "caption": coalesce(caption, epigraph),\n  creditAuthor,\n  "creditSource": coalesce(creditSource, creditProvider),\n  licenseOrRights\n,\n      layout\n    },\n    _type == "tweetEmbed" => {\n      _type,\n      _key,\n      url,\n      caption\n    }\n  }\n,\n  \n  "imageGallery": imageGallery[]{\n    \n  source,\n  externalUrl,\n  image,\n  "lqip": image.asset->metadata.lqip,\n  "dimensions": image.asset->metadata.dimensions { width, height },\n  alt,\n  "caption": coalesce(caption, epigraph),\n  creditAuthor,\n  "creditSource": coalesce(creditSource, creditProvider),\n  licenseOrRights\n\n  }\n\n\n  }\n': ArticleFamilyPageByIdPreviewQueryResult;
-    '\n  *[_type in ["post", "opinion", "analysis", "sponsored"] && _id in $ids] {\n    _id,\n    _type,\n    "title": coalesce(title, "Untitled"),\n    "slug": slug.current,\n    "date": coalesce(publishedAt, _updatedAt),\n    cover{\n      \n  source,\n  externalUrl,\n  image,\n  "lqip": image.asset->metadata.lqip,\n  "dimensions": image.asset->metadata.dimensions { width, height },\n  alt,\n  "caption": coalesce(caption, epigraph),\n  creditAuthor,\n  "creditSource": coalesce(creditSource, creditProvider),\n  licenseOrRights\n\n    }\n  }\n': ArticleFamilyBookmarksByIdsQueryResult;
+    '\n  *[_type in ["post", "opinion", "analysis", "sponsored"] && _id in $ids] {\n    \n  _id,\n  _type,\n  "title": coalesce(title, "Untitled"),\n  "slug": slug.current,\n  "date": coalesce(publishedAt, _updatedAt),\n  cover{\n    \n  source,\n  externalUrl,\n  image,\n  "lqip": image.asset->metadata.lqip,\n  "dimensions": image.asset->metadata.dimensions { width, height },\n  alt,\n  "caption": coalesce(caption, epigraph),\n  creditAuthor,\n  "creditSource": coalesce(creditSource, creditProvider),\n  licenseOrRights\n\n  }\n\n  }\n': ArticleFamilyBookmarksByIdsQueryResult;
+    '\n  *[_type in ["post", "opinion", "analysis", "sponsored"] && slug.current in $slugs] {\n    \n  _id,\n  _type,\n  "title": coalesce(title, "Untitled"),\n  "slug": slug.current,\n  "date": coalesce(publishedAt, _updatedAt),\n  cover{\n    \n  source,\n  externalUrl,\n  image,\n  "lqip": image.asset->metadata.lqip,\n  "dimensions": image.asset->metadata.dimensions { width, height },\n  alt,\n  "caption": coalesce(caption, epigraph),\n  creditAuthor,\n  "creditSource": coalesce(creditSource, creditProvider),\n  licenseOrRights\n\n  }\n\n  }\n': ArticleFamilyBookmarksBySlugsQueryResult;
     '\n  *[\n    _type == "post" &&\n    defined(slug.current) &&\n    \n  status == "published" &&\n  defined(publishedAt) && publishedAt <= now()\n\n  ][].slug.current\n': PostPublishedSlugsQueryResult;
     '\n  *[_type == "opinion" && defined(slug.current)][].slug.current\n': OpinionSlugsQueryResult;
     '\n  *[_type == "analysis" && defined(slug.current)][].slug.current\n': AnalysisSlugsQueryResult;
@@ -6471,7 +6566,7 @@ declare module "@sanity/client" {
     '\n  *[_type == "category" && defined(slug.current)]{ "slug": slug.current, name, views }\n': CategorySlugsQueryResult;
     '\n  *[_type == "category" && defined(slug.current)] | order(coalesce(order, 999) asc, name asc) {\n    "slug": slug.current,\n    name,\n    views,\n    order\n  }\n': CategoriesByViewsQueryResult;
     '\n  *[\n    _type == "tag" &&\n    defined(slug.current) &&\n    defined(category->slug.current) &&\n    hidden != true &&\n    deprecated != true\n  ] | order(coalesce(order, 999) asc, title asc) {\n    "slug": slug.current,\n    title,\n    "categorySlug": category->slug.current\n  }\n': NavTagsWithCategoryQueryResult;
-    '\n  *[\n    _type == "tag" &&\n    category->slug.current == $categorySlug &&\n    defined(slug.current) &&\n    hidden != true &&\n    deprecated != true\n  ] | order(coalesce(order, 999) asc, title asc) [0...4] {\n    "slug": slug.current,\n    title\n  }\n': TagsByCategorySlugQueryResult;
+    '\n  *[\n    _type == "tag" &&\n    category->slug.current == $categorySlug &&\n    defined(slug.current) &&\n    hidden != true &&\n    deprecated != true\n  ] | order(coalesce(order, 999) asc, title asc) [0...$tagLimit] {\n    "slug": slug.current,\n    title\n  }\n': TagsByCategorySlugQueryResult;
     '\n  *[\n    _type in ["post", "analysis"] &&\n    status == "published" &&\n    defined(slug.current) &&\n    defined(publishedAt) &&\n    publishedAt <= now() &&\n    $tagSlug in tags[]->slug.current &&\n    !(_id in $excludeIds)\n  ] | order(\n  dateTime(publishedAt) desc,\n  dateTime(_updatedAt) desc\n) [0...1] {\n    _type,\n    \n  _id,\n  "title": coalesce(title, "Untitled"),\n  "slug": slug.current,\n  readTime,\n  cover{\n    \n  source,\n  externalUrl,\n  image,\n  "lqip": image.asset->metadata.lqip,\n  "dimensions": image.asset->metadata.dimensions { width, height },\n  alt,\n  "caption": coalesce(caption, epigraph),\n  creditAuthor,\n  "creditSource": coalesce(creditSource, creditProvider),\n  licenseOrRights\n\n  },\n  \n  "imageGallery": imageGallery[]{\n    \n  source,\n  externalUrl,\n  image,\n  "lqip": image.asset->metadata.lqip,\n  "dimensions": image.asset->metadata.dimensions { width, height },\n  alt,\n  "caption": coalesce(caption, epigraph),\n  creditAuthor,\n  "creditSource": coalesce(creditSource, creditProvider),\n  licenseOrRights\n\n  }\n,\n  "category": select(\n    defined(category->name) && defined(category->slug.current) => {\n      "title": category->name,\n      "slug": category->slug.current\n    }\n  )\n\n  }\n': LatestArticleByTagGlimpseQueryResult;
     '\n  *[_type == "tag" && defined(slug.current)]{ "slug": slug.current, title }\n': TagSlugsQueryResult;
     '\n  *[_type == "tag" && slug.current == $slug][0] {\n    _id,\n    title,\n    "slug": slug.current,\n    description,\n    emoji,\n    color,\n    featured,\n    deprecated,\n    views,\n    "redirectTo": redirectTo->{\n      title,\n      "slug": slug.current\n    },\n    aliases,\n    order\n  }\n': TagBySlugQueryResult;

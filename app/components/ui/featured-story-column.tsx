@@ -286,7 +286,9 @@ export function FeaturedStoryColumn({
         ) : null}
 
         <ListingPhotoCredit
-          cover={article.cover as Parameters<typeof ListingPhotoCredit>[0]["cover"]}
+          cover={
+            article.cover as Parameters<typeof ListingPhotoCredit>[0]["cover"]
+          }
           align="right"
         />
 

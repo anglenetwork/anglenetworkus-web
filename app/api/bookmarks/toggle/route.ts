@@ -22,6 +22,8 @@ export async function POST(req: Request) {
 
   const articleId = body?.articleId as string | undefined;
   const articleSlug = (body?.articleSlug as string | null | undefined) ?? null;
+  const articleTitle =
+    typeof body?.articleTitle === "string" ? body.articleTitle.trim() : null;
 
   if (!articleId) {
     return NextResponse.json({ error: "Missing articleId" }, { status: 400 });
@@ -58,6 +60,7 @@ export async function POST(req: Request) {
     user_id: user.id,
     article_id: articleId,
     article_slug: articleSlug,
+    article_title: articleTitle || null,
   });
 
   if (insErr) {

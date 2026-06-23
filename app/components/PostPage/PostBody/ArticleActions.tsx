@@ -17,7 +17,11 @@ export default function ArticleActions({
   return (
     <div className="flex items-center gap-2">
       {articleId && slug && (
-        <BookmarkButton articleId={articleId} articleSlug={slug} />
+        <BookmarkButton
+          articleId={articleId}
+          articleSlug={slug}
+          articleTitle={title}
+        />
       )}
       {slug && shareUrl && <SocialShareButtons title={title} url={shareUrl} />}
     </div>

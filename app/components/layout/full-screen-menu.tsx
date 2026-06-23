@@ -1,6 +1,12 @@
 "use client";
 
-import { ChevronDown, Facebook, Twitter, Instagram, Youtube } from "lucide-react";
+import {
+  ChevronDown,
+  Facebook,
+  Twitter,
+  Instagram,
+  Youtube,
+} from "lucide-react";
 import { SearchBar } from "../ui/search-bar";
 import Link from "next/link";
 import { useEffect, useMemo, useRef, useState } from "react";
@@ -151,7 +157,11 @@ function MenuActionLinks({
       >
         Partner with us
       </Link>
-      <Link href="/company/contact" onClick={onClose} className={menuActionLinkClass}>
+      <Link
+        href="/company/contact"
+        onClick={onClose}
+        className={menuActionLinkClass}
+      >
         Contact
       </Link>
     </div>

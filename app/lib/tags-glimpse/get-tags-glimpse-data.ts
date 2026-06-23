@@ -7,35 +7,11 @@ import type {
   LatestArticleByTagGlimpseQueryResult,
   TagsByCategorySlugQueryResult,
 } from "@/sanity.types";
-import { articleFamilyHref } from "@/app/lib/article-family/routes";
-import type { ArticleFamilyDocType } from "@/app/lib/article-family/types";
 import type { TagsGlimpseItem } from "@/app/components/tags-glimpse/types";
+import { assembleTagsGlimpseItems } from "@/app/lib/tags-glimpse/assemble-tags-glimpse-items";
+import { TAGS_GLIMPSE_TAG_POOL } from "@/app/lib/tags-glimpse/constants";
 
-const TAG_GLIMPSE_DOC_TYPES = new Set<ArticleFamilyDocType>([
-  "post",
-  "analysis",
-]);
-
-type TagGlimpseArticleRow = LatestArticleByTagGlimpseQueryResult[number];
-
-function resolveArticleHref(row: TagGlimpseArticleRow): string | undefined {
-  const docType = row._type;
-  if (
-    !docType ||
-    !TAG_GLIMPSE_DOC_TYPES.has(docType as ArticleFamilyDocType) ||
-    !row.slug
-  ) {
-    return undefined;
-  }
-
-  return articleFamilyHref(docType as ArticleFamilyDocType, row.slug, {
-    id: row._id,
-  });
-}
-
-function normalizeTags(
-  tags: unknown,
-): TagsByCategorySlugQueryResult {
+function normalizeTags(tags: unknown): TagsByCategorySlugQueryResult {
   return Array.isArray(tags) ? tags : [];
 }
 
@@ -52,7 +28,7 @@ export async function getTagsGlimpseData(
   const tags = normalizeTags(
     await sanityFetchStatic({
       query: tagsByCategorySlugQuery,
-      params: { categorySlug },
+      params: { categorySlug, tagLimit: TAGS_GLIMPSE_TAG_POOL },
       tag: `category.tags-glimpse.${categorySlug}`,
     }),
   ).filter(
@@ -62,35 +38,18 @@ export async function getTagsGlimpseData(
 
   if (tags.length === 0) return null;
 
-  const items: TagsGlimpseItem[] = [];
-  const excludeIds: string[] = [];
+  const items = await assembleTagsGlimpseItems(
+    tags,
+    async (tagSlug, excludeIds) => {
+      const raw = await sanityFetchStatic({
+        query: latestArticleByTagGlimpseQuery,
+        params: { tagSlug, excludeIds },
+        tag: `category.tags-glimpse.${categorySlug}.${tagSlug}`,
+      });
 
-  for (const tag of tags) {
-    const raw = await sanityFetchStatic({
-      query: latestArticleByTagGlimpseQuery,
-      params: { tagSlug: tag.slug, excludeIds },
-      tag: `category.tags-glimpse.${categorySlug}.${tag.slug}`,
-    });
-
-    const article = normalizeArticles(raw)[0];
-    const href = article ? resolveArticleHref(article) : undefined;
-    if (!article?.slug || !href) continue;
-
-    excludeIds.push(article._id);
-    items.push({
-      tagSlug: tag.slug,
-      tagTitle: tag.title?.trim() || tag.slug,
-      article: {
-        title: article.title,
-        slug: article.slug,
-        href,
-        readTime: article.readTime,
-        cover: article.cover as TagsGlimpseItem["article"]["cover"],
-        imageGallery:
-          article.imageGallery as TagsGlimpseItem["article"]["imageGallery"],
-      },
-    });
-  }
+      return normalizeArticles(raw)[0] ?? null;
+    },
+  );
 
   return items.length > 0 ? items : null;
 }

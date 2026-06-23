@@ -69,6 +69,6 @@ export async function sanityFetchStatic<const QueryString extends string>({
   return authenticatedClient.fetch(query, resolvedParams, {
     perspective: "published",
     stega: false,
-    ...(requestTag ?? tag ? { tag: requestTag ?? tag } : {}),
+    ...((requestTag ?? tag) ? { tag: requestTag ?? tag } : {}),
   });
 }

@@ -61,10 +61,7 @@ export default function ShowMoreSection({
 
   return (
     <SitePageWidth className="mt-8">
-      <SectionHeader
-        title={`Latest ${tagTitle} news`}
-        accentStyle="modern"
-      />
+      <SectionHeader title={`Latest ${tagTitle} news`} accentStyle="modern" />
       <div className="space-y-0 divide-y divide-dotted divide-border border-b border-dotted">
         {visiblePosts.map((post) => {
           const coverData = getCoverImage(

@@ -171,17 +171,28 @@ export const articleFamilyPageByIdPreviewQuery = defineQuery(`
   }
 `);
 
+const articleFamilyBookmarkCardFields = `
+  _id,
+  _type,
+  "title": coalesce(title, "Untitled"),
+  "slug": slug.current,
+  "date": coalesce(publishedAt, _updatedAt),
+  cover{
+    ${imageFieldsProjection}
+  }
+`;
+
 /** Bookmark list hydration — all public article-family types by Sanity _id. */
 export const articleFamilyBookmarksByIdsQuery = defineQuery(`
   *[_type in [${GROQ_BOOKMARK_HYDRATION}] && _id in $ids] {
-    _id,
-    _type,
-    "title": coalesce(title, "Untitled"),
-    "slug": slug.current,
-    "date": coalesce(publishedAt, _updatedAt),
-    cover{
-      ${imageFieldsProjection}
-    }
+    ${articleFamilyBookmarkCardFields}
+  }
+`);
+
+/** Bookmark list fallback — hydrate by slug when stored Sanity _id does not match. */
+export const articleFamilyBookmarksBySlugsQuery = defineQuery(`
+  *[_type in [${GROQ_BOOKMARK_HYDRATION}] && slug.current in $slugs] {
+    ${articleFamilyBookmarkCardFields}
   }
 `);
 

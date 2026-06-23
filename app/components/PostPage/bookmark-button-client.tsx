@@ -10,6 +10,7 @@ import { cn } from "@/lib/utils";
 interface BookmarkButtonClientProps {
   articleId: string;
   articleSlug: string;
+  articleTitle?: string;
   initialBookmarked: boolean;
   variant?: "default" | "compact";
 }
@@ -33,6 +34,7 @@ function withTimeout<T>(
 export default function BookmarkButtonClient({
   articleId,
   articleSlug,
+  articleTitle,
   initialBookmarked,
   variant = "default",
 }: BookmarkButtonClientProps) {
@@ -67,7 +69,7 @@ export default function BookmarkButtonClient({
           method: "POST",
           headers: { "Content-Type": "application/json" },
           cache: "no-store",
-          body: JSON.stringify({ articleId, articleSlug }),
+          body: JSON.stringify({ articleId, articleSlug, articleTitle }),
         }),
         12000,
         "bookmark toggle",

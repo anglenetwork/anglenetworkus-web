@@ -65,7 +65,9 @@ function requireEnv() {
     missing.push("SANITY_API_WRITE_TOKEN");
   }
   if (missing.length) {
-    throw new Error(`Missing required environment variables: ${missing.join(", ")}`);
+    throw new Error(
+      `Missing required environment variables: ${missing.join(", ")}`,
+    );
   }
 }
 
@@ -86,7 +88,9 @@ function hasFlag(flagName) {
 function getCategoryFirstTag(categorySlug) {
   const tag = CATEGORY_FIRST_TAG[categorySlug];
   if (!tag) {
-    throw new Error(`No first canonical tag configured for category: ${categorySlug}`);
+    throw new Error(
+      `No first canonical tag configured for category: ${categorySlug}`,
+    );
   }
   return tag;
 }
@@ -129,14 +133,7 @@ function buildExternalCover(url, alt, caption) {
   };
 }
 
-function buildPostDoc({
-  category,
-  tagId,
-  index,
-  globalIndex,
-  tagTitle,
-  now,
-}) {
+function buildPostDoc({ category, tagId, index, globalIndex, tagTitle, now }) {
   const topic = TOPICS[(index - 1) % TOPICS.length];
   const title = `${category.name} layout seed ${index}: ${topic}`;
   const tickerTitle = `${category.name} seed ${index}`;
@@ -201,7 +198,9 @@ async function resolveCategoryTagIds(client, categories, dryRun) {
   const tagIdsByCategory = new Map();
 
   for (const category of categories) {
-    const { slug: tagSlug, title: tagTitle } = getCategoryFirstTag(category.slug);
+    const { slug: tagSlug, title: tagTitle } = getCategoryFirstTag(
+      category.slug,
+    );
     const tagId = buildTagDocumentId(category.slug, tagSlug);
     tagIdsByCategory.set(category.slug, tagId);
 
@@ -225,7 +224,10 @@ async function resolveCategoryTagIds(client, categories, dryRun) {
 async function run() {
   requireEnv();
 
-  const perCategory = parsePositiveIntArg("--per-category", DEFAULT_PER_CATEGORY);
+  const perCategory = parsePositiveIntArg(
+    "--per-category",
+    DEFAULT_PER_CATEGORY,
+  );
   const dryRun = hasFlag("--dry-run");
 
   const client = createClient({
@@ -255,7 +257,11 @@ async function run() {
   console.log(`  existing append posts: ${existingAppendIds.size}`);
 
   console.log("\nResolving canonical tags per category...");
-  const tagIdsByCategory = await resolveCategoryTagIds(client, categories, dryRun);
+  const tagIdsByCategory = await resolveCategoryTagIds(
+    client,
+    categories,
+    dryRun,
+  );
 
   const now = new Date();
   const toCreate = [];
@@ -287,8 +293,8 @@ async function run() {
   }
 
   for (const category of categories) {
-    const count = toCreate.filter(
-      (doc) => doc._id.startsWith(`post.append.${category.slug}.`),
+    const count = toCreate.filter((doc) =>
+      doc._id.startsWith(`post.append.${category.slug}.`),
     ).length;
     console.log(`  ${category.slug}: ${count}`);
   }

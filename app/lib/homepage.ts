@@ -49,9 +49,7 @@ type ThirdSectionPostRow = {
   readTime?: number | null;
 };
 
-function resolveThirdSectionHref(
-  row: ThirdSectionPostRow,
-): string | undefined {
+function resolveThirdSectionHref(row: ThirdSectionPostRow): string | undefined {
   const docType = row._type;
   if (
     !docType ||
