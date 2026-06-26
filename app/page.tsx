@@ -54,24 +54,31 @@ type HeroPostWithCategory = {
   category?: { slug?: string | null } | null;
 };
 
-function collectHeroPostIds(
-  ...groups: Array<unknown[] | null | undefined>
-): Set<string> {
-  const ids = new Set<string>();
-  for (const group of groups) {
-    if (!Array.isArray(group)) continue;
-    for (const post of group) {
-      if (
-        post &&
-        typeof post === "object" &&
-        "_id" in post &&
-        typeof post._id === "string"
-      ) {
-        ids.add(post._id);
-      }
-    }
+function isHeroPost(post: unknown): post is HeroPostWithCategory {
+  return (
+    !!post &&
+    typeof post === "object" &&
+    "_id" in post &&
+    typeof post._id === "string"
+  );
+}
+
+/** Pick up to `limit` posts, skipping any already used in a higher-priority hero slot. */
+function selectHeroPosts<T extends HeroPostWithCategory>(
+  posts: unknown,
+  usedIds: Set<string>,
+  limit: number,
+): T[] {
+  if (!Array.isArray(posts)) return [];
+
+  const selected: T[] = [];
+  for (const post of posts) {
+    if (!isHeroPost(post) || usedIds.has(post._id)) continue;
+    selected.push(post as T);
+    usedIds.add(post._id);
+    if (selected.length >= limit) break;
   }
-  return ids;
+  return selected;
 }
 
 function selectRightRailPosts(
@@ -166,33 +173,40 @@ export default async function Page() {
   });
   //LANDING PAGE DATA FETCHING
   // 1) Fetch hero slices for FirstSection (server-side filtered/ranked in GROQ)
-  const [justInPosts, mainHeadlinePosts, frontlinePosts, rightHeadlinePosts] =
-    await Promise.all([
-      sanityFetchStatic({
-        query: homepageHeroJustInQuery,
-        tag: "homepage.hero.just-in",
-      }),
-      sanityFetchStatic({
-        query: homepageHeroMainHeadlineQuery,
-        tag: "homepage.hero.main-headline",
-      }),
-      sanityFetchStatic({
-        query: homepageHeroFrontlineQuery,
-        tag: "homepage.hero.frontline",
-      }),
-      sanityFetchStatic({
-        query: homepageHeroRightHeadlineQuery,
-        tag: "homepage.hero.right-headline",
-      }),
-    ]);
+  const [
+    justInPostsRaw,
+    mainHeadlinePostsRaw,
+    frontlinePostsRaw,
+    rightHeadlinePostsRaw,
+  ] = await Promise.all([
+    sanityFetchStatic({
+      query: homepageHeroJustInQuery,
+      tag: "homepage.hero.just-in",
+    }),
+    sanityFetchStatic({
+      query: homepageHeroMainHeadlineQuery,
+      tag: "homepage.hero.main-headline",
+    }),
+    sanityFetchStatic({
+      query: homepageHeroFrontlineQuery,
+      tag: "homepage.hero.frontline",
+    }),
+    sanityFetchStatic({
+      query: homepageHeroRightHeadlineQuery,
+      tag: "homepage.hero.right-headline",
+    }),
+  ]);
 
-  const heroPostIds = collectHeroPostIds(
-    justInPosts,
-    mainHeadlinePosts,
-    frontlinePosts,
+  const usedHeroPostIds = new Set<string>();
+  const mainHeadlinePosts = selectHeroPosts(
+    mainHeadlinePostsRaw,
+    usedHeroPostIds,
+    1,
   );
+  const justInPosts = selectHeroPosts(justInPostsRaw, usedHeroPostIds, 5);
+  const frontlinePosts = selectHeroPosts(frontlinePostsRaw, usedHeroPostIds, 2);
   const { sideStories: rightRailSideStories, compactSideStories } =
-    selectRightRailPosts(rightHeadlinePosts, heroPostIds);
+    selectRightRailPosts(rightHeadlinePostsRaw, usedHeroPostIds);
 
   const mainStoryPost = (
     Array.isArray(mainHeadlinePosts) ? mainHeadlinePosts[0] : null

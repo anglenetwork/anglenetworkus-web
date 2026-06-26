@@ -25,23 +25,26 @@ export const homepagePublishedPostOrder = `
   dateTime(_updatedAt) desc
 `;
 
-/** Prefer editorial flag matches, then fall back to latest published posts. */
-export const homepageJustInOrder = `
-  select(justIn == true => 1, 0) desc,
-  ${homepagePublishedPostOrder}
+/** Homepage Just In rail — only posts explicitly flagged in Studio. */
+export const homepageJustInPostFilter = `
+  ${homepagePublishedPostFilter} &&
+  justIn == true
 `;
 
-export const homepageMainHeadlineOrder = `
-  select(mainHeadline == true => 1, 0) desc,
-  ${homepagePublishedPostOrder}
+/** Homepage frontline / More Top Headlines — only posts explicitly flagged in Studio. */
+export const homepageFrontlinePostFilter = `
+  ${homepagePublishedPostFilter} &&
+  frontline == true
 `;
 
-export const homepageFrontlineOrder = `
-  select(frontline == true => 1, 0) desc,
-  ${homepagePublishedPostOrder}
+/** Homepage right rail — only posts explicitly flagged in Studio. */
+export const homepageRightHeadlinePostFilter = `
+  ${homepagePublishedPostFilter} &&
+  rightHeadline == true
 `;
 
-export const homepageRightHeadlineOrder = `
-  select(rightHeadline == true => 1, 0) desc,
-  ${homepagePublishedPostOrder}
+/** Homepage main headline — only posts explicitly flagged in Studio. */
+export const homepageMainHeadlinePostFilter = `
+  ${homepagePublishedPostFilter} &&
+  mainHeadline == true
 `;
