@@ -9,6 +9,7 @@ interface Post {
   title: string;
   slug: string | null;
   excerpt?: string | null;
+  readTime?: number | null;
   cover?: {
     source?: "asset" | "external";
     externalUrl?: string | null;
@@ -74,6 +75,7 @@ interface PostForRightColumn {
   _id: string;
   title: string;
   slug: string;
+  readTime?: number | null;
   cover?: {
     source?: "asset" | "external";
     externalUrl?: string | null;
@@ -83,10 +85,6 @@ interface PostForRightColumn {
     creditAuthor?: string | null;
     creditSource?: string | null;
   } | null;
-  author?: {
-    name: string;
-    picture?: any;
-  } | null;
 }
 
 interface FirstSectionProps {
@@ -95,6 +93,7 @@ interface FirstSectionProps {
   relatedCategoryPosts: Post[];
   moreTopHeadlines: Post[];
   sideStories: Post[];
+  compactSideStories: Post[];
 }
 
 function toCenterColumnPost(post: Post): PostForCenterColumn | null {
@@ -126,8 +125,8 @@ function toRightColumnPost(post: Post): PostForRightColumn | null {
     _id: post._id,
     title: post.title,
     slug: post.slug,
+    readTime: post.readTime ?? null,
     cover: post.cover,
-    author: post.author,
   };
 }
 
@@ -137,6 +136,7 @@ export function FirstSection({
   relatedCategoryPosts,
   moreTopHeadlines,
   sideStories,
+  compactSideStories,
 }: FirstSectionProps) {
   const leftColumnJustIn = justInNews
     .filter((post): post is PostForLeftColumn => !!post.slug)
@@ -158,6 +158,11 @@ export function FirstSection({
     .slice(0, 2);
 
   const rightColumnSideStories = sideStories
+    .map(toRightColumnPost)
+    .filter((post): post is PostForRightColumn => post !== null)
+    .slice(0, 2);
+
+  const rightColumnCompactStories = compactSideStories
     .map(toRightColumnPost)
     .filter((post): post is PostForRightColumn => post !== null)
     .slice(0, 2);
@@ -187,7 +192,10 @@ export function FirstSection({
           />
         </div>
         <div className="order-3 lg:order-3 lg:col-span-6">
-          <RightColumnLanding sideStories={rightColumnSideStories} />
+          <RightColumnLanding
+            sideStories={rightColumnSideStories}
+            compactStories={rightColumnCompactStories}
+          />
         </div>
       </div>
     </main>

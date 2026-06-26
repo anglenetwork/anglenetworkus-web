@@ -78,7 +78,7 @@ export default async function RootLayout({
       </head>
       <body className={sansFont.variable}>
         <section className="min-h-screen">
-          {isDraftMode && (
+          {isDraftMode && !isStudioRoute && (
             <Suspense fallback={null}>
               <DraftModeShell />
               <VisualEditing />
@@ -93,9 +93,10 @@ export default async function RootLayout({
           )}
         </section>
 
-        {(process.env.NEXT_PUBLIC_VERCEL_ENV || process.env.VERCEL) && (
-          <SpeedInsights />
-        )}
+        {!isStudioRoute &&
+          (process.env.NEXT_PUBLIC_VERCEL_ENV || process.env.VERCEL) && (
+            <SpeedInsights />
+          )}
         {!isStudioRoute && <SanityLive />}
       </body>
     </html>

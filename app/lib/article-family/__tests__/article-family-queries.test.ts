@@ -20,6 +20,8 @@ import {
   feedEditorialEntriesQuery,
   authorPageQuery,
   sitemapAuthorSlugsQuery,
+  sponsoredIndexQuery,
+  sponsoredIndexCountQuery,
 } from "@/sanity/lib/article-family-queries";
 
 describe("article family page GROQ", () => {
@@ -87,6 +89,12 @@ describe("article family page GROQ", () => {
 
   it("sitemap author slugs requires published articles", () => {
     expect(sitemapAuthorSlugsQuery).toContain('status == "published"');
+  });
+
+  it("sponsored index query enforces published guard", () => {
+    expect(sponsoredIndexQuery).toContain('status == "published"');
+    expect(sponsoredIndexQuery).toContain("publishedAt <= now()");
+    expect(sponsoredIndexCountQuery).toContain('status == "published"');
   });
 
   it("article page body projection includes tweetEmbed fields", () => {

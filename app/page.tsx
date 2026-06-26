@@ -54,6 +54,52 @@ type HeroPostWithCategory = {
   category?: { slug?: string | null } | null;
 };
 
+function collectHeroPostIds(
+  ...groups: Array<unknown[] | null | undefined>
+): Set<string> {
+  const ids = new Set<string>();
+  for (const group of groups) {
+    if (!Array.isArray(group)) continue;
+    for (const post of group) {
+      if (
+        post &&
+        typeof post === "object" &&
+        "_id" in post &&
+        typeof post._id === "string"
+      ) {
+        ids.add(post._id);
+      }
+    }
+  }
+  return ids;
+}
+
+function selectRightRailPosts(
+  rightHeadlinePosts: unknown,
+  excludeIds: Set<string>,
+) {
+  if (!Array.isArray(rightHeadlinePosts)) {
+    return { sideStories: [], compactSideStories: [] };
+  }
+
+  const filtered = rightHeadlinePosts.filter(
+    (post): post is HeroPostWithCategory =>
+      !!post &&
+      typeof post === "object" &&
+      "_id" in post &&
+      typeof post._id === "string" &&
+      "slug" in post &&
+      typeof post.slug === "string" &&
+      post.slug.length > 0 &&
+      !excludeIds.has(post._id),
+  );
+
+  return {
+    sideStories: filtered.slice(0, 2),
+    compactSideStories: filtered.slice(2, 4),
+  };
+}
+
 function fifthSectionCardsForCategory(
   raw: unknown,
   categorySlug: string,
@@ -139,6 +185,14 @@ export default async function Page() {
         tag: "homepage.hero.right-headline",
       }),
     ]);
+
+  const heroPostIds = collectHeroPostIds(
+    justInPosts,
+    mainHeadlinePosts,
+    frontlinePosts,
+  );
+  const { sideStories: rightRailSideStories, compactSideStories } =
+    selectRightRailPosts(rightHeadlinePosts, heroPostIds);
 
   const mainStoryPost = (
     Array.isArray(mainHeadlinePosts) ? mainHeadlinePosts[0] : null
@@ -240,7 +294,8 @@ export default async function Page() {
             mainStory={mainHeadlinePosts as any}
             relatedCategoryPosts={relatedCategoryPosts as any}
             moreTopHeadlines={frontlinePosts as any}
-            sideStories={rightHeadlinePosts as any}
+            sideStories={rightRailSideStories as any}
+            compactSideStories={compactSideStories as any}
           />
           <HomepageBelowFoldLazy
             secondSection={{

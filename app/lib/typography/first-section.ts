@@ -22,8 +22,11 @@ export const mainStoryExcerpt =
 /** FirstSection — center: More Top Headlines, mobile stacked rows */
 export const moreTopHeadlinesMobileTitle = `min-w-0 flex-1 font-sans text-base font-semibold leading-snug tracking-tight text-news-text ${homepageArticleTitleLink}`;
 
-/** FirstSection — right rail: side story titles */
+/** FirstSection — right rail: featured side story titles (big cards) */
 export const sideStoryTitle = `font-medium font-sans text-xl text-news-text leading-snug tracking-normal ${homepageArticleTitleLink}`;
+
+/** FirstSection — right rail: compact side story titles (image left, title right) */
+export const sideStoryCompactTitle = `min-w-0 flex-1 font-regular font-sans text-base text-news-text leading-snug tracking-normal ${homepageArticleTitleLink}`;
 
 /** FirstSection — right rail: What Matters list item titles */
 export const mostReadItemTitle = `text-news-text leading-tight font-sans text-lg sm:text-base font-normal tracking-normal ${homepageArticleTitleLink}`;

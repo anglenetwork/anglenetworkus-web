@@ -17,6 +17,7 @@ const BecomeProCta = dynamic(
 interface DesktopHeaderProps {
   isMenuOpen: boolean;
   categories: Category[];
+  showSubscriptions?: boolean;
   onMenuToggle: () => void;
   onSearchMenuOpen: () => void;
   onCategoryClick: () => void;
@@ -25,6 +26,7 @@ interface DesktopHeaderProps {
 export function DesktopHeader({
   isMenuOpen,
   categories,
+  showSubscriptions = false,
   onMenuToggle,
   onSearchMenuOpen,
   onCategoryClick,
@@ -50,7 +52,7 @@ export function DesktopHeader({
           variant="desktop"
           className="hidden xl:flex"
         />
-        <UserMenuSlot variant="desktop" />
+        <UserMenuSlot variant="desktop" showSubscriptions={showSubscriptions} />
       </div>
     </div>
   );

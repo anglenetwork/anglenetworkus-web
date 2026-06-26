@@ -7,12 +7,14 @@ import { UserMenuSlot } from "./user-menu-slot";
 
 interface MobileHeaderProps {
   isMenuOpen: boolean;
+  showSubscriptions?: boolean;
   onMenuToggle: () => void;
   onSearchMenuOpen: () => void;
 }
 
 export function MobileHeader({
   isMenuOpen,
+  showSubscriptions = false,
   onMenuToggle,
   onSearchMenuOpen,
 }: MobileHeaderProps) {
@@ -27,7 +29,7 @@ export function MobileHeader({
       </div>
       <Logo variant="mobile" />
       <div className="flex shrink-0 items-center justify-end gap-2">
-        <UserMenuSlot variant="mobile" />
+        <UserMenuSlot variant="mobile" showSubscriptions={showSubscriptions} />
         <SearchButton
           onClick={onSearchMenuOpen}
           variant="mobile"

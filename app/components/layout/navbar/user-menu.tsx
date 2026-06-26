@@ -22,6 +22,8 @@ export type SignInButtonVariant = "default" | "link";
 
 export interface UserMenuProps {
   variant?: "mobile" | "desktop";
+  /** Hide Subscriptions when IS_SUBSCRIPTION_VISIBLE is not true. */
+  showSubscriptions?: boolean;
   /** Hide Sign in when signed out (e.g. mobile navbar — show in full-screen menu instead). */
   hideSignIn?: boolean;
   /** Only render Sign in when signed out (for full-screen menu). */
@@ -89,6 +91,7 @@ function UserMenuSignInButton({
 
 export function UserMenu({
   variant = "desktop",
+  showSubscriptions = false,
   hideSignIn = false,
   signInOnly = false,
   signInButtonVariant = "default",
@@ -272,14 +275,16 @@ export function UserMenu({
           </Link>
         </DropdownMenuItem>
 
-        <DropdownMenuItem asChild>
-          <Link
-            href="/myprofile/subscriptions"
-            className="w-full cursor-pointer font-sans"
-          >
-            Subscriptions
-          </Link>
-        </DropdownMenuItem>
+        {showSubscriptions ? (
+          <DropdownMenuItem asChild>
+            <Link
+              href="/myprofile/subscriptions"
+              className="w-full cursor-pointer font-sans"
+            >
+              Subscriptions
+            </Link>
+          </DropdownMenuItem>
+        ) : null}
 
         <DropdownMenuItem asChild>
           <Link
