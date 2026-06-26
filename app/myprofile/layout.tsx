@@ -1,4 +1,5 @@
 import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { isSubscriptionVisible } from "@/lib/subscriptions/is-subscription-visible";
 import { SignInForm } from "./components/SignInForm";
 import { ProfileSidebar } from "./components/ProfileSidebar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -16,6 +17,8 @@ export default async function MyProfileLayout({
   const {
     data: { user },
   } = await supabase.auth.getUser();
+
+  const showSubscriptions = isSubscriptionVisible();
 
   if (!user) {
     return (
@@ -36,7 +39,7 @@ export default async function MyProfileLayout({
     <div className="mx-auto max-w-7xl px-4 py-8 xl:py-12">
       <div className="grid grid-cols-1 gap-8 xl:grid-cols-4">
         <div className="xl:col-span-1">
-          <ProfileSidebar />
+          <ProfileSidebar showSubscriptions={showSubscriptions} />
         </div>
         <div className="xl:col-span-3">{children}</div>
       </div>

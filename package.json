@@ -10,7 +10,8 @@
   ],
   "scripts": {
     "predev": "npm run typegen",
-    "dev": "next --turbo",
+    "dev": "next dev",
+    "dev:webpack": "next dev --webpack",
     "prebuild": "npm run typegen && npm run format",
     "build": "next build",
     "start": "next start",

@@ -19,7 +19,11 @@ const FullScreenMenu = dynamic(
   { ssr: false },
 );
 
-export function HeaderClient({ categories, menuColumns }: HeaderProps) {
+export function HeaderClient({
+  categories,
+  menuColumns,
+  showSubscriptions = false,
+}: HeaderProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [focusSearchOnOpen, setFocusSearchOnOpen] = useState(false);
   const [headerOffset, setHeaderOffset] = useState(0);
@@ -98,6 +102,7 @@ export function HeaderClient({ categories, menuColumns }: HeaderProps) {
             <DesktopHeader
               isMenuOpen={isMenuOpen}
               categories={categories}
+              showSubscriptions={showSubscriptions}
               onMenuToggle={handleMenuToggle}
               onSearchMenuOpen={handleSearchMenuOpen}
               onCategoryClick={closeMenu}
@@ -105,6 +110,7 @@ export function HeaderClient({ categories, menuColumns }: HeaderProps) {
           ) : (
             <MobileHeader
               isMenuOpen={isMenuOpen}
+              showSubscriptions={showSubscriptions}
               onMenuToggle={handleMenuToggle}
               onSearchMenuOpen={handleSearchMenuOpen}
             />

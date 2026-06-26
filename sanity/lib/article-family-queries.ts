@@ -494,8 +494,27 @@ export const relatedContentForAnalysisQuery = defineQuery(`
   } | order(_rank desc, publishedAt desc) [0...$limit]
 `);
 
+/** Paginated sponsored index (`/sponsored`) */
+export const sponsoredIndexQuery = defineQuery(`
+  *[
+    _type == "${GROQ_SPONSORED}" &&
+    ${ARTICLE_FAMILY_PUBLISHED} &&
+    defined(slug.current)
+  ] | order(coalesce(publishedAt, _updatedAt) desc, _updatedAt desc) [$start...$end] {
+    ${articleFamilyListFragment}
+  }
+`);
+
+export const sponsoredIndexCountQuery = defineQuery(`
+  count(*[
+    _type == "${GROQ_SPONSORED}" &&
+    ${ARTICLE_FAMILY_PUBLISHED} &&
+    defined(slug.current)
+  ])
+`);
+
 /** Explicit opt-in: sponsored list only (never used as default editorial) */
-const sponsoredListQuery = defineQuery(`
+export const sponsoredListQuery = defineQuery(`
   *[
     _type == "${GROQ_SPONSORED}" &&
     ${ARTICLE_FAMILY_PUBLISHED} &&

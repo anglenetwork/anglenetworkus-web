@@ -5,7 +5,7 @@ import ArticleFamilyCard from "./ArticleFamilyCard";
 import type { ArticleFamilyCard as CardModel } from "@/app/lib/article-family/types";
 import { AnalysisAuthorLine, AnalysisListSection } from "./AnalysisRowCard";
 import AnalysisMoreSection from "./AnalysisMoreSection";
-import OpinionMoreSection from "./OpinionMoreSection";
+import EditorialListMoreSection from "./EditorialListMoreSection";
 import {
   ANALYSIS_HERO_COUNT,
   ANALYSIS_MISSED_IT_COUNT,
@@ -13,9 +13,9 @@ import {
   ANALYSIS_SIDEBAR_COUNT,
 } from "./analysis-index-constants";
 import {
-  OPINION_CONTENT_OFFSET,
-  OPINION_SIDEBAR_COUNT,
-} from "./opinion-index-constants";
+  EDITORIAL_LIST_CONTENT_OFFSET,
+  EDITORIAL_LIST_SIDEBAR_COUNT,
+} from "./editorial-list-index-constants";
 import { SitePageWidth } from "@/app/components/layout/site-page-width";
 import { SectionHeader } from "@/app/components/ui/section-header";
 import { ImageRenderer } from "@/app/components/ui/image-renderer";
@@ -33,7 +33,13 @@ const analysisLeadOverlayClassName =
 
 const PAGE_SIZE = 10;
 
-type ArticleFamilyIndexVariant = "analysis" | "opinion";
+type ArticleFamilyIndexVariant = "analysis" | "editorial-list";
+
+type EditorialListIndexUiConfig = {
+  sidebarTitle: string;
+  featuredLabel: string;
+  loadMoreApiPath: string;
+};
 
 type ArticleFamilyIndexPageProps = {
   title: string;
@@ -43,6 +49,7 @@ type ArticleFamilyIndexPageProps = {
   total: number;
   basePath: string;
   variant?: ArticleFamilyIndexVariant;
+  editorialList?: EditorialListIndexUiConfig;
 };
 
 function pageHref(basePath: string, pageNum: number): string {
@@ -87,17 +94,15 @@ function ArticleImage({
 
 function AnalysisLeadCard({
   article,
-  family = "analysis",
+  featuredLabel = "Featured analysis",
 }: {
   article: CardModel;
-  family?: "analysis" | "opinion";
+  featuredLabel?: string;
 }) {
   const coverData = getCoverImage(
     article.cover as Parameters<typeof getCoverImage>[0],
-    article.title || `Featured ${family}`,
+    article.title || featuredLabel,
   );
-  const featuredLabel =
-    family === "opinion" ? "Featured opinion" : "Featured analysis";
 
   return (
     <article className="space-y-4">
@@ -174,12 +179,12 @@ function EditorialTwoColumnHero({
   leadArticle,
   sidebarArticles,
   sidebarTitle,
-  family,
+  featuredLabel,
 }: {
   leadArticle?: CardModel;
   sidebarArticles: CardModel[];
   sidebarTitle: string;
-  family: "analysis" | "opinion";
+  featuredLabel: string;
 }) {
   const hasSidebar = sidebarArticles.length > 0;
   const leadColumnClass = "py-6 lg:pr-6";
@@ -199,7 +204,10 @@ function EditorialTwoColumnHero({
               hasSidebar ? "lg:col-span-8" : "lg:col-span-12",
             )}
           >
-            <AnalysisLeadCard article={leadArticle} family={family} />
+            <AnalysisLeadCard
+              article={leadArticle}
+              featuredLabel={featuredLabel}
+            />
           </div>
         ) : null}
         {hasSidebar ? (
@@ -260,7 +268,7 @@ function AnalysisIndexModule({
         leadArticle={leadArticle}
         sidebarArticles={sidebarArticles}
         sidebarTitle="Latest Analysis"
-        family="analysis"
+        featuredLabel="Featured analysis"
       />
       {missedItArticles.length > 0 ? (
         <NewsCardRowSection
@@ -285,29 +293,36 @@ function AnalysisIndexModule({
   );
 }
 
-function OpinionPageContent({
+function EditorialListIndexContent({
   articles,
   total,
+  sidebarTitle,
+  featuredLabel,
+  loadMoreApiPath,
 }: {
   articles: CardModel[];
   total: number;
+  sidebarTitle: string;
+  featuredLabel: string;
+  loadMoreApiPath: string;
 }) {
-  const initialMoreArticles = articles.slice(OPINION_CONTENT_OFFSET);
+  const initialMoreArticles = articles.slice(EDITORIAL_LIST_CONTENT_OFFSET);
   const showMoreSection =
-    initialMoreArticles.length > 0 || total > OPINION_CONTENT_OFFSET;
+    initialMoreArticles.length > 0 || total > EDITORIAL_LIST_CONTENT_OFFSET;
 
   return (
     <div className="mt-8 space-y-8">
       <EditorialTwoColumnHero
         leadArticle={articles[0]}
-        sidebarArticles={articles.slice(1, 1 + OPINION_SIDEBAR_COUNT)}
-        sidebarTitle="Latest Opinion"
-        family="opinion"
+        sidebarArticles={articles.slice(1, 1 + EDITORIAL_LIST_SIDEBAR_COUNT)}
+        sidebarTitle={sidebarTitle}
+        featuredLabel={featuredLabel}
       />
       {showMoreSection ? (
-        <OpinionMoreSection
+        <EditorialListMoreSection
           initialArticles={initialMoreArticles}
           total={total}
+          apiPath={loadMoreApiPath}
         />
       ) : null}
     </div>
@@ -322,6 +337,7 @@ export default function ArticleFamilyIndexPage({
   total,
   basePath,
   variant,
+  editorialList,
 }: ArticleFamilyIndexPageProps) {
   const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
   const safePage = Math.min(Math.max(1, page), totalPages);
@@ -406,12 +422,14 @@ export default function ArticleFamilyIndexPage({
           title={title}
           accentStyle="modern"
           size={
-            variant === "analysis" || variant === "opinion"
+            variant === "analysis" || variant === "editorial-list"
               ? "large"
               : "regular"
           }
         />
-        {description && variant !== "analysis" && variant !== "opinion" ? (
+        {description &&
+        variant !== "analysis" &&
+        variant !== "editorial-list" ? (
           <p className="-mt-5 max-w-2xl font-sans text-neutral-600 text-sm md:text-base">
             {description}
           </p>
@@ -422,8 +440,14 @@ export default function ArticleFamilyIndexPage({
         <p className="py-12 text-center font-sans text-neutral-600">
           No articles yet.
         </p>
-      ) : variant === "opinion" ? (
-        <OpinionPageContent articles={articles} total={total} />
+      ) : variant === "editorial-list" && editorialList ? (
+        <EditorialListIndexContent
+          articles={articles}
+          total={total}
+          sidebarTitle={editorialList.sidebarTitle}
+          featuredLabel={editorialList.featuredLabel}
+          loadMoreApiPath={editorialList.loadMoreApiPath}
+        />
       ) : (
         <div className="mt-8">
           <AnalysisIndexModule articles={articles} total={total} />

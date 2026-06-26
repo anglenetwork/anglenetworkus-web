@@ -1,27 +1,25 @@
 import { articleTitleLink } from "./article-links";
-import { categorySecondaryRowTitle } from "./second-section";
 
-/** Footer — site name beside logo */
-export const footerBrandTitle =
-  "font-bold font-sans text-4xl text-white leading-tight tracking-tight";
+/** Footer — category column heading */
+export const footerCategoryHeading = `font-sans text-sm font-bold leading-snug text-white ${articleTitleLink}`;
 
-/** Footer — column headings (Sections, Topics, Company) */
-export const footerColumnHeading =
-  "mb-4 font-bold font-sans text-sm uppercase tracking-normal text-red-600";
+/** Footer — tag links under each category */
+export const footerTagLink = `font-sans text-sm font-normal leading-snug text-white transition-opacity hover:opacity-80 ${articleTitleLink}`;
 
-/** Footer — navigation links (matches landing dark secondary row titles) */
-export const footerNavLink = categorySecondaryRowTitle.dark;
+/** Footer — top utility nav (Opinion, Analysis) */
+export const footerTopNavLink = `font-sans text-sm font-normal leading-none text-white transition-opacity hover:opacity-80 ${articleTitleLink}`;
 
-/** Footer — static nav labels (fallback list items) */
-export const footerNavLabel = categorySecondaryRowTitle.dark;
+/** Footer — “Follow us on” label */
+export const footerFollowLabel =
+  "font-sans text-xs font-bold uppercase tracking-[0.08em] text-white";
 
-/** Footer — copyright line */
+/** Footer — copyright line (below legal links) */
 export const footerCopyright =
-  "font-sans text-sm font-medium text-white leading-snug";
+  "mt-3 font-sans text-[11px] font-normal leading-relaxed text-[#b0b0b0]";
 
-/** Footer — bottom legal links */
-export const footerLegalLink = `font-sans text-sm font-medium text-white leading-snug hover:text-white ${articleTitleLink}`;
+/** Footer — bottom legal links row */
+export const footerLegalLink = `font-sans text-[11px] font-normal leading-snug text-[#b0b0b0] transition-colors hover:text-white ${articleTitleLink}`;
 
 /** Footer — bottom legal static label */
 export const footerLegalLabel =
-  "font-sans text-sm font-medium text-white leading-snug";
+  "font-sans text-[11px] font-normal leading-snug text-[#b0b0b0]";

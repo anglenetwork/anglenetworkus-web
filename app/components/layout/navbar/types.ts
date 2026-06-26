@@ -4,4 +4,5 @@ import type { Category, NavMenuColumn } from "../site-shell/types";
 export interface HeaderProps {
   categories: Category[];
   menuColumns: NavMenuColumn[];
+  showSubscriptions?: boolean;
 }

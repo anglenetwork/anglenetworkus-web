@@ -90,6 +90,17 @@ const postFields = `
   }
 `;
 
+/** First section right rail: compact image + title rows. */
+const postFieldsHeroRightRail = `
+  _id,
+  "title": coalesce(title, "Untitled"),
+  "slug": slug.current,
+  readTime,
+  cover{
+    ${imageFieldsProjection}
+  }
+`;
+
 /** Homepage SecondSection: 1 lead + 2 small cards (no body/tags/seo). */
 const postFieldsHighlightedStories = `
   _id,
@@ -196,8 +207,8 @@ export const homepageHeroRightHeadlineQuery = defineQuery(`
     ${homepagePublishedPostFilter}
   ] | order(
     ${homepageRightHeadlineOrder}
-  )[0...2] {
-    ${postFieldsLightweight}
+  )[0...10] {
+    ${postFieldsHeroRightRail}
   }
 `);
 

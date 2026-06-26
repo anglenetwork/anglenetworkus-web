@@ -282,6 +282,42 @@ export function buildAnalysisIndexMetadata(
   };
 }
 
+export function buildSponsoredIndexMetadata(
+  page: number,
+  total: number,
+  settings: SiteSettingsForSeo | null | undefined,
+  demoTitle: string,
+): Metadata {
+  const siteName = resolveSiteName(settings, demoTitle);
+  const description =
+    "Sponsored content from partners — clearly labeled and presented separately from our editorial coverage.";
+  const pageTitle = `Sponsored | ${siteName}`;
+  const canonical = buildCanonicalUrl(
+    "/sponsored",
+    page > 1 ? new URLSearchParams({ page: String(page) }) : undefined,
+  );
+  return {
+    title: { absolute: pageTitle },
+    description,
+    robots: robotsListingOrTaxonomy({ page, totalResults: total }),
+    alternates: {
+      canonical,
+    },
+    openGraph: {
+      title: pageTitle,
+      description,
+      url: canonical,
+      type: "website",
+      siteName,
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: pageTitle,
+      description,
+    },
+  };
+}
+
 export function buildLatestPageMetadata(
   page: number,
   settings: SiteSettingsForSeo | null | undefined,

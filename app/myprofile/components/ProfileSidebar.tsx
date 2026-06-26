@@ -20,8 +20,16 @@ const navigation = [
   },
 ];
 
-export function ProfileSidebar() {
+export function ProfileSidebar({
+  showSubscriptions = false,
+}: {
+  showSubscriptions?: boolean;
+}) {
   const pathname = usePathname();
+
+  const items = showSubscriptions
+    ? navigation
+    : navigation.filter((item) => item.href !== "/myprofile/subscriptions");
 
   return (
     <>
@@ -29,7 +37,7 @@ export function ProfileSidebar() {
       <aside className="sticky top-0 hidden h-screen w-64 flex-col border-border border-r bg-background xl:flex">
         <div className="flex flex-1 flex-col overflow-y-auto px-8 py-10">
           <nav className="flex-1 space-y-0.5">
-            {navigation.map((item) => {
+            {items.map((item) => {
               const Icon = item.icon;
               const isActive =
                 pathname === item.href || pathname.startsWith(item.href + "/");
@@ -56,7 +64,7 @@ export function ProfileSidebar() {
       {/* Mobile/Tablet Navigation */}
       <div className="w-full xl:hidden">
         <nav className="sticky top-0 flex gap-2 overflow-x-auto border-border border-b bg-background px-4 py-3">
-          {navigation.map((item) => {
+          {items.map((item) => {
             const Icon = item.icon;
             const isActive =
               pathname === item.href || pathname.startsWith(item.href + "/");

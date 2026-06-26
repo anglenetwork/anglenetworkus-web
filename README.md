@@ -8,8 +8,7 @@ A modern, high-performance news website built with Next.js 15 and Sanity CMS, fe
 
 ```
 app/
-├── (sanity)/                    # Sanity Studio routes
-│   └── studio/[[...tool]]/     # Content management interface
+├── studio/[[...tool]]/         # Sanity Studio (embedded CMS)
 ├── api/                        # API endpoints
 │   ├── draft-mode/enable/      # Draft mode functionality
 │   └── search/                 # Search API
