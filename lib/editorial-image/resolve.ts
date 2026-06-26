@@ -92,6 +92,71 @@ function attachAttribution(
   };
 }
 
+function resolveExternalEditorialImage(
+  input: EditorialImageInput,
+  image: SanityImageWithAlt | null,
+  externalUrl: URL,
+  options: ResolveEditorialImageOptions,
+): ResolvedEditorialImage {
+  const wikimediaWidth = options.wikimediaWidth ?? options.maxWidth ?? 1200;
+  const externalPolicy = options.externalUnoptimized ?? "auto";
+  const includeAttribution = options.includeAttribution ?? false;
+  const listingWidth = options.maxWidth ?? 1200;
+  const src = isWikimediaUrl(externalUrl)
+    ? getWikimediaThumbnail(externalUrl.toString(), wikimediaWidth)
+    : clampOptimizableExternalUrl(externalUrl, listingWidth).toString();
+
+  const result: ResolvedEditorialImage = {
+    src,
+    alt: resolveAlt(input, image, options),
+    unoptimized: shouldUnoptimizeExternalUrl(externalUrl, externalPolicy),
+  };
+  return attachAttribution(result, input, includeAttribution);
+}
+
+function resolveSanityAssetEditorialImage(
+  input: EditorialImageInput,
+  image: SanityImageWithAlt,
+  options: ResolveEditorialImageOptions,
+): ResolvedEditorialImage | null {
+  const includeAttribution = options.includeAttribution ?? false;
+  const builder = urlForImage(image as Parameters<typeof urlForImage>[0]);
+  if (!builder) return null;
+
+  try {
+    let urlBuilder = builder.quality(options.sanityQuality ?? 60);
+    if (options.sanityWidth) {
+      urlBuilder = urlBuilder.width(options.sanityWidth);
+    }
+    if (options.sanityHeight) {
+      urlBuilder = urlBuilder.height(options.sanityHeight);
+    }
+    if (options.sanityFit) {
+      urlBuilder = urlBuilder.fit(options.sanityFit);
+    }
+
+    const src = urlBuilder.url();
+    if (
+      !src ||
+      src.length === 0 ||
+      (!src.includes("cdn.sanity.io") && !src.startsWith("/"))
+    ) {
+      return null;
+    }
+
+    const result: ResolvedEditorialImage = {
+      src,
+      alt: resolveAlt(input, image, options),
+      unoptimized: false,
+      blurDataURL: getSanityLqip(input),
+    };
+    return attachAttribution(result, input, includeAttribution);
+  } catch (error) {
+    console.warn("Failed to build Sanity image URL:", error);
+    return null;
+  }
+}
+
 export function resolveEditorialImage(
   input: EditorialImageInput | null | undefined,
   options: ResolveEditorialImageOptions,
@@ -112,63 +177,16 @@ export function resolveEditorialImage(
     return null;
   }
 
-  const wikimediaWidth = options.wikimediaWidth ?? options.maxWidth ?? 1200;
-  const externalPolicy = options.externalUnoptimized ?? "auto";
-  const includeAttribution = options.includeAttribution ?? false;
-
   if (externalUrl && (input.source === "external" || !input.source)) {
-    const listingWidth = options.maxWidth ?? 1200;
-    const src = isWikimediaUrl(externalUrl)
-      ? getWikimediaThumbnail(externalUrl.toString(), wikimediaWidth)
-      : clampOptimizableExternalUrl(externalUrl, listingWidth).toString();
-
-    const result: ResolvedEditorialImage = {
-      src,
-      alt: resolveAlt(input, image, options),
-      unoptimized: shouldUnoptimizeExternalUrl(externalUrl, externalPolicy),
-    };
-    return attachAttribution(result, input, includeAttribution);
+    return resolveExternalEditorialImage(input, image, externalUrl, options);
   }
 
   if (
     hasImageAsset &&
+    image &&
     (input.source === "asset" || !input.source || !hasExternalUrl)
   ) {
-    const builder = urlForImage(image as Parameters<typeof urlForImage>[0]);
-    if (!builder) return null;
-
-    try {
-      let urlBuilder = builder.quality(options.sanityQuality ?? 60);
-      if (options.sanityWidth) {
-        urlBuilder = urlBuilder.width(options.sanityWidth);
-      }
-      if (options.sanityHeight) {
-        urlBuilder = urlBuilder.height(options.sanityHeight);
-      }
-      if (options.sanityFit) {
-        urlBuilder = urlBuilder.fit(options.sanityFit);
-      }
-
-      const src = urlBuilder.url();
-      if (
-        !src ||
-        src.length === 0 ||
-        (!src.includes("cdn.sanity.io") && !src.startsWith("/"))
-      ) {
-        return null;
-      }
-
-      const result: ResolvedEditorialImage = {
-        src,
-        alt: resolveAlt(input, image, options),
-        unoptimized: false,
-        blurDataURL: getSanityLqip(input),
-      };
-      return attachAttribution(result, input, includeAttribution);
-    } catch (error) {
-      console.warn("Failed to build Sanity image URL:", error);
-      return null;
-    }
+    return resolveSanityAssetEditorialImage(input, image, options);
   }
 
   return null;

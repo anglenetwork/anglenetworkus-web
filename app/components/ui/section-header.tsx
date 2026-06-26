@@ -1,4 +1,5 @@
 import Link from "next/link";
+import type { ReactNode } from "react";
 import { ArrowUpRight, CircleSmall, Slash } from "lucide-react";
 import { sectionHeaderLink } from "@/app/lib/typography/article-links";
 import {
@@ -20,7 +21,6 @@ type SectionHeaderIcon = keyof typeof sectionHeaderIcons;
 
 interface SectionHeaderProps {
   title: string;
-  subtitle?: string;
   href?: string;
   variant?: "light" | "news" | "dark";
   size?: "regular" | "large";
@@ -53,6 +53,34 @@ function SectionHeaderIconElement({
   );
 }
 
+function SectionHeaderLinkWrapper({
+  href,
+  variant,
+  marginClass,
+  children,
+}: {
+  href: string;
+  variant: "light" | "news" | "dark";
+  marginClass: string;
+  children: ReactNode;
+}) {
+  return (
+    <div className={marginClass}>
+      <Link
+        href={href}
+        className={cn(
+          "group block rounded-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2",
+          variant === "news"
+            ? "focus-visible:outline-news-primary"
+            : "focus-visible:outline-red-600",
+        )}
+      >
+        {children}
+      </Link>
+    </div>
+  );
+}
+
 export function SectionHeader({
   title,
   href,
@@ -75,19 +103,13 @@ export function SectionHeader({
 
     if (href) {
       return (
-        <div className="mb-8">
-          <Link
-            href={href}
-            className={cn(
-              "group block rounded-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2",
-              variant === "news"
-                ? "focus-visible:outline-news-primary"
-                : "focus-visible:outline-red-600",
-            )}
-          >
-            {titleEl}
-          </Link>
-        </div>
+        <SectionHeaderLinkWrapper
+          href={href}
+          variant={variant}
+          marginClass="mb-8"
+        >
+          {titleEl}
+        </SectionHeaderLinkWrapper>
       );
     }
 
@@ -111,19 +133,13 @@ export function SectionHeader({
 
     if (href) {
       return (
-        <div className="mb-6">
-          <Link
-            href={href}
-            className={cn(
-              "group block rounded-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2",
-              variant === "news"
-                ? "focus-visible:outline-news-primary"
-                : "focus-visible:outline-red-600",
-            )}
-          >
-            {titleEl}
-          </Link>
-        </div>
+        <SectionHeaderLinkWrapper
+          href={href}
+          variant={variant}
+          marginClass="mb-6"
+        >
+          {titleEl}
+        </SectionHeaderLinkWrapper>
       );
     }
 

@@ -12,6 +12,7 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { fetchProfileSummary } from "@/app/lib/profile/fetch-profile-summary-client";
 import { createClient } from "@/lib/supabase/client";
 import type { User } from "@supabase/supabase-js";
 import { UserMenuSkeleton } from "./user-menu-skeleton";
@@ -139,24 +140,23 @@ export function UserMenu({
 
     let mounted = true;
 
-    void supabase
-      .from("profiles")
-      .select("first_name, last_name")
-      .eq("id", user.id)
-      .maybeSingle()
-      .then(({ data: profile }) => {
-        if (!mounted) return;
+    void fetchProfileSummary()
+      .then((profile) => {
+        if (!mounted || !profile) return;
         dispatch({
           type: "profile_loaded",
-          firstName: profile?.first_name ?? null,
-          lastName: profile?.last_name ?? null,
+          firstName: profile.firstName,
+          lastName: profile.lastName,
         });
+      })
+      .catch((error) => {
+        console.error("Failed to load profile summary:", error);
       });
 
     return () => {
       mounted = false;
     };
-  }, [supabase, user]);
+  }, [user]);
 
   const handleSignOut = async () => {
     if (signingOut) return;

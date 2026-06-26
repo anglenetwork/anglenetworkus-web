@@ -84,7 +84,10 @@ export function SupabaseAuthProvider({
       }
     })();
 
-    return () => sub.subscription.unsubscribe();
+    return () => {
+      sub.subscription.unsubscribe();
+      void supabase.auth.dispose();
+    };
   }, []);
 
   const value = useMemo(() => ({ userId, ready }), [userId, ready]);

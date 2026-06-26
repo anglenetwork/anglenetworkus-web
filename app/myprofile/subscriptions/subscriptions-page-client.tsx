@@ -1,12 +1,9 @@
 "use client";
 
-import { useEffect, useMemo, useReducer, Suspense, useCallback } from "react";
+import { useEffect, useReducer, Suspense, useCallback } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { createClient } from "@/lib/supabase/client";
-import type { PostgrestError } from "@supabase/supabase-js";
-
+import { fetchSubscriptionStatus } from "@/app/lib/subscriptions/fetch-subscription-status-client";
 import { useSupabaseAuth } from "@/app/providers/SupabaseAuthProvider";
-import { type Tier } from "@/lib/subscriptions/tier";
 import { ProfileSectionHeader } from "../components/ProfileSectionHeader";
 import {
   createInitialSubscriptionState,
@@ -18,9 +15,12 @@ import { getNextTier } from "./subscriptions-upgrade-helpers";
 import { SubscriptionsUpgradeSection } from "./subscriptions-upgrade-section";
 import { SubscriptionsFaq } from "./subscriptions-faq";
 import { profileSubscriptionLoading } from "@/app/lib/typography/myprofile-page";
+import {
+  extractPostgrestMessage,
+  startStripeCheckout,
+} from "@/lib/subscriptions/subscription-client";
 
 function SubscriptionsPageContent() {
-  const supabase = useMemo(() => createClient(), []);
   const { ready: authReady } = useSupabaseAuth();
   const { replace } = useRouter();
   const searchParams = useSearchParams();
@@ -35,29 +35,19 @@ function SubscriptionsPageContent() {
   const loadSubscription = useCallback(async () => {
     dispatch({ type: "load_start" });
 
-    const ensure = await supabase.rpc("ensure_subscription_row");
-    if (ensure.error) throw ensure.error;
-
-    const { data, error } = await supabase
-      .from("subscriptions")
-      .select("tier, valid_until, status, billing_cycle")
-      .maybeSingle();
-
-    if (error) throw error;
-
-    const tier = (data?.tier ?? "free") as Tier;
-    const validUntil = data?.valid_until ?? null;
-    const status = data?.status ?? null;
-    const effectiveTier = getEffectiveTier(tier, validUntil);
+    const status = await fetchSubscriptionStatus();
+    if (!status) {
+      throw new Error("Failed to load subscription data.");
+    }
 
     dispatch({
       type: "load_success",
-      tier: effectiveTier,
-      originalTier: tier,
-      validUntil,
-      status,
+      tier: status.effectiveTier,
+      originalTier: status.originalTier,
+      validUntil: status.validUntil,
+      status: status.status,
     });
-  }, [supabase]);
+  }, []);
 
   useEffect(() => {
     if (checkoutCanceled) {
@@ -72,11 +62,13 @@ function SubscriptionsPageContent() {
       try {
         await loadSubscription();
       } catch (e: unknown) {
-        const msg =
-          (e as PostgrestError)?.message ??
-          (e as { message?: string })?.message ??
-          "Failed to load subscription data.";
-        dispatch({ type: "load_error", error: msg });
+        dispatch({
+          type: "load_error",
+          error: extractPostgrestMessage(
+            e,
+            "Failed to load subscription data.",
+          ),
+        });
       }
     })();
   }, [authReady, loadSubscription]);
@@ -87,23 +79,7 @@ function SubscriptionsPageContent() {
   ) {
     try {
       dispatch({ type: "checkout_start", tier });
-      const response = await fetch("/api/stripe/checkout", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ tier, cycle }),
-      });
-
-      if (!response.ok) {
-        const data = await response.json().catch(() => ({}));
-        throw new Error(data.error || "Failed to create checkout session");
-      }
-
-      const { url } = await response.json();
-      if (url) {
-        window.location.href = url;
-      } else {
-        throw new Error("No checkout URL returned");
-      }
+      await startStripeCheckout(tier, cycle);
     } catch (e: unknown) {
       const msg =
         (e as Error)?.message ?? "Failed to start checkout. Please try again.";

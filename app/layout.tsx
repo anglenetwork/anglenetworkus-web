@@ -1,4 +1,3 @@
-import "react-tweet/theme.css";
 import "./globals.css";
 
 import { SpeedInsights } from "@vercel/speed-insights/next";

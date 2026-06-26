@@ -1,16 +1,9 @@
 "use client";
 
-import {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-  Suspense,
-} from "react";
+import { useCallback, useEffect, useRef, useState, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
-import { createClient } from "@/lib/supabase/client";
+import { fetchSubscriptionStatus } from "@/app/lib/subscriptions/fetch-subscription-status-client";
 import { useSupabaseAuth } from "@/app/providers/SupabaseAuthProvider";
 import { type Tier } from "@/lib/subscriptions/tier";
 import { Button } from "@/components/ui/button";
@@ -28,7 +21,6 @@ const MAX_POLL_ATTEMPTS = 30;
 function SubscriptionSuccessPageContent() {
   const searchParams = useSearchParams();
   const sessionId = searchParams.get("session_id");
-  const supabase = useMemo(() => createClient(), []);
   const { ready: authReady } = useSupabaseAuth();
 
   const [loading, setLoading] = useState(true);
@@ -38,15 +30,13 @@ function SubscriptionSuccessPageContent() {
   const pollingActiveRef = useRef(true);
 
   const loadSubscription = useCallback(async () => {
-    const { data, error } = await supabase
-      .from("subscriptions")
-      .select("tier, valid_until, status, billing_cycle")
-      .maybeSingle();
+    const status = await fetchSubscriptionStatus();
+    if (!status) {
+      throw new Error("Failed to load subscription data.");
+    }
 
-    if (error) throw error;
-
-    return (data?.tier ?? "free") as Tier;
-  }, [supabase]);
+    return status.originalTier;
+  }, []);
 
   useEffect(() => {
     if (!authReady || !sessionId) {

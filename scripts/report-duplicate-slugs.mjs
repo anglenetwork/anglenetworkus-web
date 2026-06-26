@@ -4,6 +4,7 @@ import { createClient } from "@sanity/client";
 import { config } from "dotenv";
 import { dirname, join } from "path";
 import { fileURLToPath } from "url";
+import { requireSanityReadEnv } from "./lib/require-env.mjs";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -12,16 +13,7 @@ config({ path: join(__dirname, "..", ".env.local") });
 const ARTICLE_DOCUMENT_TYPES = ["post", "opinion", "analysis", "sponsored"];
 
 function requireEnv() {
-  const missing = [];
-  if (!process.env.NEXT_PUBLIC_SANITY_PROJECT_ID)
-    missing.push("NEXT_PUBLIC_SANITY_PROJECT_ID");
-  if (!process.env.NEXT_PUBLIC_SANITY_DATASET)
-    missing.push("NEXT_PUBLIC_SANITY_DATASET");
-  if (missing.length) {
-    throw new Error(
-      `Missing required environment variables: ${missing.join(", ")}`,
-    );
-  }
+  requireSanityReadEnv();
 }
 
 function groupDuplicateSlugs(docs) {

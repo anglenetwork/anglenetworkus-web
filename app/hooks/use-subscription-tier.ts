@@ -2,44 +2,9 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useDeferredIdle } from "@/app/hooks/use-deferred-idle";
+import { fetchSubscriptionStatus } from "@/app/lib/subscriptions/fetch-subscription-status-client";
 import { createClient } from "@/lib/supabase/client";
 import type { Tier } from "@/lib/subscriptions/tier";
-
-async function resolveEffectiveTier(
-  supabase: ReturnType<typeof createClient>,
-): Promise<Tier | null> {
-  const {
-    data: { session },
-  } = await supabase.auth.getSession();
-
-  if (!session?.user) return null;
-
-  try {
-    await supabase.rpc("ensure_subscription_row");
-
-    const { data, error } = await supabase
-      .from("subscriptions")
-      .select("tier, valid_until")
-      .maybeSingle();
-
-    if (error) throw error;
-
-    let effectiveTier: Tier = (data?.tier ?? "free") as Tier;
-    const validUntil = data?.valid_until;
-
-    if (effectiveTier === "pro" && validUntil) {
-      const until = new Date(validUntil);
-      if (until < new Date()) {
-        effectiveTier = "free";
-      }
-    }
-
-    return effectiveTier;
-  } catch (error) {
-    console.error("Error loading subscription:", error);
-    return "free";
-  }
-}
 
 /**
  * Subscription tier for nav CTAs. Defers Supabase work until idle to reduce TBT on public pages.
@@ -59,10 +24,28 @@ export function useSubscriptionTier() {
     let mounted = true;
 
     const load = async () => {
-      const next = await resolveEffectiveTier(supabase);
-      if (!mounted) return;
-      setTier(next);
-      setLoading(false);
+      try {
+        const {
+          data: { session },
+        } = await supabase.auth.getSession();
+
+        if (!session?.user) {
+          if (!mounted) return;
+          setTier(null);
+          setLoading(false);
+          return;
+        }
+
+        const status = await fetchSubscriptionStatus();
+        if (!mounted) return;
+        setTier(status?.effectiveTier ?? "free");
+        setLoading(false);
+      } catch (error) {
+        console.error("Error loading subscription:", error);
+        if (!mounted) return;
+        setTier("free");
+        setLoading(false);
+      }
     };
 
     void load();
@@ -70,9 +53,7 @@ export function useSubscriptionTier() {
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange(() => {
-      void resolveEffectiveTier(supabase).then((next) => {
-        if (mounted) setTier(next);
-      });
+      void load();
     });
 
     return () => {

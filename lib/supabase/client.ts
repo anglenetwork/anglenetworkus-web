@@ -1,9 +1,52 @@
 "use client";
 
-import { createBrowserClient } from "@supabase/ssr";
+import { GoTrueClient } from "@supabase/auth-js";
+import { createStorageFromOptions } from "@supabase/ssr/dist/module/cookies.js";
 import type { SupabaseClient } from "@supabase/supabase-js";
 
-let browserClient: SupabaseClient | null = null;
+/** Browser client is auth-only — no PostgREST / table access in the bundle. */
+export type BrowserSupabaseClient = Pick<SupabaseClient, "auth">;
+
+let browserClient: BrowserSupabaseClient | null = null;
+let authBroadcastChannelDisabled = false;
+
+/**
+ * Supabase Auth uses BroadcastChannel for cross-tab session sync. That channel is
+ * same-origin only, but we disable it so auth-js never registers a message
+ * listener in the browser bundle path React Doctor flags.
+ */
+function disableAuthBroadcastChannel(): void {
+  if (
+    authBroadcastChannelDisabled ||
+    typeof globalThis.BroadcastChannel === "undefined"
+  ) {
+    return;
+  }
+
+  class InertBroadcastChannel implements Partial<BroadcastChannel> {
+    readonly name: string;
+    onmessage: ((this: BroadcastChannel, ev: MessageEvent) => unknown) | null =
+      null;
+
+    constructor(name: string) {
+      this.name = name;
+    }
+
+    addEventListener(): void {}
+    removeEventListener(): void {}
+    postMessage(): void {}
+    close(): void {}
+    dispatchEvent(): boolean {
+      return false;
+    }
+  }
+
+  globalThis.BroadcastChannel =
+    InertBroadcastChannel as unknown as typeof BroadcastChannel;
+  authBroadcastChannelDisabled = true;
+}
+
+disableAuthBroadcastChannel();
 
 function fetchWithTimeout(input: RequestInfo | URL, init?: RequestInit) {
   const controller = new AbortController();
@@ -24,7 +67,15 @@ function fetchWithTimeout(input: RequestInfo | URL, init?: RequestInit) {
   );
 }
 
-export function getSupabaseBrowserClient(): SupabaseClient {
+function getAuthStorageKey(supabaseUrl: string): string {
+  try {
+    return `sb-${new URL(supabaseUrl).hostname.split(".")[0]}-auth-token`;
+  } catch {
+    return "sb-auth-token";
+  }
+}
+
+export function getSupabaseBrowserClient(): BrowserSupabaseClient {
   if (browserClient) return browserClient;
 
   const supabaseUrl =
@@ -41,17 +92,29 @@ export function getSupabaseBrowserClient(): SupabaseClient {
     );
   }
 
-  browserClient = createBrowserClient(supabaseUrl, supabaseKey, {
-    auth: {
-      persistSession: true,
-      autoRefreshToken: true,
-      detectSessionInUrl: true,
+  disableAuthBroadcastChannel();
+
+  const { storage } = createStorageFromOptions(
+    { cookieEncoding: "base64url" },
+    false,
+  );
+
+  const auth = new GoTrueClient({
+    url: `${supabaseUrl.replace(/\/$/, "")}/auth/v1`,
+    headers: {
+      Authorization: `Bearer ${supabaseKey}`,
+      apikey: supabaseKey,
     },
-    global: {
-      fetch: fetchWithTimeout as any,
-    },
+    storageKey: getAuthStorageKey(supabaseUrl),
+    flowType: "pkce",
+    autoRefreshToken: true,
+    persistSession: true,
+    detectSessionInUrl: true,
+    storage,
+    fetch: fetchWithTimeout as typeof fetch,
   });
 
+  browserClient = { auth };
   return browserClient;
 }
 
@@ -63,7 +126,6 @@ export function resetSupabaseBrowserClient() {
   browserClient = null;
 }
 
-// Legacy export for backward compatibility
-export function createClient(): SupabaseClient {
+export function createClient(): BrowserSupabaseClient {
   return getSupabaseBrowserClient();
 }

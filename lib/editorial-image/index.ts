@@ -13,6 +13,4 @@ export {
   resolveEditorialImage,
   resolveListingImage,
   type EditorialImageInput,
-  type ResolveEditorialImageOptions,
-  type ResolvedEditorialImage,
 } from "./resolve";
