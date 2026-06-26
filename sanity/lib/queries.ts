@@ -2,13 +2,13 @@
 import { defineQuery } from "next-sanity";
 import { articleFamilyListFragment } from "./article-family-queries";
 import {
-  homepageFrontlineOrder,
-  homepageJustInOrder,
-  homepageMainHeadlineOrder,
+  homepageFrontlinePostFilter,
+  homepageJustInPostFilter,
+  homepageMainHeadlinePostFilter,
   homepagePublishedEditorialFilter,
   homepagePublishedPostFilter,
   homepagePublishedPostOrder,
-  homepageRightHeadlineOrder,
+  homepageRightHeadlinePostFilter,
 } from "./homepage-query-filters";
 import {
   imageFieldsProjection,
@@ -174,9 +174,9 @@ const postFieldsLightweight = `
 
 export const homepageHeroJustInQuery = defineQuery(`
   *[
-    ${homepagePublishedPostFilter}
+    ${homepageJustInPostFilter}
   ] | order(
-    ${homepageJustInOrder}
+    ${homepagePublishedPostOrder}
   )[0...5] {
     ${postFieldsLightweight}
   }
@@ -184,9 +184,9 @@ export const homepageHeroJustInQuery = defineQuery(`
 
 export const homepageHeroMainHeadlineQuery = defineQuery(`
   *[
-    ${homepagePublishedPostFilter}
+    ${homepageMainHeadlinePostFilter}
   ] | order(
-    ${homepageMainHeadlineOrder}
+    ${homepagePublishedPostOrder}
   )[0...1] {
     ${postFieldsLightweight}
   }
@@ -194,9 +194,9 @@ export const homepageHeroMainHeadlineQuery = defineQuery(`
 
 export const homepageHeroFrontlineQuery = defineQuery(`
   *[
-    ${homepagePublishedPostFilter}
+    ${homepageFrontlinePostFilter}
   ] | order(
-    ${homepageFrontlineOrder}
+    ${homepagePublishedPostOrder}
   )[0...2] {
     ${postFieldsLightweight}
   }
@@ -204,9 +204,9 @@ export const homepageHeroFrontlineQuery = defineQuery(`
 
 export const homepageHeroRightHeadlineQuery = defineQuery(`
   *[
-    ${homepagePublishedPostFilter}
+    ${homepageRightHeadlinePostFilter}
   ] | order(
-    ${homepageRightHeadlineOrder}
+    ${homepagePublishedPostOrder}
   )[0...10] {
     ${postFieldsHeroRightRail}
   }
@@ -638,9 +638,9 @@ export const searchEditorialCountSponsoredQuery = defineQuery(`
 
 export const mainHeadlinesQuery = defineQuery(`
   *[
-    ${homepagePublishedPostFilter}
+    ${homepageMainHeadlinePostFilter}
   ] | order(
-    ${homepageMainHeadlineOrder}
+    ${homepagePublishedPostOrder}
   ) [0...5] {
     _id,
     title,
