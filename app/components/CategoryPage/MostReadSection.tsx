@@ -12,12 +12,7 @@ export function MostReadSection({ articles }: MostReadSectionProps) {
 
   return (
     <section>
-      <SectionHeader
-        title="Most Read"
-        subtitle="Last 10 days"
-        accentStyle="modern"
-        variant="news"
-      />
+      <SectionHeader title="Most Read" accentStyle="modern" variant="news" />
       <div className="space-y-4 rounded-lg bg-black p-8 text-news-surface">
         {articles.map((article, index) => (
           <div key={article.id}>

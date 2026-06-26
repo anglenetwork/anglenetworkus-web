@@ -3,7 +3,7 @@ import type { NavMenuCategory, NavMenuColumn } from "./menu-columns";
 export const FOOTER_CATEGORY_GRID_COLUMNS = 5;
 export const FOOTER_CATEGORY_GRID_ROWS = 2;
 
-export function flattenMenuCategories(
+function flattenMenuCategories(
   menuColumns: NavMenuColumn[],
 ): NavMenuCategory[] {
   return menuColumns.flatMap((column) => column.categories);

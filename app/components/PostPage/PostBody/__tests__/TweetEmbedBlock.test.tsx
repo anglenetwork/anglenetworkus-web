@@ -1,11 +1,5 @@
 import { cleanup, render, screen } from "@testing-library/react";
-import { afterEach, describe, expect, it, vi } from "vitest";
-
-vi.mock("react-tweet", () => ({
-  Tweet: ({ id }: { id: string }) => (
-    <div data-testid="mock-tweet">Tweet {id}</div>
-  ),
-}));
+import { afterEach, describe, expect, it } from "vitest";
 
 import { TweetEmbedBlock } from "../TweetEmbedBlock";
 
@@ -20,16 +14,24 @@ describe("TweetEmbedBlock", () => {
     render(<TweetEmbedBlock url={VALID_TWEET_URL} />);
 
     expect(screen.getByLabelText("Embedded post from X")).toBeInTheDocument();
-    expect(screen.getByTestId("mock-tweet")).toHaveTextContent(
-      "Tweet 1629307668568633344",
+    const iframe = screen.getByTitle(
+      "Embedded post 1629307668568633344 from X",
+    );
+    expect(iframe).toHaveAttribute(
+      "src",
+      "https://platform.twitter.com/embed/Tweet.html?id=1629307668568633344&dnt=true",
     );
   });
 
   it("extracts the ID from a URL with query params", () => {
     render(<TweetEmbedBlock url={`${VALID_TWEET_URL}?s=20&t=abc`} />);
 
-    expect(screen.getByTestId("mock-tweet")).toHaveTextContent(
-      "Tweet 1629307668568633344",
+    const iframe = screen.getByTitle(
+      "Embedded post 1629307668568633344 from X",
+    );
+    expect(iframe).toHaveAttribute(
+      "src",
+      "https://platform.twitter.com/embed/Tweet.html?id=1629307668568633344&dnt=true",
     );
   });
 

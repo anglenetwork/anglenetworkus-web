@@ -106,6 +106,21 @@ describe("resolveEditorialImage", () => {
     expect(result?.unoptimized).toBe(true);
   });
 
+  it("repairs broken Wikimedia SVG thumb URLs", () => {
+    const result = resolveEditorialImage(
+      {
+        source: "external",
+        externalUrl:
+          "https://upload.wikimedia.org/wikipedia/commons/thumb/0/07/Strait_of_Hormuz-svg-en.svg/1280px-Strait_of_Hormuz-svg-en.svg",
+      },
+      { fallbackAlt: "Fallback", wikimediaWidth: 1200 },
+    );
+    expect(result?.src).toBe(
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/0/07/Strait_of_Hormuz-svg-en.svg/1280px-Strait_of_Hormuz-svg-en.svg.png",
+    );
+    expect(result?.unoptimized).toBe(true);
+  });
+
   it("includes attribution when requested", () => {
     const result = resolveEditorialImage(
       {

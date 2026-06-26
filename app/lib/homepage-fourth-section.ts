@@ -4,7 +4,6 @@ import {
   getMostReadPosts,
   orderDocumentsByIds,
 } from "@/app/lib/article-family/metrics";
-import { HOMEPAGE_FOURTH_SECTION_MOST_READ_LIMIT } from "@/app/lib/article-family/ranking-policy";
 import { sanityFetchStatic } from "@/sanity/lib/fetch";
 import {
   homepageFourthSectionMostReadFallbackQuery,
@@ -17,21 +16,19 @@ import {
   type FourthSectionMostReadPost,
 } from "./homepage-fourth-section/most-read-selection";
 
-export { selectFourthSectionMostReadPosts } from "./homepage-fourth-section/most-read-selection";
-
-export const HOMEPAGE_FOURTH_SECTION_CATEGORY = {
+const HOMEPAGE_FOURTH_SECTION_CATEGORY = {
   slug: "tech",
   title: "Tech",
   href: "/category/tech",
 } as const;
 
-export const HOMEPAGE_FOURTH_SECTION_FEATURED_COUNT = 2;
-export const HOMEPAGE_FOURTH_SECTION_SECONDARY_COUNT = 4;
+const HOMEPAGE_FOURTH_SECTION_FEATURED_COUNT = 2;
+const HOMEPAGE_FOURTH_SECTION_SECONDARY_COUNT = 4;
 
 export type FourthSectionTechPost =
   HomepageFourthSectionTechQueryResult[number];
 
-export type HomepageFourthSectionMostReadPost = FourthSectionMostReadPost;
+type HomepageFourthSectionMostReadPost = FourthSectionMostReadPost;
 
 export type HomepageFourthSectionData = {
   category: typeof HOMEPAGE_FOURTH_SECTION_CATEGORY;

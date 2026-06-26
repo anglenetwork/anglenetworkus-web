@@ -8,6 +8,12 @@ import {
   mediaAltField,
   mediaCaptionAndCreditFields,
 } from "../helpers/mediaFields";
+import {
+  buildGalleryImagePreviewSubtitle,
+  buildGalleryImagePreviewTitle,
+  resolveGalleryImageIndex,
+  type GalleryPreviewContext,
+} from "../helpers/gallery-image-preview";
 
 export default defineType({
   name: "galleryImageItem",
@@ -38,49 +44,21 @@ export default defineType({
       alt: "alt",
       source: "source",
     },
-    prepare(selection: any, context: any) {
+    prepare(selection, context) {
       const { media, externalUrl, caption, alt, source } = selection;
-
-      let imageNumber: number | null = null;
-      const path = context?.path;
-      if (
-        Array.isArray(path) &&
-        path.length >= 2 &&
-        typeof path[1] === "number"
-      ) {
-        imageNumber = path[1] + 1;
-      }
-
-      if (imageNumber === null && context?.document?.imageGallery) {
-        const gallery = context.document.imageGallery;
-        if (Array.isArray(gallery)) {
-          const index = gallery.findIndex((item: any) => {
-            if (source === "external" && item?.source === "external") {
-              return item?.externalUrl === externalUrl;
-            }
-            if (source === "asset" && item?.source === "asset") {
-              return item?.image?.asset?._ref === media?.asset?._ref;
-            }
-            return false;
-          });
-          if (index !== -1) imageNumber = index + 1;
-        }
-      }
-
-      const title =
-        imageNumber !== null
-          ? `Image ${imageNumber}`
-          : caption || alt || "Gallery Image";
-      const subtitleParts = [
-        source === "external" ? "External URL" : "Uploaded Asset",
-        imageNumber !== null && caption ? caption : null,
-      ].filter(Boolean);
+      const imageNumber = resolveGalleryImageIndex(
+        selection,
+        (context ?? {}) as GalleryPreviewContext,
+      );
 
       return {
-        title,
+        title: buildGalleryImagePreviewTitle(imageNumber, caption, alt),
         media,
-        subtitle:
-          subtitleParts.length > 0 ? subtitleParts.join(" • ") : undefined,
+        subtitle: buildGalleryImagePreviewSubtitle(
+          source,
+          imageNumber,
+          caption,
+        ),
       };
     },
   },

@@ -43,3 +43,10 @@ export function extractTweetId(input: string): string | null {
 export function isTweetUrl(input: string): boolean {
   return extractTweetId(input) !== null;
 }
+
+export function getTweetEmbedSrc(input: string): string | null {
+  const tweetId = extractTweetId(input);
+  if (!tweetId) return null;
+
+  return `https://platform.twitter.com/embed/Tweet.html?id=${tweetId}&dnt=true`;
+}

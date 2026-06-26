@@ -12,6 +12,7 @@ import { createClient } from "@sanity/client";
 import { config } from "dotenv";
 import { dirname, join } from "path";
 import { fileURLToPath } from "url";
+import { requireSanityWriteEnv } from "./lib/require-env.mjs";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 config({ path: join(__dirname, "..", ".env.local") });
@@ -54,21 +55,7 @@ const TOPICS = [
 ];
 
 function requireEnv() {
-  const missing = [];
-  if (!process.env.NEXT_PUBLIC_SANITY_PROJECT_ID) {
-    missing.push("NEXT_PUBLIC_SANITY_PROJECT_ID");
-  }
-  if (!process.env.NEXT_PUBLIC_SANITY_DATASET) {
-    missing.push("NEXT_PUBLIC_SANITY_DATASET");
-  }
-  if (!process.env.SANITY_API_WRITE_TOKEN) {
-    missing.push("SANITY_API_WRITE_TOKEN");
-  }
-  if (missing.length) {
-    throw new Error(
-      `Missing required environment variables: ${missing.join(", ")}`,
-    );
-  }
+  requireSanityWriteEnv();
 }
 
 function parsePositiveIntArg(flagName, fallback) {

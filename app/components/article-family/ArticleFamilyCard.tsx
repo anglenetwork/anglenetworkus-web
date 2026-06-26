@@ -1,3 +1,4 @@
+import type React from "react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { format, parseISO } from "date-fns";
@@ -6,75 +7,112 @@ import { ImageRenderer } from "../ui/image-renderer";
 import type { ArticleFamilyCard as CardModel } from "@/app/lib/article-family/types";
 import { ReadTimeLabel } from "@/app/components/ui/read-time-label";
 import { SectionHeader } from "@/app/components/ui/section-header";
-import {
-  articleFamilyCardTitle,
-  articleFamilyCardTitleRail,
-  articleFamilyHeroTileTitle,
-} from "@/app/lib/typography/article-family-card";
+import { articleFamilyHeroTileTitle } from "@/app/lib/typography/article-family-card";
 import {
   searchResultAuthor,
   searchResultDate,
   searchResultExcerpt,
   searchResultSponsorLabel,
-  searchResultTitle,
 } from "@/app/lib/typography/search-page";
+import {
+  editorialKicker,
+  searchResultSectionKicker,
+  typeLabel,
+} from "@/app/lib/article-family/card-labels";
+import {
+  getArticleFamilyCardThumbLayout,
+  type ArticleFamilyCardLayout,
+} from "@/app/lib/article-family/card-thumb-layout";
 
-export type ArticleFamilyCardLayout = "compact" | "large" | "rail" | "heroTile";
+type ArticleFamilyCardVariant = "default" | "search";
 
-export type ArticleFamilyCardVariant = "default" | "search";
-
-function typeLabel(
-  t: CardModel["_type"],
-  showPostAsNews: boolean,
-): string | null {
-  switch (t) {
-    case "post":
-      return showPostAsNews ? "News" : null;
-    case "opinion":
-      return "Opinion";
-    case "analysis":
-      return "Analysis";
-    case "sponsored":
-      return "Sponsored";
-    default:
-      return null;
-  }
+function ArticleCardBodyMetadata({
+  article,
+  showExcerpt,
+  showAuthor,
+  showAnalysisFocus,
+  showDate,
+  dateStr,
+  hideExcerptOnMobile,
+  hideAuthorOnMobile,
+  hidePostTypeBadgeOnMobile,
+  dateClassName,
+}: {
+  article: CardModel;
+  showExcerpt: boolean;
+  showAuthor: boolean;
+  showAnalysisFocus: boolean | "" | null | undefined;
+  showDate: boolean;
+  dateStr: string;
+  hideExcerptOnMobile: boolean;
+  hideAuthorOnMobile: boolean;
+  hidePostTypeBadgeOnMobile: boolean;
+  dateClassName: string;
+}) {
+  return (
+    <>
+      {showExcerpt && article.excerpt ? (
+        <p
+          className={cn(
+            searchResultExcerpt,
+            hideExcerptOnMobile && "max-md:hidden",
+          )}
+        >
+          {article.excerpt}
+        </p>
+      ) : null}
+      {showAuthor && article.author?.name ? (
+        <p
+          className={cn(
+            searchResultAuthor,
+            hideAuthorOnMobile && "max-md:hidden",
+          )}
+        >
+          {article.author.name}
+        </p>
+      ) : null}
+      {showAnalysisFocus ? (
+        <p
+          className={cn(
+            "mb-1 line-clamp-2 text-neutral-600 text-xs",
+            hidePostTypeBadgeOnMobile && "max-md:hidden",
+          )}
+        >
+          {article.analysisFocus}
+        </p>
+      ) : null}
+      {showDate && dateStr ? <p className={dateClassName}>{dateStr}</p> : null}
+    </>
+  );
 }
 
-/** Category-first kicker (homepage opinion rail). */
-function editorialKicker(
-  article: CardModel,
-  fallbackTypeLabel: string | null,
-): string {
-  const cat = article.category?.title?.trim();
-  if (cat) return cat;
-  if (article._type === "opinion") return "Opinion";
-  if (article._type === "analysis") return "Analysis";
-  return fallbackTypeLabel || "Trending";
-}
+export type ArticleFamilyCardContext = {
+  article: CardModel;
+  layout: ArticleFamilyCardLayout;
+  variant: ArticleFamilyCardVariant;
+  kickerMode: "card" | "editorial";
+  showDate: boolean;
+  readTimeMinutes?: number;
+  isSearchVariant: boolean;
+  showPostTypeBadge: boolean;
+  showAuthor: boolean;
+  showExcerpt: boolean;
+  hideExcerptOnMobile: boolean;
+  hideAuthorOnMobile: boolean;
+  hidePostTypeBadgeOnMobile: boolean;
+  showTypeMetadataInCompact: boolean;
+  label: string | null;
+  imgUrl: string | null;
+  coverData: ReturnType<typeof getCoverImage>;
+  showAnalysisFocus: boolean | "" | null | undefined;
+  sponsorName: string | undefined;
+  dateStr: string;
+  thumbLayout: ReturnType<typeof getArticleFamilyCardThumbLayout>;
+  editorialK: string;
+  thumbnail: React.ReactNode;
+};
 
-function searchResultSectionKicker(
-  article: CardModel,
-  label: string | null,
-): { title: string; href?: string } | null {
-  const categoryTitle = article.category?.title?.trim();
-  const categorySlug = article.category?.slug?.trim();
-  if (categoryTitle && categorySlug) {
-    return { title: categoryTitle, href: `/category/${categorySlug}` };
-  }
-  if (!label) return null;
-
-  const href =
-    article._type === "opinion"
-      ? "/opinion"
-      : article._type === "analysis"
-        ? "/analysis"
-        : undefined;
-
-  return { title: label, href };
-}
-
-export default function ArticleFamilyCard({
+export function buildArticleFamilyCardContext({
   article,
   layout = "compact",
   variant = "default",
@@ -84,14 +122,11 @@ export default function ArticleFamilyCard({
 }: {
   article: CardModel;
   layout?: ArticleFamilyCardLayout;
-  /** `search` enables the search-results card treatment (type badge, excerpt, mobile tweaks). */
   variant?: ArticleFamilyCardVariant;
-  /** `editorial` = category title first, then Opinion/Analysis (opinion rail). */
   kickerMode?: "card" | "editorial";
   showDate?: boolean;
-  /** Used when `layout="heroTile"` (carousel tiles). */
   readTimeMinutes?: number;
-}) {
+}): ArticleFamilyCardContext {
   const isSearchVariant = variant === "search";
   const showPostTypeBadge = isSearchVariant;
   const showAuthor = isSearchVariant;
@@ -99,22 +134,15 @@ export default function ArticleFamilyCard({
   const hideExcerptOnMobile = isSearchVariant;
   const hideAuthorOnMobile = isSearchVariant;
   const hidePostTypeBadgeOnMobile = isSearchVariant;
-  const enlargeMobileThumb = isSearchVariant;
   const showTypeMetadataInCompact = isSearchVariant;
   const label = typeLabel(article._type, showPostTypeBadge);
-  const imgMaxW =
-    layout === "large"
-      ? 400
-      : layout === "rail"
-        ? 180
-        : layout === "heroTile"
-          ? 400
-          : 450;
+
+  const thumbLayout = getArticleFamilyCardThumbLayout(layout, isSearchVariant);
 
   const coverData = getCoverImage(
     article.cover as Parameters<typeof getCoverImage>[0],
     article.title || "Article",
-    imgMaxW,
+    thumbLayout.imgMaxW,
   );
   const imgUrl = coverData?.src ?? null;
   const showAnalysisFocus =
@@ -131,74 +159,19 @@ export default function ArticleFamilyCard({
     dateStr = "";
   }
 
-  if (layout === "heroTile") {
-    return (
-      <article className="group">
-        <Link href={article.href} className="block">
-          <div className="relative h-[400px] w-full cursor-pointer overflow-hidden rounded-lg bg-neutral-950 transition-opacity duration-200 hover:opacity-90">
-            <div className="absolute inset-0">
-              <ImageRenderer
-                src={imgUrl || "/placeholder.svg"}
-                alt={coverData?.alt || article.title || "Article"}
-                width={300}
-                height={400}
-                fill
-                unoptimized={coverData?.unoptimized}
-                sizes="(max-width: 768px) 100vw, 300px"
-                className="rounded-sm object-cover"
-              />
-            </div>
-            <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent" />
-            <div className="absolute right-0 bottom-0 left-0 p-4 text-white">
-              <h3 className={articleFamilyHeroTileTitle}>{article.title}</h3>
-              <div className="flex items-center gap-2">
-                <ReadTimeLabel
-                  minutes={readTimeMinutes}
-                  variant="hero"
-                  as="span"
-                />
-              </div>
-            </div>
-          </div>
-        </Link>
-      </article>
-    );
-  }
-
-  const thumbWrap =
-    layout === "rail"
-      ? "relative h-[72px] w-24 flex-shrink-0 overflow-hidden rounded-[4px]"
-      : enlargeMobileThumb
-        ? "relative h-[92px] w-[115px] flex-shrink-0 overflow-hidden rounded-lg md:h-[174px] md:w-[216px]"
-        : "relative h-[77px] w-24 flex-shrink-0 overflow-hidden rounded-lg md:h-[174px] md:w-[216px]";
-  const thumbImageWidth = layout === "rail" ? 96 : 216;
-  const thumbImageHeight = layout === "rail" ? 72 : 174;
-  const thumbSizes =
-    layout === "rail"
-      ? "96px"
-      : enlargeMobileThumb
-        ? "(max-width: 768px) 115px, 216px"
-        : "(max-width: 768px) 96px, 216px";
-  const linkGap = layout === "rail" ? "gap-3" : "gap-4";
-  const titleClass = isSearchVariant
-    ? searchResultTitle
-    : layout === "rail"
-      ? articleFamilyCardTitleRail
-      : articleFamilyCardTitle;
-
   const editorialK = editorialKicker(article, label);
 
   const thumbnail = imgUrl ? (
-    <div className={thumbWrap}>
+    <div className={thumbLayout.thumbWrap}>
       <ImageRenderer
         src={imgUrl}
         alt={coverData?.alt || article.title || "Article image"}
         unoptimized={coverData?.unoptimized}
         className="object-cover object-center transition-opacity duration-200"
-        width={thumbImageWidth}
-        height={thumbImageHeight}
+        width={thumbLayout.thumbImageWidth}
+        height={thumbLayout.thumbImageHeight}
         quality={50}
-        sizes={thumbSizes}
+        sizes={thumbLayout.thumbSizes}
         fill
       />
     </div>
@@ -206,89 +179,168 @@ export default function ArticleFamilyCard({
     <div
       className={cn(
         "flex items-center justify-center rounded-lg bg-gray-200/80 font-sans text-[10px] text-gray-500",
-        layout === "rail"
-          ? "h-[72px] w-24 rounded-[4px]"
-          : enlargeMobileThumb
-            ? "h-[92px] w-[115px] md:h-[174px] md:w-[216px]"
-            : "h-[77px] w-24 md:h-[174px] md:w-[216px]",
+        thumbLayout.placeholderClass,
       )}
     >
       No Image
     </div>
   );
 
-  if (isSearchVariant) {
-    const kicker = searchResultSectionKicker(article, label);
+  return {
+    article,
+    layout,
+    variant,
+    kickerMode,
+    showDate,
+    readTimeMinutes,
+    isSearchVariant,
+    showPostTypeBadge,
+    showAuthor,
+    showExcerpt,
+    hideExcerptOnMobile,
+    hideAuthorOnMobile,
+    hidePostTypeBadgeOnMobile,
+    showTypeMetadataInCompact,
+    label,
+    imgUrl,
+    coverData,
+    showAnalysisFocus,
+    sponsorName,
+    dateStr,
+    thumbLayout,
+    editorialK,
+    thumbnail,
+  };
+}
 
-    return (
-      <article className="group">
-        <div className={cn("flex items-start rounded-lg", linkGap)}>
-          <Link
-            href={article.href}
-            className="shrink-0"
-            aria-label={`Read article: ${article.title}`}
-          >
-            {thumbnail}
-          </Link>
-          <div className="min-w-0 flex-1">
-            {kicker ? (
-              <div className="[&>div]:mb-2">
-                <SectionHeader
-                  title={kicker.title}
-                  href={kicker.href}
-                  variant="news"
-                  accentStyle="minimal"
-                  icon="slash"
-                />
-              </div>
-            ) : null}
-            {article._type === "sponsored" && sponsorName ? (
-              <p className={cn(searchResultSponsorLabel, "mb-2")}>
-                {sponsorName}
-              </p>
-            ) : null}
-            <Link href={article.href} className="block">
-              <h3 className={titleClass}>{article.title}</h3>
-            </Link>
-            {showExcerpt && article.excerpt ? (
-              <p
-                className={cn(
-                  searchResultExcerpt,
-                  hideExcerptOnMobile && "max-md:hidden",
-                )}
-              >
-                {article.excerpt}
-              </p>
-            ) : null}
-            {showAuthor && article.author?.name ? (
-              <p
-                className={cn(
-                  searchResultAuthor,
-                  hideAuthorOnMobile && "max-md:hidden",
-                )}
-              >
-                {article.author.name}
-              </p>
-            ) : null}
-            {showAnalysisFocus && (
-              <p className="mb-1 line-clamp-2 text-neutral-600 text-xs">
-                {article.analysisFocus}
-              </p>
-            )}
-            {showDate && dateStr ? (
-              <p className={searchResultDate}>{dateStr}</p>
-            ) : null}
+function ArticleFamilyHeroTile({
+  article,
+  imgUrl,
+  coverData,
+  readTimeMinutes,
+}: Pick<
+  ArticleFamilyCardContext,
+  "article" | "imgUrl" | "coverData" | "readTimeMinutes"
+>) {
+  return (
+    <article className="group">
+      <Link href={article.href} className="block">
+        <div className="relative h-[400px] w-full cursor-pointer overflow-hidden rounded-lg bg-neutral-950 transition-opacity duration-200 hover:opacity-90">
+          <div className="absolute inset-0">
+            <ImageRenderer
+              src={imgUrl || "/placeholder.svg"}
+              alt={coverData?.alt || article.title || "Article"}
+              width={300}
+              height={400}
+              fill
+              unoptimized={coverData?.unoptimized}
+              sizes="(max-width: 768px) 100vw, 300px"
+              className="rounded-sm object-cover"
+            />
+          </div>
+          <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent" />
+          <div className="absolute right-0 bottom-0 left-0 p-4 text-white">
+            <h3 className={articleFamilyHeroTileTitle}>{article.title}</h3>
+            <div className="flex items-center gap-2">
+              <ReadTimeLabel
+                minutes={readTimeMinutes}
+                variant="hero"
+                as="span"
+              />
+            </div>
           </div>
         </div>
-      </article>
-    );
-  }
+      </Link>
+    </article>
+  );
+}
 
+function ArticleFamilySearchCard({
+  article,
+  label,
+  sponsorName,
+  thumbnail,
+  thumbLayout,
+  showExcerpt,
+  showAuthor,
+  showAnalysisFocus,
+  showDate,
+  dateStr,
+  hideExcerptOnMobile,
+  hideAuthorOnMobile,
+}: ArticleFamilyCardContext) {
+  const kicker = searchResultSectionKicker(article, label);
+
+  return (
+    <article className="group">
+      <div className={cn("flex items-start rounded-lg", thumbLayout.linkGap)}>
+        <Link
+          href={article.href}
+          className="shrink-0"
+          aria-label={`Read article: ${article.title}`}
+        >
+          {thumbnail}
+        </Link>
+        <div className="min-w-0 flex-1">
+          {kicker ? (
+            <div className="[&>div]:mb-2">
+              <SectionHeader
+                title={kicker.title}
+                href={kicker.href}
+                variant="news"
+                accentStyle="minimal"
+                icon="slash"
+              />
+            </div>
+          ) : null}
+          {article._type === "sponsored" && sponsorName ? (
+            <p className={cn(searchResultSponsorLabel, "mb-2")}>
+              {sponsorName}
+            </p>
+          ) : null}
+          <Link href={article.href} className="block">
+            <h3 className={thumbLayout.titleClass}>{article.title}</h3>
+          </Link>
+          <ArticleCardBodyMetadata
+            article={article}
+            showExcerpt={showExcerpt}
+            showAuthor={showAuthor}
+            showAnalysisFocus={showAnalysisFocus}
+            showDate={showDate}
+            dateStr={dateStr}
+            hideExcerptOnMobile={hideExcerptOnMobile}
+            hideAuthorOnMobile={hideAuthorOnMobile}
+            hidePostTypeBadgeOnMobile={false}
+            dateClassName={searchResultDate}
+          />
+        </div>
+      </div>
+    </article>
+  );
+}
+
+function ArticleFamilyDefaultCard({
+  article,
+  label,
+  sponsorName,
+  kickerMode,
+  editorialK,
+  thumbnail,
+  thumbLayout,
+  showExcerpt,
+  showAuthor,
+  showAnalysisFocus,
+  showDate,
+  dateStr,
+  hideExcerptOnMobile,
+  hideAuthorOnMobile,
+  hidePostTypeBadgeOnMobile,
+}: ArticleFamilyCardContext) {
   return (
     <article className="group">
       <Link
         href={article.href}
-        className={`flex cursor-pointer items-start rounded-lg transition-colors duration-200 ${linkGap}`}
+        className={`flex cursor-pointer items-start rounded-lg transition-colors duration-200 ${thumbLayout.linkGap}`}
       >
         <div className="flex-shrink-0">{thumbnail}</div>
         <div className="min-w-0 flex-1">
@@ -315,42 +367,40 @@ export default function ArticleFamilyCard({
               )}
             </div>
           )}
-          <h3 className={titleClass}>{article.title}</h3>
-          {showExcerpt && article.excerpt ? (
-            <p
-              className={cn(
-                searchResultExcerpt,
-                hideExcerptOnMobile && "max-md:hidden",
-              )}
-            >
-              {article.excerpt}
-            </p>
-          ) : null}
-          {showAuthor && article.author?.name ? (
-            <p
-              className={cn(
-                searchResultAuthor,
-                hideAuthorOnMobile && "max-md:hidden",
-              )}
-            >
-              {article.author.name}
-            </p>
-          ) : null}
-          {showAnalysisFocus && (
-            <p
-              className={cn(
-                "mb-1 line-clamp-2 text-neutral-600 text-xs",
-                hidePostTypeBadgeOnMobile && "max-md:hidden",
-              )}
-            >
-              {article.analysisFocus}
-            </p>
-          )}
-          {showDate && dateStr && (
-            <p className="mt-1 font-sans text-neutral-500 text-xs">{dateStr}</p>
-          )}
+          <h3 className={thumbLayout.titleClass}>{article.title}</h3>
+          <ArticleCardBodyMetadata
+            article={article}
+            showExcerpt={showExcerpt}
+            showAuthor={showAuthor}
+            showAnalysisFocus={showAnalysisFocus}
+            showDate={showDate}
+            dateStr={dateStr}
+            hideExcerptOnMobile={hideExcerptOnMobile}
+            hideAuthorOnMobile={hideAuthorOnMobile}
+            hidePostTypeBadgeOnMobile={hidePostTypeBadgeOnMobile}
+            dateClassName="mt-1 font-sans text-neutral-500 text-xs"
+          />
         </div>
       </Link>
     </article>
   );
+}
+
+export default function ArticleFamilyCard(props: {
+  article: CardModel;
+  layout?: ArticleFamilyCardLayout;
+  variant?: ArticleFamilyCardVariant;
+  kickerMode?: "card" | "editorial";
+  showDate?: boolean;
+  readTimeMinutes?: number;
+}) {
+  const ctx = buildArticleFamilyCardContext(props);
+
+  if (props.layout === "heroTile") {
+    return <ArticleFamilyHeroTile {...ctx} />;
+  }
+  if (props.variant === "search") {
+    return <ArticleFamilySearchCard {...ctx} />;
+  }
+  return <ArticleFamilyDefaultCard {...ctx} />;
 }

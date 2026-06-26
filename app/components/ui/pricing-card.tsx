@@ -2,6 +2,8 @@ import type React from "react";
 import { Check } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { resolvePricingCardStyles } from "./pricing-card-styles";
+import PricingCardPriceBlock from "./pricing-card-price-block";
 
 interface PricingCardProps {
   plan: string;
@@ -34,29 +36,19 @@ const PricingCard: React.FC<PricingCardProps> = ({
   discountText,
   onClick,
 }) => {
-  const hasCustomBackground = !!backgroundColor;
-  const cardClass = backgroundColor
-    ? `${backgroundColor} border-0`
-    : recommended
-      ? "bg-emerald-500 border-0"
-      : borderColor
-        ? `bg-gray-50 border-2 ${borderColor}`
-        : "bg-gray-50 border border-gray-200";
-
-  const textClass =
-    hasCustomBackground || recommended ? "text-white" : "text-gray-900";
-  const secondaryTextClass =
-    hasCustomBackground || recommended ? "text-red-100" : "text-gray-600";
-
-  const getButtonClass = () => {
-    if (buttonVariant === "current") {
-      return "border border-gray-300 bg-white text-gray-900 hover:bg-gray-50";
-    }
-    if (hasCustomBackground || recommended) {
-      return "bg-white text-red-600 hover:bg-gray-50 border-0";
-    }
-    return "bg-gray-200 text-gray-900 hover:bg-gray-300 border-0";
-  };
+  const {
+    cardClass,
+    textClass,
+    secondaryTextClass,
+    buttonClass,
+    hasCustomBackground,
+    accent,
+  } = resolvePricingCardStyles({
+    recommended,
+    backgroundColor,
+    borderColor,
+    buttonVariant,
+  });
 
   return (
     <Card
@@ -73,48 +65,14 @@ const PricingCard: React.FC<PricingCardProps> = ({
 
         {/* Pricing */}
         <div>
-          {price !== null && (
-            <div>
-              <div className="flex items-baseline gap-2">
-                <span className="font-bold text-6xl">${price}</span>
-                {periodLabel && (
-                  <span
-                    className={`text-xl opacity-90 ${secondaryTextClass} inline-block min-w-[85px]`}
-                  >
-                    {periodLabel}
-                  </span>
-                )}
-              </div>
-              {discountText && (
-                <div
-                  className={`mt-1 font-semibold text-2xl ${hasCustomBackground || recommended ? "text-red-200" : "text-emerald-600"}`}
-                >
-                  {discountText}
-                </div>
-              )}
-            </div>
-          )}
-          {pricingLabel && (
-            <div>
-              <div className="flex items-baseline gap-2">
-                <span className="font-bold text-6xl">{pricingLabel}</span>
-                {periodLabel && (
-                  <span
-                    className={`text-xl opacity-90 ${secondaryTextClass} inline-block min-w-[85px]`}
-                  >
-                    {periodLabel}
-                  </span>
-                )}
-              </div>
-              {discountText && (
-                <div
-                  className={`mt-1 font-semibold text-sm ${hasCustomBackground || recommended ? "text-red-200" : "text-emerald-600"}`}
-                >
-                  {discountText}
-                </div>
-              )}
-            </div>
-          )}
+          <PricingCardPriceBlock
+            price={price}
+            pricingLabel={pricingLabel}
+            periodLabel={periodLabel}
+            discountText={discountText}
+            secondaryTextClass={secondaryTextClass}
+            accent={accent}
+          />
         </div>
       </div>
 
@@ -123,7 +81,7 @@ const PricingCard: React.FC<PricingCardProps> = ({
         {features.map((feature) => (
           <div key={feature} className="flex items-start gap-3">
             <Check
-              className={`size-5 flex-shrink-0 ${hasCustomBackground || recommended ? "text-red-200" : "text-emerald-600"} mt-0.5`}
+              className={`size-5 flex-shrink-0 ${accent ? "text-red-200" : "text-emerald-600"} mt-0.5`}
             />
             <span className={`text-base ${secondaryTextClass}`}>{feature}</span>
           </div>
@@ -132,7 +90,7 @@ const PricingCard: React.FC<PricingCardProps> = ({
 
       {buttonText && (
         <Button
-          className={`mt-8 w-full rounded-full py-3 font-semibold transition-all ${getButtonClass()}`}
+          className={`mt-8 w-full rounded-full py-3 font-semibold transition-all ${buttonClass}`}
           disabled={disabled}
           onClick={onClick}
         >

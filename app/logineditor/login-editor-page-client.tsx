@@ -3,10 +3,14 @@
 import { signIn } from "next-auth/react";
 import { useSearchParams } from "next/navigation";
 import { Suspense } from "react";
+import { safeRelativeRedirectPath } from "@/lib/safe-redirect-path";
 
 function LoginForm() {
   const searchParams = useSearchParams();
-  const callbackUrl = searchParams.get("callbackUrl") || "/studio";
+  const callbackUrl = safeRelativeRedirectPath(
+    searchParams.get("callbackUrl"),
+    { defaultPath: "/studio", allowedPrefixes: ["/studio"] },
+  );
 
   return (
     <main className="flex min-h-screen items-center justify-center bg-background">

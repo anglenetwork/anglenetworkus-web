@@ -1,0 +1,55 @@
+{
+  "$schema": "https://raw.githubusercontent.com/fallow-rs/fallow/main/schema.json",
+  "entry": ["next.config.ts", "lib/empty-polyfill-module.js"],
+  "ignorePatterns": [
+    "scripts/**",
+    "app/components/article-family/OpinionMoreSection.tsx",
+    "app/components/article-family/opinion-index-constants.ts",
+    "app/tag/[slug]/components/TagTextNewsItem.tsx",
+    "app/tag/[slug]/components/TagArticleItem.tsx"
+  ],
+  "ignoreDependencies": ["eslint-config-next"],
+  "duplicates": {
+    "minOccurrences": 6,
+    "threshold": 25,
+    "ignore": ["sanity.types.ts"]
+  },
+  "rules": {
+    "unused-files": "warn",
+    "unused-exports": "warn",
+    "unused-types": "warn",
+    "unused-dev-dependencies": "warn",
+    "unlisted-dependencies": "warn",
+    "test-only-dependencies": "warn"
+  },
+  "ignoreExports": [
+    {
+      "file": "app/lib/article-family/types.ts",
+      "exports": ["*"]
+    },
+    {
+      "file": "sanity.types.ts",
+      "exports": ["*"]
+    },
+    {
+      "file": "app/components/CategoryPage/index.ts",
+      "exports": ["*"]
+    }
+  ],
+  "health": {
+    "maxCrap": 2500,
+    "maxCognitive": 80,
+    "maxCyclomatic": 50,
+    "ignore": [
+      "scripts/**",
+      "lib/privacy-policy-setup/**",
+      "lib/terms-of-service-setup/**",
+      "tests/**",
+      "sanity/**",
+      "app/api/**",
+      "app/auth/**",
+      "app/myprofile/**",
+      "sanity.types.ts"
+    ]
+  }
+}
