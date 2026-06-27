@@ -380,7 +380,7 @@ export const articlesByCategoryEditorialQuery = defineQuery(`
 `);
 
 /** Category listing: `post` only (homepage Fifth Section — newest news, no analysis). */
-export const articlesByCategoryStandardPostsQuery = defineQuery(`
+const articlesByCategoryStandardPostsQuery = defineQuery(`
   *[
     _type == "${GROQ_POST}" &&
     category->slug.current == $categorySlug &&
@@ -514,7 +514,7 @@ export const sponsoredIndexCountQuery = defineQuery(`
 `);
 
 /** Explicit opt-in: sponsored list only (never used as default editorial) */
-export const sponsoredListQuery = defineQuery(`
+const sponsoredListQuery = defineQuery(`
   *[
     _type == "${GROQ_SPONSORED}" &&
     ${ARTICLE_FAMILY_PUBLISHED} &&

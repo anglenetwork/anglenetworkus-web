@@ -34,13 +34,22 @@ describe("editorialKicker", () => {
 
   it("falls back to type or Trending", () => {
     expect(
-      editorialKicker({ _type: "opinion" } as Parameters<typeof editorialKicker>[0], null),
+      editorialKicker(
+        { _type: "opinion" } as Parameters<typeof editorialKicker>[0],
+        null,
+      ),
     ).toBe("Opinion");
     expect(
-      editorialKicker({ _type: "post" } as Parameters<typeof editorialKicker>[0], "News"),
+      editorialKicker(
+        { _type: "post" } as Parameters<typeof editorialKicker>[0],
+        "News",
+      ),
     ).toBe("News");
     expect(
-      editorialKicker({ _type: "post" } as Parameters<typeof editorialKicker>[0], null),
+      editorialKicker(
+        { _type: "post" } as Parameters<typeof editorialKicker>[0],
+        null,
+      ),
     ).toBe("Trending");
   });
 });
@@ -60,10 +69,18 @@ describe("searchResultSectionKicker", () => {
 
   it("returns section href for opinion and analysis", () => {
     expect(
-      searchResultSectionKicker({ _type: "opinion" } as Parameters<typeof searchResultSectionKicker>[0], "Opinion"),
+      searchResultSectionKicker(
+        { _type: "opinion" } as Parameters<typeof searchResultSectionKicker>[0],
+        "Opinion",
+      ),
     ).toEqual({ title: "Opinion", href: "/opinion" });
     expect(
-      searchResultSectionKicker({ _type: "analysis" } as Parameters<typeof searchResultSectionKicker>[0], "Analysis"),
+      searchResultSectionKicker(
+        { _type: "analysis" } as Parameters<
+          typeof searchResultSectionKicker
+        >[0],
+        "Analysis",
+      ),
     ).toEqual({ title: "Analysis", href: "/analysis" });
   });
 });

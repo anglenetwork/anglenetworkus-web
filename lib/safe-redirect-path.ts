@@ -37,8 +37,7 @@ export function safeRelativeRedirectPath(
   }
 
   const pathOnly = trimmed.split(/[?#]/, 1)[0] ?? trimmed;
-  const allowedPrefixes =
-    options.allowedPrefixes ?? DEFAULT_ALLOWED_PREFIXES;
+  const allowedPrefixes = options.allowedPrefixes ?? DEFAULT_ALLOWED_PREFIXES;
 
   const isAllowed = allowedPrefixes.some(
     (prefix) => pathOnly === prefix || pathOnly.startsWith(`${prefix}/`),

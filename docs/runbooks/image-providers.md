@@ -7,6 +7,7 @@ Single source of truth for which remote hosts are optimizable vs display-only, a
 | File | Role |
 |------|------|
 | [`lib/editorial-image/policy.ts`](../../lib/editorial-image/policy.ts) | `OPTIMIZABLE_REMOTE_HOSTS`, `REMOTE_PATTERN_HOSTS`, Wikimedia rules, `shouldUnoptimizeExternalUrl` |
+| [`lib/image-optimization.ts`](../../lib/image-optimization.ts) | `parseWikimediaCommonsUrl`, `getWikimediaThumbnail` — always rebuilds `/thumb/` URLs from source file identity (never trusts stored thumb widths) |
 | [`lib/editorial-image/resolve.ts`](../../lib/editorial-image/resolve.ts) | `resolveEditorialImage`, `resolveListingImage` — builds `src`, `unoptimized`, optional `blurDataURL` (Sanity LQIP only) |
 | [`next.config.ts`](../../next.config.ts) | `images.remotePatterns` derived from `REMOTE_PATTERN_HOSTS` |
 
@@ -59,6 +60,7 @@ GROQ projects `"lqip": image.asset->metadata.lqip` via [`sanity/lib/image-fields
 - [ ] Article detail: credit + **license** in caption (`ArticleCaption`).
 - [ ] Listings / cards: credit only (`ListingPhotoCredit`, `ExcerptCreditCaption`) — no license line.
 - [ ] Wikimedia: thumbnail URL + unoptimized / direct fetch (no optimizer 429s).
+- [ ] Run `npm run verify:wikimedia-covers` after publishing external Wikimedia covers.
 - [ ] Unknown external host: unoptimized direct URL.
 - [ ] Sanity asset with LQIP: blur placeholder on optimized cover when metadata exists.
 

@@ -23,7 +23,7 @@ export function TweetEmbedBlock({ url, caption }: TweetEmbedBlockProps) {
             className="mx-auto block w-full max-w-[550px] border-0"
             style={{ minHeight: 400 }}
             loading="lazy"
-                sandbox="allow-scripts allow-presentation allow-popups"
+            sandbox="allow-scripts allow-presentation allow-popups"
           />
         </div>
       </div>

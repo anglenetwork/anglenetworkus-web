@@ -32,7 +32,6 @@ export default function PostSelectedNews({
           const coverData = getCoverImage(
             post.cover as Parameters<typeof getCoverImage>[0],
             post.title || "Article image",
-            200,
           );
           const imgUrl = coverData?.src ?? null;
 

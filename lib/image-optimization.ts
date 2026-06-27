@@ -1,9 +1,14 @@
 import { isWikimediaHostname } from "@/lib/editorial-image/policy";
 
 /**
- * Image optimization utilities for external images.
+ * Image optimization utilities for Wikimedia Commons external images.
+ *
  * Wikimedia /thumb/ URLs only work at pre-generated widths and use format-specific
  * leaf suffixes (SVG sources rasterize to `{width}px-{file}.svg.png`).
+ *
+ * Never pass stored /thumb/ URLs through unchanged — CMS and publishers store
+ * arbitrary widths (e.g. 2560px) that often return HTTP 400. Always rebuild
+ * from the source file identity + snapped width.
  */
 
 /** Widths Wikimedia pre-generates for /thumb/ URLs (arbitrary widths often return 400). */
@@ -11,6 +16,11 @@ export const WIKIMEDIA_THUMBNAIL_WIDTHS = [
   120, 150, 180, 200, 220, 250, 300, 320, 400, 440, 480, 500, 600, 640, 720,
   800, 960, 1024, 1280, 1920, 2560, 3840,
 ] as const;
+
+export type ParsedWikimediaCommonsUrl = {
+  hash: string;
+  filename: string;
+};
 
 /** Pick the smallest pre-generated Wikimedia width >= requested, or the largest available. */
 export function snapWikimediaThumbnailWidth(requestedWidth: number): number {
@@ -24,6 +34,29 @@ export function snapWikimediaThumbnailWidth(requestedWidth: number): number {
 /** True when the Commons source file is SVG (not an already-rasterized `.svg.png` leaf). */
 export function isWikimediaSvgFilename(filename: string): boolean {
   return /\.svg$/i.test(filename) && !/\.svg\.png$/i.test(filename);
+}
+
+/**
+ * Minimum snap width when building a /thumb/ URL from a Commons source file.
+ * Many files only exist at larger pre-generated sizes (e.g. SVG raster thumbs at 1280px).
+ */
+export function minWikimediaNewThumbWidth(filename: string): number {
+  const filenameOnly = filename.split("/").pop() || filename;
+  if (isWikimediaSvgFilename(filenameOnly)) {
+    return snapWikimediaThumbnailWidth(1280);
+  }
+  return snapWikimediaThumbnailWidth(960);
+}
+
+/** Pick a /thumb/ width that is likely to exist for a Commons source file. */
+export function resolveWikimediaNewThumbWidth(
+  filename: string,
+  maxWidth: number,
+): number {
+  return Math.max(
+    snapWikimediaThumbnailWidth(maxWidth),
+    minWikimediaNewThumbWidth(filename),
+  );
 }
 
 /** Build the final `/thumb/.../{width}px-{leaf}` segment for a source filename. */
@@ -43,84 +76,75 @@ function findCommonsIndex(pathParts: string[]): number {
 }
 
 /**
- * Repair existing /thumb/ URLs when the leaf format is wrong (e.g. SVG missing `.png`).
- * Keeps the stored width unchanged to avoid 400s from non-standard pre-generated sizes.
+ * Parse a Wikimedia Commons file or thumb URL into hash + source filename.
+ * Returns null for non-Commons paths on upload.wikimedia.org.
  */
-export function repairWikimediaThumbUrl(url: URL, pathParts: string[]): URL {
-  const commonsIndex = findCommonsIndex(pathParts);
-  if (commonsIndex === -1 || pathParts[commonsIndex + 1] !== "thumb") {
-    return url;
-  }
+export function parseWikimediaCommonsUrl(
+  url: string | URL,
+): ParsedWikimediaCommonsUrl | null {
+  try {
+    const parsed = typeof url === "string" ? new URL(url) : url;
+    if (!isWikimediaHostname(parsed.hostname)) {
+      return null;
+    }
 
-  if (pathParts.length < commonsIndex + 5) {
-    return url;
-  }
+    const pathParts = parsed.pathname.split("/").filter(Boolean);
+    const commonsIndex = findCommonsIndex(pathParts);
+    if (commonsIndex === -1) {
+      return null;
+    }
 
-  const sourceFilename = pathParts[pathParts.length - 2];
-  const leafSegment = pathParts[pathParts.length - 1];
-  const leafMatch = leafSegment.match(/^(\d+)px-(.+)$/);
-  if (!leafMatch || !isWikimediaSvgFilename(sourceFilename)) {
-    return url;
-  }
+    const afterCommons = pathParts.slice(commonsIndex + 1);
+    if (afterCommons.length < 2) {
+      return null;
+    }
 
-  const [, width, leafName] = leafMatch;
-  if (/\.svg\.png$/i.test(leafName)) {
-    return url;
-  }
+    if (afterCommons[0] === "thumb") {
+      const filePathParts = afterCommons.slice(1, -1);
+      if (filePathParts.length < 2) {
+        return null;
+      }
+      return {
+        hash: filePathParts[0],
+        filename: filePathParts.slice(1).join("/"),
+      };
+    }
 
-  if (!leafName.toLowerCase().endsWith(".svg")) {
-    return url;
+    return {
+      hash: afterCommons[0],
+      filename: afterCommons.slice(1).join("/"),
+    };
+  } catch {
+    return null;
   }
+}
 
-  const repaired = new URL(url.toString());
-  const prefix = pathParts.slice(0, pathParts.length - 1);
-  prefix.push(`${width}px-${leafName}.png`);
-  repaired.pathname = `/${prefix.join("/")}`;
-  return repaired;
+/** Build a canonical Commons /thumb/ URL for a source file at the given width. */
+export function buildWikimediaThumbUrl(
+  hash: string,
+  filename: string,
+  width: number,
+): string {
+  const thumbLeaf = buildWikimediaThumbLeaf(filename, width);
+  return `https://upload.wikimedia.org/wikipedia/commons/thumb/${hash}/${filename}/${thumbLeaf}`;
 }
 
 /**
- * Converts a Wikimedia Commons URL to a thumbnail URL, or repairs malformed thumbs.
+ * Normalize any Wikimedia Commons URL (full file or existing /thumb/) to a
+ * working thumbnail URL at a snapped, file-aware width.
  */
 export function getWikimediaThumbnail(
   originalUrl: string,
   maxWidth: number = 1200,
 ): string {
-  const thumbnailWidth = snapWikimediaThumbnailWidth(maxWidth);
   try {
-    const url = new URL(originalUrl);
-
-    if (!isWikimediaHostname(url.hostname)) {
+    const parsed = parseWikimediaCommonsUrl(originalUrl);
+    if (!parsed) {
       return originalUrl;
     }
 
-    const pathParts = url.pathname.split("/").filter((p) => p);
-    const commonsIndex = findCommonsIndex(pathParts);
-    if (commonsIndex === -1) {
-      return originalUrl;
-    }
-
-    if (pathParts[commonsIndex + 1] === "thumb") {
-      const repaired = repairWikimediaThumbUrl(url, pathParts);
-      return repaired.toString();
-    }
-
-    const hash = pathParts[commonsIndex + 1];
-    const filename = pathParts.slice(commonsIndex + 2).join("/");
-
-    if (!hash || !filename) {
-      return originalUrl;
-    }
-
-    const thumbLeaf = buildWikimediaThumbLeaf(filename, thumbnailWidth);
-    const thumbnailPath = `/wikipedia/commons/thumb/${hash}/${filename}/${thumbLeaf}`;
-    url.pathname = thumbnailPath;
-
-    try {
-      return new URL(url.toString()).toString();
-    } catch {
-      return originalUrl;
-    }
+    const width = resolveWikimediaNewThumbWidth(parsed.filename, maxWidth);
+    return buildWikimediaThumbUrl(parsed.hash, parsed.filename, width);
   } catch {
     return originalUrl;
   }

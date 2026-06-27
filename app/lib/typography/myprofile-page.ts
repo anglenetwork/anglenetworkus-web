@@ -41,8 +41,7 @@ export const profileFormLabel =
   "mb-3 block font-sans text-sm font-semibold text-neutral-900";
 
 /** My profile — read-only field value */
-export const profileFormValue =
-  "font-sans text-base font-normal text-neutral-900";
+const profileFormValue = "font-sans text-base font-normal text-neutral-900";
 
 /** My profile — text input */
 export const profileFormInput =
@@ -85,7 +84,7 @@ export const bookmarksListTitle = `mb-2 line-clamp-2 font-sans text-lg font-semi
 export const bookmarksListMeta =
   "mb-1 font-sans text-sm font-medium text-neutral-400";
 
-export const bookmarksListDate =
+const bookmarksListDate =
   "mb-4 font-sans text-xs font-medium uppercase tracking-wide text-neutral-400 xl:mb-0";
 
 export const bookmarksListAction =

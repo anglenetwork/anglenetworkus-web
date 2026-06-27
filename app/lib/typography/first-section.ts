@@ -29,4 +29,4 @@ export const sideStoryTitle = `font-medium font-sans text-xl text-news-text lead
 export const sideStoryCompactTitle = `min-w-0 flex-1 font-regular font-sans text-base text-news-text leading-snug tracking-normal ${homepageArticleTitleLink}`;
 
 /** FirstSection — right rail: What Matters list item titles */
-export const mostReadItemTitle = `text-news-text leading-tight font-sans text-lg sm:text-base font-normal tracking-normal ${homepageArticleTitleLink}`;
+const mostReadItemTitle = `text-news-text leading-tight font-sans text-lg sm:text-base font-normal tracking-normal ${homepageArticleTitleLink}`;

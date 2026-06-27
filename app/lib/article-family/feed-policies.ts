@@ -6,17 +6,17 @@ import type { ArticleFamilyDocType } from "./types";
  */
 
 /** Standard homepage / news rails: standard reported news only */
-export const FEED_STANDARD_NEWS_TYPES = [
+const FEED_STANDARD_NEWS_TYPES = [
   "post",
 ] as const satisfies readonly ArticleFamilyDocType[];
 
 /** Opinion rail: opinion pieces only */
-export const FEED_OPINION_TYPES = [
+const FEED_OPINION_TYPES = [
   "opinion",
 ] as const satisfies readonly ArticleFamilyDocType[];
 
 /** Analysis rail: analysis only */
-export const FEED_ANALYSIS_TYPES = [
+const FEED_ANALYSIS_TYPES = [
   "analysis",
 ] as const satisfies readonly ArticleFamilyDocType[];
 

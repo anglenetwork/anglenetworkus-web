@@ -6,7 +6,6 @@ import {
   BarChartIcon,
   CogIcon,
   CommentIcon,
-  DocumentsIcon,
   DocumentTextIcon,
   TagsIcon,
   TagIcon,
@@ -26,7 +25,6 @@ const DESK_MANAGED_TYPES = new Set([
   "category",
   "tag",
   "author",
-  "topic",
 ]);
 
 function coverInvalid(): string {
@@ -314,17 +312,6 @@ export const editorialDeskStructure: StructureResolver = (S) => {
         ),
 
       siteSettingsItem,
-
-      S.listItem()
-        .title("Legacy / Utilities")
-        .icon(DocumentsIcon)
-        .child(
-          S.list()
-            .title("Legacy / Utilities")
-            .items([
-              S.documentTypeListItem("topic").title("Topics / Entities"),
-            ]),
-        ),
 
       ...(remainingTypes.length > 0 ? [S.divider(), ...remainingTypes] : []),
     ]);

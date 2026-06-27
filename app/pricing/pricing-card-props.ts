@@ -2,7 +2,7 @@ import type { AppRouterInstance } from "next/dist/shared/lib/app-router-context.
 import type { Tier } from "@/lib/subscriptions/tier";
 import type { PRICING_DATA } from "@/lib/subscriptions/pricing-data";
 
-type PricingPeriod = typeof PRICING_DATA.monthly;
+type PricingPeriod = typeof PRICING_DATA.monthly | typeof PRICING_DATA.yearly;
 
 type PricingCardPropsInput = {
   tier: Tier;
@@ -32,11 +32,7 @@ export function buildStarterCardProps({
     pricingLabel: currentPricing.starter.pricingLabel,
     recommended: false,
     periodLabel: "Forever",
-    features: [
-      "AI Super Resolution",
-      "Basic enhancements",
-      "Standard support",
-    ],
+    features: ["AI Super Resolution", "Basic enhancements", "Standard support"],
     buttonText: tier === "free" ? "Current plan" : undefined,
     buttonVariant: tier === "free" ? "current" : undefined,
     disabled: tier === "free",
@@ -58,7 +54,11 @@ export function buildProCardProps({
   currentPricing,
 }: Pick<
   PricingCardPropsInput,
-  "tier" | "billingYearly" | "checkoutLoading" | "handleCheckout" | "currentPricing"
+  | "tier"
+  | "billingYearly"
+  | "checkoutLoading"
+  | "handleCheckout"
+  | "currentPricing"
 >) {
   return {
     plan: "Pro",
@@ -83,8 +83,7 @@ export function buildProCardProps({
             ? "Loading..."
             : "Upgrade to Pro",
     buttonVariant: tier === "pro" ? "current" : "default",
-    disabled:
-      tier === "pro" || tier === "lifetime" || checkoutLoading !== null,
+    disabled: tier === "pro" || tier === "lifetime" || checkoutLoading !== null,
     onClick:
       tier !== "pro" && tier !== "lifetime"
         ? () => handleCheckout("pro", billingYearly ? "year" : "month")
@@ -122,7 +121,6 @@ export function buildLifetimeCardProps({
     buttonVariant: tier === "lifetime" ? "current" : "default",
     disabled: tier === "lifetime" || checkoutLoading !== null,
     borderColor: "border-red-500",
-    onClick:
-      tier !== "lifetime" ? () => handleCheckout("lifetime") : undefined,
+    onClick: tier !== "lifetime" ? () => handleCheckout("lifetime") : undefined,
   };
 }

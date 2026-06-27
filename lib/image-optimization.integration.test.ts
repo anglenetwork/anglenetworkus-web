@@ -25,16 +25,17 @@ async function headOk(url: string, retries = 3): Promise<number> {
   return 429;
 }
 
-describe.runIf(runIntegration)("Wikimedia thumbnail live HEAD verification", () => {
-  it.each(uniqueIntegrationCases)(
-    "$name ($resolved)",
-    async ({ resolved }) => {
+describe.runIf(runIntegration)(
+  "Wikimedia thumbnail live HEAD verification",
+  () => {
+    it.each(uniqueIntegrationCases)("$name ($resolved)", async ({
+      resolved,
+    }) => {
       const status = await headOk(resolved);
       expect(status, `HEAD ${resolved}`).toBe(200);
-    },
-    25_000,
-  );
-});
+    }, 25_000);
+  },
+);
 
 describe.runIf(!runIntegration)(
   "Wikimedia thumbnail live HEAD verification",

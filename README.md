@@ -32,9 +32,7 @@ sanity/
 │   │   ├── post.ts          # Article schema
 │   │   ├── category.ts      # Category schema
 │   │   ├── author.ts        # Author profiles
-│   │   ├── topic.ts         # Topic/entity schema
 │   │   ├── tag.ts           # Tagging system
-│   │   └── comment.ts       # Comment system
 │   ├── objects/             # Reusable field types
 │   │   ├── blockContent.ts  # Rich text content
 │   │   └── seo.ts           # SEO metadata

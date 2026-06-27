@@ -28,11 +28,11 @@ const articleSearchTextQuery = `
   title,
   tickerTitle,
   excerpt,
-  "coverCaption": coalesce(cover.caption, cover.epigraph),
+  "coverCaption": cover.caption,
   body[]{
     _type,
     children[]{text},
-    "caption": coalesce(caption, epigraph),
+    caption,
     alt
   },
   disclosure,

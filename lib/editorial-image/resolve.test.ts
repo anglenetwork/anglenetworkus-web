@@ -121,6 +121,36 @@ describe("resolveEditorialImage", () => {
     expect(result?.unoptimized).toBe(true);
   });
 
+  it("rebuilds stored 2560 SVG thumbs that return HTTP 400", () => {
+    const result = resolveEditorialImage(
+      {
+        source: "external",
+        externalUrl:
+          "https://upload.wikimedia.org/wikipedia/commons/thumb/7/78/Anthropic_logo.svg/2560px-Anthropic_logo.svg.png",
+      },
+      { fallbackAlt: "Fallback", wikimediaWidth: 1200 },
+    );
+    expect(result?.src).toBe(
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/7/78/Anthropic_logo.svg/1280px-Anthropic_logo.svg.png",
+    );
+    expect(result?.unoptimized).toBe(true);
+  });
+
+  it("uses Wikimedia width floor for small listing requests", () => {
+    const result = resolveEditorialImage(
+      {
+        source: "external",
+        externalUrl:
+          "https://upload.wikimedia.org/wikipedia/commons/0/07/Strait_of_Hormuz-svg-en.svg",
+      },
+      { fallbackAlt: "Fallback", maxWidth: 200, wikimediaWidth: 200 },
+    );
+    expect(result?.src).toBe(
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/0/07/Strait_of_Hormuz-svg-en.svg/1280px-Strait_of_Hormuz-svg-en.svg.png",
+    );
+    expect(result?.unoptimized).toBe(true);
+  });
+
   it("includes attribution when requested", () => {
     const result = resolveEditorialImage(
       {
