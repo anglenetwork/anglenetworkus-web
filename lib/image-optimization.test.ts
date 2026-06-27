@@ -3,11 +3,12 @@ import {
   buildWikimediaThumbLeaf,
   getWikimediaThumbnail,
   isWikimediaSvgFilename,
+  minWikimediaNewThumbWidth,
+  parseWikimediaCommonsUrl,
+  resolveWikimediaNewThumbWidth,
   snapWikimediaThumbnailWidth,
 } from "./image-optimization";
-import {
-  wikimediaThumbnailCases,
-} from "./image-optimization.fixtures";
+import { wikimediaThumbnailCases } from "./image-optimization.fixtures";
 
 describe("snapWikimediaThumbnailWidth", () => {
   it("snaps to the next pre-generated width when an exact size is unavailable", () => {
@@ -29,9 +30,9 @@ describe("isWikimediaSvgFilename", () => {
 
 describe("buildWikimediaThumbLeaf", () => {
   it("appends .png for SVG sources", () => {
-    expect(
-      buildWikimediaThumbLeaf("Strait_of_Hormuz-svg-en.svg", 1280),
-    ).toBe("1280px-Strait_of_Hormuz-svg-en.svg.png");
+    expect(buildWikimediaThumbLeaf("Strait_of_Hormuz-svg-en.svg", 1280)).toBe(
+      "1280px-Strait_of_Hormuz-svg-en.svg.png",
+    );
   });
 
   it("keeps raster filenames unchanged", () => {
@@ -39,11 +40,48 @@ describe("buildWikimediaThumbLeaf", () => {
   });
 });
 
+describe("resolveWikimediaNewThumbWidth", () => {
+  it("floors SVG full URLs to 1280 even for small listing requests", () => {
+    expect(
+      resolveWikimediaNewThumbWidth("Strait_of_Hormuz-svg-en.svg", 200),
+    ).toBe(1280);
+  });
+
+  it("floors raster full URLs to 960 even for small listing requests", () => {
+    expect(
+      resolveWikimediaNewThumbWidth("King_Charles_photo.jpg", 200),
+    ).toBe(960);
+  });
+
+  it("respects larger requested widths", () => {
+    expect(
+      resolveWikimediaNewThumbWidth("photo.jpg", 1920),
+    ).toBe(1920);
+  });
+});
+
+describe("minWikimediaNewThumbWidth", () => {
+  it("uses 1280 for SVG and 960 for raster", () => {
+    expect(minWikimediaNewThumbWidth("map.svg")).toBe(1280);
+    expect(minWikimediaNewThumbWidth("photo.jpg")).toBe(960);
+  });
+});
+
+describe("parseWikimediaCommonsUrl", () => {
+  it("parses full file and thumb URLs to the same source identity", () => {
+    const full = parseWikimediaCommonsUrl(
+      "https://upload.wikimedia.org/wikipedia/commons/7/78/Anthropic_logo.svg",
+    );
+    const thumb = parseWikimediaCommonsUrl(
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/7/78/Anthropic_logo.svg/2560px-Anthropic_logo.svg.png",
+    );
+    expect(full).toEqual({ hash: "7", filename: "78/Anthropic_logo.svg" });
+    expect(thumb).toEqual(full);
+  });
+});
+
 describe("getWikimediaThumbnail", () => {
-  it.each(wikimediaThumbnailCases)(
-    "$name",
-    ({ input, maxWidth, expected }) => {
-      expect(getWikimediaThumbnail(input, maxWidth)).toBe(expected);
-    },
-  );
+  it.each(wikimediaThumbnailCases)("$name", ({ input, maxWidth, expected }) => {
+    expect(getWikimediaThumbnail(input, maxWidth)).toBe(expected);
+  });
 });

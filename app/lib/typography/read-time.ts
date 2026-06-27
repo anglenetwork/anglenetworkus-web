@@ -20,9 +20,6 @@ const readTimeLabelVariants: Record<ReadTimeLabelVariant, string> = {
   hero: "font-light font-sans text-xs text-white",
 };
 
-/** @deprecated Use `readTimeLabelClassName("default")` or `ReadTimeLabel`. */
-export const tagReadTimeLabel = readTimeLabelVariants.default;
-
 export function formatReadTimeLabel(minutes?: number | null): string {
   return `${minutes || 3} MIN READ`;
 }

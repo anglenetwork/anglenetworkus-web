@@ -1,8 +1,6 @@
 export {
-  OPTIMIZABLE_REMOTE_HOSTS,
   REMOTE_PATTERN_HOSTS,
   isOptimizableRemoteHost,
-  isOptimizableRemoteUrl,
   isWikimediaHostname,
   isWikimediaUrl,
   isWhitelistedDomain,

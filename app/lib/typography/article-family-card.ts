@@ -10,4 +10,4 @@ export const articleFamilyCardTitleRail = `line-clamp-2 font-sans text-sm font-s
 export const articleFamilyHeroTileTitle = `mb-2 font-sans font-semibold text-white text-xl leading-snug tracking-tight ${articleTitleLink}`;
 
 /** Homepage — EditorialRailsSection opinion overlay card headline */
-export const editorialOpinionRailTitle = `break-words font-bold font-sans text-neutral-900 text-xl leading-[1.08] tracking-tight sm:text-2xl md:text-2xl lg:text-4xl ${articleTitleLink}`;
+const editorialOpinionRailTitle = `break-words font-bold font-sans text-neutral-900 text-xl leading-[1.08] tracking-tight sm:text-2xl md:text-2xl lg:text-4xl ${articleTitleLink}`;

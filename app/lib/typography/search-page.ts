@@ -20,7 +20,7 @@ export const searchFilterLabel =
   "font-bold font-sans text-sm uppercase tracking-normal text-neutral-900";
 
 /** Search page — result type / category kicker (News, Opinion, etc.) */
-export const searchResultTypeLabel =
+const searchResultTypeLabel =
   "font-bold font-sans text-xs uppercase tracking-wider text-sectionAccent";
 
 /** Search page — sponsored attribution on result cards */

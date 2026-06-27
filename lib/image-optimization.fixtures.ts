@@ -1,25 +1,34 @@
 /** Shared Wikimedia URL fixtures for unit and integration tests. */
 
-export const kingCharlesJpgFull =
+const kingCharlesJpgFull =
   "https://upload.wikimedia.org/wikipedia/commons/e/ee/King_Charles_III_and_Queen_Camilla_arrive_at_Rideau_Hall%2C_2025.jpg";
 
-export const kingCharlesJpgThumb =
+const kingCharlesJpgThumb =
   "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ee/King_Charles_III_and_Queen_Camilla_arrive_at_Rideau_Hall%2C_2025.jpg/1280px-King_Charles_III_and_Queen_Camilla_arrive_at_Rideau_Hall%2C_2025.jpg";
 
-export const kingCharlesJpgThumbExpected =
+const kingCharlesJpgThumbExpected =
   "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ee/King_Charles_III_and_Queen_Camilla_arrive_at_Rideau_Hall%2C_2025.jpg/1280px-King_Charles_III_and_Queen_Camilla_arrive_at_Rideau_Hall%2C_2025.jpg";
 
-export const hormuzSvgFull =
+const kingCharlesJpgThumb960Expected =
+  "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ee/King_Charles_III_and_Queen_Camilla_arrive_at_Rideau_Hall%2C_2025.jpg/960px-King_Charles_III_and_Queen_Camilla_arrive_at_Rideau_Hall%2C_2025.jpg";
+
+const hormuzSvgFull =
   "https://upload.wikimedia.org/wikipedia/commons/0/07/Strait_of_Hormuz-svg-en.svg";
 
-export const hormuzSvgBrokenThumb =
+const hormuzSvgBrokenThumb =
   "https://upload.wikimedia.org/wikipedia/commons/thumb/0/07/Strait_of_Hormuz-svg-en.svg/1280px-Strait_of_Hormuz-svg-en.svg";
 
-export const hormuzSvgCorrectThumb =
+const hormuzSvgCorrectThumb =
   "https://upload.wikimedia.org/wikipedia/commons/thumb/0/07/Strait_of_Hormuz-svg-en.svg/1280px-Strait_of_Hormuz-svg-en.svg.png";
 
-export const hormuzSvgThumbExpected =
+const hormuzSvgThumbExpected =
   "https://upload.wikimedia.org/wikipedia/commons/thumb/0/07/Strait_of_Hormuz-svg-en.svg/1280px-Strait_of_Hormuz-svg-en.svg.png";
+
+const anthropicSvgBroken2560Thumb =
+  "https://upload.wikimedia.org/wikipedia/commons/thumb/7/78/Anthropic_logo.svg/2560px-Anthropic_logo.svg.png";
+
+const anthropicSvgThumbExpected =
+  "https://upload.wikimedia.org/wikipedia/commons/thumb/7/78/Anthropic_logo.svg/1280px-Anthropic_logo.svg.png";
 
 /** Cases passed to getWikimediaThumbnail unit tests. */
 export const wikimediaThumbnailCases = [
@@ -30,10 +39,10 @@ export const wikimediaThumbnailCases = [
     expected: kingCharlesJpgThumbExpected,
   },
   {
-    name: "JPG existing thumb unchanged",
+    name: "JPG existing thumb rebuilt to raster floor",
     input: kingCharlesJpgThumb,
     maxWidth: 800,
-    expected: kingCharlesJpgThumb,
+    expected: kingCharlesJpgThumb960Expected,
   },
   {
     name: "SVG full URL",
@@ -48,10 +57,28 @@ export const wikimediaThumbnailCases = [
     expected: hormuzSvgThumbExpected,
   },
   {
-    name: "SVG correct thumb unchanged",
+    name: "SVG correct thumb normalized to svg floor",
     input: hormuzSvgCorrectThumb,
     maxWidth: 800,
-    expected: hormuzSvgCorrectThumb,
+    expected: hormuzSvgThumbExpected,
+  },
+  {
+    name: "SVG full URL small maxWidth uses 1280 floor",
+    input: hormuzSvgFull,
+    maxWidth: 200,
+    expected: hormuzSvgThumbExpected,
+  },
+  {
+    name: "JPG full URL small maxWidth uses 960 floor",
+    input: kingCharlesJpgFull,
+    maxWidth: 200,
+    expected: kingCharlesJpgThumb960Expected,
+  },
+  {
+    name: "SVG stored 2560 thumb rebuilt to 1280",
+    input: anthropicSvgBroken2560Thumb,
+    maxWidth: 1200,
+    expected: anthropicSvgThumbExpected,
   },
 ] as const;
 
@@ -59,3 +86,10 @@ export const wikimediaThumbnailCases = [
 export const wikimediaIntegrationCases = wikimediaThumbnailCases.map(
   ({ name, input, maxWidth }) => ({ name, input, maxWidth }),
 );
+
+export {
+  anthropicSvgBroken2560Thumb,
+  anthropicSvgThumbExpected,
+  hormuzSvgBrokenThumb,
+  hormuzSvgThumbExpected,
+};

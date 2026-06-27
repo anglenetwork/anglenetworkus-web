@@ -44,3 +44,12 @@ npx playwright show-report
 ## Performance / SEO Rule
 
 Do not introduce visual regressions, layout shifts, or unnecessary client-side JavaScript.
+
+## Sanity CMS publishing
+
+When creating or publishing Sanity content, read [`docs/sanity-publishing.md`](docs/sanity-publishing.md):
+
+- Article body goes in **`body`** (Portable Text) only — never `bodyTextOne`, `bodyBlocks`, or `bodyRich`.
+- Repo schema files are the source of truth; MCP `get_schema` can lag until `/studio` is deployed and opened.
+- Ingestion pipeline: Gunner creates drafts only; humans publish in Studio.
+- Audit legacy fields: `npm run sanity:audit-legacy-fields`

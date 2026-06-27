@@ -1,7 +1,7 @@
 // ### Font style for regular posts
 
 /** Regular post — category link above title */
-export const regularPostCategory =
+const regularPostCategory =
   "font-sans text-sm font-medium uppercase tracking-wider text-foreground text-neutral-600";
 
 /** Regular post — page title (PostHeader h1) */

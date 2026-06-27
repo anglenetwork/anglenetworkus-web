@@ -1,7 +1,7 @@
 import { articleTitleLink } from "./article-links";
 
 /** Post page — Popular Reads / News for You section heading */
-export const postSidebarSectionTitle =
+const postSidebarSectionTitle =
   "mb-6 font-bold font-sans text-foreground text-2xl";
 
 /** Post page — Popular Reads / News for You list item title */

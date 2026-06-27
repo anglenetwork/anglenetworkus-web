@@ -47,9 +47,7 @@ describe("safeRelativeRedirectPath", () => {
 
 describe("withPostLoginFlag", () => {
   it("appends post_login when absent", () => {
-    expect(withPostLoginFlag("/myprofile")).toBe(
-      "/myprofile?post_login=1",
-    );
+    expect(withPostLoginFlag("/myprofile")).toBe("/myprofile?post_login=1");
     expect(withPostLoginFlag("/myprofile?foo=1")).toBe(
       "/myprofile?foo=1&post_login=1",
     );

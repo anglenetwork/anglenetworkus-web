@@ -1,5 +1,5 @@
 /** Hosts where Next.js image optimization is allowed at runtime (external URLs). */
-export const OPTIMIZABLE_REMOTE_HOSTS = [
+const OPTIMIZABLE_REMOTE_HOSTS = [
   "cdn.sanity.io",
   "images.unsplash.com",
   "images.pexels.com",
@@ -34,7 +34,7 @@ export function isOptimizableRemoteHost(hostname: string): boolean {
   return (OPTIMIZABLE_REMOTE_HOSTS as readonly string[]).includes(hostname);
 }
 
-export function isOptimizableRemoteUrl(url: string | URL): boolean {
+function isOptimizableRemoteUrl(url: string | URL): boolean {
   try {
     const parsed = typeof url === "string" ? new URL(url) : url;
     return isOptimizableRemoteHost(parsed.hostname);

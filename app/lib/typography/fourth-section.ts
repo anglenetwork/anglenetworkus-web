@@ -6,7 +6,7 @@ import {
 } from "./second-section";
 
 /** FourthSection — lead story per column; smaller at xl when shown 3-up */
-export const techFeaturedTitle = `${categoryFeaturedTitle.news} xl:text-xl xl:leading-snug`;
+const techFeaturedTitle = `${categoryFeaturedTitle.news} xl:text-xl xl:leading-snug`;
 export const techSecondaryTitle = categorySecondaryRowTitle.news;
 export const techExclusiveBadge = categoryExclusiveBadge;
 

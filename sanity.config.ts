@@ -24,7 +24,6 @@ import post from "@/sanity/schemas/documents/post";
 import sponsored from "@/sanity/schemas/documents/sponsored";
 import settings from "@/sanity/schemas/singletons/settings";
 import tag from "@/sanity/schemas/documents/tag";
-import topic from "@/sanity/schemas/documents/topic";
 import blockContent from "@/sanity/schemas/objects/blockContent";
 import editorialImage from "@/sanity/schemas/objects/editorialImage";
 import pullQuote from "@/sanity/schemas/objects/pullQuote";
@@ -58,7 +57,6 @@ export default defineConfig({
       author,
       category,
       tag,
-      topic,
       // Objects
       blockContent,
       editorialImage,

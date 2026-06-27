@@ -298,7 +298,6 @@ export const homepageFourthSectionMostReadFallbackQuery = `
 
 export {
   articlesByCategoryEditorialQuery as postsByCategoryQuery,
-  articlesByCategoryStandardPostsQuery as postsByCategoryStandardPostsQuery,
   articlesByCategoryStandardPostsLimitedQuery as postsByCategoryStandardPostsLimitedQuery,
 } from "./article-family-queries";
 
@@ -460,7 +459,7 @@ export const newsTickerQuery = defineQuery(`
   }
 `);
 
-export const categoryTickerQuery = defineQuery(`
+const categoryTickerQuery = defineQuery(`
   *[
     ${homepagePublishedPostFilter} &&
     category->slug.current == $categorySlug &&
@@ -483,7 +482,7 @@ const SEARCH_TEXT_MATCH = `(
   title match $term ||
   tickerTitle match $term ||
   excerpt match $term ||
-  coalesce(cover.caption, cover.epigraph) match $term
+  cover.caption match $term
 )`;
 
 /** score()/boost() only allow document-local match expressions (no coalesce, derefs, pt::text, count). */
@@ -493,7 +492,6 @@ const SEARCH_SCORE_PIPE = `
   boost(tickerTitle match $term, 80),
   boost(excerpt match $term, 65),
   boost(cover.caption match $term, 55),
-  boost(cover.epigraph match $term, 50),
   boost(searchText match $term, 20)
 )
 | order(_score desc, publishedAt desc)

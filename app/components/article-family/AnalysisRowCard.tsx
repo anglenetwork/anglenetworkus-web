@@ -102,7 +102,7 @@ function AnalysisArticleImage({
   );
 }
 
-export function AnalysisRowCard({
+function AnalysisRowCard({
   article,
   variant = "default",
 }: {

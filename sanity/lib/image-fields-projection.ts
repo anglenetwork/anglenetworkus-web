@@ -6,9 +6,9 @@ export const imageFieldsProjection = `
   "lqip": image.asset->metadata.lqip,
   "dimensions": image.asset->metadata.dimensions { width, height },
   alt,
-  "caption": coalesce(caption, epigraph),
+  caption,
   creditAuthor,
-  "creditSource": coalesce(creditSource, creditProvider),
+  creditSource,
   licenseOrRights
 `;
 
