@@ -32,7 +32,7 @@ export function RightColumnLanding({
 }: RightColumnLandingProps) {
   return (
     <div className="px-0 text-left md:px-4">
-      <div className="flex flex-col divide-y divide-dotted divide-news-border">
+      <div className="flex flex-col">
         {sideStories.map((post) => {
           const coverData = getCoverImage(post.cover, post.title);
 
@@ -64,7 +64,7 @@ export function RightColumnLanding({
       </div>
 
       {compactStories.length > 0 ? (
-        <div className="mt-6 flex flex-col divide-y divide-dotted divide-news-border">
+        <div className="mt-6 flex flex-col">
           {compactStories.map((post) => {
             const coverData = getCoverImage(post.cover, post.title);
 
