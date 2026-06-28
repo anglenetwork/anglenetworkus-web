@@ -79,7 +79,6 @@ export default async function EditorialRailsSection() {
       <SectionHeader
         title="Opinion"
         accentStyle="minimal"
-        icon="slash"
         href="/opinion"
         variant="news"
       />

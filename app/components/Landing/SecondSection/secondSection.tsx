@@ -130,7 +130,6 @@ export default function SecondSection({
                 href={`/category/${category.slug}`}
                 variant={variant}
                 accentStyle="minimal"
-                icon="slash"
               />
 
               {(() => {

@@ -63,6 +63,7 @@ function ClassicRelatedArticles({ posts }: { posts: ArticleSidebarPost[] }) {
           variant="light"
           accentStyle="small-dot"
           size="large"
+          icon={false}
         />
 
         <div className="flex flex-col gap-8 lg:flex-row">

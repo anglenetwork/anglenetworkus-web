@@ -130,7 +130,6 @@ export default function FourthSection({
         href={category.href}
         variant="news"
         accentStyle="minimal"
-        icon="slash"
       />
 
       <div className="grid grid-cols-1 lg:grid-cols-3 lg:divide-x lg:divide-dotted lg:divide-news-border">

@@ -248,7 +248,6 @@ export function FeaturedStoryColumn({
         href={headerHref}
         variant={variant}
         accentStyle="minimal"
-        icon="slash"
       />
     );
 

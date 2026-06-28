@@ -301,7 +301,7 @@ export default async function Page() {
       <JsonLdScript data={organizationLd} />
       <JsonLdScript data={websiteLd} />
       <SitePageWidth className="bg-news-surface">
-        <NewsTicker posts={newsTickerPosts as any} />
+        <NewsTicker posts={newsTickerPosts as any} showLiveUpdatesLabel />
         <div className={`${HOMEPAGE_BELOW_FOLD_SECTION_GAP} pb-10 md:pb-14`}>
           <FirstSection
             justInNews={justInPosts as any}
