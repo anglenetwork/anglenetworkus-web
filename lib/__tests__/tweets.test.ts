@@ -1,5 +1,10 @@
 import { describe, expect, it } from "vitest";
-import { extractTweetId, isTweetUrl } from "../tweets";
+import {
+  extractTweetId,
+  getTweetEmbedSrc,
+  isTweetUrl,
+  parseTweetResizeHeight,
+} from "../tweets";
 
 describe("extractTweetId", () => {
   it("extracts ID from a valid twitter.com URL", () => {
@@ -60,5 +65,43 @@ describe("isTweetUrl", () => {
   it("returns false for unsupported URLs", () => {
     expect(isTweetUrl("https://example.com/status/123")).toBe(false);
     expect(isTweetUrl("")).toBe(false);
+  });
+});
+
+describe("getTweetEmbedSrc", () => {
+  it("builds a Twitter embed URL with sizing params", () => {
+    expect(
+      getTweetEmbedSrc("https://twitter.com/jack/status/1629307668568633344"),
+    ).toBe(
+      "https://platform.twitter.com/embed/Tweet.html?dnt=true&id=1629307668568633344&theme=light&width=550&frame=false&hideThread=false",
+    );
+  });
+});
+
+describe("parseTweetResizeHeight", () => {
+  it("parses twttr.private.resize payloads", () => {
+    expect(
+      parseTweetResizeHeight({
+        "twttr.embed": {
+          method: "twttr.private.resize",
+          params: [{ height: 283.4, width: 550 }],
+        },
+      }),
+    ).toBe(284);
+  });
+
+  it("parses legacy resize payloads", () => {
+    expect(
+      parseTweetResizeHeight({
+        "twttr.embed": {
+          method: "resize",
+          params: [320],
+        },
+      }),
+    ).toBe(320);
+  });
+
+  it("returns null for unrelated messages", () => {
+    expect(parseTweetResizeHeight({ foo: "bar" })).toBeNull();
   });
 });
