@@ -32,12 +32,12 @@ export function RightColumnLanding({
 }: RightColumnLandingProps) {
   return (
     <div className="px-0 text-left md:px-4">
-      <div className="flex flex-col">
+      <div className="flex flex-col gap-4">
         {sideStories.map((post) => {
           const coverData = getCoverImage(post.cover, post.title);
 
           return (
-            <article key={post._id} className="space-y-3 py-6 first:pt-0">
+            <article key={post._id} className="space-y-3">
               {coverData ? (
                 <Link href={`/post/${post.slug}`} className="group block">
                   <div className="relative aspect-[16/9] w-full overflow-hidden rounded-sm bg-news-secondary">

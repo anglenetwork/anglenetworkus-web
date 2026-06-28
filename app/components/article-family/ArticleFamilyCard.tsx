@@ -99,7 +99,6 @@ function ArticleFamilySearchCard({
                 href={kicker.href}
                 variant="news"
                 accentStyle="minimal"
-                icon="slash"
               />
             </div>
           ) : null}

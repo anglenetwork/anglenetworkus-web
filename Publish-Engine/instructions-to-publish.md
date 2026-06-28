@@ -45,9 +45,12 @@ The user may provide:
 - URL only
 - URL + pasted text
 - URL + image URL
-- Pasted text only
+- URL + tweet URL (Twitter/X status link to embed in the body)
+- Pasted text only (may include a tweet URL inline)
 
 **URL only:** Read the public article and infer the source. If blocked, paywalled, JS-dependent, unavailable, or unreliable, ask for pasted text.
+
+**Tweet URL in the prompt:** When the user supplies a Twitter/X status URL (or one appears in pasted text / the source article), extract it and embed it in `body` as a `tweetEmbed` block — see [Tweet / X embeds](#tweet--x-embeds). Do not paste embed HTML, iframe code, or screenshot the tweet as an image.
 
 **Never invent facts.** If key details cannot be verified, say so or ask for clarification.
 
@@ -66,9 +69,11 @@ The user may provide:
 ## Workflow
 
 ```
-Input (URL / text / image)
+Input (URL / text / image / tweet URL)
     ↓
 Fetch & extract source content (or use pasted text)
+    ↓
+Detect tweet URLs in prompt or source → validate status URLs
     ↓
 Rewrite in Angle style
     ↓
@@ -76,7 +81,7 @@ Classify category + tags (canonical taxonomy)
     ↓
 Generate metadata (title, slug, excerpt, SEO, readTime, cover)
     ↓
-Build Portable Text body
+Build Portable Text body (paragraphs + optional tweetEmbed blocks)
     ↓
 Draft preview OR publish directly
     ↓
@@ -102,7 +107,7 @@ Map rewritten content to Sanity fields:
 | SEO title | `seo.title` | Nested under `seo` object |
 | SEO description | `seo.description` | Nested under `seo` object |
 | Read time | `readTime` | Integer minutes (~200 wpm from body word count) |
-| Publish time | `publishedAt` | `new Date().toISOString()` — never future or rounded |
+| Publish time | `publishedAt` | `new Date().toISOString()` at publish time — never future, never rounded, never copied from examples |
 | Update time | `updatedAt` | Same as `publishedAt` |
 | Cover image | `cover` | `coverMedia` object — see Image section |
 | Priority | `priority` | Default `3` (0–10) |
@@ -142,9 +147,106 @@ Use stable `_key` values (`body-b0`, `body-s0`, `body-b1`, …) so re-runs produ
 - Links: add mark `"link"` on span; define href in `markDefs`
 - Embeds: `editorialImage`, `pullQuote`, `articleDivider`, `videoEmbed`, `tweetEmbed`
 
-Reference implementation: `news-ingestion/src/gunnerWorker/portableText.ts`.
+Reference implementation for paragraph blocks: `news-ingestion/src/gunnerWorker/portableText.ts`.
 
 **Never write:** `bodyTextOne`, `bodyRich`, `bodyBlocks`, document-level `date`.
+
+### Tweet / X embeds
+
+Tweets live **inside `body`**, not as a top-level post field. Schema: `sanity/schemas/objects/tweetEmbed.ts` (allowed in `blockContent` on `post.body`).
+
+#### When to include
+
+- The publish prompt includes a tweet URL (e.g. `Tweet URL: https://x.com/.../status/123`).
+- Pasted text or the source article centers on a specific post — embed that status URL.
+- The rewrite references a public X/Twitter post that adds essential context or attribution.
+
+Do **not** embed when no valid status URL is available. Do **not** download tweet images for `cover` or `editorialImage` — use `tweetEmbed` for the post itself.
+
+#### Valid URL shape
+
+Must be a **status URL** with a numeric tweet ID:
+
+| Host | Example |
+|------|---------|
+| `twitter.com` | `https://twitter.com/jack/status/1629307668568633344` |
+| `x.com` | `https://x.com/elonmusk/status/1629307668568633344` |
+| `mobile.twitter.com` | `https://mobile.twitter.com/jack/status/1629307668568633344` |
+
+Query strings are fine (`?s=20&t=abc`). Validation matches `lib/tweets.ts`: path must contain `/status/{numericId}`.
+
+**Invalid (do not use):**
+
+- Profile, home, or search URLs (`https://x.com/username` with no `/status/`)
+- `t.co` short links without resolving to a status URL first
+- Embed HTML, `<blockquote>`, or iframe paste from X/Twitter
+- Screenshots or hotlinked tweet media as `cover` / `editorialImage`
+
+#### Block payload
+
+Insert a **sibling object** in the `body` array (same level as paragraph blocks), typically after the paragraph that introduces the tweet:
+
+```json
+{
+  "_type": "tweetEmbed",
+  "_key": "body-tweet-0",
+  "url": "https://x.com/elonmusk/status/1629307668568633344",
+  "caption": "Optional editor note shown below the embed"
+}
+```
+
+| Field | Required | Notes |
+|-------|----------|-------|
+| `_type` | yes | Always `"tweetEmbed"` |
+| `_key` | yes | Stable key, e.g. `body-tweet-0`, `body-tweet-1` |
+| `url` | yes | Full `https://` status URL — **URL only**, no HTML |
+| `caption` | no | Short editor note under the embed; not the tweet text |
+
+Multiple tweets: add one `tweetEmbed` block per status URL with distinct `_key` values.
+
+#### Placement and read time
+
+- Keep reading order: intro paragraph → `tweetEmbed` → follow-up paragraphs.
+- `readTime` is estimated from **paragraph text only** (~200 wpm); tweet embed blocks do not add words.
+- The site renders embeds via `TweetEmbedBlock` → iframe from `platform.twitter.com` using the extracted numeric ID (`lib/tweets.ts`).
+
+#### Example `body` excerpt (paragraph + tweet)
+
+```json
+"body": [
+  {
+    "_type": "block",
+    "_key": "body-b0",
+    "style": "normal",
+    "children": [
+      { "_type": "span", "_key": "body-s0", "text": "The White House responded on X shortly after the announcement.", "marks": [] }
+    ],
+    "markDefs": []
+  },
+  {
+    "_type": "tweetEmbed",
+    "_key": "body-tweet-0",
+    "url": "https://x.com/WhiteHouse/status/1629307668568633344"
+  },
+  {
+    "_type": "block",
+    "_key": "body-b1",
+    "style": "normal",
+    "children": [
+      { "_type": "span", "_key": "body-s1", "text": "Officials said the policy would take effect next month.", "marks": [] }
+    ],
+    "markDefs": []
+  }
+]
+```
+
+#### Checklist before publish
+
+- [ ] `url` is a status URL on `twitter.com`, `x.com`, or `mobile.twitter.com`
+- [ ] Path ends with `/status/{digits}` (numeric ID only)
+- [ ] Block uses `_type: "tweetEmbed"` — not a paragraph, link, or raw HTML
+- [ ] Tweet block appears in logical reading order in `body`
+- [ ] Optional `caption` is an editor note, not a copy of the tweet body
 
 ---
 
@@ -246,7 +348,7 @@ cover._type = "coverMedia"
 cover.source = "external"
 cover.externalUrl = direct https image file URL
 cover.alt = required descriptive alt text
-cover.caption = Commons caption/description (English), else blank
+cover.caption = normalized English caption (see Cover caption rules below)
 cover.creditAuthor = creator from source page
 cover.creditSource = "Wikimedia Commons" (or institution name)
 cover.licenseOrRights = e.g. "CC BY-SA 4.0"
@@ -261,14 +363,45 @@ cover.licenseOrRights = e.g. "CC BY-SA 4.0"
 | `cover.creditLicense` | `cover.licenseOrRights` |
 | `cover.creditSourceUrl` | No schema field — note Commons file page URL in workflow; optionally include in `creditSource` text |
 
+### Cover caption rules
+
+`cover.caption` is the visible caption line on the site (formerly called epigraph). **Never paste the source site's caption or description verbatim** if it is not publication-ready.
+
+Source captions (Unsplash, Wikimedia Commons, etc.) are often lowercase SEO phrases, not finished sentences. Use them only as reference.
+
+**Always normalize before publishing:**
+
+1. Write one clear English sentence describing what the image shows.
+2. Capitalize the first word and proper nouns.
+3. End with a period unless the source is a formal title that should stay as-is.
+4. Use sentence case — not ALL CAPS or title case for every word.
+5. Fix grammar, articles, and punctuation; do not leave lowercase stream-of-keywords text.
+6. Do not copy the article excerpt, dek, or promo copy into `cover.caption`.
+7. Keep `cover.alt` separate — alt can be more descriptive for accessibility; caption is the reader-facing line.
+
+**Bad (verbatim Unsplash):** `a row of benches sitting next to a body of water`
+
+**Good (normalized):** `A row of benches beside a body of water in Louisville, Kentucky.`
+
+**Bad (verbatim Unsplash):** `a group of people sitting around a table under a canopy`
+
+**Good (normalized):** `A group of people sitting around a table under a canopy.`
+
+If the source has no usable description, write a neutral caption from what the image actually shows, or leave `cover.caption` blank.
+
 ### Wikimedia Commons rules
 
 When the user provides a Commons file page URL, that page is the source of truth for metadata and rights. Check it directly.
 
-- Do not leave `cover.caption` empty if Commons has a clear caption or description.
+- Use Commons caption/description as **reference**, then normalize per Cover caption rules above.
+- Do not leave `cover.caption` empty if Commons has a clear caption or description you can rewrite into a proper sentence.
 - Do not use article deck, homepage promo, or fallback copy as caption.
-- Do not treat Commons only as a rights source — use caption/description for `cover.caption`.
+- Do not treat Commons only as a rights source — derive `cover.caption` from Commons when available.
 - For SVG sources, prefer raster thumb URLs ending in `.png` (see `lib/image-optimization.ts`).
+
+### Unsplash and stock (user-provided)
+
+When the user supplies an Unsplash or other stock URL, verify the photo page for author and license. **Rewrite the Unsplash `name`/description into a normalized caption** — do not copy it character-for-character.
 
 ### Auto image search
 
@@ -296,14 +429,14 @@ cover.licenseOrRights = "The Angle Media Network."
 
 If `cover.caption` is missing, render no caption. Caption line = `cover.caption` only. Credit line = `creditAuthor`, `creditSource`, `licenseOrRights`.
 
-### Validation before publishing with Commons
+### Validation before publishing (cover metadata)
 
 Confirm:
 
-- [ ] Commons page was checked directly
-- [ ] `cover.caption` came from Commons caption/description when available
-- [ ] `creditAuthor`, `creditSource`, `licenseOrRights` match the page
-- [ ] No fallback article text appears in cover metadata
+- [ ] Source page was checked directly (Commons, Unsplash, etc.)
+- [ ] `cover.caption` is a normalized English sentence — capitalized, punctuated, not a raw source paste
+- [ ] `creditAuthor`, `creditSource`, `licenseOrRights` match the source page
+- [ ] No article excerpt or promo text appears in `cover.caption`
 
 ---
 
@@ -333,6 +466,7 @@ If publish mode is unspecified, use this mode.
 Rewrite and publish this article as a new Angle Sanity post.
 Publish mode: show me draft first
 Article URL: [URL]
+Tweet URL: [optional — https://x.com/.../status/{id}]
 Image mode: auto-find approved image
 Wikimedia Commons image URL: [optional]
 Special instructions: [optional]
@@ -343,6 +477,7 @@ Special instructions: [optional]
 ```
 Rewrite and publish this article directly as a new Angle Sanity post.
 Article URL: [URL]
+Tweet URL: [optional — https://x.com/.../status/{id}]
 Image mode: auto-find approved image
 Wikimedia Commons image URL: [optional]
 Special instructions: [optional]
@@ -360,6 +495,8 @@ Run this GROQ query after publishing:
   status,
   publishedAt,
   "bodyBlockCount": count(body),
+  "tweetEmbedCount": count(body[_type == "tweetEmbed"]),
+  "tweetUrls": body[_type == "tweetEmbed"].url,
   defined(bodyTextOne),
   defined(bodyRich),
   cover
@@ -370,6 +507,7 @@ Expect:
 
 - `bodyBlockCount > 0`
 - `defined(bodyTextOne)` and `defined(bodyRich)` are `false`
+- When a tweet was requested: `tweetEmbedCount > 0` and each `tweetUrls` entry is a valid status URL
 - `cover` has valid source, alt, license, and credit fields
 
 ---
@@ -386,6 +524,8 @@ Publish via Sanity MCP (`create_document`, patch) or `@sanity/client` with a wri
 
 Example minimal publish payload shape:
 
+**Never copy `publishedAt` or `updatedAt` from this example.** Always generate both with `new Date().toISOString()` at the moment you publish. The homepage excludes posts where `publishedAt > now()`.
+
 ```json
 {
   "_type": "post",
@@ -393,15 +533,18 @@ Example minimal publish payload shape:
   "tickerTitle": "...",
   "excerpt": "...",
   "slug": { "_type": "slug", "current": "..." },
-  "body": [/* Portable Text blocks */],
+  "body": [
+    { "_type": "block", "_key": "body-b0", "style": "normal", "children": [{ "_type": "span", "_key": "body-s0", "text": "...", "marks": [] }], "markDefs": [] },
+    { "_type": "tweetEmbed", "_key": "body-tweet-0", "url": "https://x.com/user/status/1234567890" }
+  ],
   "category": { "_type": "reference", "_ref": "category.politics" },
   "tags": [{ "_key": "tag-0", "_type": "reference", "_ref": "tag.politics.congress" }],
   "author": { "_type": "reference", "_ref": "59d2b194-17eb-4526-ad4f-35aaf3ea874c" },
   "cover": { "_type": "coverMedia", "source": "external", "..." : "..." },
   "seo": { "_type": "seo", "title": "...", "description": "..." },
   "status": "published",
-  "publishedAt": "2026-06-26T12:00:00.000Z",
-  "updatedAt": "2026-06-26T12:00:00.000Z",
+  "publishedAt": "<generate with new Date().toISOString() at publish time>",
+  "updatedAt": "<same as publishedAt>",
   "readTime": 4,
   "priority": 3,
   "mainHeadline": false,

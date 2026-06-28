@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { NewsTickerTrack } from "./news-ticker-track";
 import { NewsTickerShell } from "./news-ticker-shell";
-import { newsTickerItemLink } from "@/app/lib/typography/news-ticker";
+import { newsTickerItemLink, newsTickerLiveUpdatesLabel } from "@/app/lib/typography/news-ticker";
 
 interface NewsTickerPost {
   tickerTitle: string;
@@ -10,9 +10,11 @@ interface NewsTickerPost {
 
 interface NewsTickerProps {
   posts: NewsTickerPost[];
+  /** Landing homepage only — prepends a muted "Live Updates" label. */
+  showLiveUpdatesLabel?: boolean;
 }
 
-export function NewsTicker({ posts }: NewsTickerProps) {
+export function NewsTicker({ posts, showLiveUpdatesLabel = false }: NewsTickerProps) {
   // Filter out posts without tickerTitle
   const newsItems = posts
     .filter((post) => post.tickerTitle && post.slug)
@@ -26,6 +28,14 @@ export function NewsTicker({ posts }: NewsTickerProps) {
     <nav className="w-full min-w-0 max-w-full bg-news-surface">
       <NewsTickerShell itemCount={newsItems.length}>
         <NewsTickerTrack>
+          {showLiveUpdatesLabel ? (
+            <div className="flex shrink-0 items-center">
+              <span className={newsTickerLiveUpdatesLabel}>Live Updates</span>
+              {newsItems.length > 0 ? (
+                <span className="text-news-muted">|</span>
+              ) : null}
+            </div>
+          ) : null}
           {newsItems.map((item, index) => (
             <div
               key={item.slug || index}

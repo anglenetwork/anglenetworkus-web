@@ -201,7 +201,20 @@ Fields: `provider` (`youtube` \| `vimeo` \| `generic`), `url` (required), option
 
 ### `tweetEmbed`
 
-Fields: `url` (required Twitter/X status URL), optional `caption`. No raw embed HTML.
+Body-only embed for a Twitter/X status post (`sanity/schemas/objects/tweetEmbed.ts`).
+
+| Field | Required | Notes |
+|-------|----------|-------|
+| `url` | yes | Status URL on `twitter.com`, `x.com`, or `mobile.twitter.com` with `/status/{numericId}` |
+| `caption` | no | Optional editor note below the embed |
+
+**Portable Text block shape:**
+
+```json
+{ "_type": "tweetEmbed", "_key": "body-tweet-0", "url": "https://x.com/user/status/1234567890" }
+```
+
+**Rules:** URL only — no raw embed HTML, iframe code, or tweet screenshots. Frontend extracts the numeric ID and renders via `platform.twitter.com` (`lib/tweets.ts`, `TweetEmbedBlock.tsx`). See [`instructions-to-publish.md`](instructions-to-publish.md#tweet--x-embeds) for publishing workflow.
 
 ### `sponsorAttribution`
 

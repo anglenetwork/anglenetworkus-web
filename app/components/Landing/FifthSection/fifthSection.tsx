@@ -129,7 +129,6 @@ export default function FifthSection({
             href={`/category/${leftCategory.slug}`}
             variant={variant}
             accentStyle="minimal"
-            icon="slash"
           />
 
           {mainArticle?.slug &&
@@ -210,7 +209,6 @@ export default function FifthSection({
             href={`/category/${rightCategory.slug}`}
             variant={variant}
             accentStyle="minimal"
-            icon="slash"
           />
 
           <div

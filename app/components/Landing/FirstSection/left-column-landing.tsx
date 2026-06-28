@@ -78,7 +78,6 @@ export function LeftColumnLanding({ justInNews }: LeftColumnLandingProps) {
         title="Just in"
         variant="news"
         accentStyle="minimal"
-        icon="slash"
       />
 
       <div className="flex flex-col divide-y divide-dotted divide-news-border">

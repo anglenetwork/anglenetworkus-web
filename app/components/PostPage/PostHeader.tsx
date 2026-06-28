@@ -42,7 +42,6 @@ export default function PostHeader({
             href={`/category/${category.slug}`}
             variant="news"
             accentStyle="minimal"
-            icon="slash"
           />
         </div>
       )}
