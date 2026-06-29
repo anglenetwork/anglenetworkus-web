@@ -40,6 +40,7 @@ export function TagMainSection({
         accentStyle="modern"
         size="large"
         variant="news"
+        icon={false}
       />
 
       <div className="grid grid-cols-1 gap-8 lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)] lg:gap-10">

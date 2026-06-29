@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { ChevronRight } from "lucide-react";
+import { cn } from "@/lib/utils";
 import { ReadTimeLabel } from "@/app/components/ui/read-time-label";
 import {
   mostReadFeedHeadline,
@@ -17,7 +18,7 @@ export type MostReadFeedItem = {
 function MostReadFeedHeader({ seeAllHref }: { seeAllHref: string }) {
   return (
     <div className="mb-6 flex items-start justify-between gap-4">
-      <h2 className={mostReadFeedTitle}>
+      <h2 className={cn(mostReadFeedTitle, "text-white")}>
         <span className="relative inline-block">
           M
           <span
@@ -31,7 +32,7 @@ function MostReadFeedHeader({ seeAllHref }: { seeAllHref: string }) {
         href={seeAllHref}
         className="group flex shrink-0 items-center gap-2 rounded-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-news-primary focus-visible:outline-offset-2"
       >
-        <span className={mostReadFeedSeeAllLink}>See all</span>
+        <span className={cn(mostReadFeedSeeAllLink, "text-white")}>See all</span>
         <span
           className="flex size-6 items-center justify-center rounded-full bg-news-primary text-white"
           aria-hidden
@@ -58,7 +59,7 @@ export function MostReadFeed({
     <aside aria-label="Most read articles">
       <MostReadFeedHeader seeAllHref={seeAllHref} />
 
-      <ul className="flex flex-col divide-y divide-dotted divide-news-border">
+      <ul className="flex flex-col divide-y divide-white/15">
         {items.map((item) => (
           <li key={item.id} className="py-5 first:pt-0 last:pb-0">
             <Link
@@ -66,8 +67,10 @@ export function MostReadFeed({
               className="group block space-y-2 rounded-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-news-primary focus-visible:outline-offset-2"
               aria-label={`Read article: ${item.title}`}
             >
-              <ReadTimeLabel minutes={item.readTimeMinutes} variant="accent" />
-              <h3 className={mostReadFeedHeadline}>{item.title}</h3>
+              <ReadTimeLabel minutes={item.readTimeMinutes} variant="hero" />
+              <h3 className={cn(mostReadFeedHeadline, "text-white")}>
+                {item.title}
+              </h3>
             </Link>
           </li>
         ))}
