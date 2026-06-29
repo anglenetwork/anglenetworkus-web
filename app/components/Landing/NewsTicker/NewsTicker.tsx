@@ -1,7 +1,10 @@
 import Link from "next/link";
 import { NewsTickerTrack } from "./news-ticker-track";
 import { NewsTickerShell } from "./news-ticker-shell";
-import { newsTickerItemLink, newsTickerLiveUpdatesLabel } from "@/app/lib/typography/news-ticker";
+import {
+  newsTickerItemLink,
+  newsTickerLiveUpdatesLabel,
+} from "@/app/lib/typography/news-ticker";
 
 interface NewsTickerPost {
   tickerTitle: string;
@@ -14,7 +17,10 @@ interface NewsTickerProps {
   showLiveUpdatesLabel?: boolean;
 }
 
-export function NewsTicker({ posts, showLiveUpdatesLabel = false }: NewsTickerProps) {
+export function NewsTicker({
+  posts,
+  showLiveUpdatesLabel = false,
+}: NewsTickerProps) {
   // Filter out posts without tickerTitle
   const newsItems = posts
     .filter((post) => post.tickerTitle && post.slug)

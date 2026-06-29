@@ -92,10 +92,7 @@ export default async function RootLayout({
           )}
         </section>
 
-        {!isStudioRoute &&
-          (process.env.NEXT_PUBLIC_VERCEL_ENV || process.env.VERCEL) && (
-            <SpeedInsights />
-          )}
+        {!isStudioRoute ? <SpeedInsights /> : null}
         {!isStudioRoute && <SanityLive />}
       </body>
     </html>

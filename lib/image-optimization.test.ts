@@ -48,15 +48,13 @@ describe("resolveWikimediaNewThumbWidth", () => {
   });
 
   it("floors raster full URLs to 960 even for small listing requests", () => {
-    expect(
-      resolveWikimediaNewThumbWidth("King_Charles_photo.jpg", 200),
-    ).toBe(960);
+    expect(resolveWikimediaNewThumbWidth("King_Charles_photo.jpg", 200)).toBe(
+      960,
+    );
   });
 
   it("respects larger requested widths", () => {
-    expect(
-      resolveWikimediaNewThumbWidth("photo.jpg", 1920),
-    ).toBe(1920);
+    expect(resolveWikimediaNewThumbWidth("photo.jpg", 1920)).toBe(1920);
   });
 });
 

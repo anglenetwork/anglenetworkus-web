@@ -132,7 +132,7 @@ export default function FourthSection({
         accentStyle="minimal"
       />
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 lg:divide-x lg:divide-dotted lg:divide-news-border">
+      <div className="grid grid-cols-1 lg:grid-cols-3">
         <div className="lg:col-span-2">
           <div className="grid grid-cols-1 divide-y divide-dotted divide-news-border lg:grid-cols-2 lg:divide-x lg:divide-y-0">
             {featured.map((article) => (
@@ -150,7 +150,7 @@ export default function FourthSection({
         </div>
 
         {mostRead.length > 0 ? (
-          <div className="border-news-border border-t border-dotted bg-news-background py-6 lg:border-t-0 lg:px-6 lg:py-6">
+          <div className="bg-black py-6 text-white max-lg:border-t max-lg:border-white/15 lg:px-6 lg:py-6">
             <MostReadFeed items={mostRead} />
           </div>
         ) : null}

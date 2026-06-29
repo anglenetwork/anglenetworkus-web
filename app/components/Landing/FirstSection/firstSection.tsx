@@ -172,7 +172,7 @@ export function FirstSection({
   return (
     <main className="w-full">
       {mainStoryPost?.title && mainStoryPost?.slug && (
-        <div className="mb-6 hidden lg:block">
+        <div className="mx-auto mb-6 hidden max-w-6xl lg:block">
           <Link href={`/post/${mainStoryPost.slug}`} className="group block">
             <h1 className={mainHeadlineDesktopTitle}>{mainStoryPost.title}</h1>
           </Link>
