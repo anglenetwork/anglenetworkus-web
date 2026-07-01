@@ -19,11 +19,6 @@ export interface Article {
   href?: string;
 }
 
-export interface CategoryTickerPost {
-  tickerTitle: string;
-  slug: string;
-}
-
 export interface CategoryPageProps {
   categoryName: string;
   hasPosts: boolean;
@@ -38,5 +33,4 @@ export interface CategoryPageProps {
     centerArticle: Article;
     rightColumn: Article[];
   };
-  categoryTickerPosts?: CategoryTickerPost[];
 }

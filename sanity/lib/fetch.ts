@@ -25,8 +25,10 @@ export async function sanityFetch<const QueryString extends string>({
   tags?: string[];
   requestTag?: string;
 }) {
-  const resolvedParams = await params;
-  const { isEnabled: isPreview } = await draftMode();
+  const [resolvedParams, { isEnabled: isPreview }] = await Promise.all([
+    Promise.resolve(params),
+    draftMode(),
+  ]);
   const useLivePreview =
     isPreview || perspective === "drafts" || perspective === "previewDrafts";
 

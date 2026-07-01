@@ -17,7 +17,13 @@ export interface Tag {
 
 export type { NavMenuColumn } from "@/app/lib/nav/menu-columns";
 
+export interface TickerPost {
+  tickerTitle: string;
+  slug: string;
+}
+
 export interface SiteShellNav {
   categories: Category[];
   menuColumns: import("@/app/lib/nav/menu-columns").NavMenuColumn[];
+  tickerPosts: TickerPost[];
 }

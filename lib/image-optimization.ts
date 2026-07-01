@@ -12,7 +12,7 @@ import { isWikimediaHostname } from "@/lib/editorial-image/policy";
  */
 
 /** Widths Wikimedia pre-generates for /thumb/ URLs (arbitrary widths often return 400). */
-export const WIKIMEDIA_THUMBNAIL_WIDTHS = [
+const WIKIMEDIA_THUMBNAIL_WIDTHS = [
   120, 150, 180, 200, 220, 250, 300, 320, 400, 440, 480, 500, 600, 640, 720,
   800, 960, 1024, 1280, 1920, 2560, 3840,
 ] as const;
@@ -120,7 +120,7 @@ export function parseWikimediaCommonsUrl(
 }
 
 /** Build a canonical Commons /thumb/ URL for a source file at the given width. */
-export function buildWikimediaThumbUrl(
+function buildWikimediaThumbUrl(
   hash: string,
   filename: string,
   width: number,

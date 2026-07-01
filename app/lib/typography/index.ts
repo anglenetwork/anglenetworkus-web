@@ -3,7 +3,6 @@ export * from "./article-family-card";
 export * from "./first-section";
 export * from "./second-section";
 export * from "./fifth-section";
-export * from "./news-ticker";
 export * from "./post-page";
 export * from "./tag-page";
 export * from "./myprofile-page";

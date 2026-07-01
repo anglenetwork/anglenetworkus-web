@@ -33,14 +33,12 @@ export function CategoryPage({
   missedItArticles,
   tagsGlimpse,
   featuredArticles,
-  categoryTickerPosts,
 }: CategoryPageProps) {
   return (
     <div className="min-h-screen bg-news-surface">
       <CategoryHeader
         categoryName={categoryName}
         categoryDescription={categoryDescription}
-        categoryTickerPosts={categoryTickerPosts}
       />
 
       {featuredArticles ? (

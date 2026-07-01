@@ -3,34 +3,21 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import dynamic from "next/dynamic";
 import { usePathname } from "next/navigation";
-import { useMediaQuery } from "@/app/hooks/use-media-query";
-import { MobileHeader } from "./mobile-header";
+import { UnifiedNavbar } from "./unified-navbar";
 import { HeaderProps } from "./types";
-
-const DESKTOP_NAV_QUERY = "(min-width: 1024px)";
-
-const DesktopHeader = dynamic(
-  () => import("./desktop-header").then((mod) => mod.DesktopHeader),
-  { ssr: false },
-);
 
 const FullScreenMenu = dynamic(
   () => import("../full-screen-menu").then((mod) => mod.FullScreenMenu),
   { ssr: false },
 );
 
-export function HeaderClient({
-  categories,
-  menuColumns,
-  showSubscriptions = false,
-}: HeaderProps) {
+export function HeaderClient({ categories, menuColumns }: HeaderProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [focusSearchOnOpen, setFocusSearchOnOpen] = useState(false);
   const [headerOffset, setHeaderOffset] = useState(0);
   const headerRef = useRef<HTMLElement | null>(null);
   const lastHeightRef = useRef(0);
   const pathname = usePathname();
-  const isDesktopNav = useMediaQuery(DESKTOP_NAV_QUERY);
   const previousPathnameRef = useRef(pathname);
 
   if (previousPathnameRef.current !== pathname) {
@@ -95,26 +82,16 @@ export function HeaderClient({
     <>
       <header
         ref={headerRef}
-        className="sticky top-0 z-50 border-neutral-200 border-b bg-white shadow-sm transition-all duration-500 ease-out"
+        className="sticky top-0 z-[100] h-[60px] w-full border-stone-200 border-b bg-stone-50"
       >
-        <div className="container mx-auto px-4 sm:px-6 lg:px-16">
-          {isDesktopNav ? (
-            <DesktopHeader
-              isMenuOpen={isMenuOpen}
-              categories={categories}
-              showSubscriptions={showSubscriptions}
-              onMenuToggle={handleMenuToggle}
-              onSearchMenuOpen={handleSearchMenuOpen}
-              onCategoryClick={closeMenu}
-            />
-          ) : (
-            <MobileHeader
-              isMenuOpen={isMenuOpen}
-              showSubscriptions={showSubscriptions}
-              onMenuToggle={handleMenuToggle}
-              onSearchMenuOpen={handleSearchMenuOpen}
-            />
-          )}
+        <div className="mx-auto h-full max-w-[1320px] px-8">
+          <UnifiedNavbar
+            isMenuOpen={isMenuOpen}
+            categories={categories}
+            onMenuToggle={handleMenuToggle}
+            onSearchMenuOpen={handleSearchMenuOpen}
+            onCategoryClick={closeMenu}
+          />
         </div>
       </header>
 

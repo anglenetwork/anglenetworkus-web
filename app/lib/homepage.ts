@@ -66,33 +66,56 @@ function resolveThirdSectionHref(row: ThirdSectionPostRow): string | undefined {
 export async function getThirdSectionData(): Promise<
   HomepageThirdSectionArticle[]
 > {
-  const rows: HomepageThirdSectionArticle[] = [];
-  const usedIds: string[] = [];
-
-  for (const tag of HOMEPAGE_THIRD_SECTION_TAGS) {
+  async function fetchPostForTag(
+    tag: (typeof HOMEPAGE_THIRD_SECTION_TAGS)[number],
+    excludeIds: string[],
+  ) {
     const post = await sanityFetchStatic({
       query: homepageThirdSectionByTagQuery,
-      params: { tagSlug: tag.slug, excludeIds: usedIds },
+      params: { tagSlug: tag.slug, excludeIds },
       tag: `homepage.third-section.${tag.slug}`,
     });
-
-    const row = post as ThirdSectionPostRow | null;
-    const href = row ? resolveThirdSectionHref(row) : undefined;
-    if (!row?.slug || !href) continue;
-
-    usedIds.push(row._id);
-    rows.push({
-      tagSlug: tag.slug,
-      tagTitle: tag.title,
-      _id: row._id,
-      title: row.title,
-      slug: row.slug,
-      href,
-      readTime: row.readTime ?? null,
-    });
+    return post as ThirdSectionPostRow | null;
   }
 
-  return rows;
+  const initialPosts = await Promise.all(
+    HOMEPAGE_THIRD_SECTION_TAGS.map((tag) => fetchPostForTag(tag, [])),
+  );
+
+  async function collectRows(
+    index: number,
+    usedIds: Set<string>,
+    rows: HomepageThirdSectionArticle[],
+  ): Promise<HomepageThirdSectionArticle[]> {
+    if (index >= HOMEPAGE_THIRD_SECTION_TAGS.length) {
+      return rows;
+    }
+
+    const tag = HOMEPAGE_THIRD_SECTION_TAGS[index];
+    let row = initialPosts[index];
+
+    if (row && usedIds.has(row._id)) {
+      row = await fetchPostForTag(tag, [...usedIds]);
+    }
+
+    const href = row ? resolveThirdSectionHref(row) : undefined;
+    if (row?.slug && href) {
+      usedIds.add(row._id);
+      rows.push({
+        tagSlug: tag.slug,
+        tagTitle: tag.title,
+        _id: row._id,
+        title: row.title,
+        slug: row.slug,
+        href,
+        readTime: row.readTime ?? null,
+      });
+    }
+
+    return collectRows(index + 1, usedIds, rows);
+  }
+
+  return collectRows(0, new Set(), []);
 }
 
 /** Homepage seventh section: featured-stories carousel (one card per category). */

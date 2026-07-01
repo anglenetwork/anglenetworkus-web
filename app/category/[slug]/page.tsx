@@ -12,7 +12,6 @@ import {
   buildCategoryHeadlineRowArticles,
   buildCategoryLatestArticles,
   buildCategoryMissedItArticles,
-  buildCategoryTickerPosts,
 } from "@/app/lib/category-page/layout-sections";
 import { CategoryPage } from "@/app/components/CategoryPage";
 import type { Article } from "@/app/components/CategoryPage/types";
@@ -161,8 +160,6 @@ export default async function CategoryPageRoute({
     transformPostToArticle,
   );
 
-  const categoryTickerPosts = buildCategoryTickerPosts(postList);
-
   const missedItArticles = buildCategoryMissedItArticles(
     postList,
     transformPostToArticle,
@@ -195,7 +192,6 @@ export default async function CategoryPageRoute({
         missedItArticles={missedItArticles}
         tagsGlimpse={tagsGlimpse ?? undefined}
         featuredArticles={featuredArticles}
-        categoryTickerPosts={categoryTickerPosts}
       />
     </>
   );

@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useSyncExternalStore } from "react";
 
 function getTopWindowSnapshot(): boolean {
@@ -31,12 +32,13 @@ export default function AlertBanner() {
     <div className="fixed top-0 left-0 z-50 w-full border-b bg-white/95 text-black backdrop-blur">
       <div className="py-2 text-center text-sm">
         {"Previewing drafts. "}
-        <a
+        <Link
           href="/api/draft-mode/disable"
+          prefetch={false}
           className="underline transition-colors duration-200 hover:text-cyan"
         >
           Back to published
-        </a>
+        </Link>
       </div>
     </div>
   );

@@ -67,19 +67,13 @@ export async function checkArticleMetricsReadiness(supabase) {
     return false;
   }
 
-  const hasDailyTable = await probeRelation(
-    "article_metrics_daily",
-    "Daily metrics table",
-  );
-  const hasTotalsTable = await probeRelation(
-    "article_metrics_totals",
-    "Totals table",
-  );
-  const hasRankingsView = await probeRelation(
-    "article_metrics_rankings",
-    "Rankings view",
-  );
-  const hasIncrementFunction = await probeIncrementFunction();
+  const [hasDailyTable, hasTotalsTable, hasRankingsView, hasIncrementFunction] =
+    await Promise.all([
+      probeRelation("article_metrics_daily", "Daily metrics table"),
+      probeRelation("article_metrics_totals", "Totals table"),
+      probeRelation("article_metrics_rankings", "Rankings view"),
+      probeIncrementFunction(),
+    ]);
 
   const ready =
     hasDailyTable && hasTotalsTable && hasRankingsView && hasIncrementFunction;

@@ -1,8 +1,7 @@
 import { FirstSection } from "./components/Landing/FirstSection/firstSection";
-import { NewsTicker } from "./components/Landing/NewsTicker/NewsTicker";
+import EditorialRailsSection from "./components/article-family/EditorialRailsSection";
 import { HomepageBelowFoldLazy } from "./components/Landing/homepage-below-fold-lazy";
 import { HOMEPAGE_BELOW_FOLD_SECTION_GAP } from "./components/Landing/homepage-below-fold-spacing";
-import EditorialRailsSection from "./components/article-family/EditorialRailsSection";
 import { JsonLdScript } from "./components/seo/json-ld-script";
 import nextDynamic from "next/dynamic";
 import { toPlainText } from "next-sanity";
@@ -28,7 +27,6 @@ import {
   homepageHeroRelatedByCategoryQuery,
   homepageHeroRightHeadlineQuery,
   highlightedStoriesByCategoryQuery,
-  newsTickerQuery,
   postsByCategoryStandardPostsLimitedQuery,
 } from "@/sanity/lib/queries";
 import { normalizeArticleFamilyCard } from "@/app/lib/article-family/normalize";
@@ -152,6 +150,8 @@ export async function generateMetadata() {
   );
 }
 
+const homepageOpinionRail = <EditorialRailsSection />;
+
 export default async function Page() {
   const settings = await getCachedSettings();
   const siteUrl = getPublicSiteUrl();
@@ -249,7 +249,6 @@ export default async function Page() {
   const sixthSectionRightArticle = sixthSectionRightPosts[0];
 
   const [
-    newsTickerPosts,
     secondSectionData,
     thirdSectionData,
     fourthSectionData,
@@ -257,9 +256,6 @@ export default async function Page() {
     fifthSectionLeftRaw,
     fifthSectionRightRaw,
   ] = await Promise.all([
-    sanityFetchStatic({
-      query: newsTickerQuery,
-    }),
     getSecondSectionData(
       ["tech", "business", "entertainment"],
       ["Tech", "Business", "Entertainment"],
@@ -301,7 +297,6 @@ export default async function Page() {
       <JsonLdScript data={organizationLd} />
       <JsonLdScript data={websiteLd} />
       <SitePageWidth className="bg-news-surface">
-        <NewsTicker posts={newsTickerPosts as any} showLiveUpdatesLabel />
         <div className={`${HOMEPAGE_BELOW_FOLD_SECTION_GAP} pb-10 md:pb-14`}>
           <FirstSection
             justInNews={justInPosts as any}
@@ -336,7 +331,7 @@ export default async function Page() {
                 : null
             }
             seventhSection={{ categoriesData: seventhSectionData as any }}
-            opinion={<EditorialRailsSection />}
+            opinion={homepageOpinionRail}
           />
           {/* <PromoSection /> */}
         </div>

@@ -9,6 +9,10 @@ export const moreTopHeadlinesGridTitle = `font-semibold font-display text-base t
 /** FirstSection — left rail: remaining Just In stories */
 export const justInSecondaryTitle = `font-semibold font-display text-lg text-news-text leading-snug tracking-normal ${homepageArticleTitleLink}`;
 
+/** FirstSection — Just In category label above story titles */
+export const justInCategoryLabel =
+  "mb-1.5 block font-sans text-[10.5px] font-bold uppercase tracking-[0.07em] text-news-primary";
+
 /** FirstSection — center: desktop main headline (lg+) */
 export const mainHeadlineDesktopTitle = `text-6xl font-bold text-news-text !leading-tight tracking-tight text-center font-display ${homepageArticleTitleLink}`;
 

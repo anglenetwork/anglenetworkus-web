@@ -453,7 +453,7 @@ export const newsTickerQuery = defineQuery(`
   *[
     ${homepagePublishedPostFilter} &&
     defined(tickerTitle)
-  ] | order(${homepagePublishedPostOrder}) [0...4] {
+  ] | order(${homepagePublishedPostOrder}) [0...5] {
     tickerTitle,
     "slug": slug.current
   }

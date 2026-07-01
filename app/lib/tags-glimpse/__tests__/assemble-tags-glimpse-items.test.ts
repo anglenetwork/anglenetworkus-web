@@ -105,4 +105,38 @@ describe("assembleTagsGlimpseItems", () => {
       "tag-d",
     ]);
   });
+
+  it("re-fetches when the parallel prefetch returns a duplicate article", async () => {
+    let fetchCount = 0;
+
+    const items = await assembleTagsGlimpseItems(
+      tags.slice(0, 2),
+      async (tagSlug, excludeIds) => {
+        fetchCount += 1;
+        if (tagSlug === "tag-b" && excludeIds.length > 0) {
+          return {
+            _id: "article-b-alt",
+            _type: "post" as const,
+            slug: "story-b-alt",
+            title: "Story B Alt",
+            readTime: 2,
+          };
+        }
+        return {
+          _id: "shared",
+          _type: "post" as const,
+          slug: "shared-story",
+          title: "Shared",
+          readTime: 2,
+        };
+      },
+    );
+
+    expect(items).toHaveLength(2);
+    expect(items.map((item) => item.article.slug)).toEqual([
+      "shared-story",
+      "story-b-alt",
+    ]);
+    expect(fetchCount).toBe(3);
+  });
 });

@@ -3,6 +3,7 @@ import { sanityFetchStatic } from "@/sanity/lib/fetch";
 import {
   categoriesByViewsQuery,
   navTagsWithCategoryQuery,
+  newsTickerQuery,
 } from "@/sanity/lib/queries";
 import { buildNavCategories } from "@/app/lib/nav/category-order";
 import {
@@ -10,6 +11,7 @@ import {
   type NavTagWithCategory,
 } from "@/app/lib/nav/menu-columns";
 import { SiteShellFrame } from "./site-shell-frame";
+import type { TickerPost } from "./types";
 
 interface SiteShellProps {
   children: ReactNode;
@@ -20,17 +22,23 @@ interface SiteShellProps {
  * tags from Sanity, then builds four menu columns for the full-screen menu.
  */
 export async function SiteShell({ children }: SiteShellProps) {
-  const [categoriesData, tagsData] = await Promise.all([
+  const [categoriesData, tagsData, tickerData] = await Promise.all([
     sanityFetchStatic({ query: categoriesByViewsQuery }),
     sanityFetchStatic({ query: navTagsWithCategoryQuery }),
+    sanityFetchStatic({ query: newsTickerQuery }),
   ]);
 
   const categories = buildNavCategories(categoriesData);
   const tagRows = mapNavTags(tagsData);
   const menuColumns = buildNavMenuColumns(categories, tagRows);
+  const tickerPosts = mapTickerPosts(tickerData);
 
   return (
-    <SiteShellFrame categories={categories} menuColumns={menuColumns}>
+    <SiteShellFrame
+      categories={categories}
+      menuColumns={menuColumns}
+      tickerPosts={tickerPosts}
+    >
       {children}
     </SiteShellFrame>
   );
@@ -41,6 +49,27 @@ type NavTagRow = {
   title: string | null;
   categorySlug: string | null;
 };
+
+function mapTickerPosts(rows: unknown): TickerPost[] {
+  if (!Array.isArray(rows)) return [];
+
+  return rows
+    .filter(
+      (row): row is { tickerTitle: string; slug: string } =>
+        !!row &&
+        typeof row === "object" &&
+        "tickerTitle" in row &&
+        typeof row.tickerTitle === "string" &&
+        row.tickerTitle.length > 0 &&
+        "slug" in row &&
+        typeof row.slug === "string" &&
+        row.slug.length > 0,
+    )
+    .map((row) => ({
+      tickerTitle: row.tickerTitle,
+      slug: row.slug,
+    }));
+}
 
 function mapNavTags(rows: NavTagRow[]): NavTagWithCategory[] {
   return rows.filter(
