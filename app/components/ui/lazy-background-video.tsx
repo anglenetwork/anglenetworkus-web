@@ -4,10 +4,7 @@ import Image from "next/image";
 import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { getPexelsVideoPosterUrl } from "@/lib/pexels-video";
 
-export type LazyBackgroundVideoLoadStrategy =
-  | "viewport"
-  | "idle"
-  | "viewport-or-idle";
+type LazyBackgroundVideoLoadStrategy = "viewport" | "idle" | "viewport-or-idle";
 
 interface LazyBackgroundVideoProps {
   videoSrc: string;

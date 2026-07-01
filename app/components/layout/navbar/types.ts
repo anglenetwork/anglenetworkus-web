@@ -1,4 +1,4 @@
-export type { Category, Tag, NavMenuColumn } from "../site-shell/types";
+export type { Category, NavMenuColumn } from "../site-shell/types";
 import type { Category, NavMenuColumn } from "../site-shell/types";
 
 export interface HeaderProps {

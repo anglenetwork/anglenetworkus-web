@@ -147,5 +147,3 @@ export default function PostBody({
     </div>
   );
 }
-
-export type { PostBodyProps } from "./types";

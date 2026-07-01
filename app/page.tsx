@@ -5,7 +5,6 @@ import { HOMEPAGE_BELOW_FOLD_SECTION_GAP } from "./components/Landing/homepage-b
 import { JsonLdScript } from "./components/seo/json-ld-script";
 import nextDynamic from "next/dynamic";
 import { toPlainText } from "next-sanity";
-import { sanityFetchStatic } from "@/sanity/lib/fetch";
 import * as demo from "@/sanity/lib/demo";
 import { getCachedSettings } from "@/app/lib/cached-settings";
 import {
@@ -20,108 +19,10 @@ import {
 } from "@/app/lib/seo/publisher";
 import { getPublicSiteUrl } from "@/app/lib/seo/site-url";
 import { resolveOpenGraphImage } from "@/sanity/lib/utils";
-import {
-  homepageHeroFrontlineQuery,
-  homepageHeroJustInQuery,
-  homepageHeroMainHeadlineQuery,
-  homepageHeroRelatedByCategoryQuery,
-  homepageHeroRightHeadlineQuery,
-  highlightedStoriesByCategoryQuery,
-  postsByCategoryStandardPostsLimitedQuery,
-} from "@/sanity/lib/queries";
-import { normalizeArticleFamilyCard } from "@/app/lib/article-family/normalize";
-import type { ArticleFamilyCard } from "@/app/lib/article-family/types";
-import {
-  getSeventhSectionData,
-  getSecondSectionData,
-  getThirdSectionData,
-} from "./lib/homepage";
-import { getFourthSectionData } from "./lib/homepage-fourth-section";
-import {
-  HOMEPAGE_FIFTH_SECTION_CATEGORIES,
-  HOMEPAGE_FIFTH_SECTION_LEFT_FETCH_LIMIT,
-  HOMEPAGE_FIFTH_SECTION_RIGHT_FETCH_LIMIT,
-} from "./lib/homepage-fifth-section";
+import { loadHomepagePageData } from "@/app/lib/homepage/load-homepage-page-data";
 import { SitePageWidth } from "@/app/components/layout/site-page-width";
 
 export const dynamic = "force-dynamic";
-
-type HeroPostWithCategory = {
-  _id: string;
-  slug?: string | null;
-  category?: { slug?: string | null } | null;
-};
-
-function isHeroPost(post: unknown): post is HeroPostWithCategory {
-  return (
-    !!post &&
-    typeof post === "object" &&
-    "_id" in post &&
-    typeof post._id === "string"
-  );
-}
-
-/** Pick up to `limit` posts, skipping any already used in a higher-priority hero slot. */
-function selectHeroPosts<T extends HeroPostWithCategory>(
-  posts: unknown,
-  usedIds: Set<string>,
-  limit: number,
-): T[] {
-  if (!Array.isArray(posts)) return [];
-
-  const selected: T[] = [];
-  for (const post of posts) {
-    if (!isHeroPost(post) || usedIds.has(post._id)) continue;
-    selected.push(post as T);
-    usedIds.add(post._id);
-    if (selected.length >= limit) break;
-  }
-  return selected;
-}
-
-function selectRightRailPosts(
-  rightHeadlinePosts: unknown,
-  excludeIds: Set<string>,
-) {
-  if (!Array.isArray(rightHeadlinePosts)) {
-    return { sideStories: [], compactSideStories: [] };
-  }
-
-  const filtered = rightHeadlinePosts.filter(
-    (post): post is HeroPostWithCategory =>
-      !!post &&
-      typeof post === "object" &&
-      "_id" in post &&
-      typeof post._id === "string" &&
-      "slug" in post &&
-      typeof post.slug === "string" &&
-      post.slug.length > 0 &&
-      !excludeIds.has(post._id),
-  );
-
-  return {
-    sideStories: filtered.slice(0, 2),
-    compactSideStories: filtered.slice(2, 4),
-  };
-}
-
-function fifthSectionCardsForCategory(
-  raw: unknown,
-  categorySlug: string,
-  maxRows: number,
-): ArticleFamilyCard[] {
-  if (!Array.isArray(raw)) return [];
-  return raw
-    .slice(0, maxRows)
-    .map((row) => normalizeArticleFamilyCard(row))
-    .filter(
-      (card): card is ArticleFamilyCard =>
-        card != null &&
-        !!card.slug &&
-        !!card.href &&
-        card.category?.slug === categorySlug,
-    );
-}
 
 function PromoSectionPlaceholder() {
   return (
@@ -153,7 +54,10 @@ export async function generateMetadata() {
 const homepageOpinionRail = <EditorialRailsSection />;
 
 export default async function Page() {
-  const settings = await getCachedSettings();
+  const [settings, homepageData] = await Promise.all([
+    getCachedSettings(),
+    loadHomepagePageData(),
+  ]);
   const siteUrl = getPublicSiteUrl();
   const siteName = resolveSiteName(settings, demo.title);
   const orgId = organizationJsonLdId(siteUrl);
@@ -171,126 +75,16 @@ export default async function Page() {
     siteUrl,
     organizationId: orgId,
   });
-  //LANDING PAGE DATA FETCHING
-  // 1) Fetch hero slices for FirstSection (server-side filtered/ranked in GROQ)
-  const [
-    justInPostsRaw,
-    mainHeadlinePostsRaw,
-    frontlinePostsRaw,
-    rightHeadlinePostsRaw,
-  ] = await Promise.all([
-    sanityFetchStatic({
-      query: homepageHeroJustInQuery,
-      tag: "homepage.hero.just-in",
-    }),
-    sanityFetchStatic({
-      query: homepageHeroMainHeadlineQuery,
-      tag: "homepage.hero.main-headline",
-    }),
-    sanityFetchStatic({
-      query: homepageHeroFrontlineQuery,
-      tag: "homepage.hero.frontline",
-    }),
-    sanityFetchStatic({
-      query: homepageHeroRightHeadlineQuery,
-      tag: "homepage.hero.right-headline",
-    }),
-  ]);
 
-  const usedHeroPostIds = new Set<string>();
-  const mainHeadlinePosts = selectHeroPosts(
-    mainHeadlinePostsRaw,
-    usedHeroPostIds,
-    1,
-  );
-  const justInPosts = selectHeroPosts(justInPostsRaw, usedHeroPostIds, 5);
-  const frontlinePosts = selectHeroPosts(frontlinePostsRaw, usedHeroPostIds, 2);
-  const { sideStories: rightRailSideStories, compactSideStories } =
-    selectRightRailPosts(rightHeadlinePostsRaw, usedHeroPostIds);
-
-  const mainStoryPost = (
-    Array.isArray(mainHeadlinePosts) ? mainHeadlinePosts[0] : null
-  ) as HeroPostWithCategory | null;
-  const mainStoryCategorySlug = mainStoryPost?.category?.slug ?? null;
-  const relatedCategoryPosts =
-    mainStoryCategorySlug && mainStoryPost?._id
-      ? await sanityFetchStatic({
-          query: homepageHeroRelatedByCategoryQuery,
-          params: {
-            categorySlug: mainStoryCategorySlug,
-            excludePostId: mainStoryPost._id,
-          },
-          tag: "homepage.hero.related-category",
-        })
-      : [];
-
-  // 3) Fetch posts for SixthSection (1 featured per column: US, Politics, Business)
-  const [
-    sixthSectionLeftPosts,
-    sixthSectionCenterPosts,
-    sixthSectionRightPosts,
-  ] = await Promise.all([
-    sanityFetchStatic({
-      query: highlightedStoriesByCategoryQuery,
-      params: { categorySlug: "us" },
-    }),
-    sanityFetchStatic({
-      query: highlightedStoriesByCategoryQuery,
-      params: { categorySlug: "politics" },
-    }),
-    sanityFetchStatic({
-      query: highlightedStoriesByCategoryQuery,
-      params: { categorySlug: "business" },
-    }),
-  ]);
-
-  const sixthSectionLeftArticle = sixthSectionLeftPosts[0];
-  const sixthSectionCenterArticle = sixthSectionCenterPosts[0];
-  const sixthSectionRightArticle = sixthSectionRightPosts[0];
-
-  const [
+  const {
+    hero,
     secondSectionData,
     thirdSectionData,
     fourthSectionData,
+    fifthSection,
+    sixthSection,
     seventhSectionData,
-    fifthSectionLeftRaw,
-    fifthSectionRightRaw,
-  ] = await Promise.all([
-    getSecondSectionData(
-      ["tech", "business", "entertainment"],
-      ["Tech", "Business", "Entertainment"],
-    ),
-    getThirdSectionData(),
-    getFourthSectionData(),
-    getSeventhSectionData(),
-    sanityFetchStatic({
-      query: postsByCategoryStandardPostsLimitedQuery,
-      params: {
-        categorySlug: HOMEPAGE_FIFTH_SECTION_CATEGORIES.left.slug,
-        limit: HOMEPAGE_FIFTH_SECTION_LEFT_FETCH_LIMIT,
-      },
-      tag: "homepage.fifth-section.left",
-    }),
-    sanityFetchStatic({
-      query: postsByCategoryStandardPostsLimitedQuery,
-      params: {
-        categorySlug: HOMEPAGE_FIFTH_SECTION_CATEGORIES.right.slug,
-        limit: HOMEPAGE_FIFTH_SECTION_RIGHT_FETCH_LIMIT,
-      },
-      tag: "homepage.fifth-section.right",
-    }),
-  ]);
-
-  const fifthSectionLeftCards = fifthSectionCardsForCategory(
-    fifthSectionLeftRaw,
-    HOMEPAGE_FIFTH_SECTION_CATEGORIES.left.slug,
-    HOMEPAGE_FIFTH_SECTION_LEFT_FETCH_LIMIT,
-  );
-  const fifthSectionRightCards = fifthSectionCardsForCategory(
-    fifthSectionRightRaw,
-    HOMEPAGE_FIFTH_SECTION_CATEGORIES.right.slug,
-    HOMEPAGE_FIFTH_SECTION_RIGHT_FETCH_LIMIT,
-  );
+  } = homepageData;
 
   return (
     <>
@@ -299,12 +93,12 @@ export default async function Page() {
       <SitePageWidth className="bg-news-surface">
         <div className={`${HOMEPAGE_BELOW_FOLD_SECTION_GAP} pb-10 md:pb-14`}>
           <FirstSection
-            justInNews={justInPosts as any}
-            mainStory={mainHeadlinePosts as any}
-            relatedCategoryPosts={relatedCategoryPosts as any}
-            moreTopHeadlines={frontlinePosts as any}
-            sideStories={rightRailSideStories as any}
-            compactSideStories={compactSideStories as any}
+            justInNews={hero.justInPosts as any}
+            mainStory={hero.mainHeadlinePosts as any}
+            relatedCategoryPosts={hero.relatedCategoryPosts as any}
+            moreTopHeadlines={hero.frontlinePosts as any}
+            sideStories={hero.rightRailSideStories as any}
+            compactSideStories={hero.compactSideStories as any}
           />
           <HomepageBelowFoldLazy
             secondSection={{
@@ -313,20 +107,13 @@ export default async function Page() {
             }}
             thirdSection={{ articles: thirdSectionData }}
             fourthSection={fourthSectionData}
-            fifthSection={{
-              leftColumnPosts: fifthSectionLeftCards,
-              rightColumnPosts: fifthSectionRightCards,
-              leftCategory: HOMEPAGE_FIFTH_SECTION_CATEGORIES.left,
-              rightCategory: HOMEPAGE_FIFTH_SECTION_CATEGORIES.right,
-            }}
+            fifthSection={fifthSection}
             sixthSection={
-              sixthSectionLeftArticle?.slug &&
-              sixthSectionCenterArticle?.slug &&
-              sixthSectionRightArticle?.slug
+              sixthSection
                 ? {
-                    leftArticle: sixthSectionLeftArticle as any,
-                    centerArticle: sixthSectionCenterArticle as any,
-                    rightArticle: sixthSectionRightArticle as any,
+                    leftArticle: sixthSection.leftArticle as any,
+                    centerArticle: sixthSection.centerArticle as any,
+                    rightArticle: sixthSection.rightArticle as any,
                   }
                 : null
             }

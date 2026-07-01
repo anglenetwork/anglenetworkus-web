@@ -9,7 +9,7 @@ export interface Category {
   views?: number;
 }
 
-export interface Tag {
+interface Tag {
   slug: string;
   title: string;
   views?: number;

@@ -86,10 +86,3 @@ export const wikimediaThumbnailCases = [
 export const wikimediaIntegrationCases = wikimediaThumbnailCases.map(
   ({ name, input, maxWidth }) => ({ name, input, maxWidth }),
 );
-
-export {
-  anthropicSvgBroken2560Thumb,
-  anthropicSvgThumbExpected,
-  hormuzSvgBrokenThumb,
-  hormuzSvgThumbExpected,
-};

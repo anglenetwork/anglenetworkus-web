@@ -12,10 +12,10 @@ import {
   postRelatedModernSideTitle,
 } from "@/app/lib/typography/post-page";
 
-export type BottomArticleModuleVariant = "classic" | "modern";
+type BottomArticleModuleVariant = "classic" | "modern";
 
 /** Classic: 1 hero + up to 6 list items. Modern: 6 grid cards + 4 sidebar items. */
-export const RELATED_MODULE_CLASSIC_TOTAL = 7;
+const RELATED_MODULE_CLASSIC_TOTAL = 7;
 export const RELATED_MODULE_MODERN_TOTAL = 10;
 
 interface BottomArticleModuleProps {

@@ -77,17 +77,3 @@ export function HomepageBelowFoldSections({
     </>
   );
 }
-
-export type HomepageBelowFoldTopProps = Pick<
-  HomepageBelowFoldSectionsProps,
-  | "secondSection"
-  | "thirdSection"
-  | "fourthSection"
-  | "fifthSection"
-  | "sixthSection"
->;
-
-export type HomepageBelowFoldBottomProps = Pick<
-  HomepageBelowFoldSectionsProps,
-  "seventhSection"
->;

@@ -1,10 +1,5 @@
 import { articleTitleLink } from "./article-links";
 
-export {
-  formatReadTimeLabel,
-  readTimeLabelClassName,
-} from "./read-time";
-
 /** Tag page — TagFeaturedArticle lead title on image overlay */
 export const tagFeaturedOverlayTitle =
   "line-clamp-4 font-display text-xl font-semibold leading-snug tracking-tight text-white md:text-2xl xl:text-3xl";

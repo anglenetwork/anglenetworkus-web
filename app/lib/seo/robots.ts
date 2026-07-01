@@ -36,7 +36,7 @@ export function robotsIndexableArticle(): Metadata["robots"] {
 }
 
 /** sponsored — public but not in organic index */
-export function robotsSponsoredArticle(): Metadata["robots"] {
+function robotsSponsoredArticle(): Metadata["robots"] {
   return googleBotNoindexFollow;
 }
 
