@@ -32,7 +32,9 @@ function MostReadFeedHeader({ seeAllHref }: { seeAllHref: string }) {
         href={seeAllHref}
         className="group flex shrink-0 items-center gap-2 rounded-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-news-primary focus-visible:outline-offset-2"
       >
-        <span className={cn(mostReadFeedSeeAllLink, "text-white")}>See all</span>
+        <span className={cn(mostReadFeedSeeAllLink, "text-white")}>
+          See all
+        </span>
         <span
           className="flex size-6 items-center justify-center rounded-full bg-news-primary text-white"
           aria-hidden

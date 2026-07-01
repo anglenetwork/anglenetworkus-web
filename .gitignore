@@ -42,6 +42,12 @@ yarn-error.log*
 # local env files
 .env*.local
 
+# Cursor MCP config may contain API tokens
+.cursor/mcp.json
+
+# OpenCode local MCP config
+opencode.json
+
 # vercel
 .vercel
 

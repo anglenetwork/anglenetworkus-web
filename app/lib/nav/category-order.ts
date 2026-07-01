@@ -9,9 +9,9 @@ const CATEGORY_NAV_ORDER = [
   "world",
   "politics",
   "business",
-  "science",
-  "entertainment",
   "tech",
+  "entertainment",
+  "science",
   "lifestyle",
 ] as const;
 

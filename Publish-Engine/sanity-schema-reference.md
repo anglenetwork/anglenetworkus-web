@@ -1,135 +1,96 @@
 # Angle Sanity Schema Reference
 
-Concise reference for the current CMS shape. Source of truth: `sanity/schemas/` in this repo. Operational runbooks: [`docs/sanity-publishing.md`](../docs/sanity-publishing.md).
+Concise CMS reference for Angle publishing. Source of truth: deployed Sanity schema + `sanity/schemas/`.
 
 ## Project
 
-| Setting | Value |
-|---------|-------|
-| Project | Angle Network (`hxfedc5p`) |
-| Dataset | `production` |
-| Studio (local) | `http://localhost:3000/studio` |
-| Studio (hosted) | `https://angle-studio.sanity.studio/` |
+* Project: Angle Network (`hxfedc5p`)
+* Dataset: `production`
+* Local Studio: `http://localhost:3000/studio`
+* Hosted Studio: `https://angle-studio.sanity.studio/`
 
-Deploy schema changes: `npx sanity schema deploy` then `npx sanity deploy`.
+Deploy schema changes:
+
+```bash
+npx sanity schema deploy
+npx sanity deploy
+```
 
 ---
 
 ## Document types
 
-| Type | Purpose | Extra fields beyond shared article base |
-|------|---------|----------------------------------------|
-| `post` | Standard news | Homepage booleans, `priority`, `readTime`, `labels` |
-| `opinion` | Viewpoint / commentary | `disclosure` (optional); **author required** |
-| `analysis` | Explainer journalism | `analysisFocus` (required, max 120); optional `methodologyNote`, `sourcesNote`; **author required** |
-| `sponsored` | Paid / partner content | `sponsorAttribution` (required object) |
-| `author` | Byline + optional Studio access | name, slug, picture, email, bio, social, `seo` |
-| `category` | Top-level taxonomy | name, slug; optional parent, hero, nav metadata |
-| `tag` | Sub-taxonomy (category-scoped) | title, slug, **required** ref → `category` |
-| `settings` | Site singleton | site title, description, footer, OG image |
+| Type        | Notes                                                                                                     |
+| ----------- | --------------------------------------------------------------------------------------------------------- |
+| `post`      | Standard news article. Category required, tags optional, author optional, homepage curation fields.       |
+| `opinion`   | Viewpoint/commentary. Author required. Optional `disclosure`. No `category` or `tags` in deployed schema. |
+| `analysis`  | Explainer/interpretive article. `analysisFocus`, category, and author required. Tags optional.            |
+| `sponsored` | Paid/partner content. `sponsorAttribution`, category, and author required. Tags optional.                 |
+| `author`    | Byline document; includes name, slug, picture, email, bio, social, Studio access fields, SEO.             |
+| `category`  | Top-level taxonomy. Name, slug, optional parent/nav/display metadata, SEO.                                |
+| `tag`       | Category-scoped taxonomy. Title, slug, required parent `category`.                                        |
+| `settings`  | Site singleton. Title, description, footer, OG image.                                                     |
 
-The `topic` document type was removed. Do not create or reference it.
+Removed: `topic`. Do not create or reference it.
 
 ---
 
-## How schemas connect
+## Article fields
 
+Shared article-like fields:
+
+| Field          | Notes                                                                          |
+| -------------- | ------------------------------------------------------------------------------ |
+| `title`        | Required. Min 4 characters.                                                    |
+| `tickerTitle`  | Required. Max 40 characters.                                                   |
+| `excerpt`      | Optional. Max 280 characters. Replaces `dek`.                                  |
+| `slug`         | Required. `{ _type: "slug", current: "kebab-case" }`; unique per `_type`.      |
+| `body`         | Required when published. Portable Text via `blockContent`.                     |
+| `cover`        | Required when published. `coverMedia` object.                                  |
+| `imageGallery` | Optional array of `galleryImageItem`.                                          |
+| `category`     | Required on `post`, `analysis`, `sponsored`. Not present on `opinion`.         |
+| `tags`         | Optional on `post`, `analysis`, `sponsored`; must belong to selected category. |
+| `author`       | Optional on `post`; required on `opinion`, `analysis`, `sponsored`.            |
+| `status`       | `draft` | `scheduled` | `published`; default `published`.                      |
+| `publishedAt`  | Required when published. UTC datetime.                                         |
+| `updatedAt`    | Optional UTC datetime.                                                         |
+| `seo`          | Optional object: `title`, `description`, `ogImage`, `canonicalUrl`.            |
+| `searchText`   | Optional. Do not overwrite if already set.                                     |
+
+---
+
+## `post` curation fields
+
+Homepage placement uses booleans only. No rank or until fields exist.
+
+| Field             | Notes                                                                           |
+| ----------------- | ------------------------------------------------------------------------------- |
+| `mainHeadline`    | Homepage lead story.                                                            |
+| `frontline`       | Top stories below main headline.                                                |
+| `rightHeadline`   | Right rail.                                                                     |
+| `justIn`          | “Just In” rail.                                                                 |
+| `breakingNews`    | Only relevant when `justIn` is true; mutually exclusive with `developingStory`. |
+| `developingStory` | Only relevant when `justIn` is true; mutually exclusive with `breakingNews`.    |
+| `featured`        | Editorial boost, not a rail slot.                                               |
+| `priority`        | Number 0–10. Default automation value: `3`.                                     |
+| `readTime`        | Number; automation should send whole minutes.                                   |
+| `labels`          | Optional array: `breaking`, `exclusive`, `live`.                                |
+
+Only one primary rail may be true: `mainHeadline`, `frontline`, `rightHeadline`, or `justIn`.
+
+Default automation flags:
+
+```json
+{
+  "mainHeadline": false,
+  "frontline": false,
+  "rightHeadline": false,
+  "justIn": false,
+  "breakingNews": false,
+  "developingStory": false,
+  "featured": false
+}
 ```
-post ──→ category (required ref)
-     ──→ tags[] (refs, filtered to selected category)
-     ──→ author (optional ref on post; required on opinion/analysis)
-     ──→ cover (coverMedia object)
-     ──→ body (blockContent array)
-     ──→ seo (seo object)
-
-tag ──→ category (required parent ref)
-
-blockContent ──→ block | editorialImage | pullQuote | articleDivider | videoEmbed | tweetEmbed
-```
-
-Article types (`post`, `opinion`, `analysis`, `sponsored`) share core fields from `sanity/schemas/helpers/articleBaseFields.ts`.
-
----
-
-## Shared article fields
-
-### Core metadata
-
-| Field | Required | Notes |
-|-------|----------|-------|
-| `title` | Yes | Min 4 characters |
-| `tickerTitle` | Yes | Max 40 characters; short ticker headline |
-| `excerpt` | No | Max 280; card/subhead text (no separate `dek` field) |
-| `slug` | Yes | `{ _type: "slug", current: "kebab-case" }`; unique per `_type` |
-
-### Body
-
-| Field | Required when published | Notes |
-|-------|-------------------------|-------|
-| `body` | Yes | Portable Text (`blockContent`); canonical content stream |
-
-**Never write:** `bodyTextOne`, `bodyRich`, `bodyBlocks`, `date`.
-
-### Media
-
-| Field | Required when published | Notes |
-|-------|-------------------------|-------|
-| `cover` | Yes | `coverMedia` object with valid source + alt |
-| `imageGallery` | No | Array of `galleryImageItem` |
-
-### Taxonomy
-
-| Field | Required | Notes |
-|-------|----------|-------|
-| `category` | Yes | Reference → `category` |
-| `tags` | No | Array of references → `tag`; Studio filters to selected category |
-| `author` | Varies | Optional on `post`; required on `opinion` and `analysis` |
-
-### Publishing
-
-| Field | Required when published | Notes |
-|-------|-------------------------|-------|
-| `status` | — | `draft` \| `scheduled` \| `published` (default: `published`) |
-| `publishedAt` | Yes | UTC datetime |
-| `updatedAt` | No | UTC datetime |
-
-### SEO
-
-| Field | Notes |
-|-------|-------|
-| `seo.title` | Optional override |
-| `seo.description` | Optional override |
-| `seo.ogImage` | Optional image |
-| `seo.canonicalUrl` | Optional URL |
-
-### Other
-
-| Field | Notes |
-|-------|-------|
-| `searchText` | Optional; auto-backfillable via `npm run backfill:article-search-text`; do not overwrite if already set |
-
----
-
-## `post`-specific fields
-
-### Homepage curation (booleans only)
-
-There are **no `*Rank` or `*Until` fields** in the current schema. The frontend filters by boolean flags and orders by `publishedAt desc`.
-
-| Field | Default | Notes |
-|-------|---------|-------|
-| `mainHeadline` | `false` | Hero rail — mutually exclusive with other primary rails |
-| `frontline` | `false` | Two top stories below main headline |
-| `rightHeadline` | `false` | Right column rail |
-| `justIn` | `false` | Left-column "Just In" rail |
-| `breakingNews` | `false` | Only visible when `justIn` is true; mutually exclusive with `developingStory` |
-| `developingStory` | `false` | Only visible when `justIn` is true |
-| `featured` | `false` | Editorial boost; not a rail slot |
-| `priority` | — | Integer 0–10 (10 = highest) |
-| `readTime` | — | Estimated minutes |
-| `labels` | — | Internal array: `breaking`, `exclusive`, `live` |
-
-**Rail exclusivity:** Only one of `mainHeadline`, `frontline`, `rightHeadline`, `justIn` may be true at a time.
 
 ---
 
@@ -137,169 +98,251 @@ There are **no `*Rank` or `*Until` fields** in the current schema. The frontend 
 
 ### `coverMedia`
 
-Hero image for articles.
+Fields:
 
-| Field | Notes |
-|-------|-------|
-| `source` | `"asset"` \| `"external"` (required) |
-| `externalUrl` | Required when `source === "external"` |
-| `image` | Sanity asset; required when `source === "asset"` |
-| `alt` | Required for published posts |
-| `caption` | Visible caption below image |
-| `creditAuthor` | Creator / photographer |
-| `creditSource` | Provider or platform (e.g. "Wikimedia Commons") |
-| `licenseOrRights` | Rights note (e.g. "CC BY-SA 4.0") |
+```txt
+_type = "coverMedia"
+source = "asset" | "external"
+externalUrl = required when source is "external"
+image = required when source is "asset"
+alt = required when published
+caption = visible caption
+creditAuthor = creator/photographer
+creditSource = provider/platform/institution
+licenseOrRights = rights/license note
+```
 
-**Published validation:** alt required; `licenseOrRights` required when image present; `creditAuthor` **or** `creditSource` required.
+Published cover must have:
 
-**Legacy names removed — do not use:** `epigraph`, `creditProvider`, `creditLicense`, `creditSourceUrl`.
+```txt
+alt
+licenseOrRights
+creditAuthor or creditSource
+valid source + image/externalUrl
+```
 
-**Frontend rule:** If `cover.caption` is empty, render no caption line (do not fall back to excerpt).
+Do not use legacy cover fields:
+
+```txt
+cover.epigraph
+cover.creditProvider
+cover.creditSourceUrl
+cover.creditLicense
+cover.licenseUrl
+```
+
+Use instead:
+
+```txt
+cover.caption
+cover.creditSource
+cover.licenseOrRights
+```
+
+---
 
 ### `blockContent`
 
-Portable Text array for article body.
+Allowed body items:
 
-- **Text blocks:** styles `normal`, `h2`, `h3`, `h4`, `blockquote`; lists `bullet`, `number`; inline links via `markDefs`
-- **Embeds:** `editorialImage`, `pullQuote`, `articleDivider`, `videoEmbed`, `tweetEmbed`
+```txt
+block | editorialImage | pullQuote | articleDivider | videoEmbed | tweetEmbed
+```
 
-Block shape:
+Text block styles:
+
+```txt
+normal | h2 | h3 | h4 | blockquote
+```
+
+Lists:
+
+```txt
+bullet | number
+```
+
+Inline annotation:
+
+```txt
+link
+```
+
+Minimal paragraph block:
 
 ```json
 {
   "_type": "block",
   "_key": "body-b0",
   "style": "normal",
-  "children": [{ "_type": "span", "_key": "body-s0", "text": "...", "marks": [] }],
+  "children": [
+    {
+      "_type": "span",
+      "_key": "body-s0",
+      "text": "Paragraph text.",
+      "marks": []
+    }
+  ],
   "markDefs": []
 }
 ```
 
-### `editorialImage`
-
-Inline body image. Same media fields as `coverMedia` plus required `layout`: `inline` \| `wide` \| `full`.
-
-### `galleryImageItem`
-
-Gallery/carousel item. Same media attribution fields as cover; used in `imageGallery` array.
-
-### `seo`
-
-Nested SEO object: `title`, `description`, `ogImage`, `canonicalUrl`.
-
-### `pullQuote`
-
-Fields: `quote` (required), `attribution`, `sourceLabel`.
-
-### `articleDivider`
-
-Visual section break in body content.
-
-### `videoEmbed`
-
-Fields: `provider` (`youtube` \| `vimeo` \| `generic`), `url` (required), optional `title`.
-
-### `tweetEmbed`
-
-Body-only embed for a Twitter/X status post (`sanity/schemas/objects/tweetEmbed.ts`).
-
-| Field | Required | Notes |
-|-------|----------|-------|
-| `url` | yes | Status URL on `twitter.com`, `x.com`, or `mobile.twitter.com` with `/status/{numericId}` |
-| `caption` | no | Optional editor note below the embed |
-
-**Portable Text block shape:**
-
-```json
-{ "_type": "tweetEmbed", "_key": "body-tweet-0", "url": "https://x.com/user/status/1234567890" }
-```
-
-**Rules:** URL only — no raw embed HTML, iframe code, or tweet screenshots. Frontend extracts the numeric ID and renders via `platform.twitter.com` (`lib/tweets.ts`, `TweetEmbedBlock.tsx`). See [`instructions-to-publish.md`](instructions-to-publish.md#tweet--x-embeds) for publishing workflow.
-
-### `sponsorAttribution`
-
-For `sponsored` type only. Fields: `sponsorName` (required), `sponsorUrl`, `disclosure` (required).
+Use stable `_key` values.
 
 ---
 
-## Reference ID patterns
+### `tweetEmbed`
 
-| Entity | Pattern | Example |
-|--------|---------|---------|
-| Category | `category.{slug}` | `category.politics` |
-| Tag | `tag.{categorySlug}.{tagSlug}` | `tag.politics.congress` |
-| Author | Document `_id` in Sanity | Ashley Simmons: `59d2b194-17eb-4526-ad4f-35aaf3ea874c` |
+Stored inside `body[]`.
 
-Reference shape: `{ _type: "reference", _ref: "category.politics" }`.
+```json
+{
+  "_type": "tweetEmbed",
+  "_key": "body-tweet-0",
+  "url": "https://x.com/user/status/1234567890"
+}
+```
 
-Tags in arrays also need `_key`: `{ _key: "tag-0", _type: "reference", _ref: "tag.politics.congress" }`.
+Rules:
 
-Verify author IDs exist in production before publishing.
+```txt
+URL must be a status URL on twitter.com, x.com, or mobile.twitter.com
+Path must include /status/{numericId}
+Optional field: caption
+No raw HTML, iframe code, screenshots, profile URLs, or tweet images
+```
+
+---
+
+### Other objects
+
+| Object               | Fields                                                                                 |
+| -------------------- | -------------------------------------------------------------------------------------- |
+| `editorialImage`     | Same media fields as `coverMedia` plus required `layout`: `inline`, `wide`, or `full`. |
+| `galleryImageItem`   | Same media fields as `coverMedia`.                                                     |
+| `seo`                | `title`, `description`, `ogImage`, `canonicalUrl`.                                     |
+| `pullQuote`          | Required `quote`; optional `attribution`, `sourceLabel`.                               |
+| `articleDivider`     | Required `style`: `line` or `spacer`.                                                  |
+| `videoEmbed`         | Required `provider` and `url`; optional `title`.                                       |
+| `sponsorAttribution` | Required `sponsorName` and `disclosure`; optional `sponsorUrl`.                        |
+
+---
+
+## Reference shapes
+
+Category:
+
+```json
+{ "_type": "reference", "_ref": "category.politics" }
+```
+
+Tag:
+
+```json
+{ "_key": "tag-0", "_type": "reference", "_ref": "tag.politics.congress" }
+```
+
+Author:
+
+```json
+{ "_type": "reference", "_ref": "59d2b194-17eb-4526-ad4f-35aaf3ea874c" }
+```
+
+Default author:
+
+```txt
+Ashley Simmons
+59d2b194-17eb-4526-ad4f-35aaf3ea874c
+```
+
+Verify author IDs exist before publishing.
 
 ---
 
 ## Canonical taxonomy
 
-8 categories, 37 tags. Tags must belong to the selected category. Never invent new categories or tags.
+Use exactly one category. Tags must belong to that category. Never invent categories or tags.
 
-| Category | Tags |
-|----------|------|
-| **US** (`us`) | Trump, Iran War, Crime, Abortion, Education, Weather |
-| **World** (`world`) | China, Europe, Middle East, Latin America, Africa |
-| **Politics** (`politics`) | Immigration, White House, Congress, Elections, Supreme Court |
-| **Business** (`business`) | Markets, Economy, Finance, Tariffs, Inflation, Real Estate |
-| **Science** (`science`) | Space, Life Sciences, Climate |
-| **Entertainment** (`entertainment`) | Movies, Television, Fashion, Music, Celebrity |
-| **Tech** (`tech`) | Artificial Intelligence, Social Media |
-| **Lifestyle** (`lifestyle`) | Food, Travel, Culture, Health, Beauty |
+| Category ref             | Allowed tag refs                                                                                                                                     |
+| ------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `category.us`            | `tag.us.trump`, `tag.us.iran-war`, `tag.us.crime`, `tag.us.abortion`, `tag.us.education`, `tag.us.weather`                                           |
+| `category.world`         | `tag.world.china`, `tag.world.europe`, `tag.world.middle-east`, `tag.world.latin-america`, `tag.world.africa`                                        |
+| `category.politics`      | `tag.politics.immigration`, `tag.politics.white-house`, `tag.politics.congress`, `tag.politics.elections`, `tag.politics.supreme-court`              |
+| `category.business`      | `tag.business.markets`, `tag.business.economy`, `tag.business.finance`, `tag.business.tariffs`, `tag.business.inflation`, `tag.business.real-estate` |
+| `category.science`       | `tag.science.space`, `tag.science.life-sciences`, `tag.science.climate`                                                                              |
+| `category.entertainment` | `tag.entertainment.movies`, `tag.entertainment.television`, `tag.entertainment.fashion`, `tag.entertainment.music`, `tag.entertainment.celebrity`    |
+| `category.tech`          | `tag.tech.artificial-intelligence`, `tag.tech.social-media`                                                                                          |
+| `category.lifestyle`     | `tag.lifestyle.food`, `tag.lifestyle.travel`, `tag.lifestyle.culture`, `tag.lifestyle.health`, `tag.lifestyle.beauty`                                |
 
-Slug reference (for `_ref` IDs):
-
-- **US:** `trump`, `iran-war`, `crime`, `abortion`, `education`, `weather`
-- **World:** `china`, `europe`, `middle-east`, `latin-america`, `africa`
-- **Politics:** `immigration`, `white-house`, `congress`, `elections`, `supreme-court`
-- **Business:** `markets`, `economy`, `finance`, `tariffs`, `inflation`, `real-estate`
-- **Science:** `space`, `life-sciences`, `climate`
-- **Entertainment:** `movies`, `television`, `fashion`, `music`, `celebrity`
-- **Tech:** `artificial-intelligence`, `social-media`
-- **Lifestyle:** `food`, `travel`, `culture`, `health`, `beauty`
-
-Source: `news-ingestion/src/utils/data/canonical-taxonomy.ts`.
+Current taxonomy: 8 categories, 37 tags.
 
 ---
 
-## Legacy / forbidden fields
+## Never write
 
-Do **not** write these on new or updated documents:
+Do not write these fields on new or updated article documents:
 
-| Field | Reason |
-|-------|--------|
-| `bodyTextOne`, `bodyRich`, `bodyBlocks` | Replaced by `body` |
-| `date` | Replaced by `publishedAt` |
-| `dek` | Replaced by `excerpt` |
-| `*Rank` (`mainHeadlineRank`, `frontlineRank`, etc.) | Removed from schema |
-| `*Until` (`frontlineUntil`, `justInUntil`, etc.) | Removed from schema |
-| `views`, `viewsAll`, `views7d`, `views30d` | Article views tracked in Supabase |
-| `topic` | Document type removed |
-| `epigraph`, `creditProvider`, `creditSourceUrl`, `creditLicense` | Renamed or removed from `coverMedia` |
+```txt
+bodyTextOne
+bodyRich
+bodyBlocks
+date
+dek
+topic
+views
+viewsAll
+views7d
+views30d
+mainHeadlineRank
+frontlineRank
+rightHeadlineRank
+justInRank
+mainHeadlineUntil
+frontlineUntil
+rightHeadlineUntil
+justInUntil
+cover.epigraph
+cover.creditProvider
+cover.creditSourceUrl
+cover.creditLicense
+cover.licenseUrl
+```
 
-Schema deploy does not remove stored legacy keys on existing documents. Old keys may still appear in dataset data until manually unset.
+Replacements:
+
+```txt
+body replaces bodyTextOne/bodyRich/bodyBlocks
+publishedAt replaces date
+excerpt replaces dek
+cover.caption replaces cover.epigraph
+cover.creditSource replaces cover.creditProvider
+cover.licenseOrRights replaces cover.creditLicense
+```
+
+Legacy fields may still exist on old stored documents until manually unset.
 
 ---
 
-## Required fields checklist (published `post`)
+## Published `post` minimum
 
-| Field | Rule |
-|-------|------|
-| `_type` | `"post"` |
-| `title` | ≥ 4 chars |
-| `tickerTitle` | ≤ 40 chars |
-| `slug.current` | Unique kebab-case |
-| `body` | Non-empty Portable Text |
-| `category` | Valid reference |
-| `cover` | Valid `coverMedia` with source, alt, license, credit |
-| `status` | `"published"` |
-| `publishedAt` | UTC ISO datetime |
-| `seo` | Nested object with title and description |
+A valid automated published `post` should include:
 
-Recommended defaults for automated publishing: see [`instructions-to-publish.md`](instructions-to-publish.md).
+```txt
+_type = "post"
+title
+tickerTitle
+excerpt
+slug.current
+body[]
+category reference
+optional valid tags[]
+author reference, usually Ashley Simmons
+cover with source, image/externalUrl, alt, licenseOrRights, credit
+seo.title
+seo.description
+status = "published"
+publishedAt = current UTC ISO
+updatedAt = same as publishedAt
+readTime = whole minutes
+priority = 3
+homepage flags = false unless requested
+```
