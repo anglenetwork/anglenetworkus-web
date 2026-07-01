@@ -28,6 +28,32 @@ function resolveArticleHref(row: ArticleRow): string | undefined {
   });
 }
 
+function toTagsGlimpseItem(
+  tag: TagRow,
+  article: ArticleRow & { slug: string },
+): TagsGlimpseItem {
+  const href = resolveArticleHref(article);
+  if (!href) {
+    throw new Error(
+      `assembleTagsGlimpseItems: unresolved href for ${article._id}`,
+    );
+  }
+
+  return {
+    tagSlug: tag.slug,
+    tagTitle: tag.title?.trim() || tag.slug,
+    article: {
+      title: article.title?.trim() || "Untitled",
+      slug: article.slug,
+      href,
+      readTime: article.readTime,
+      cover: article.cover as TagsGlimpseItem["article"]["cover"],
+      imageGallery:
+        article.imageGallery as TagsGlimpseItem["article"]["imageGallery"],
+    },
+  };
+}
+
 /** Picks up to four tags with distinct latest articles (skips tags without articles). */
 export async function assembleTagsGlimpseItems(
   tags: TagRow[],
@@ -37,31 +63,34 @@ export async function assembleTagsGlimpseItems(
   ) => Promise<ArticleRow | null | undefined>,
   maxItems = TAGS_GLIMPSE_TAG_COUNT,
 ): Promise<TagsGlimpseItem[]> {
-  const items: TagsGlimpseItem[] = [];
-  const excludeIds: string[] = [];
+  const initialArticles = await Promise.all(
+    tags.map((tag) => getLatestArticle(tag.slug, [])),
+  );
 
-  for (const tag of tags) {
-    if (items.length >= maxItems) break;
+  async function collectItems(
+    index: number,
+    excludeIds: Set<string>,
+    items: TagsGlimpseItem[],
+  ): Promise<TagsGlimpseItem[]> {
+    if (index >= tags.length || items.length >= maxItems) {
+      return items;
+    }
 
-    const article = await getLatestArticle(tag.slug, excludeIds);
+    const tag = tags[index];
+    let article = initialArticles[index];
+
+    if (article && excludeIds.has(article._id)) {
+      article = await getLatestArticle(tag.slug, [...excludeIds]);
+    }
+
     const href = article ? resolveArticleHref(article) : undefined;
-    if (!article?.slug || !href) continue;
+    if (article?.slug && href) {
+      excludeIds.add(article._id);
+      items.push(toTagsGlimpseItem(tag, article as ArticleRow & { slug: string }));
+    }
 
-    excludeIds.push(article._id);
-    items.push({
-      tagSlug: tag.slug,
-      tagTitle: tag.title?.trim() || tag.slug,
-      article: {
-        title: article.title?.trim() || "Untitled",
-        slug: article.slug,
-        href,
-        readTime: article.readTime,
-        cover: article.cover as TagsGlimpseItem["article"]["cover"],
-        imageGallery:
-          article.imageGallery as TagsGlimpseItem["article"]["imageGallery"],
-      },
-    });
+    return collectItems(index + 1, excludeIds, items);
   }
 
-  return items;
+  return collectItems(0, new Set(), []);
 }

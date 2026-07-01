@@ -40,7 +40,12 @@ function blockText(block) {
 
 export function portableTextToPlainText(blocks) {
   if (!Array.isArray(blocks)) return "";
-  return blocks.map(blockText).filter(Boolean).join(" ");
+  return blocks
+    .flatMap((block) => {
+      const text = blockText(block);
+      return text ? [text] : [];
+    })
+    .join(" ");
 }
 
 function addText(parts, value) {

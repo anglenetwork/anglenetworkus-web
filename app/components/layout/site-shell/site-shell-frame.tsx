@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import { HeaderClient } from "../navbar/header-client";
+import { LiveUpdatesTicker } from "../live-updates-ticker";
 import { Footer } from "../footer";
 import { isSubscriptionVisible } from "@/lib/subscriptions/is-subscription-visible";
 import type { SiteShellNav } from "./types";
@@ -15,6 +16,7 @@ export function SiteShellFrame({
   children,
   categories,
   menuColumns,
+  tickerPosts,
 }: SiteShellFrameProps) {
   const showSubscriptions = isSubscriptionVisible();
 
@@ -25,6 +27,7 @@ export function SiteShellFrame({
         menuColumns={menuColumns}
         showSubscriptions={showSubscriptions}
       />
+      <LiveUpdatesTicker posts={tickerPosts} />
       {children}
       <Footer menuColumns={menuColumns} />
     </div>

@@ -64,6 +64,7 @@
 // export default nextConfig;
 // next.config.ts
 import type { NextConfig } from "next";
+import "./lib/empty-polyfill-module.js";
 import { REMOTE_PATTERN_HOSTS } from "./lib/editorial-image/policy";
 
 /** Next ships a fixed polyfill module; our browserslist is modern-only (see package.json). */
@@ -85,7 +86,6 @@ const nextConfig: NextConfig = {
       "lucide-react",
       "@radix-ui/react-slot",
       "@radix-ui/react-dialog",
-      "@radix-ui/react-dropdown-menu",
       "@radix-ui/react-select",
       "@radix-ui/react-alert-dialog",
       "date-fns",
@@ -134,6 +134,10 @@ const nextConfig: NextConfig = {
   },
 
   async headers() {
+    if (process.env.NODE_ENV !== "production") {
+      return [];
+    }
+
     return [
       {
         // Cache optimized images

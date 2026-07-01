@@ -63,7 +63,7 @@ export function TweetEmbedBlock({ url, caption }: TweetEmbedBlockProps) {
           loading="lazy"
           referrerPolicy="strict-origin-when-cross-origin"
           allow="encrypted-media; fullscreen"
-          sandbox="allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox allow-forms"
+          sandbox="allow-scripts allow-popups allow-popups-to-escape-sandbox allow-forms"
         />
       </div>
       {trimmedCaption ? (

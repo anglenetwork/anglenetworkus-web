@@ -37,19 +37,20 @@ export async function hydrateBookmarkArticles(
     console.error("Error fetching bookmark articles by id from Sanity:", error);
   }
 
-  const missingSlugs = [
-    ...new Set(
-      bookmarks
-        .filter(
-          (bookmark) =>
-            !articlesByPublishedId[
-              publishedSanityDocumentId(bookmark.article_id)
-            ],
-        )
-        .map((bookmark) => bookmark.article_slug?.trim())
-        .filter((slug): slug is string => !!slug),
-    ),
-  ];
+  const missingSlugs: string[] = [];
+  const seenSlugs = new Set<string>();
+
+  for (const bookmark of bookmarks) {
+    if (articlesByPublishedId[publishedSanityDocumentId(bookmark.article_id)]) {
+      continue;
+    }
+
+    const slug = bookmark.article_slug?.trim();
+    if (!slug || seenSlugs.has(slug)) continue;
+
+    seenSlugs.add(slug);
+    missingSlugs.push(slug);
+  }
 
   if (missingSlugs.length === 0) {
     return articlesByPublishedId;

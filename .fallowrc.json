@@ -1,13 +1,7 @@
 {
   "$schema": "https://raw.githubusercontent.com/fallow-rs/fallow/main/schema.json",
   "entry": ["next.config.ts", "lib/empty-polyfill-module.js"],
-  "ignorePatterns": [
-    "scripts/**",
-    "app/components/article-family/OpinionMoreSection.tsx",
-    "app/components/article-family/opinion-index-constants.ts",
-    "app/tag/[slug]/components/TagTextNewsItem.tsx",
-    "app/tag/[slug]/components/TagArticleItem.tsx"
-  ],
+  "ignorePatterns": ["scripts/**"],
   "ignoreDependencies": ["eslint-config-next"],
   "duplicates": {
     "minOccurrences": 6,

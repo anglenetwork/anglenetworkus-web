@@ -22,7 +22,7 @@ describe("TweetEmbedBlock", () => {
     expect(iframe).toHaveAttribute("src", EMBED_SRC);
     expect(iframe).toHaveAttribute(
       "sandbox",
-      "allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox allow-forms",
+      "allow-scripts allow-popups allow-popups-to-escape-sandbox allow-forms",
     );
   });
 

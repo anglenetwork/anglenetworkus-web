@@ -5,6 +5,7 @@ import { getCoverImage } from "@/sanity/lib/utils";
 import { SectionHeader } from "../../ui/section-header";
 import {
   firstSectionFeaturedStoryTitle,
+  justInCategoryLabel,
   justInSecondaryTitle,
 } from "@/app/lib/typography/first-section";
 import type { JustInCarouselImage } from "./just-in-image-carousel";
@@ -32,6 +33,10 @@ interface Post {
   imageGallery?: GalleryImage[] | null;
   breakingNews?: boolean | null;
   developingStory?: boolean | null;
+  category?: {
+    title: string | null;
+    slug: string | null;
+  } | null;
 }
 
 function listingImageFromGallery(
@@ -73,7 +78,7 @@ interface LeftColumnLandingProps {
 
 export function LeftColumnLanding({ justInNews }: LeftColumnLandingProps) {
   return (
-    <div className="mb-8 px-0 text-left md:px-4 lg:sticky lg:top-20 lg:mb-0 lg:h-auto lg:overflow-hidden">
+    <div className="mb-8 px-0 text-left md:px-4 lg:sticky lg:top-[60px] lg:mb-0 lg:h-auto lg:overflow-hidden">
       <SectionHeader title="Just in" variant="news" accentStyle="minimal" />
 
       <div className="flex flex-col divide-y divide-dotted divide-news-border">
@@ -106,6 +111,11 @@ export function LeftColumnLanding({ justInNews }: LeftColumnLandingProps) {
                 />
               ) : null}
               <Link href={`/post/${post.slug}`} className="group block">
+                {post.category?.title ? (
+                  <span className={justInCategoryLabel}>
+                    {post.category.title}
+                  </span>
+                ) : null}
                 <h3
                   className={
                     isFirstArticle
