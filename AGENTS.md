@@ -53,3 +53,13 @@ When creating or publishing Sanity content, read [`docs/sanity-publishing.md`](d
 - Repo schema files are the source of truth; MCP `get_schema` can lag until `/studio` is deployed and opened.
 - Ingestion pipeline: Gunner creates drafts only; humans publish in Studio.
 - Audit legacy fields: `npm run sanity:audit-legacy-fields`
+
+## Sanity MCP
+
+Sanity MCP is configured in `opencode.json` as a remote server at `https://mcp.sanity.io`. To authenticate:
+
+```bash
+opencode mcp auth sanity
+```
+
+This opens a browser for OAuth authorization. Once authenticated, you can use Sanity tools by mentioning `sanity` in prompts (e.g., run GROQ queries, manage documents, explore schema).
