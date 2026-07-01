@@ -29,7 +29,7 @@ export default function ContactPage() {
           <div className="mx-auto flex size-12 items-center justify-center rounded-full bg-primary">
             <Mail className="size-6 text-primary-foreground" />
           </div>
-          <CardTitle className="text-balance font-sans font-semibold text-2xl">
+          <CardTitle className="text-balance font-display font-semibold text-2xl">
             Get in Touch
           </CardTitle>
           <CardDescription className="text-pretty font-sans text-base">

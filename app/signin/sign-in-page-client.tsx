@@ -188,7 +188,7 @@ export default function SignInPageClient({
           </div>
 
           {/* Heading */}
-          <h1 className="mb-2 text-center font-bold font-sans text-2xl">
+          <h1 className="mb-2 text-center font-bold font-display text-2xl">
             Sign in to continue
           </h1>
           <p className="mb-8 text-center font-sans text-muted-foreground text-sm">
@@ -312,7 +312,7 @@ export default function SignInPageClient({
                       </h2>
                     </Link>
                   ) : (
-                    <h2 className="mb-4 font-bold font-sans text-4xl text-shadow text-white">
+                    <h2 className="mb-4 font-bold font-display text-4xl text-shadow text-white">
                       {currentItem.title}
                     </h2>
                   )}

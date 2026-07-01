@@ -1,8 +1,9 @@
 /** Advertise promo block (`app/components/ui/thirdSection.tsx`) — headline wrapper */
-export const promoHeadline = "text-center font-sans leading-tight text-white";
+export const promoHeadline =
+  "text-center font-display leading-tight text-white";
 
 /** Advertise promo block — headline line 1 */
-export const promoHeadlineLine1 = "block text-lg font-light md:text-xl";
+export const promoHeadlineLine1 = "block text-lg font-medium md:text-xl";
 
 /** Advertise promo block — headline line 2 */
 export const promoHeadlineLine2 = "mt-2 block text-2xl font-medium md:text-4xl";
@@ -17,4 +18,4 @@ export const promoCtaButton =
 
 /** FifthSection — left column featured story title on image overlay */
 export const fifthSectionFeaturedOverlayTitle =
-  "line-clamp-4 font-sans text-xl font-semibold leading-snug tracking-tight text-white md:text-2xl xl:text-3xl";
+  "line-clamp-4 font-display text-xl font-semibold leading-snug tracking-tight text-white md:text-2xl xl:text-3xl";

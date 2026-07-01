@@ -17,7 +17,7 @@ const readTimeLabelVariants: Record<ReadTimeLabelVariant, string> = {
   muted:
     "mt-3 font-sans font-semibold text-muted-foreground text-xs uppercase tracking-wide",
   inline: "font-sans text-neutral-400 text-xs",
-  hero: "font-light font-sans text-xs text-white",
+  hero: "font-normal font-sans text-xs text-white",
 };
 
 export function formatReadTimeLabel(minutes?: number | null): string {

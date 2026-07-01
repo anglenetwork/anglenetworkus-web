@@ -23,8 +23,8 @@ export default function AdvertiseWithUsPage() {
         {/* Centered contact/partnership text overlaid on video */}
         <div className="absolute inset-0 z-10 flex items-center justify-center px-4">
           <div className="mx-auto max-w-3xl space-y-8 text-center">
-            <h1 className="font-sans text-5xl text-white leading-tight md:text-6xl lg:text-7xl">
-              <div className="font-light text-4xl">Your Message.</div>
+            <h1 className="font-display text-5xl text-white leading-tight md:text-6xl lg:text-7xl">
+              <div className="font-medium text-4xl">Your Message.</div>
               <div className="font-medium text-5xl">Our Audience.</div>
               <div className="font-bold">Real Impact.</div>
             </h1>

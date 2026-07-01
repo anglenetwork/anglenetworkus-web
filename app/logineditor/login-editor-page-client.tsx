@@ -16,7 +16,7 @@ function LoginForm() {
     <main className="flex min-h-screen items-center justify-center bg-background">
       <div className="mx-auto w-full max-w-md px-4">
         <div className="rounded-lg border border-border bg-card p-8 shadow-lg">
-          <h1 className="mb-6 text-center font-bold font-sans text-2xl">
+          <h1 className="mb-6 text-center font-bold font-display text-2xl">
             Sanity Studio Access
           </h1>
           <p className="mb-8 text-center font-sans text-muted-foreground">

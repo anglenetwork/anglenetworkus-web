@@ -17,7 +17,7 @@ export function Wordmark({
   return (
     <span
       className={cn(
-        "font-bold font-sans uppercase leading-none tracking-tight",
+        "font-bold font-display uppercase leading-none tracking-tight",
         textColor,
         className,
         titleClassName,
