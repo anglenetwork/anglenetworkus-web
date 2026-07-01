@@ -6,7 +6,7 @@ export const profileSectionHeader =
 
 /** My profile — section header title */
 export const profileSectionTitle =
-  "mb-2 font-bold font-sans text-2xl text-neutral-900 leading-tight tracking-tight xl:text-3xl";
+  "mb-2 font-bold font-display text-2xl text-neutral-900 leading-tight tracking-tight xl:text-3xl";
 
 /** My profile — section header description */
 export const profileSectionDescription =
@@ -14,7 +14,7 @@ export const profileSectionDescription =
 
 /** My profile — profile details display name */
 export const profileDetailsDisplayName =
-  "font-bold font-sans text-3xl text-neutral-900 leading-tight tracking-tight";
+  "font-bold font-display text-3xl text-neutral-900 leading-tight tracking-tight";
 
 /** My profile — profile details email subtitle */
 export const profileDetailsEmail =
@@ -67,7 +67,7 @@ export const profileButtonSecondary =
 
 /** My profile — card title (sign in, error, not found) */
 export const profileCardTitle =
-  "font-bold font-sans text-2xl text-neutral-900 leading-tight tracking-tight";
+  "font-bold font-display text-2xl text-neutral-900 leading-tight tracking-tight";
 
 /** My profile — card / empty body copy */
 export const profileCardBody =
@@ -78,7 +78,7 @@ export const profileSignInLabel =
   "font-sans text-sm font-semibold text-neutral-900";
 
 /** My profile — BookmarksList saved article title */
-export const bookmarksListTitle = `mb-2 line-clamp-2 font-sans text-lg font-semibold leading-snug tracking-normal text-neutral-900 ${articleTitleLink}`;
+export const bookmarksListTitle = `mb-2 line-clamp-2 font-display text-lg font-semibold leading-snug tracking-normal text-neutral-900 ${articleTitleLink}`;
 
 /** My profile — BookmarksList metadata */
 export const bookmarksListMeta =
@@ -122,7 +122,7 @@ export const profileNewsletterNote =
 
 /** My profile — modal */
 export const profileModalTitle =
-  "font-bold font-sans text-2xl text-neutral-900 leading-tight tracking-tight";
+  "font-bold font-display text-2xl text-neutral-900 leading-tight tracking-tight";
 
 export const profileModalDescription = profileCardBody;
 
@@ -131,20 +131,20 @@ export const profileSubscriptionEyebrow =
   "mb-4 inline-block rounded-full bg-red-600/10 px-3 py-1 font-sans text-sm font-semibold uppercase tracking-wide text-red-600";
 
 export const profileSubscriptionHeroTitle =
-  "mb-2 font-bold font-sans text-4xl text-neutral-900 leading-tight tracking-tight";
+  "mb-2 font-bold font-display text-4xl text-neutral-900 leading-tight tracking-tight";
 
 export const profileSubscriptionHeroTitleAccent = "text-red-600";
 
 export const profileSubscriptionHeroSubtitle = profileCardBody;
 
 export const profileSubscriptionSectionTitle =
-  "mb-2 font-bold font-sans text-3xl text-neutral-900 leading-tight tracking-tight";
+  "mb-2 font-bold font-display text-3xl text-neutral-900 leading-tight tracking-tight";
 
 export const profileSubscriptionSectionSubtitle =
   "font-sans text-base text-neutral-400 leading-relaxed";
 
 export const profileSubscriptionPlanPrice =
-  "mb-2 font-bold font-sans text-5xl text-neutral-900 leading-tight tracking-tight";
+  "mb-2 font-bold font-display text-5xl text-neutral-900 leading-tight tracking-tight";
 
 export const profileSubscriptionPriceAmount =
   "font-semibold font-sans text-3xl text-neutral-900";
@@ -168,13 +168,13 @@ export const profileSubscriptionStatLabel =
   "mb-1 font-sans text-sm font-medium text-neutral-400";
 
 export const profileSubscriptionStatValue =
-  "font-bold font-sans text-2xl text-neutral-900 capitalize";
+  "font-bold font-display text-2xl text-neutral-900 capitalize";
 
 export const profileSubscriptionBadge =
   "mb-4 inline-block rounded-full bg-red-600 px-3 py-1 font-sans text-xs font-semibold uppercase tracking-wide text-white";
 
 export const profileSubscriptionFaqTitle =
-  "mb-8 font-bold font-sans text-2xl text-neutral-900 leading-tight tracking-tight";
+  "mb-8 font-bold font-display text-2xl text-neutral-900 leading-tight tracking-tight";
 
 export const profileSubscriptionFaqQuestion =
   "mb-2 font-semibold font-sans text-base text-neutral-900";
@@ -189,7 +189,7 @@ export const profileSubscriptionLoading = profileCardBody;
 
 /** My profile — subscription success / alert */
 export const profileAlertErrorTitle =
-  "mb-2 font-bold font-sans text-xl text-red-900";
+  "mb-2 font-bold font-display text-xl text-red-900";
 
 export const profileAlertErrorBody =
   "font-sans text-base font-medium text-red-700";

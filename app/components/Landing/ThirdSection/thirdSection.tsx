@@ -49,7 +49,7 @@ export default function ThirdSection({ articles }: ThirdSectionProps) {
             >
               <h3
                 className={cn(
-                  "font-sans font-semibold text-base text-news-text leading-snug tracking-normal md:text-base",
+                  "font-display font-semibold text-base text-news-text leading-snug tracking-normal md:text-base",
                   homepageArticleTitleLink,
                 )}
               >

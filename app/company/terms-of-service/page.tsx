@@ -14,7 +14,7 @@ export async function generateMetadata(): Promise<Metadata> {
 export default function TermsOfServicePage() {
   return (
     <div className="container mx-auto max-w-4xl px-4 py-16">
-      <h1 className="mb-6 font-bold font-sans text-3xl">Terms of Service</h1>
+      <h1 className="mb-6 font-bold font-display text-3xl">Terms of Service</h1>
       <div className="prose prose-sm max-w-none font-sans text-sm">
         <p className="mb-4 text-gray-600 text-sm">
           Effective Date: {termsOfServiceConfig.effectiveDate}

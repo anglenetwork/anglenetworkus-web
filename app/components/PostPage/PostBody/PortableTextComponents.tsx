@@ -106,7 +106,7 @@ function renderEditorialImageBlock(
   );
 }
 
-/** Portable Text: `font-body` for paragraphs/lists; `font-sans` for headings, block quotes, captions, and meta. */
+/** Portable Text: `font-body` for paragraphs/lists; `font-display` for headings; `font-sans` for block quotes, captions, and meta. */
 export const portableTextComponents: PortableTextComponents = {
   types: {
     image: ({ value }: PortableTextComponentProps) => {

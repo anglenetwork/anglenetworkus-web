@@ -41,7 +41,7 @@ export function MostReadItem({
           {index + 1}
         </div>
         <div className="flex-1 space-y-2">
-          <h3 className="font-medium font-sans text-base text-news-surface leading-snug tracking-normal">
+          <h3 className="font-display font-semibold text-base text-news-surface leading-snug tracking-normal">
             <Link
               href={article.href ?? `/post/${article.slug}`}
               className={articleTitleLink}

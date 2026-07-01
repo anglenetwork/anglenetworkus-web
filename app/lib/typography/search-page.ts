@@ -28,7 +28,7 @@ export const searchResultSponsorLabel =
   "font-semibold font-sans text-xs text-amber-800";
 
 /** Search page — result card title */
-export const searchResultTitle = `mb-2 font-sans text-sm font-semibold leading-snug tracking-normal text-neutral-900 md:text-base ${articleTitleLink}`;
+export const searchResultTitle = `mb-2 font-display text-sm font-semibold leading-snug tracking-normal text-neutral-900 md:text-base ${articleTitleLink}`;
 
 /** Search page — result excerpt (ArticleFamilyCard search variant) */
 export const searchResultExcerpt =

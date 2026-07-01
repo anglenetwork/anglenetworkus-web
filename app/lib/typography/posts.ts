@@ -6,7 +6,7 @@ const regularPostCategory =
 
 /** Regular post — page title (PostHeader h1) */
 export const regularPostTitle =
-  "font-sans text-2xl font-bold leading-tight tracking-tight text-neutral-900 sm:text-2xl sm:leading-tight md:text-3xl lg:text-5xl xl:font-semibold xl:leading-tight";
+  "font-display text-2xl font-bold leading-tight tracking-tight text-neutral-900 sm:text-2xl sm:leading-tight md:text-3xl lg:text-5xl xl:font-semibold xl:leading-tight";
 
 /** Regular post — dek / excerpt */
 export const regularPostExcerpt =
@@ -42,19 +42,19 @@ export const regularPostBodyParagraph =
 
 /** Regular post — body h1 (in-article) */
 export const regularPostBodyH1 =
-  "font-sans text-3xl font-semibold leading-tight tracking-tight text-neutral-900 sm:text-4xl md:text-5xl";
+  "font-display text-3xl font-semibold leading-tight tracking-tight text-neutral-900 sm:text-4xl md:text-5xl";
 
 /** Regular post — body h2 */
 export const regularPostBodyH2 =
-  "font-sans text-2xl font-semibold leading-snug tracking-tight text-neutral-900 sm:text-3xl md:text-4xl lg:text-4xl";
+  "font-display text-2xl font-semibold leading-snug tracking-tight text-neutral-900 sm:text-3xl md:text-4xl lg:text-4xl";
 
 /** Regular post — body h3 */
 export const regularPostBodyH3 =
-  "font-sans text-xl font-semibold leading-snug text-neutral-900 sm:text-2xl md:text-2xl";
+  "font-display text-xl font-semibold leading-snug text-neutral-900 sm:text-2xl md:text-2xl";
 
 /** Regular post — body h4 */
 export const regularPostBodyH4 =
-  "font-sans text-lg font-medium leading-snug text-neutral-900";
+  "font-display text-lg font-medium leading-snug text-neutral-900";
 
 /** Regular post — body blockquote / pull quote */
 export const regularPostBodyQuote =
@@ -81,7 +81,7 @@ export const nonRegularPostTypeLabel =
 
 /** Non-regular post — page title */
 export const nonRegularPostTitle =
-  "font-sans text-2xl font-bold leading-tight tracking-tight text-neutral-950 md:text-3xl lg:text-4xl";
+  "font-display text-2xl font-bold leading-tight tracking-tight text-neutral-950 md:text-3xl lg:text-4xl";
 
 /** Non-regular post — dek / excerpt */
 export const nonRegularPostExcerpt =

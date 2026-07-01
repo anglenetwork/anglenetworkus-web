@@ -12,11 +12,11 @@ export const techExclusiveBadge = categoryExclusiveBadge;
 
 /** FourthSection — Most Read feed header title */
 export const mostReadFeedTitle =
-  "font-bold font-sans text-3xl text-news-text leading-tight tracking-tight md:text-2xl";
+  "font-bold font-display text-3xl text-news-text leading-tight tracking-tight md:text-2xl";
 
 /** FourthSection — Most Read feed “See all” link */
 export const mostReadFeedSeeAllLink =
   "font-bold font-sans text-base text-news-text leading-none tracking-normal";
 
 /** FourthSection — Most Read feed item headline */
-export const mostReadFeedHeadline = `font-semibold font-sans text-lg text-news-text leading-snug tracking-normal md:text-base ${homepageArticleTitleLink}`;
+export const mostReadFeedHeadline = `font-semibold font-display text-lg text-news-text leading-snug tracking-normal md:text-base ${homepageArticleTitleLink}`;

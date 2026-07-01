@@ -7,7 +7,7 @@ export function CategoryArticlesEmptyState({
 }) {
   return (
     <div className="py-12 text-center">
-      <h2 className="mb-3 font-sans font-semibold text-2xl text-news-text">
+      <h2 className="mb-3 font-display font-semibold text-2xl text-news-text">
         No articles yet
       </h2>
       <p className="mx-auto mb-8 max-w-md font-sans text-news-muted">

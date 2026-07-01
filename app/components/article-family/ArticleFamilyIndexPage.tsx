@@ -217,7 +217,7 @@ function EditorialTwoColumnHero({
               "rounded-lg bg-news-surface lg:col-span-4",
             )}
           >
-            <h2 className="mb-6 font-bold font-sans text-lg text-neutral-900 md:mb-8 md:text-xl">
+            <h2 className="mb-6 font-bold font-display text-lg text-neutral-900 md:mb-8 md:text-xl">
               {sidebarTitle}
             </h2>
             <AnalysisListSection articles={sidebarArticles} variant="sidebar" />
@@ -280,7 +280,7 @@ function AnalysisIndexModule({
       ) : null}
       {showMoreSection ? (
         <section className="rounded-lg bg-background">
-          <h2 className="mb-4 font-bold font-sans text-lg text-neutral-900 md:text-xl">
+          <h2 className="mb-4 font-bold font-display text-lg text-neutral-900 md:text-xl">
             More Analysis
           </h2>
           <AnalysisMoreSection
@@ -348,7 +348,7 @@ export default function ArticleFamilyIndexPage({
     return (
       <SitePageWidth variant="narrow" className="py-10 md:py-14">
         <header className="mb-10 border-neutral-200 border-b pb-6">
-          <h1 className="font-bold font-sans text-3xl text-neutral-900 md:text-4xl">
+          <h1 className="font-bold font-display text-3xl text-neutral-900 md:text-4xl">
             {title}
           </h1>
           {description ? (
