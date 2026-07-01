@@ -3,7 +3,7 @@ import "server-only";
 import { supabaseAdmin } from "@/lib/supabase/admin";
 import { EDITORIAL_RANKING_TYPES } from "@/app/lib/article-family/ranking-policy";
 
-export const ARTICLE_METRIC_TYPES = [
+const ARTICLE_METRIC_TYPES = [
   "post",
   "opinion",
   "analysis",
@@ -12,7 +12,7 @@ export const ARTICLE_METRIC_TYPES = [
 
 export type ArticleMetricType = (typeof ARTICLE_METRIC_TYPES)[number];
 
-export type ArticleMetricsSnapshot = {
+type ArticleMetricsSnapshot = {
   viewsAll: number;
   views7d: number;
   views30d: number;
@@ -76,7 +76,7 @@ export async function recordArticleView({
   if (error) throw error;
 }
 
-export async function getArticleMetrics(
+async function getArticleMetrics(
   articleId: string,
 ): Promise<ArticleMetricsSnapshot | null> {
   try {
@@ -179,7 +179,7 @@ export async function getMostReadPosts({
   }
 }
 
-export async function getMostReadByType({
+async function getMostReadByType({
   type,
   limit,
 }: {

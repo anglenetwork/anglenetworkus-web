@@ -1,2 +1,2 @@
 export { TagsGlimpse } from "./tags-glimpse";
-export type { TagsGlimpseItem, TagsGlimpseProps } from "./types";
+export type { TagsGlimpseItem } from "./types";

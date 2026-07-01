@@ -11,8 +11,6 @@ import {
   promoHeadlineLine3,
 } from "@/app/lib/typography/fifth-section";
 
-export { PROMO_VIDEO_SRC } from "@/lib/pexels-video";
-
 export function ThirdSection() {
   return (
     <div className="relative h-96 w-full overflow-hidden rounded-md bg-neutral-900">

@@ -86,7 +86,9 @@ export async function assembleTagsGlimpseItems(
     const href = article ? resolveArticleHref(article) : undefined;
     if (article?.slug && href) {
       excludeIds.add(article._id);
-      items.push(toTagsGlimpseItem(tag, article as ArticleRow & { slug: string }));
+      items.push(
+        toTagsGlimpseItem(tag, article as ArticleRow & { slug: string }),
+      );
     }
 
     return collectItems(index + 1, excludeIds, items);

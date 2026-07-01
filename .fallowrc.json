@@ -28,6 +28,10 @@
     {
       "file": "app/components/CategoryPage/index.ts",
       "exports": ["*"]
+    },
+    {
+      "file": "app/components/Landing/homepage-below-fold.tsx",
+      "exports": ["HomepageBelowFoldSections"]
     }
   ],
   "health": {
