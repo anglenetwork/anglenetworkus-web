@@ -62,7 +62,7 @@ export function CenterColumnLanding({
     <div className="lg:px-6">
       {/* Main Story */}
       {mainStory.map((post) => (
-        <article key={post._id} className="mb-8">
+        <article key={post._id} className="mb-8 mt-5 lg:mt-0">
           <Link href={`/post/${post.slug}`} className="group block">
             <h1 className={mainHeadlineMobileTitle}>{post.title}</h1>
           </Link>

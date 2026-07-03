@@ -4,7 +4,6 @@ import {
   FOOTER_CATEGORY_GRID_COLUMNS,
   FOOTER_CATEGORY_GRID_ROWS,
 } from "../footer-category-grid";
-import type { NavMenuColumn } from "../menu-columns";
 
 function category(slug: string, name: string) {
   return {
@@ -15,16 +14,12 @@ function category(slug: string, name: string) {
 }
 
 describe("buildFooterCategoryGrid", () => {
-  it("lays out categories into two rows of five columns", () => {
-    const menuColumns: NavMenuColumn[] = [
-      {
-        categories: Array.from({ length: 8 }, (_, index) =>
-          category(`cat-${index}`, `Category ${index}`),
-        ),
-      },
-    ];
+  it("lays out categories into two rows of five columns in navbar order", () => {
+    const menuCategories = Array.from({ length: 8 }, (_, index) =>
+      category(`cat-${index}`, `Category ${index}`),
+    );
 
-    const rows = buildFooterCategoryGrid(menuColumns);
+    const rows = buildFooterCategoryGrid(menuCategories);
 
     expect(rows).toHaveLength(FOOTER_CATEGORY_GRID_ROWS);
     expect(rows[0]).toHaveLength(FOOTER_CATEGORY_GRID_COLUMNS);

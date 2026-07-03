@@ -20,19 +20,3 @@ export const minimalSectionTitle = {
   news: "font-bold font-sans text-base uppercase tracking-normal text-black",
   dark: "font-bold font-sans text-base uppercase tracking-normal text-white",
 } as const;
-
-/** SectionHeader small-dot — uppercase kicker title (regular size) */
-export const smallDotSectionTitle = {
-  light:
-    "font-bold font-sans text-sm uppercase tracking-normal text-foreground",
-  news: "font-bold font-sans text-sm uppercase tracking-normal text-news-text",
-  dark: "font-bold font-sans text-sm uppercase tracking-normal text-white",
-} as const;
-
-/** SectionHeader small-dot — uppercase kicker title (large size) */
-export const smallDotSectionTitleLarge = {
-  light:
-    "font-bold font-sans text-lg uppercase tracking-normal text-foreground",
-  news: "font-bold font-sans text-lg uppercase tracking-normal text-news-text",
-  dark: "font-bold font-sans text-lg uppercase tracking-normal text-white",
-} as const;

@@ -18,3 +18,12 @@ export const categorySecondaryRowTitle = {
 /** SecondSection — EXCLUSIVE badge (when applicable) */
 export const categoryExclusiveBadge =
   "inline-block bg-news-primary px-1.5 py-0.5 font-bold font-sans text-[10px] text-white uppercase tracking-wide";
+
+/** Category hero — dek/excerpt beneath the featured headline */
+export const categoryFeaturedDek =
+  "mt-4 max-w-2xl font-sans text-base text-news-muted leading-relaxed";
+
+/** Category hero — "Also in {category}" text-only side list: kicker + title */
+export const categoryTextItemKicker =
+  "mb-2 block font-sans font-semibold text-[11px] text-news-primary uppercase tracking-wide";
+export const categoryTextItemTitle = `font-semibold font-display text-lg text-news-text leading-snug tracking-normal ${homepageArticleTitleLink}`;

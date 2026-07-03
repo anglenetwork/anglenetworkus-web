@@ -9,4 +9,6 @@ export type TagsGlimpseItem = {
 export type TagsGlimpseProps = {
   items: TagsGlimpseItem[];
   variant?: "news" | "dark";
+  divideStyle?: "dotted" | "solid";
+  imageAspectClassName?: string;
 };

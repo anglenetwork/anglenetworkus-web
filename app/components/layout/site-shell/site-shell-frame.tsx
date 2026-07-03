@@ -15,7 +15,7 @@ interface SiteShellFrameProps extends SiteShellNav {
 export function SiteShellFrame({
   children,
   categories,
-  menuColumns,
+  menuCategories,
   tickerPosts,
 }: SiteShellFrameProps) {
   const showSubscriptions = isSubscriptionVisible();
@@ -24,12 +24,12 @@ export function SiteShellFrame({
     <div className="min-h-screen bg-white">
       <HeaderClient
         categories={categories}
-        menuColumns={menuColumns}
+        menuCategories={menuCategories}
         showSubscriptions={showSubscriptions}
       />
       <LiveUpdatesTicker posts={tickerPosts} />
       {children}
-      <Footer menuColumns={menuColumns} />
+      <Footer menuCategories={menuCategories} />
     </div>
   );
 }

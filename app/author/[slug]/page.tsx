@@ -105,7 +105,7 @@ export default async function AuthorPage({
     <>
       <JsonLdScript data={personLd} />
       <JsonLdScript data={breadcrumbLd} />
-      <SitePageWidth variant="narrow" className="py-10 md:py-14">
+      <SitePageWidth className="py-10 md:py-14">
         <header className="mb-10 border-neutral-200 border-b pb-6">
           <h1 className="font-bold font-display text-3xl text-neutral-900 md:text-4xl">
             {author.name}

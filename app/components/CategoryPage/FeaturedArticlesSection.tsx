@@ -9,6 +9,7 @@ import {
 } from "@/app/components/ui/news-headline-row";
 
 interface FeaturedArticlesSectionProps {
+  categoryName: string;
   featuredArticles: {
     leftColumn: Article[];
     centerArticle: Article;
@@ -30,11 +31,13 @@ function SideArticleList({
   articles,
   variant,
   layout = "stacked",
+  divideStyle = "dotted",
   className,
 }: {
   articles: Article[];
   variant: "light" | "news" | "dark";
-  layout?: "stacked" | "compact";
+  layout?: "stacked" | "compact" | "text";
+  divideStyle?: "dotted" | "solid";
   className?: string;
 }) {
   const divideClass =
@@ -43,13 +46,14 @@ function SideArticleList({
   return (
     <div
       className={cn(
-        "flex flex-col divide-y divide-dotted",
+        "flex flex-col divide-y",
+        divideStyle === "dotted" && "divide-dotted",
         divideClass,
         className,
       )}
     >
       {articles.map((article) => (
-        <div key={article.id} className="py-4 first:pt-0 last:pb-0">
+        <div key={article.id} className="py-5 first:pt-0 last:pb-0">
           <FeatureSideItem
             article={article}
             variant={variant}
@@ -61,7 +65,16 @@ function SideArticleList({
   );
 }
 
+function AlsoInLabel({ categoryName }: { categoryName: string }) {
+  return (
+    <p className="mb-6 font-sans text-news-muted text-xs uppercase tracking-wide">
+      Also in {categoryName}
+    </p>
+  );
+}
+
 export function FeaturedArticlesSection({
+  categoryName,
   featuredArticles,
   headlineRowArticles,
 }: FeaturedArticlesSectionProps) {
@@ -80,25 +93,20 @@ export function FeaturedArticlesSection({
             variant={variant}
           />
           {sideArticles.length > 0 ? (
-            <div className="mt-8">
+            <div className="mt-10">
+              <AlsoInLabel categoryName={categoryName} />
               <SideArticleList
                 articles={sideArticles}
                 variant={variant}
-                layout="compact"
+                layout="text"
+                divideStyle="solid"
               />
             </div>
           ) : null}
         </div>
 
-        <div className="hidden grid-cols-[1fr_3fr_1fr] divide-x divide-dotted divide-news-border xl:grid">
-          <div className="min-w-0 px-6 py-0">
-            <SideArticleList
-              articles={featuredArticles.leftColumn}
-              variant={variant}
-            />
-          </div>
-
-          <div className="min-w-0 px-6">
+        <div className="hidden grid-cols-[1.7fr_1fr] divide-x divide-news-border xl:grid">
+          <div className="min-w-0 pr-10">
             <FeatureHero
               article={featuredArticles.centerArticle}
               variant={variant}
@@ -106,10 +114,13 @@ export function FeaturedArticlesSection({
             />
           </div>
 
-          <div className="min-w-0 px-6 py-0">
+          <div className="min-w-0 pl-10">
+            <AlsoInLabel categoryName={categoryName} />
             <SideArticleList
-              articles={featuredArticles.rightColumn}
+              articles={sideArticles}
               variant={variant}
+              layout="text"
+              divideStyle="solid"
             />
           </div>
         </div>

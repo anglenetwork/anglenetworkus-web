@@ -139,6 +139,7 @@ export default async function CategoryPageRoute({
         "",
       readTime: typeof post.readTime === "number" ? post.readTime : null,
       category: post.category?.title || categoryName,
+      tag: post.tags?.[0]?.title || undefined,
       imageUrl: coverData?.src,
       imageAlt: coverData?.alt,
       imageCredit: formatImageCredit(post.cover) ?? undefined,

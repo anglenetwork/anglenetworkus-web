@@ -8,6 +8,8 @@ export interface Article {
   publishedAt: string;
   readTime?: number | null;
   category: string;
+  /** First tag title, used as a kicker label distinct from the page's own category. */
+  tag?: string;
   imageUrl?: string;
   imageAlt?: string;
   imageCredit?: string;

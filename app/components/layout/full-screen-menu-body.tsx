@@ -2,10 +2,7 @@
 
 import type { RefObject } from "react";
 import { cn } from "@/lib/utils";
-import type {
-  NavMenuCategory,
-  NavMenuColumn,
-} from "@/app/lib/nav/menu-columns";
+import type { NavMenuCategory } from "@/app/lib/nav/menu-columns";
 import { SearchBar } from "../ui/search-bar";
 import {
   MenuActionLinks,
@@ -15,7 +12,6 @@ import {
 
 interface FullScreenMenuBodyProps {
   visible: boolean;
-  menuColumns: NavMenuColumn[];
   menuCategories: NavMenuCategory[];
   xlMenuRows: (NavMenuCategory | null)[][];
   onClose: () => void;
@@ -24,7 +20,6 @@ interface FullScreenMenuBodyProps {
 
 export function FullScreenMenuBody({
   visible,
-  menuColumns,
   menuCategories,
   xlMenuRows,
   onClose,
@@ -33,7 +28,7 @@ export function FullScreenMenuBody({
   return (
     <div
       className={cn(
-        "space-y-6 px-4 pb-4 transition-all duration-700 ease-out sm:px-6 sm:pb-6 md:space-y-12 lg:px-16 lg:pb-16 xl:px-0 xl:pb-0",
+        "space-y-6 pb-4 transition-all duration-700 ease-out sm:pb-6 md:space-y-12 lg:pb-16 xl:pb-0",
         visible
           ? "translate-y-0 pt-2 opacity-100 md:pt-0"
           : "translate-y-8 opacity-0",
@@ -54,20 +49,13 @@ export function FullScreenMenuBody({
         <MenuCategoryAccordion categories={menuCategories} onClose={onClose} />
       </div>
 
-      <div className="hidden gap-12 md:grid md:grid-cols-2 lg:grid-cols-2 xl:hidden">
-        {menuColumns.map((column, columnIndex) => (
-          <div
-            key={`menu-column-${columnIndex}`}
-            className="flex flex-col gap-8"
-          >
-            {column.categories.map((category) => (
-              <MenuCategorySection
-                key={category.slug}
-                category={category}
-                onClose={onClose}
-              />
-            ))}
-          </div>
+      <div className="hidden gap-8 md:grid md:grid-cols-2 xl:hidden">
+        {menuCategories.map((category) => (
+          <MenuCategorySection
+            key={category.slug}
+            category={category}
+            onClose={onClose}
+          />
         ))}
       </div>
 

@@ -127,38 +127,36 @@ function SubscriptionsPageContent() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-secondary/10 font-sans">
-      <div className="mx-auto max-w-7xl px-2">
-        <ProfileSectionHeader
-          title="Subscriptions"
-          description="Manage your subscription and explore upgrade options"
-        />
-        {state.loading ? (
-          <div className="py-16 text-center">
-            <div className={profileSubscriptionLoading}>
-              Loading subscription data…
-            </div>
+      <ProfileSectionHeader
+        title="Subscriptions"
+        description="Manage your subscription and explore upgrade options"
+      />
+      {state.loading ? (
+        <div className="py-16 text-center">
+          <div className={profileSubscriptionLoading}>
+            Loading subscription data…
           </div>
-        ) : (
-          <>
-            <SubscriptionsCurrentPlan
-              originalTier={state.originalTier}
-              billingYearly={state.billingYearly}
-              validUntil={state.validUntil}
-              status={state.status}
-              error={state.error}
-              cancelLoading={state.cancelLoading}
-              onCancel={cancelProAtPeriodEnd}
-            />
-            <SubscriptionsUpgradeSection
-              effectiveTier={effectiveTier}
-              billingYearly={state.billingYearly}
-              checkoutLoading={state.checkoutLoading}
-              onUpgrade={handleUpgrade}
-            />
-            <SubscriptionsFaq />
-          </>
-        )}
-      </div>
+        </div>
+      ) : (
+        <>
+          <SubscriptionsCurrentPlan
+            originalTier={state.originalTier}
+            billingYearly={state.billingYearly}
+            validUntil={state.validUntil}
+            status={state.status}
+            error={state.error}
+            cancelLoading={state.cancelLoading}
+            onCancel={cancelProAtPeriodEnd}
+          />
+          <SubscriptionsUpgradeSection
+            effectiveTier={effectiveTier}
+            billingYearly={state.billingYearly}
+            checkoutLoading={state.checkoutLoading}
+            onUpgrade={handleUpgrade}
+          />
+          <SubscriptionsFaq />
+        </>
+      )}
     </div>
   );
 }

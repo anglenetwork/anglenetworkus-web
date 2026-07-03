@@ -150,7 +150,7 @@ export default function FourthSection({
         </div>
 
         {mostRead.length > 0 ? (
-          <div className="bg-black py-6 text-white max-lg:border-white/15 max-lg:border-t lg:px-6 lg:py-6">
+          <div className="bg-black py-6 text-white max-lg:border-white/15 max-lg:border-t max-xl:px-4 sm:max-xl:px-6 lg:py-6 xl:px-6">
             <MostReadFeed items={mostRead} />
           </div>
         ) : null}

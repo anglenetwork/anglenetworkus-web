@@ -2,13 +2,17 @@ import Link from "next/link";
 import { cn } from "@/lib/utils";
 import type { Article } from "./types";
 import { ImageRenderer } from "../ui/image-renderer";
-import { categorySecondaryRowTitle } from "@/app/lib/typography/second-section";
+import {
+  categorySecondaryRowTitle,
+  categoryTextItemKicker,
+  categoryTextItemTitle,
+} from "@/app/lib/typography/second-section";
 import { ReadTimeLabel } from "@/app/components/ui/read-time-label";
 
 interface FeatureSideItemProps {
   article: Article;
   variant?: "light" | "news" | "dark";
-  layout?: "stacked" | "compact";
+  layout?: "stacked" | "compact" | "text";
 }
 
 export function FeatureSideItem({
@@ -21,6 +25,26 @@ export function FeatureSideItem({
     article.imageUrl ||
     "/placeholder.svg?height=200&width=300&query=news article";
   const readTimeClassName = variant === "news" ? "text-neutral-600" : undefined;
+
+  if (layout === "text") {
+    const kicker = article.tag || article.category;
+
+    return (
+      <article className="group">
+        {kicker ? (
+          <span className={categoryTextItemKicker}>{kicker}</span>
+        ) : null}
+        <Link href={href} className="block">
+          <h3 className={categoryTextItemTitle}>{article.title}</h3>
+        </Link>
+        <ReadTimeLabel
+          minutes={article.readTime}
+          variant={variant}
+          className={readTimeClassName}
+        />
+      </article>
+    );
+  }
 
   if (layout === "compact") {
     return (

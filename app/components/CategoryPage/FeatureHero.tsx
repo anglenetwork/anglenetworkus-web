@@ -3,7 +3,10 @@ import { cn } from "@/lib/utils";
 import { ExcerptCreditCaption } from "@/app/helpers";
 import type { Article } from "./types";
 import { ImageRenderer } from "../ui/image-renderer";
-import { categoryFeaturedTitle } from "@/app/lib/typography/second-section";
+import {
+  categoryFeaturedDek,
+  categoryFeaturedTitle,
+} from "@/app/lib/typography/second-section";
 import { ReadTimeLabel } from "@/app/components/ui/read-time-label";
 
 interface FeatureHeroProps {
@@ -65,6 +68,16 @@ export function FeatureHero({
           {article.title}
         </h2>
       </Link>
+      {article.excerpt ? (
+        <p
+          className={cn(
+            categoryFeaturedDek,
+            variant === "dark" && "text-neutral-400",
+          )}
+        >
+          {article.excerpt}
+        </p>
+      ) : null}
       <ReadTimeLabel
         minutes={article.readTime}
         variant={variant}

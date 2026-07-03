@@ -2,26 +2,10 @@ import { LatestArticlesSection } from "./LatestArticlesSection";
 import { CategoryHeader } from "./CategoryHeader";
 import { FeaturedArticlesSection } from "./FeaturedArticlesSection";
 import { MostReadSection } from "./MostReadSection";
+import { MoreInCategorySection } from "./MoreInCategorySection";
 import { CategoryArticlesEmptyState } from "./CategoryArticlesEmptyState";
-import type { Article, CategoryPageProps } from "./types";
+import type { CategoryPageProps } from "./types";
 import { SitePageWidth } from "@/app/components/layout/site-page-width";
-import { TagsGlimpse } from "@/app/components/tags-glimpse";
-import {
-  NewsCardRowSection,
-  type NewsCardRowItem,
-} from "@/app/components/ui/news-card-row-section";
-
-function articleToNewsCardRowItem(article: Article): NewsCardRowItem {
-  return {
-    id: article.id,
-    title: article.title,
-    href: article.href ?? `/post/${article.slug}`,
-    image: article.imageUrl ?? "",
-    imageAlt: article.imageAlt,
-    imageUnoptimized: article.imageUnoptimized,
-    readTimeMinutes: article.readTime,
-  };
-}
 
 export function CategoryPage({
   categoryName,
@@ -43,27 +27,19 @@ export function CategoryPage({
 
       {featuredArticles ? (
         <FeaturedArticlesSection
+          categoryName={categoryName}
           featuredArticles={featuredArticles}
           headlineRowArticles={headlineRowArticles}
         />
       ) : null}
 
-      {tagsGlimpse && tagsGlimpse.length > 0 ? (
-        <SitePageWidth className="pt-12 pb-12 xl:pb-6">
-          <TagsGlimpse items={tagsGlimpse} />
-        </SitePageWidth>
-      ) : null}
-
-      {missedItArticles && missedItArticles.length > 0 ? (
-        <SitePageWidth className="py-12">
-          <NewsCardRowSection
-            title="In case you missed it"
-            items={missedItArticles.map(articleToNewsCardRowItem)}
-            columns={4}
-            minItems={1}
-          />
-        </SitePageWidth>
-      ) : null}
+      <SitePageWidth className="pt-14 pb-[90px]">
+        <MoreInCategorySection
+          categoryName={categoryName}
+          missedItArticles={missedItArticles}
+          tagsGlimpse={tagsGlimpse}
+        />
+      </SitePageWidth>
 
       <main>
         <SitePageWidth className="py-12">

@@ -1,64 +1,60 @@
 import { describe, expect, it } from "vitest";
 import {
-  buildNavMenuColumns,
-  buildXlMenuGrid,
+  buildNavCategoryGrid,
+  buildNavMenuCategories,
 } from "@/app/lib/nav/menu-columns";
 
-describe("buildNavMenuColumns", () => {
+describe("buildNavMenuCategories", () => {
   const categories = [
     { slug: "us", name: "US" },
     { slug: "world", name: "World" },
     { slug: "politics", name: "Politics" },
     { slug: "business", name: "Business" },
-    { slug: "science", name: "Science" },
-    { slug: "entertainment", name: "Entertainment" },
     { slug: "tech", name: "Tech" },
+    { slug: "entertainment", name: "Entertainment" },
+    { slug: "science", name: "Science" },
     { slug: "lifestyle", name: "Lifestyle" },
   ];
 
-  it("creates five columns with eight categories distributed 2+2+2+1+1", () => {
-    const columns = buildNavMenuColumns(categories, []);
-
-    expect(columns).toHaveLength(5);
-    expect(columns.map((column) => column.categories.length)).toEqual([
-      2, 2, 2, 1, 1,
-    ]);
-    expect(columns[0]?.categories.map((category) => category.slug)).toEqual([
-      "us",
-      "world",
-    ]);
-    expect(columns[4]?.categories[0]?.slug).toBe("lifestyle");
-  });
-
-  it("groups sanity tags under their parent category", () => {
-    const columns = buildNavMenuColumns(categories, [
+  it("returns categories in navbar order with tags grouped by parent", () => {
+    const menuCategories = buildNavMenuCategories(categories, [
       { slug: "congress", title: "Congress", categorySlug: "politics" },
       { slug: "markets", title: "Markets", categorySlug: "business" },
     ]);
 
-    const politics = columns
-      .flatMap((column) => column.categories)
-      .find((category) => category.slug === "politics");
+    expect(menuCategories.map((category) => category.slug)).toEqual([
+      "us",
+      "world",
+      "politics",
+      "business",
+      "tech",
+      "entertainment",
+      "science",
+      "lifestyle",
+    ]);
 
+    const politics = menuCategories.find(
+      (category) => category.slug === "politics",
+    );
     expect(politics?.tags).toEqual([{ slug: "congress", title: "Congress" }]);
   });
 
-  it("builds xl grid rows so second categories share a horizontal row", () => {
-    const columns = buildNavMenuColumns(categories, []);
-    const rows = buildXlMenuGrid(columns);
+  it("builds xl/footer grids in navbar reading order", () => {
+    const menuCategories = buildNavMenuCategories(categories, []);
+    const rows = buildNavCategoryGrid(menuCategories, 5, 2);
 
     expect(rows).toHaveLength(2);
     expect(rows[0]?.map((category) => category?.slug)).toEqual([
       "us",
+      "world",
       "politics",
-      "science",
+      "business",
       "tech",
-      "lifestyle",
     ]);
     expect(rows[1]?.map((category) => category?.slug ?? null)).toEqual([
-      "world",
-      "business",
       "entertainment",
+      "science",
+      "lifestyle",
       null,
       null,
     ]);

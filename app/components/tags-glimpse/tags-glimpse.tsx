@@ -13,7 +13,12 @@ const XL_GRID_COLS: Record<number, string> = {
   4: "xl:grid-cols-4",
 };
 
-export function TagsGlimpse({ items, variant = "news" }: TagsGlimpseProps) {
+export function TagsGlimpse({
+  items,
+  variant = "news",
+  divideStyle = "dotted",
+  imageAspectClassName,
+}: TagsGlimpseProps) {
   if (items.length === 0) {
     return null;
   }
@@ -21,6 +26,7 @@ export function TagsGlimpse({ items, variant = "news" }: TagsGlimpseProps) {
   const divideClass =
     variant === "dark" ? "divide-white/30" : "divide-news-border";
   const useTwoColumns = items.length >= 2;
+  const isDotted = divideStyle === "dotted";
 
   return (
     <section
@@ -32,10 +38,14 @@ export function TagsGlimpse({ items, variant = "news" }: TagsGlimpseProps) {
     >
       <div
         className={cn(
-          "grid grid-cols-1 divide-y divide-dotted",
+          "grid grid-cols-1 divide-y",
+          isDotted && "divide-dotted",
           divideClass,
           useTwoColumns &&
-            "md:grid-cols-2 md:divide-x md:divide-y-0 md:[&>*:nth-child(n+3)]:border-t md:[&>*:nth-child(n+3)]:border-dotted",
+            cn(
+              "md:grid-cols-2 md:divide-x md:divide-y-0 md:[&>*:nth-child(n+3)]:border-t",
+              isDotted && "md:[&>*:nth-child(n+3)]:border-dotted",
+            ),
           XL_GRID_COLS[items.length] ?? "xl:grid-cols-4",
           items.length >= 2 &&
             "xl:divide-x xl:divide-y-0 xl:[&>*:nth-child(n+3)]:border-t-0",
@@ -53,6 +63,7 @@ export function TagsGlimpse({ items, variant = "news" }: TagsGlimpseProps) {
               article={item.article}
               variant={variant}
               imageSizes={IMAGE_SIZES}
+              imageAspectClassName={imageAspectClassName}
             />
           </article>
         ))}

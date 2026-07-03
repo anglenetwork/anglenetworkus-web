@@ -44,9 +44,10 @@ export interface FeaturedStoryArticle {
 }
 
 const DEFAULT_IMAGE_SIZES = "(max-width: 1024px) 100vw, 33vw";
+const DEFAULT_IMAGE_ASPECT_CLASS_NAME = "aspect-[16/9]";
 
-const featuredImageClassName =
-  "relative aspect-[16/9] w-full overflow-hidden rounded-sm bg-news-secondary";
+const featuredImageBaseClassName =
+  "relative w-full overflow-hidden rounded-sm bg-news-secondary";
 
 function listingGalleryImage(galleryImage: FeaturedStoryGalleryImage): {
   src: string;
@@ -67,11 +68,13 @@ function ArticleImageCarousel({
   galleryImages,
   articleHref,
   imageSizes,
+  imageAspectClassName = DEFAULT_IMAGE_ASPECT_CLASS_NAME,
 }: {
   coverImage: { src: string; alt: string; unoptimized: boolean } | null;
   galleryImages: Array<{ src: string; alt: string; unoptimized: boolean }>;
   articleHref: string;
   imageSizes: string;
+  imageAspectClassName?: string;
 }) {
   const allImages = [...(coverImage ? [coverImage] : []), ...galleryImages];
 
@@ -95,7 +98,7 @@ function ArticleImageCarousel({
       className="group block"
       aria-label="View featured article images"
     >
-      <div className={featuredImageClassName}>
+      <div className={cn(featuredImageBaseClassName, imageAspectClassName)}>
         {allImages.map((image, idx) => {
           if (!shouldRenderCarouselSlide(idx, currentIndex, allImages.length)) {
             return null;
@@ -223,6 +226,7 @@ export function FeaturedStoryColumn({
   variant = "news",
   imageSizes = DEFAULT_IMAGE_SIZES,
   headerLayout = "default",
+  imageAspectClassName = DEFAULT_IMAGE_ASPECT_CLASS_NAME,
 }: {
   headerTitle: string;
   headerHref?: string;
@@ -230,6 +234,7 @@ export function FeaturedStoryColumn({
   variant?: "news" | "dark";
   imageSizes?: string;
   headerLayout?: "default" | "title-with-more";
+  imageAspectClassName?: string;
 }) {
   const { coverData, galleryImagesData, hasGalleryImages } =
     resolveArticleImages(article);
@@ -262,6 +267,7 @@ export function FeaturedStoryColumn({
             galleryImages={galleryImagesData}
             articleHref={articleHref}
             imageSizes={imageSizes}
+            imageAspectClassName={imageAspectClassName}
           />
         ) : coverData?.src ? (
           <Link
@@ -269,7 +275,9 @@ export function FeaturedStoryColumn({
             className="group block"
             aria-label={`Read article: ${article.title}`}
           >
-            <div className={featuredImageClassName}>
+            <div
+              className={cn(featuredImageBaseClassName, imageAspectClassName)}
+            >
               <ImageRenderer
                 src={coverData.src}
                 alt={coverData.alt}

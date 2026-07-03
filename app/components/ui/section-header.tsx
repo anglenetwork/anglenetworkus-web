@@ -6,8 +6,6 @@ import {
   minimalSectionTitle,
   modernSectionTitle,
   modernSectionTitleLarge,
-  smallDotSectionTitle,
-  smallDotSectionTitleLarge,
 } from "@/app/lib/typography/section-header";
 import { cn } from "@/lib/utils";
 
@@ -23,8 +21,8 @@ interface SectionHeaderProps {
   href?: string;
   variant?: "light" | "news" | "dark";
   size?: "regular" | "large";
-  accentStyle?: "small-dot" | "modern" | "minimal";
-  /** Default: circle-small. Pass `false` to hide the icon (small-dot uses its dot fallback). */
+  accentStyle?: "modern" | "minimal";
+  /** Default: circle-small. Pass `false` to hide the icon. */
   icon?: SectionHeaderIcon | false;
 }
 
@@ -94,35 +92,6 @@ export function SectionHeader({
   const showIcon = icon !== false;
   const resolvedIcon = icon === false ? "circle-small" : icon;
 
-  if (accentStyle === "modern") {
-    const titleClass =
-      size === "large"
-        ? modernSectionTitleLarge[variant]
-        : modernSectionTitle[variant];
-    const titleEl = (
-      <div className={cn("flex items-center", showIcon && "gap-2")}>
-        {showIcon && (
-          <SectionHeaderIconElement icon={resolvedIcon} variant={variant} />
-        )}
-        <h2 className={cn(titleClass, href && sectionHeaderLink)}>{title}</h2>
-      </div>
-    );
-
-    if (href) {
-      return (
-        <SectionHeaderLinkWrapper
-          href={href}
-          variant={variant}
-          marginClass="mb-8"
-        >
-          {titleEl}
-        </SectionHeaderLinkWrapper>
-      );
-    }
-
-    return <div className="mb-8">{titleEl}</div>;
-  }
-
   if (accentStyle === "minimal") {
     const titleEl = (
       <div className={cn("flex items-center", showIcon && "gap-2")}>
@@ -157,46 +126,28 @@ export function SectionHeader({
 
   const titleClass =
     size === "large"
-      ? smallDotSectionTitleLarge[variant]
-      : smallDotSectionTitle[variant];
-  const linkWrapperClass = cn(
-    "group block rounded-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2",
-    variant === "news"
-      ? "focus-visible:outline-news-primary"
-      : "focus-visible:outline-red-600",
-    href && "cursor-pointer",
-  );
-
-  const content = (
-    <div className="mb-6 flex w-full flex-col items-start gap-3">
-      <div className="flex items-center gap-2">
-        {showIcon ? (
-          <SectionHeaderIconElement icon={resolvedIcon} variant={variant} />
-        ) : (
-          <span
-            className={cn(
-              "size-1.5 shrink-0",
-              variant === "dark"
-                ? "bg-white"
-                : variant === "news"
-                  ? "bg-news-text"
-                  : "bg-neutral-900",
-            )}
-            aria-hidden
-          />
-        )}
-        <h2 className={cn(titleClass, href && sectionHeaderLink)}>{title}</h2>
-      </div>
+      ? modernSectionTitleLarge[variant]
+      : modernSectionTitle[variant];
+  const titleEl = (
+    <div className={cn("flex items-center", showIcon && "gap-2")}>
+      {showIcon && (
+        <SectionHeaderIconElement icon={resolvedIcon} variant={variant} />
+      )}
+      <h2 className={cn(titleClass, href && sectionHeaderLink)}>{title}</h2>
     </div>
   );
 
   if (href) {
     return (
-      <Link href={href} className={linkWrapperClass}>
-        {content}
-      </Link>
+      <SectionHeaderLinkWrapper
+        href={href}
+        variant={variant}
+        marginClass="mb-8"
+      >
+        {titleEl}
+      </SectionHeaderLinkWrapper>
     );
   }
 
-  return content;
+  return <div className="mb-8">{titleEl}</div>;
 }
