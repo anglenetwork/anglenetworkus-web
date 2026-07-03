@@ -61,8 +61,7 @@ function ClassicRelatedArticles({ posts }: { posts: ArticleSidebarPost[] }) {
         <SectionHeader
           title="Related Articles"
           variant="light"
-          accentStyle="small-dot"
-          size="large"
+          accentStyle="modern"
           icon={false}
         />
 
@@ -153,7 +152,7 @@ function ModernRelatedArticles({
         className={`w-full bg-black text-white ${ARTICLE_IMAGE_FRAME_CLASS}`}
         aria-label="Related articles"
       >
-        <div className="mx-auto max-w-[1440px] px-8 py-10 sm:px-10 sm:py-12 md:px-12 lg:px-16 lg:py-16">
+        <div className="py-10 sm:py-12 lg:py-16">
           <div className="flex flex-col gap-10 md:gap-12 lg:flex-row lg:gap-16">
             <div className="min-w-0 lg:flex-[2]">
               <h2 className="font-sans font-semibold text-sm text-white uppercase tracking-wide sm:text-base">

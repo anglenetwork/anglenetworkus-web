@@ -8,8 +8,7 @@ import {
 
 export default function NotFound() {
   return (
-    <div className="mx-auto max-w-2xl px-4 py-8 xl:py-12">
-      <Card>
+    <Card>
         <CardHeader>
           <CardTitle className={profileCardTitle}>Page not found</CardTitle>
         </CardHeader>
@@ -22,6 +21,5 @@ export default function NotFound() {
           </Button>
         </CardContent>
       </Card>
-    </div>
   );
 }

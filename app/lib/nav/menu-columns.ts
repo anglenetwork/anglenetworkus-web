@@ -15,6 +15,7 @@ export type NavMenuCategory = {
   tags: NavMenuTag[];
 };
 
+/** @deprecated Column grouping is no longer used for display; kept for type compatibility. */
 export type NavMenuColumn = {
   categories: NavMenuCategory[];
 };
@@ -22,8 +23,6 @@ export type NavMenuColumn = {
 export type NavTagWithCategory = NavMenuTag & {
   categorySlug: string;
 };
-
-const MENU_COLUMN_SIZES = [2, 2, 2, 1, 1] as const;
 
 function resolveCategories(categories: NavCategory[]): NavCategory[] {
   if (categories.length > 0) return categories;
@@ -44,11 +43,13 @@ function tagsForCategory(
   return tagsByCategory.get(categorySlug) ?? [];
 }
 
-/** Groups category-scoped tags into five menu columns for xl (2+2+2+1+1 categories). */
-export function buildNavMenuColumns(
+/**
+ * Categories with tags in navbar order — single source for menu and footer display.
+ */
+export function buildNavMenuCategories(
   categories: NavCategory[],
   tagRows: NavTagWithCategory[],
-): NavMenuColumn[] {
+): NavMenuCategory[] {
   const tagsByCategory = new Map<string, NavMenuTag[]>();
   for (const row of tagRows) {
     const list = tagsByCategory.get(row.categorySlug) ?? [];
@@ -58,49 +59,31 @@ export function buildNavMenuColumns(
 
   const useCanonicalFallback = tagRows.length === 0;
   const resolvedCategories = resolveCategories(categories);
-  const categoriesWithTags: NavMenuCategory[] = resolvedCategories.map(
-    (category) => ({
-      slug: category.slug,
-      name: category.name,
-      tags: tagsForCategory(
-        category.slug,
-        tagsByCategory,
-        useCanonicalFallback,
-      ),
-    }),
-  );
 
-  const columns: NavMenuColumn[] = [];
-  let index = 0;
-  for (const size of MENU_COLUMN_SIZES) {
-    const slice = categoriesWithTags.slice(index, index + size);
-    if (slice.length === 0) break;
-    columns.push({ categories: slice });
-    index += size;
-  }
-
-  return columns;
+  return resolvedCategories.map((category) => ({
+    slug: category.slug,
+    name: category.name,
+    tags: tagsForCategory(
+      category.slug,
+      tagsByCategory,
+      useCanonicalFallback,
+    ),
+  }));
 }
 
-/** xl layout: one grid row per category index so row baselines align across columns. */
-export function buildXlMenuGrid(
-  menuColumns: NavMenuColumn[],
+/** Row-major grid filled in navbar order (left-to-right, top-to-bottom). */
+export function buildNavCategoryGrid(
+  categories: NavMenuCategory[],
+  columns: number,
+  rows: number,
 ): (NavMenuCategory | null)[][] {
-  if (menuColumns.length === 0) return [];
-
-  const rowCount = Math.max(
-    ...menuColumns.map((column) => column.categories.length),
-  );
-  const rows: (NavMenuCategory | null)[][] = Array.from(
-    { length: rowCount },
-    () => Array.from({ length: menuColumns.length }, () => null),
+  const slotCount = columns * rows;
+  const slots = Array.from(
+    { length: slotCount },
+    (_, index) => categories[index] ?? null,
   );
 
-  menuColumns.forEach((column, columnIndex) => {
-    column.categories.forEach((category, rowIndex) => {
-      rows[rowIndex][columnIndex] = category;
-    });
-  });
-
-  return rows;
+  return Array.from({ length: rows }, (_, rowIndex) =>
+    slots.slice(rowIndex * columns, rowIndex * columns + columns),
+  );
 }

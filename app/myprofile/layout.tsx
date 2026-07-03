@@ -1,5 +1,6 @@
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { isSubscriptionVisible } from "@/lib/subscriptions/is-subscription-visible";
+import { SitePageWidth } from "@/app/components/layout/site-page-width";
 import { SignInForm } from "./components/SignInForm";
 import { ProfileSidebar } from "./components/ProfileSidebar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -22,27 +23,29 @@ export default async function MyProfileLayout({
 
   if (!user) {
     return (
-      <div className="mx-auto max-w-2xl px-4 py-8 xl:py-12">
-        <Card>
-          <CardHeader>
-            <CardTitle className={profileCardTitle}>Sign In</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <SignInForm />
-          </CardContent>
-        </Card>
-      </div>
+      <SitePageWidth className="py-8 xl:py-12">
+        <div className="mx-auto max-w-2xl">
+          <Card>
+            <CardHeader>
+              <CardTitle className={profileCardTitle}>Sign In</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <SignInForm />
+            </CardContent>
+          </Card>
+        </div>
+      </SitePageWidth>
     );
   }
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-8 xl:py-12">
+    <SitePageWidth className="py-8 xl:py-12">
       <div className="grid grid-cols-1 gap-8 xl:grid-cols-4">
         <div className="xl:col-span-1">
           <ProfileSidebar showSubscriptions={showSubscriptions} />
         </div>
         <div className="xl:col-span-3">{children}</div>
       </div>
-    </div>
+    </SitePageWidth>
   );
 }

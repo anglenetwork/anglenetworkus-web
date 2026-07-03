@@ -1,3 +1,5 @@
+import { SitePageWidth } from "@/app/components/layout/site-page-width";
+
 function SidebarNewsSkeleton() {
   return (
     <div className="mx-auto w-full max-w-md">
@@ -23,7 +25,7 @@ function SidebarNewsSkeleton() {
 export default function Loading() {
   return (
     <div className="min-h-screen bg-white">
-      <div className="container mx-auto px-4 py-4 sm:px-6 lg:px-16">
+      <SitePageWidth className="py-4">
         <div className="mt-4 lg:mt-8">
           {/* Header skeleton */}
           <div className="mb-8">
@@ -65,7 +67,7 @@ export default function Loading() {
             </div>
           </div>
         </div>
-      </div>
+      </SitePageWidth>
     </div>
   );
 }

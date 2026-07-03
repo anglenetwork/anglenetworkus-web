@@ -15,7 +15,7 @@ interface Tag {
   views?: number;
 }
 
-export type { NavMenuColumn } from "@/app/lib/nav/menu-columns";
+export type { NavMenuCategory } from "@/app/lib/nav/menu-columns";
 
 export interface TickerPost {
   tickerTitle: string;
@@ -24,6 +24,6 @@ export interface TickerPost {
 
 export interface SiteShellNav {
   categories: Category[];
-  menuColumns: import("@/app/lib/nav/menu-columns").NavMenuColumn[];
+  menuCategories: import("@/app/lib/nav/menu-columns").NavMenuCategory[];
   tickerPosts: TickerPost[];
 }

@@ -1,21 +1,23 @@
 import Link from "next/link";
 import { User } from "lucide-react";
+import { cn } from "@/lib/utils";
 import { Wordmark } from "./navbar/logo";
+import { SITE_PAGE_WIDTH_HUB_CLASS } from "@/app/components/layout/site-page-width";
 import { FooterCategoriesGrid } from "./footer-categories-grid";
 import { FooterLegalBar } from "./footer-legal-bar";
 import { FooterSocialRow } from "./footer-social-row";
 import { footerTopNavLink } from "@/app/lib/typography/footer";
 import { footerTopNavLinks } from "@/app/lib/site-social-links";
-import type { NavMenuColumn } from "@/app/lib/nav/menu-columns";
+import type { NavMenuCategory } from "@/app/lib/nav/menu-columns";
 
 interface FooterProps {
-  menuColumns: NavMenuColumn[];
+  menuCategories: NavMenuCategory[];
 }
 
-export function Footer({ menuColumns }: FooterProps) {
+export function Footer({ menuCategories }: FooterProps) {
   return (
     <footer className="mt-0 bg-black font-sans text-white">
-      <div className="mx-auto max-w-7xl px-6 py-10 lg:px-8">
+      <div className={cn(SITE_PAGE_WIDTH_HUB_CLASS, "py-10")}>
         {/* Row 1 — logo + utility nav (CNN top bar) */}
         <div className="flex flex-col gap-5 pb-6 sm:flex-row sm:items-center sm:justify-between">
           <Link
@@ -49,7 +51,7 @@ export function Footer({ menuColumns }: FooterProps) {
           </div>
         </div>
 
-        <FooterCategoriesGrid menuColumns={menuColumns} />
+        <FooterCategoriesGrid menuCategories={menuCategories} />
 
         {/* Row 2 — follow + social icons (CNN social row) */}
         <FooterSocialRow />

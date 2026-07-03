@@ -10,10 +10,6 @@ const techFeaturedTitle = `${categoryFeaturedTitle.news} xl:text-xl xl:leading-s
 export const techSecondaryTitle = categorySecondaryRowTitle.news;
 export const techExclusiveBadge = categoryExclusiveBadge;
 
-/** FourthSection — Most Read feed header title */
-export const mostReadFeedTitle =
-  "font-bold font-display text-3xl text-news-text leading-tight tracking-tight md:text-2xl";
-
 /** FourthSection — Most Read feed “See all” link */
 export const mostReadFeedSeeAllLink =
   "font-bold font-sans text-base text-news-text leading-none tracking-normal";

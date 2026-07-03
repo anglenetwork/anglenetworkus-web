@@ -32,7 +32,7 @@ export function PricingBillingToggle({
 
 export function PricingFaq() {
   return (
-    <div className="mx-auto mt-16 max-w-4xl px-4">
+    <div className="mx-auto mt-16 max-w-4xl">
       <div className="text-center">
         <h2 className="mb-6 font-bold text-2xl text-gray-900">
           Frequently Asked Questions

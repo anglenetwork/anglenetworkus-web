@@ -1,21 +1,19 @@
 import Link from "next/link";
 import { buildFooterCategoryGrid } from "@/app/lib/nav/footer-category-grid";
-import type { NavMenuColumn } from "@/app/lib/nav/menu-columns";
+import type { NavMenuCategory } from "@/app/lib/nav/menu-columns";
 import {
   footerCategoryHeading,
   footerTagLink,
 } from "@/app/lib/typography/footer";
 
 interface FooterCategoriesGridProps {
-  menuColumns: NavMenuColumn[];
+  menuCategories: NavMenuCategory[];
 }
 
 function FooterCategoryColumn({
   category,
 }: {
-  category: NonNullable<
-    ReturnType<typeof buildFooterCategoryGrid>[number][number]
-  >;
+  category: NavMenuCategory;
 }) {
   return (
     <section className="min-w-0">
@@ -46,9 +44,9 @@ function FooterCategoryColumn({
 }
 
 export function FooterCategoriesGrid({
-  menuColumns,
+  menuCategories,
 }: FooterCategoriesGridProps) {
-  const rows = buildFooterCategoryGrid(menuColumns);
+  const rows = buildFooterCategoryGrid(menuCategories);
   const hasCategories = rows.some((row) => row.some(Boolean));
 
   if (!hasCategories) {

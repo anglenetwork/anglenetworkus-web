@@ -7,7 +7,7 @@ import {
 } from "@/sanity/lib/queries";
 import { buildNavCategories } from "@/app/lib/nav/category-order";
 import {
-  buildNavMenuColumns,
+  buildNavMenuCategories,
   type NavTagWithCategory,
 } from "@/app/lib/nav/menu-columns";
 import { SiteShellFrame } from "./site-shell-frame";
@@ -30,13 +30,13 @@ export async function SiteShell({ children }: SiteShellProps) {
 
   const categories = buildNavCategories(categoriesData);
   const tagRows = mapNavTags(tagsData);
-  const menuColumns = buildNavMenuColumns(categories, tagRows);
+  const menuCategories = buildNavMenuCategories(categories, tagRows);
   const tickerPosts = mapTickerPosts(tickerData);
 
   return (
     <SiteShellFrame
       categories={categories}
-      menuColumns={menuColumns}
+      menuCategories={menuCategories}
       tickerPosts={tickerPosts}
     >
       {children}

@@ -1,6 +1,10 @@
 import type { ReactNode } from "react";
 import { cn } from "@/lib/utils";
 
+/** Shared hub shell — category, post, home, tag, and site chrome. */
+export const SITE_PAGE_WIDTH_HUB_CLASS =
+  "mx-auto w-full px-4 sm:px-6 container lg:px-16";
+
 type SitePageWidthProps = {
   children: ReactNode;
   className?: string;
@@ -19,8 +23,9 @@ export function SitePageWidth({
   return (
     <div
       className={cn(
-        "mx-auto w-full px-4 sm:px-6",
-        variant === "hub" ? "container lg:px-16" : "max-w-5xl lg:px-10",
+        variant === "hub"
+          ? SITE_PAGE_WIDTH_HUB_CLASS
+          : "mx-auto w-full max-w-5xl px-4 sm:px-6 lg:px-10",
         className,
       )}
     >

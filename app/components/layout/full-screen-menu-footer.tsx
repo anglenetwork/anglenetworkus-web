@@ -17,7 +17,7 @@ export function FullScreenMenuFooter({
     <>
       <div
         className={cn(
-          "flex items-center gap-4 p-4 transition-all duration-700 ease-out sm:px-6 lg:px-16 xl:px-0",
+          "flex items-center gap-4 p-4 transition-all duration-700 ease-out",
           visible ? "translate-y-0 opacity-100" : "translate-y-8 opacity-0",
         )}
         style={{ transitionDelay: visible ? "300ms" : "0ms" }}
@@ -50,7 +50,7 @@ export function FullScreenMenuFooter({
 
       <div
         className={cn(
-          "space-y-2 px-4 pb-4 text-muted-foreground text-xs transition-all duration-700 ease-out sm:px-6 sm:pb-6 lg:px-16 lg:pb-16 xl:px-0 xl:pb-8",
+          "space-y-2 pb-4 text-muted-foreground text-xs transition-all duration-700 ease-out sm:pb-6 lg:pb-16 xl:pb-8",
           visible ? "translate-y-0 opacity-100" : "translate-y-8 opacity-0",
         )}
         style={{ transitionDelay: visible ? "400ms" : "0ms" }}

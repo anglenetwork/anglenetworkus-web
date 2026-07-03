@@ -3,6 +3,8 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import dynamic from "next/dynamic";
 import { usePathname } from "next/navigation";
+import { cn } from "@/lib/utils";
+import { SITE_PAGE_WIDTH_HUB_CLASS } from "@/app/components/layout/site-page-width";
 import { UnifiedNavbar } from "./unified-navbar";
 import { HeaderProps } from "./types";
 
@@ -11,7 +13,11 @@ const FullScreenMenu = dynamic(
   { ssr: false },
 );
 
-export function HeaderClient({ categories, menuColumns }: HeaderProps) {
+export function HeaderClient({
+  categories,
+  menuCategories,
+  showSubscriptions = false,
+}: HeaderProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [focusSearchOnOpen, setFocusSearchOnOpen] = useState(false);
   const [headerOffset, setHeaderOffset] = useState(0);
@@ -84,10 +90,11 @@ export function HeaderClient({ categories, menuColumns }: HeaderProps) {
         ref={headerRef}
         className="sticky top-0 z-[100] h-[60px] w-full border-stone-200 border-b bg-stone-50"
       >
-        <div className="mx-auto h-full max-w-[1320px] px-8">
+        <div className={cn(SITE_PAGE_WIDTH_HUB_CLASS, "h-full")}>
           <UnifiedNavbar
             isMenuOpen={isMenuOpen}
             categories={categories}
+            showSubscriptions={showSubscriptions}
             onMenuToggle={handleMenuToggle}
             onSearchMenuOpen={handleSearchMenuOpen}
             onCategoryClick={closeMenu}
@@ -97,7 +104,7 @@ export function HeaderClient({ categories, menuColumns }: HeaderProps) {
 
       {isMenuOpen ? (
         <FullScreenMenu
-          menuColumns={menuColumns}
+          menuCategories={menuCategories}
           onClose={closeMenu}
           headerOffset={headerOffset}
           focusSearchOnOpen={focusSearchOnOpen}

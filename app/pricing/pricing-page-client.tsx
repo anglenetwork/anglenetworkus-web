@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import PricingCard from "@/app/components/ui/pricing-card";
+import { SitePageWidth } from "@/app/components/layout/site-page-width";
 import { PRICING_DATA } from "@/lib/subscriptions/pricing-data";
 import { usePricingSubscription } from "./use-pricing-subscription";
 import {
@@ -33,9 +34,9 @@ export default function PricingPage() {
   };
 
   return (
-    <div className="pt-10 pb-20 font-sans">
+    <SitePageWidth className="pt-10 pb-20 font-sans">
       {/* Header Section */}
-      <div className="mb-12 px-4 text-center">
+      <div className="mb-12 text-center">
         <h1 className="mb-4 font-bold text-4xl text-gray-900 md:text-5xl">
           Choose Your Plan
         </h1>
@@ -52,7 +53,7 @@ export default function PricingPage() {
 
       {/* Error Message */}
       {error ? (
-        <div className="mx-auto mb-6 max-w-4xl px-4">
+        <div className="mx-auto mb-6 max-w-4xl">
           <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-red-700">
             {error}
           </div>
@@ -60,15 +61,13 @@ export default function PricingPage() {
       ) : null}
 
       {/* Pricing Cards */}
-      <div className="mx-auto max-w-6xl px-4">
-        <div className="flex flex-col items-center gap-8 lg:flex-row lg:items-stretch lg:justify-center">
-          <PricingCard {...buildStarterCardProps(cardPropsInput)} />
-          <PricingCard {...buildProCardProps(cardPropsInput)} />
-          <PricingCard {...buildLifetimeCardProps(cardPropsInput)} />
-        </div>
+      <div className="flex flex-col items-center gap-8 lg:flex-row lg:items-stretch lg:justify-center">
+        <PricingCard {...buildStarterCardProps(cardPropsInput)} />
+        <PricingCard {...buildProCardProps(cardPropsInput)} />
+        <PricingCard {...buildLifetimeCardProps(cardPropsInput)} />
       </div>
 
       <PricingFaq />
-    </div>
+    </SitePageWidth>
   );
 }

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { SITE_PAGE_WIDTH_HUB_CLASS } from "@/app/components/layout/site-page-width";
 import type { TickerPost } from "./site-shell/types";
 
 interface LiveUpdatesTickerProps {
@@ -19,7 +20,7 @@ export function LiveUpdatesTicker({ posts }: LiveUpdatesTickerProps) {
       aria-label="Live updates"
       className="w-full border-stone-200 border-b bg-stone-50"
     >
-      <div className="mx-auto max-w-[1320px] px-8">
+      <div className={SITE_PAGE_WIDTH_HUB_CLASS}>
         <div className="scrollbar-hide flex items-center overflow-x-auto py-[9px]">
           <div className="flex shrink-0 items-center gap-2 border-stone-200 border-r pr-5">
             <span

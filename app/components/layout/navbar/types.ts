@@ -1,8 +1,8 @@
-export type { Category, NavMenuColumn } from "../site-shell/types";
-import type { Category, NavMenuColumn } from "../site-shell/types";
+export type { Category, NavMenuCategory } from "../site-shell/types";
+import type { Category, NavMenuCategory } from "../site-shell/types";
 
 export interface HeaderProps {
   categories: Category[];
-  menuColumns: NavMenuColumn[];
+  menuCategories: NavMenuCategory[];
   showSubscriptions?: boolean;
 }

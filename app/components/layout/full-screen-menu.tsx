@@ -2,15 +2,18 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
+import { SITE_PAGE_WIDTH_HUB_CLASS } from "@/app/components/layout/site-page-width";
+import type { NavMenuCategory } from "@/app/lib/nav/menu-columns";
+import { buildNavCategoryGrid } from "@/app/lib/nav/menu-columns";
 import {
-  buildXlMenuGrid,
-  type NavMenuColumn,
-} from "@/app/lib/nav/menu-columns";
+  FOOTER_CATEGORY_GRID_COLUMNS,
+  FOOTER_CATEGORY_GRID_ROWS,
+} from "@/app/lib/nav/footer-category-grid";
 import { FullScreenMenuBody } from "./full-screen-menu-body";
 import { FullScreenMenuFooter } from "./full-screen-menu-footer";
 
 interface FullScreenMenuProps {
-  menuColumns: NavMenuColumn[];
+  menuCategories: NavMenuCategory[];
   onClose: () => void;
   headerOffset: number;
   focusSearchOnOpen?: boolean;
@@ -18,7 +21,7 @@ interface FullScreenMenuProps {
 }
 
 export function FullScreenMenu({
-  menuColumns,
+  menuCategories,
   onClose,
   headerOffset,
   focusSearchOnOpen = false,
@@ -32,10 +35,14 @@ export function FullScreenMenu({
   onFocusSearchHandledRef.current = onFocusSearchHandled;
 
   const [visible, setVisible] = useState(false);
-  const xlMenuRows = buildXlMenuGrid(menuColumns);
-  const menuCategories = useMemo(
-    () => menuColumns.flatMap((column) => column.categories),
-    [menuColumns],
+  const xlMenuRows = useMemo(
+    () =>
+      buildNavCategoryGrid(
+        menuCategories,
+        FOOTER_CATEGORY_GRID_COLUMNS,
+        FOOTER_CATEGORY_GRID_ROWS,
+      ),
+    [menuCategories],
   );
 
   useEffect(() => {
@@ -89,10 +96,9 @@ export function FullScreenMenu({
         className="h-full max-h-[100svh] overflow-y-auto overscroll-contain"
         style={{ paddingTop: `${headerOffset || 0}px` }}
       >
-        <div className="container mx-auto max-w-7xl md:py-6">
+        <div className={cn(SITE_PAGE_WIDTH_HUB_CLASS, "md:py-6")}>
           <FullScreenMenuBody
             visible={visible}
-            menuColumns={menuColumns}
             menuCategories={menuCategories}
             xlMenuRows={xlMenuRows}
             onClose={onClose}

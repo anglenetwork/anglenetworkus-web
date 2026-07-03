@@ -8,9 +8,9 @@ export const CANONICAL_NAV_CATEGORIES = [
   { slug: "world", name: "World" },
   { slug: "politics", name: "Politics" },
   { slug: "business", name: "Business" },
-  { slug: "science", name: "Science" },
-  { slug: "entertainment", name: "Entertainment" },
   { slug: "tech", name: "Tech" },
+  { slug: "entertainment", name: "Entertainment" },
+  { slug: "science", name: "Science" },
   { slug: "lifestyle", name: "Lifestyle" },
 ] as const;
 
