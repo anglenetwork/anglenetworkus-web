@@ -8,7 +8,7 @@ export const categoryLatestArticleTitle = `font-medium font-display text-xl text
 
 /** More in [Category] — section heading */
 export const moreInCategoryHeading =
-  "font-bold font-display text-[22px] text-news-text tracking-tight";
+  "font-bold font-display text-[22px] text-news-text tracking-[-0.3px]";
 
 /** More in [Category] — top row + region article headline */
 export const moreInCategoryTopHeadline = `font-semibold font-display text-[19px] text-news-text leading-[1.28] tracking-tight ${homepageArticleTitleLink}`;

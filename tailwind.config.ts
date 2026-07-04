@@ -27,6 +27,12 @@ const config: Config = {
           "sans-serif",
         ],
         body: ["var(--font-body)", "Georgia", "serif"],
+        mono: [
+          "var(--font-mono)",
+          "ui-monospace",
+          "SFMono-Regular",
+          "monospace",
+        ],
       },
       borderRadius: {
         lg: "var(--radius)",

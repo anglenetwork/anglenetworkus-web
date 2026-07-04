@@ -14,7 +14,7 @@ export const postArticleTitle =
 
 /** Header — italic serif dek */
 export const postArticleDek =
-  "font-body text-lg italic leading-relaxed text-neutral-700 md:text-xl";
+  "font-body text-lg italic leading-relaxed text-neutral-500 md:text-lg";
 
 /** Body — paragraph copy (drop cap applied via wrapper selector, see PostBody/index.tsx) */
 export const postArticleBodyParagraph =
