@@ -25,21 +25,67 @@ import {
 } from "@/app/lib/seo/metadata-builders";
 import { articleFamilyHref } from "@/app/lib/article-family/routes";
 import type { ArticleFamilyDocType } from "@/app/lib/article-family/types";
-import { SitePageWidth } from "@/app/components/layout/site-page-width";
 import { trackTagView } from "@/app/lib/analytics/track-tag-view";
 import { getCoverImage } from "@/sanity/lib/utils";
-import {
-  NewsCardRowSection,
-  type NewsCardRowItem,
-} from "@/app/components/ui/news-card-row-section";
 import ShowMoreSection from "./ShowMoreSection";
-import { TagMainSection, type TagMainPost } from "./components/TagMainSection";
+import { TagHeroGrid } from "./components/TagHeroGrid";
+import { TagIcymiSection } from "./components/TagIcymiSection";
+import { TagPageHeader } from "./components/TagPageHeader";
+import {
+  formatTagItemNumber,
+  type TagIcymiItem,
+  type TagPost,
+} from "./components/types";
 
-/** Featured hero + sidebar rows in TagMainSection (1 featured + this many sidebar). */
-const TAG_MAIN_SIDEBAR_POST_COUNT = 5;
+/** Featured hero + sidebar rows in TagHeroGrid (1 featured + this many sidebar). */
+const TAG_MAIN_SIDEBAR_POST_COUNT = 3;
 
-/** Card row after the main tag block (same pattern as category pages). */
+/** ICYMI grid after the hero block. */
 const TAG_MISSED_IT_COUNT = 4;
+
+type RawTagPost = TagPost &
+  Record<string, unknown> & {
+    _type?: string;
+    excerpt?: string | null;
+    date?: string;
+    author?: unknown;
+    category?: unknown;
+    views7d?: number | null;
+  };
+
+function formatTagImageCredit(
+  cover: TagPost["cover"],
+): string | null {
+  if (!cover) return null;
+  const author = cover.creditAuthor?.trim();
+  const source = cover.creditSource?.trim();
+  if (author && source) return `${author} / ${source}`;
+  if (source) return source;
+  if (author) return author;
+  return null;
+}
+
+function postToIcymiItem(
+  post: RawTagPost,
+  numberIndex: number,
+): TagIcymiItem {
+  const coverData = getCoverImage(
+    post.cover as Parameters<typeof getCoverImage>[0],
+    post.title || "Article image",
+  );
+
+  return {
+    id: post._id,
+    number: formatTagItemNumber(numberIndex),
+    title: post.title || "Untitled",
+    href: post.href,
+    imageUrl: coverData?.src ?? "",
+    imageAlt: coverData?.alt,
+    imageUnoptimized: coverData?.unoptimized,
+    imageCredit: formatTagImageCredit(post.cover),
+    readTimeMinutes: post.readTime,
+  };
+}
 
 // Revalidate this page every 60s
 export const revalidate = 60;
@@ -48,8 +94,8 @@ export const revalidate = 60;
 export async function generateStaticParams() {
   const tags = await client.fetch(tagSlugsQuery);
   return tags
-    .filter((tag: any) => tag.slug !== null)
-    .map((tag: any) => ({ slug: tag.slug }));
+    .filter((tag: { slug: string | null }) => tag.slug !== null)
+    .map((tag: { slug: string | null }) => ({ slug: tag.slug! }));
 }
 
 export async function generateMetadata({
@@ -91,7 +137,6 @@ export async function generateMetadata({
 }
 
 async function getTagData(slug: string) {
-  // Get the tag data
   const tag = await sanityFetch({
     query: tagBySlugQuery,
     params: { slug },
@@ -101,7 +146,6 @@ async function getTagData(slug: string) {
     return null;
   }
 
-  // Handle deprecated tags with redirects
   if (tag.deprecated && tag.redirectTo?.slug) {
     redirect(`/tag/${tag.redirectTo.slug}`);
   }
@@ -162,25 +206,6 @@ async function getTagData(slug: string) {
   };
 }
 
-function postToNewsCardRowItem(
-  post: TagMainPost & Record<string, unknown>,
-): NewsCardRowItem {
-  const coverData = getCoverImage(
-    post.cover as Parameters<typeof getCoverImage>[0],
-    post.title || "Article image",
-  );
-
-  return {
-    id: post._id,
-    title: post.title || "Untitled",
-    href: post.href,
-    image: coverData?.src ?? "",
-    imageAlt: coverData?.alt,
-    imageUnoptimized: coverData?.unoptimized,
-    readTimeMinutes: post.readTime,
-  };
-}
-
 export default async function TagPage({
   params,
 }: {
@@ -200,11 +225,13 @@ export default async function TagPage({
 
   const posts = (rawPosts as Record<string, unknown>[]).map((p) => ({
     ...p,
+    title: (p.title as string | null) || "Untitled",
+    slug: String(p.slug ?? ""),
     href: articleFamilyHref(
       ((p._type as ArticleFamilyDocType) || "post") as ArticleFamilyDocType,
       String(p.slug ?? "#"),
     ),
-  })) as Array<TagMainPost & Record<string, unknown>>;
+  })) as RawTagPost[];
 
   const featuredPost = posts[0];
   const sidebarPosts = posts.slice(1, 1 + TAG_MAIN_SIDEBAR_POST_COUNT);
@@ -216,6 +243,10 @@ export default async function TagPage({
   const latestPosts = posts.slice(missedItStart + TAG_MISSED_IT_COUNT);
   const tagTitle = tag.title || "Tag";
 
+  const icymiItems = missedItPosts.map((post, index) =>
+    postToIcymiItem(post, missedItStart + index - 1),
+  );
+
   const breadcrumbLd = buildBreadcrumbJsonLd([
     { name: "Home", path: "/" },
     { name: tag.title || "Tag", path: `/tag/${slug}` },
@@ -224,32 +255,24 @@ export default async function TagPage({
   return (
     <>
       <JsonLdScript data={breadcrumbLd} />
-      <main className="min-h-screen bg-background py-4 md:py-8">
-        <SitePageWidth>
-          {featuredPost ? (
-            <TagMainSection
-              tagTitle={tag.title || "Tag"}
-              featuredPost={featuredPost}
-              sidebarPosts={sidebarPosts}
-            />
-          ) : null}
-        </SitePageWidth>
+      <div className="min-h-screen bg-news-surface">
+        <TagPageHeader tagTitle={tagTitle} />
 
-        {missedItPosts.length > 0 ? (
-          <SitePageWidth className="mt-8">
-            <NewsCardRowSection
-              title="In case you missed it"
-              items={missedItPosts.map(postToNewsCardRowItem)}
-              columns={4}
-              minItems={1}
-            />
-          </SitePageWidth>
+        {featuredPost ? (
+          <TagHeroGrid
+            featuredPost={featuredPost}
+            sidebarPosts={sidebarPosts}
+          />
+        ) : null}
+
+        {icymiItems.length > 0 ? (
+          <TagIcymiSection items={icymiItems} />
         ) : null}
 
         {latestPosts.length > 0 ? (
           <ShowMoreSection posts={latestPosts as any} tagTitle={tagTitle} />
         ) : null}
-      </main>
+      </div>
     </>
   );
 }

@@ -2,6 +2,8 @@
 
 import Link from "next/link";
 import { ChevronDown, X } from "lucide-react";
+import { useEffect, useMemo, useReducer } from "react";
+import { createClient } from "@/lib/supabase/client";
 import { cn } from "@/lib/utils";
 import * as AccordionPrimitive from "@radix-ui/react-accordion";
 import type { NavMenuCategory } from "@/app/lib/nav/menu-columns";
@@ -9,6 +11,7 @@ import {
   menuAccordionCategoryHeading,
   menuAccordionTagLink,
   menuActionLink,
+  menuSignInLink,
   menuStackedActionLink,
   xlMenuActionLink,
   xlMenuCategoryHeading,
@@ -59,15 +62,16 @@ export function MenuCategoryAccordion({
           className="border-0 border-b border-dotted border-border pb-0 last:border-b"
         >
           <AccordionPrimitive.Header className="m-0 flex items-center gap-3 py-5">
-            <h2 className="m-0 min-w-0 shrink-0">
-              <Link
-                href={`/category/${category.slug}`}
-                onClick={onClose}
-                className={cn(menuAccordionCategoryHeading, "inline-block")}
-              >
-                {category.name}
-              </Link>
-            </h2>
+            <Link
+              href={`/category/${category.slug}`}
+              onClick={onClose}
+              className={cn(
+                menuAccordionCategoryHeading,
+                "inline-block min-w-0 shrink-0",
+              )}
+            >
+              {category.name}
+            </Link>
             <AccordionPrimitive.Trigger
               className={cn(
                 "flex min-h-11 min-w-0 flex-1 items-center justify-end self-stretch p-0 hover:no-underline",
@@ -174,17 +178,13 @@ export function MenuActionLinks({
 
   if (variant === "stacked") {
     return (
-      <div className={cn("flex flex-col gap-0", className)}>
-        {links.map((link, index) => (
+      <div className={cn("flex flex-col", className)}>
+        {links.map((link) => (
           <Link
             key={link.href}
             href={link.href}
             onClick={onClose}
-            className={cn(
-              menuStackedActionLink,
-              "border-border border-t border-dotted py-[18px]",
-              index === 0 && "border-t-0",
-            )}
+            className={cn(menuStackedActionLink, "py-3.5")}
           >
             {link.label}
           </Link>
@@ -208,6 +208,139 @@ export function MenuActionLinks({
           {link.label}
         </Link>
       ))}
+    </div>
+  );
+}
+
+type MenuAuthState = { user: { id: string } | null; loading: boolean };
+
+type MenuAuthAction =
+  | { type: "resolved"; user: { id: string } | null }
+  | { type: "auth_change"; user: { id: string } | null };
+
+function menuAuthReducer(
+  state: MenuAuthState,
+  action: MenuAuthAction,
+): MenuAuthState {
+  switch (action.type) {
+    case "resolved":
+      return { user: action.user, loading: false };
+    case "auth_change":
+      return { ...state, user: action.user, loading: false };
+    default:
+      return state;
+  }
+}
+
+const initialMenuAuthState: MenuAuthState = { user: null, loading: true };
+
+const stackedFooterRowClass = "block py-3.5";
+
+function MenuFooterAuthLink({
+  onClose,
+  loading,
+  user,
+}: {
+  onClose: () => void;
+  loading: boolean;
+  user: { id: string } | null;
+}) {
+  if (loading) {
+    return (
+      <span
+        className={cn(menuSignInLink, stackedFooterRowClass, "invisible")}
+        aria-hidden
+      >
+        Sign in
+      </span>
+    );
+  }
+
+  if (user) {
+    return (
+      <Link
+        href="/myprofile"
+        onClick={onClose}
+        className={cn(menuSignInLink, stackedFooterRowClass)}
+      >
+        Account
+      </Link>
+    );
+  }
+
+  return (
+    <Link
+      href="/signin"
+      onClick={onClose}
+      className={cn(menuSignInLink, stackedFooterRowClass)}
+    >
+      Sign in
+    </Link>
+  );
+}
+
+export function MenuStackedFooterLinks({ onClose }: { onClose: () => void }) {
+  const supabase = useMemo(() => createClient(), []);
+  const [state, dispatch] = useReducer(menuAuthReducer, initialMenuAuthState);
+
+  useEffect(() => {
+    let mounted = true;
+
+    void supabase.auth.getSession().then(({ data: { session } }) => {
+      if (!mounted) return;
+      dispatch({ type: "resolved", user: session?.user ?? null });
+    });
+
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((event, session) => {
+      if (!mounted || event === "INITIAL_SESSION") return;
+      dispatch({ type: "auth_change", user: session?.user ?? null });
+    });
+
+    return () => {
+      mounted = false;
+      subscription.unsubscribe();
+    };
+  }, [supabase]);
+
+  return (
+    <div className="flex flex-col">
+      <Link
+        href="/opinion"
+        onClick={onClose}
+        className={cn(menuStackedActionLink, stackedFooterRowClass)}
+      >
+        Opinion
+      </Link>
+      <Link
+        href="/analysis"
+        onClick={onClose}
+        className={cn(menuStackedActionLink, stackedFooterRowClass)}
+      >
+        Analysis
+      </Link>
+      <MenuFooterAuthLink
+        onClose={onClose}
+        loading={state.loading}
+        user={state.user}
+      />
+      <div className={cn("flex flex-wrap items-center gap-x-7 py-3.5")}>
+        <Link
+          href="/company/advertise-with-us"
+          onClick={onClose}
+          className={menuStackedActionLink}
+        >
+          Partner with us
+        </Link>
+        <Link
+          href="/company/contact"
+          onClick={onClose}
+          className={menuStackedActionLink}
+        >
+          Contact
+        </Link>
+      </div>
     </div>
   );
 }

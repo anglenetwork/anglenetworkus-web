@@ -4,12 +4,15 @@ import { useState } from "react";
 import { ImageRenderer } from "@/app/components/ui/image-renderer";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { SectionHeader } from "@/app/components/ui/section-header";
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, Circle } from "lucide-react";
 import { getCoverImage } from "@/sanity/lib/utils";
 import { SitePageWidth } from "@/app/components/layout/site-page-width";
 import { ReadTimeLabel } from "@/app/components/ui/read-time-label";
-import { tagShowMoreTitle } from "@/app/lib/typography/tag-page";
+import {
+  tagIcymiHeading,
+  tagLatestRowImageFrame,
+  tagShowMoreTitle,
+} from "@/app/lib/typography/tag-page";
 
 interface Post {
   _id: string;
@@ -60,8 +63,18 @@ export default function ShowMoreSection({
   };
 
   return (
-    <SitePageWidth className="mt-8">
-      <SectionHeader title={`Latest ${tagTitle} news`} accentStyle="modern" />
+    <SitePageWidth className="pb-[90px] pt-8">
+      <div className="mb-6 flex items-baseline gap-[18px]">
+        <div className="flex items-center gap-[9px]">
+          <Circle
+            className="size-[13px] shrink-0 text-news-primary"
+            strokeWidth={2.5}
+            aria-hidden
+          />
+          <h2 className={tagIcymiHeading}>Latest {tagTitle} news</h2>
+        </div>
+        <div className="h-px flex-1 bg-news-border" />
+      </div>
       <div className="space-y-0 divide-y divide-dotted divide-border border-b border-dotted">
         {visiblePosts.map((post) => {
           const coverData = getCoverImage(
@@ -125,22 +138,22 @@ function FullWidthArticle({
 }) {
   const to = href ?? `/post/${slug}`;
   return (
-    <article className="flex flex-col gap-4 py-8 lg:flex-row lg:gap-8">
-      <div className="relative aspect-video w-full overflow-hidden rounded-lg lg:h-32 lg:w-32 lg:flex-shrink-0">
+    <article className="flex items-start gap-4 py-8 sm:gap-6">
+      <div className={tagLatestRowImageFrame}>
         <Link
           href={to}
-          className="block h-full"
+          className="block size-full"
           aria-label={`Read article: ${title}`}
         >
           <ImageRenderer
             src={image || "/placeholder.svg"}
             alt=""
-            width={192}
-            height={108}
+            width={96}
+            height={96}
             fill
             unoptimized={imageUnoptimized}
-            sizes="(max-width: 1024px) 100vw, 192px"
-            className="object-cover"
+            sizes="96px"
+            className="object-cover object-center"
           />
         </Link>
       </div>
@@ -151,7 +164,7 @@ function FullWidthArticle({
         <p className="mt-2 text-pretty font-sans text-base text-muted-foreground leading-relaxed">
           {description}
         </p>
-        <ReadTimeLabel minutes={readTimeMinutes} variant="muted" />
+        <ReadTimeLabel minutes={readTimeMinutes} variant="muted" className="font-mono" />
       </div>
     </article>
   );

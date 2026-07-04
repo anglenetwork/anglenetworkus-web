@@ -10,7 +10,7 @@ import {
   xlMenuLegalLink,
 } from "@/app/lib/typography/full-screen-menu";
 import { siteSocialLinks } from "@/app/lib/site-social-links";
-import { MenuActionLinks } from "./full-screen-menu-parts";
+import { MenuActionLinks, MenuStackedFooterLinks } from "./full-screen-menu-parts";
 
 function XIcon({ className }: { className?: string }) {
   return (
@@ -71,7 +71,10 @@ export function FullScreenMenuFooter({
 
   return (
     <div
-      className={cn(transitionClass, "mt-14 border-border border-t pt-6")}
+      className={cn(
+        transitionClass,
+        "mt-6 pt-0 xl:mt-14 xl:border-border xl:border-t xl:pt-6",
+      )}
       style={{ transitionDelay: visible ? "300ms" : "0ms" }}
     >
       <MenuActionLinks
@@ -81,7 +84,7 @@ export function FullScreenMenuFooter({
       />
 
       <div className="xl:hidden">
-        <MenuActionLinks onClose={onClose} variant="stacked" className="mb-2" />
+        <MenuStackedFooterLinks onClose={onClose} />
 
         <div
           className={cn(

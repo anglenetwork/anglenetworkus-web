@@ -22,16 +22,16 @@ export function MostReadItem({
           href={article.href ?? `/post/${article.slug}`}
           className="mb-4 block"
         >
-          <div className="relative aspect-video w-full overflow-hidden rounded-sm">
+          <div className="relative aspect-square w-full overflow-hidden rounded-sm bg-news-secondary">
             <ImageRenderer
               src={article.imageUrl}
               alt={article.title}
-              width={640}
-              height={360}
+              width={400}
+              height={400}
               fill
               unoptimized={article.imageUnoptimized}
               sizes="(max-width: 768px) 100vw, 384px"
-              className="object-cover"
+              className="object-cover object-center"
             />
           </div>
         </Link>

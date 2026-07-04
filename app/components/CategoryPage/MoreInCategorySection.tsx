@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowUpRight, Slash } from "lucide-react";
+import { ArrowUpRight, Circle, Slash } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { ImageRenderer } from "@/app/components/ui/image-renderer";
 import { ReadTimeLabel } from "@/app/components/ui/read-time-label";
@@ -16,12 +16,21 @@ import {
 import { formatImageCredit, getCoverImage } from "@/sanity/lib/utils";
 import type { Article } from "./types";
 
-const REGION_IMAGE_SIZES = "(max-width: 1023px) 112px, 25vw";
+const REGION_IMAGE_SIZES = "(max-width: 1023px) 80px, 25vw";
+const REGION_MOBILE_IMAGE_SIZE = 80;
+const REGION_DESKTOP_IMAGE_SIZE = 400;
 
 function MoreInCategoryHeading({ categoryName }: { categoryName: string }) {
   return (
     <div className="flex items-baseline gap-[18px]">
-      <h2 className={moreInCategoryHeading}>More in {categoryName}</h2>
+      <div className="flex items-center gap-[9px]">
+        <Circle
+          className="size-[13px] shrink-0 text-news-primary"
+          strokeWidth={2.5}
+          aria-hidden
+        />
+        <h2 className={moreInCategoryHeading}>More in {categoryName}</h2>
+      </div>
       <div className="h-px flex-1 bg-news-border" />
     </div>
   );
@@ -40,14 +49,8 @@ function moreTopBlockItemClassName(
   );
 }
 
-function moreRegionBlockItemClassName(index: number, total: number) {
-  return cn(
-    "border-news-border py-6 lg:py-0",
-    "lg:px-8",
-    "lg:border-l",
-    index === 0 && "lg:border-l-0 lg:pl-0",
-    index === total - 1 && "lg:pr-0",
-  );
+function moreRegionBlockItemClassName() {
+  return "min-w-0 py-6 lg:py-0 lg:px-8";
 }
 
 function MoreInCategoryTopRow({ articles }: { articles: Article[] }) {
@@ -57,7 +60,7 @@ function MoreInCategoryTopRow({ articles }: { articles: Article[] }) {
   return (
     <div
       aria-label="More headlines"
-      className="mt-9 border-news-border border-t border-b"
+      className="border-news-border border-t border-b"
     >
       <div className="grid grid-cols-1 divide-y divide-news-border xl:grid-cols-4 xl:divide-y-0">
         {items.map((article, index) => {
@@ -130,14 +133,14 @@ function MoreInCategoryRegionMobileRow({ item }: { item: TagsGlimpseItem }) {
         aria-label={`Read article: ${article.title}`}
       >
         {coverData?.src ? (
-          <div className="relative h-20 w-28 shrink-0 overflow-hidden bg-news-secondary">
+          <div className="relative size-20 shrink-0 overflow-hidden rounded-sm bg-news-secondary">
             <ImageRenderer
               src={coverData.src}
               alt={coverData.alt}
-              width={112}
-              height={80}
+              width={REGION_MOBILE_IMAGE_SIZE}
+              height={REGION_MOBILE_IMAGE_SIZE}
               fill
-              sizes={REGION_IMAGE_SIZES}
+              sizes={`${REGION_MOBILE_IMAGE_SIZE}px`}
               unoptimized={coverData.unoptimized}
               className="object-cover object-center"
             />
@@ -201,15 +204,15 @@ function MoreInCategoryRegionColumn({ item }: { item: TagsGlimpseItem }) {
       {coverData?.src ? (
         <Link
           href={articleHref}
-          className="group block"
+          className="group block w-full min-w-0"
           aria-label={`Read article: ${article.title}`}
         >
-          <div className="relative aspect-[5/4] w-full overflow-hidden bg-news-secondary">
+          <div className="relative aspect-square w-full min-w-0 overflow-hidden rounded-sm bg-news-secondary">
             <ImageRenderer
               src={coverData.src}
               alt={coverData.alt}
-              width={600}
-              height={480}
+              width={REGION_DESKTOP_IMAGE_SIZE}
+              height={REGION_DESKTOP_IMAGE_SIZE}
               fill
               sizes={REGION_IMAGE_SIZES}
               unoptimized={coverData.unoptimized}
@@ -241,17 +244,29 @@ function MoreInCategoryRegionColumn({ item }: { item: TagsGlimpseItem }) {
   );
 }
 
-function MoreInCategoryRegions({ items }: { items: TagsGlimpseItem[] }) {
+function MoreInCategoryRegions({
+  categoryName,
+  items,
+  hasHeadlinesAbove,
+}: {
+  categoryName: string;
+  items: TagsGlimpseItem[];
+  hasHeadlinesAbove: boolean;
+}) {
   const columns = items.slice(0, 4);
   if (columns.length === 0) return null;
 
   return (
-    <div aria-label="Regional highlights" className="mt-14">
-      <div className="grid grid-cols-1 divide-y divide-news-border lg:grid-cols-4 lg:divide-y-0">
-        {columns.map((item, index) => (
+    <div
+      aria-label={`More in ${categoryName}`}
+      className={cn(hasHeadlinesAbove && "mt-14")}
+    >
+      <MoreInCategoryHeading categoryName={categoryName} />
+      <div className="mt-9 grid grid-cols-1 divide-y divide-news-border lg:grid-cols-4 lg:divide-x lg:divide-y-0">
+        {columns.map((item) => (
           <article
             key={item.tagSlug}
-            className={cn("group", moreRegionBlockItemClassName(index, columns.length))}
+            className={cn("group", moreRegionBlockItemClassName())}
           >
             <div className="lg:hidden">
               <MoreInCategoryRegionMobileRow item={item} />
@@ -291,11 +306,15 @@ export function MoreInCategorySection({
       aria-label={`More in ${categoryName}`}
       className="bg-news-surface"
     >
-      <MoreInCategoryHeading categoryName={categoryName} />
-
       {hasHeadlines ? <MoreInCategoryTopRow articles={topArticles} /> : null}
 
-      {hasTags ? <MoreInCategoryRegions items={regionItems} /> : null}
+      {hasTags ? (
+        <MoreInCategoryRegions
+          categoryName={categoryName}
+          items={regionItems}
+          hasHeadlinesAbove={hasHeadlines}
+        />
+      ) : null}
     </section>
   );
 }

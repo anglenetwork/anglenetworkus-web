@@ -14,6 +14,10 @@ export const menuAccordionTagLink =
 export const menuStackedActionLink =
   "font-display text-lg font-semibold text-foreground transition-colors hover:text-news-primary focus-visible:outline focus-visible:outline-2 focus-visible:outline-link focus-visible:outline-offset-3";
 
+/** Below-xl footer — sign in / account link */
+export const menuSignInLink =
+  "font-display text-lg font-semibold text-link transition-colors hover:text-news-primary focus-visible:outline focus-visible:outline-2 focus-visible:outline-link focus-visible:outline-offset-3";
+
 /** XL full-screen menu — category column heading link */
 export const menuCategoryHeading =
   "font-display text-[19px] font-semibold tracking-tight text-foreground capitalize transition-colors hover:text-news-primary focus-visible:outline focus-visible:outline-2 focus-visible:outline-link focus-visible:outline-offset-3 md:text-[21px]";

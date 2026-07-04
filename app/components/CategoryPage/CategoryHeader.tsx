@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { SitePageWidth } from "@/app/components/layout/site-page-width";
+import { formatSectionDate } from "@/app/lib/format-section-date";
 import { categoryHeaderTagLink } from "@/app/lib/typography/category-page";
 import type { CategoryTag } from "./types";
 
@@ -7,18 +8,6 @@ interface CategoryHeaderProps {
   categoryName: string;
   categoryDescription?: string;
   categoryTags?: CategoryTag[];
-}
-
-/** e.g. "THURSDAY, JULY 2, 2026" */
-function formatSectionDate(date: Date): string {
-  return date
-    .toLocaleDateString("en-US", {
-      weekday: "long",
-      month: "long",
-      day: "numeric",
-      year: "numeric",
-    })
-    .toUpperCase();
 }
 
 export function CategoryHeader({
