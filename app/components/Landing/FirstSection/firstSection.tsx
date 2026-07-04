@@ -1,4 +1,5 @@
 import { LeftColumnLanding } from "./left-column-landing";
+import { HOMEPAGE_JUST_IN_LIMIT } from "@/app/lib/homepage/first-section";
 import { CenterColumnLanding } from "./centerColumnLanding";
 import { RightColumnLanding } from "./rightColumnLanding";
 import Link from "next/link";
@@ -140,7 +141,7 @@ export function FirstSection({
 }: FirstSectionProps) {
   const leftColumnJustIn = justInNews
     .filter((post): post is PostForLeftColumn => !!post.slug)
-    .slice(0, 5);
+    .slice(0, HOMEPAGE_JUST_IN_LIMIT);
 
   const mainStoryPosts = mainStory
     .map(toCenterColumnPost)
@@ -172,7 +173,7 @@ export function FirstSection({
   return (
     <main className="w-full">
       {mainStoryPost?.title && mainStoryPost?.slug && (
-        <div className="mb-6 hidden max-xl:mt-5 lg:block">
+        <div className="mb-6 hidden max-xl:mt-5 lg:block mx-auto max-w-6xl">
           <Link href={`/post/${mainStoryPost.slug}`} className="group block">
             <h1 className={mainHeadlineDesktopTitle}>{mainStoryPost.title}</h1>
           </Link>

@@ -19,6 +19,7 @@ export type ArticleFamilyAuthor = {
   name: string;
   slug?: string | null;
   picture?: unknown;
+  shortBio?: string | null;
 };
 
 /** Cover shape from GROQ (coverFieldsProjection) */

@@ -21,13 +21,18 @@ export interface Article {
   href?: string;
 }
 
+export interface CategoryTag {
+  slug: string;
+  title: string;
+}
+
 export interface CategoryPageProps {
   categoryName: string;
   hasPosts: boolean;
   categoryDescription?: string;
+  categoryTags?: CategoryTag[];
   latestArticles: Article[];
   mostReadArticles: Article[];
-  headlineRowArticles?: Article[];
   missedItArticles?: Article[];
   tagsGlimpse?: TagsGlimpseItem[];
   featuredArticles?: {

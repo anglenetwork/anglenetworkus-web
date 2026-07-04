@@ -1,4 +1,5 @@
 // /sanity/lib/queries.ts
+import { HOMEPAGE_JUST_IN_LIMIT } from "@/app/lib/homepage/first-section";
 import { defineQuery } from "next-sanity";
 import { articleFamilyListFragment } from "./article-family-queries";
 import {
@@ -177,7 +178,7 @@ export const homepageHeroJustInQuery = defineQuery(`
     ${homepageJustInPostFilter}
   ] | order(
     ${homepagePublishedPostOrder}
-  )[0...5] {
+  )[0...${HOMEPAGE_JUST_IN_LIMIT}] {
     ${postFieldsLightweight}
   }
 `);

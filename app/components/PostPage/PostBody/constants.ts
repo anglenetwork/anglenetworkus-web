@@ -1,3 +1,4 @@
+import { cn } from "@/lib/utils";
 import {
   regularPostImageEpigraph,
   regularPostImageEpigraphCredit,
@@ -66,7 +67,32 @@ export const ARTICLE_MEDIA_CLASSES = {
     image: "object-cover object-center",
     sizes: "(max-width: 640px) 100vw, (max-width: 1280px) 100vw, 1376px",
   },
+  /** Standard post redesign — hero sits inside the (narrower) main column, not full-bleed. */
+  postStandard: {
+    figure: "mt-7 mb-0 text-left",
+    wrapper:
+      "relative w-full h-[280px] overflow-hidden rounded-lg md:h-[440px]",
+    image: "object-cover object-center",
+    sizes: "(max-width: 768px) 100vw, (max-width: 1280px) 66vw, 800px",
+  },
 } as const;
+
+/** Standard post redesign — article body measure (matches the design's 660px column) */
+export const POST_ARTICLE_BODY_MAX_WIDTH_CLASS = "max-w-[660px]";
+
+/** Standard post redesign — Portable Text body column, incl. drop-cap on the first paragraph */
+export const POST_ARTICLE_BODY_COLUMN_CLASS = cn(
+  "space-y-6 pt-10 font-body text-left",
+  POST_ARTICLE_BODY_MAX_WIDTH_CLASS,
+  "[&>p:first-of-type::first-letter]:float-left",
+  "[&>p:first-of-type::first-letter]:mr-2",
+  "[&>p:first-of-type::first-letter]:mt-1",
+  "[&>p:first-of-type::first-letter]:font-display",
+  "[&>p:first-of-type::first-letter]:text-6xl",
+  "[&>p:first-of-type::first-letter]:font-bold",
+  "[&>p:first-of-type::first-letter]:leading-[0.8]",
+  "[&>p:first-of-type::first-letter]:text-neutral-900",
+);
 
 /** Non-regular post — caption / credit under hero and in-body images */
 export const NON_REGULAR_POST_IMAGE_CAPTION_CLASS =

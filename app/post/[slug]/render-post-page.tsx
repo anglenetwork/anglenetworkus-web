@@ -3,7 +3,6 @@ import ArticleFamilyPage from "@/app/components/article-family/ArticleFamilyPage
 import BottomArticleModule, {
   RELATED_MODULE_MODERN_TOTAL,
 } from "@/app/components/PostPage/BottomArticleModule";
-import { SuggestedTags } from "@/app/components/SuggestedTags";
 import { fetchArticleFamilyPage } from "@/app/lib/article-family/fetch";
 import { loadLatestInCategory } from "@/app/lib/article-family/sidebars";
 
@@ -40,23 +39,21 @@ export async function RenderPostPage({
   return (
     <ArticleFamilyPage
       article={article}
+      tags={tagsForSuggested}
       footer={({ relatedArticles }) => {
         const bottomSlice = (
           categoryLatest.length > 0 ? categoryLatest : relatedArticles
         ).slice(0, RELATED_MODULE_MODERN_TOTAL);
 
         return (
-          <>
-            <SuggestedTags tags={tagsForSuggested} />
-            {bottomSlice.length > 0 && (
-              <BottomArticleModule
-                posts={bottomSlice}
-                variant="modern"
-                categoryName={categoryName}
-                categoryHref={categoryHref}
-              />
-            )}
-          </>
+          bottomSlice.length > 0 && (
+            <BottomArticleModule
+              posts={bottomSlice}
+              variant="modern"
+              categoryName={categoryName}
+              categoryHref={categoryHref}
+            />
+          )
         );
       }}
     />

@@ -52,7 +52,8 @@ const articleFamilyAuthor = `
     defined(author->name) => {
       "name": coalesce(author->name, "Anonymous"),
       "slug": author->slug.current,
-      "picture": author->picture
+      "picture": author->picture,
+      "shortBio": author->shortBio
     }
   )
 `;

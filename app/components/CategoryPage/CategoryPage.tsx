@@ -11,9 +11,9 @@ export function CategoryPage({
   categoryName,
   hasPosts,
   categoryDescription,
+  categoryTags,
   latestArticles,
   mostReadArticles,
-  headlineRowArticles,
   missedItArticles,
   tagsGlimpse,
   featuredArticles,
@@ -23,14 +23,11 @@ export function CategoryPage({
       <CategoryHeader
         categoryName={categoryName}
         categoryDescription={categoryDescription}
+        categoryTags={categoryTags}
       />
 
       {featuredArticles ? (
-        <FeaturedArticlesSection
-          categoryName={categoryName}
-          featuredArticles={featuredArticles}
-          headlineRowArticles={headlineRowArticles}
-        />
+        <FeaturedArticlesSection featuredArticles={featuredArticles} />
       ) : null}
 
       <SitePageWidth className="pt-14 pb-[90px]">

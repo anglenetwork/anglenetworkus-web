@@ -1,5 +1,6 @@
 import Link from "next/link";
 import type { SanityImageSource } from "@sanity/image-url/lib/types/types";
+import { HOMEPAGE_JUST_IN_LIMIT } from "@/app/lib/homepage/first-section";
 import { resolveListingImage } from "@/lib/editorial-image";
 import { getCoverImage } from "@/sanity/lib/utils";
 import { SectionHeader } from "../../ui/section-header";
@@ -77,12 +78,14 @@ interface LeftColumnLandingProps {
 }
 
 export function LeftColumnLanding({ justInNews }: LeftColumnLandingProps) {
+  const articles = justInNews.slice(0, HOMEPAGE_JUST_IN_LIMIT);
+
   return (
     <div className="mb-8 px-0 text-left md:px-4 lg:sticky lg:top-[60px] lg:mb-0 lg:h-auto lg:overflow-hidden">
       <SectionHeader title="Just in" variant="news" accentStyle="minimal" />
 
       <div className="flex flex-col divide-y divide-dotted divide-news-border">
-        {justInNews.map((post, index) => {
+        {articles.map((post, index) => {
           const isFirstArticle = index === 0;
           const carouselImages = isFirstArticle
             ? carouselImagesForPost(post)

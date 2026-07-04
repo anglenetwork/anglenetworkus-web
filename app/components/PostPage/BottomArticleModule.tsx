@@ -8,9 +8,16 @@ import { ARTICLE_IMAGE_FRAME_CLASS } from "./PostBody/constants";
 import {
   postRelatedClassicHeroTitle,
   postRelatedClassicListTitle,
+  postRelatedModernCardCategory,
+  postRelatedModernCardReadTime,
   postRelatedModernCardTitle,
+  postRelatedModernRailDate,
+  postRelatedModernRailEyebrow,
+  postRelatedModernSectionTitle,
   postRelatedModernSideTitle,
+  postRelatedModernViewAllLink,
 } from "@/app/lib/typography/post-page";
+import { cn } from "@/lib/utils";
 
 type BottomArticleModuleVariant = "classic" | "modern";
 
@@ -145,77 +152,87 @@ function ModernRelatedArticles({
   const sidePosts = posts.slice(6, RELATED_MODULE_MODERN_TOTAL);
 
   const trimmedCategory = categoryName?.trim();
+  const sectionTitle = trimmedCategory
+    ? `More in ${trimmedCategory}`
+    : "More to read";
 
   return (
-    <div className="my-8 sm:my-12">
-      <section
-        className={`w-full bg-black text-white ${ARTICLE_IMAGE_FRAME_CLASS}`}
-        aria-label="Related articles"
-      >
-        <div className="py-10 sm:py-12 lg:py-16">
-          <div className="flex flex-col gap-10 md:gap-12 lg:flex-row lg:gap-16">
-            <div className="min-w-0 lg:flex-[2]">
-              <h2 className="font-sans font-semibold text-sm text-white uppercase tracking-wide sm:text-base">
-                {trimmedCategory ? (
-                  <>
-                    More in{" "}
-                    {categoryHref ? (
-                      <Link
-                        href={categoryHref}
-                        className="text-sectionAccent underline decoration-1 underline-offset-2 hover:opacity-90"
-                      >
-                        {trimmedCategory}
-                      </Link>
-                    ) : (
-                      <span className="text-sectionAccent underline decoration-1 underline-offset-2">
-                        {trimmedCategory}
-                      </span>
-                    )}
-                  </>
-                ) : (
-                  "More to read"
-                )}
-              </h2>
-
-              <div className="mt-6 grid grid-cols-1 gap-x-4 gap-y-10 sm:grid-cols-2 sm:gap-x-6 md:grid-cols-2 lg:grid-cols-3 lg:gap-y-8">
-                {gridPosts.map((post) => (
-                  <ModernGridCard key={post._id} post={post} />
-                ))}
-              </div>
-            </div>
-
-            {sidePosts.length > 0 && (
-              <aside className="min-w-0 border-white/30 border-t pt-10 lg:max-w-[360px] lg:flex-1 lg:border-t-0 lg:border-l lg:pt-0 lg:pl-12">
-                <h2 className="font-sans font-semibold text-sectionAccent text-sm uppercase tracking-wide">
-                  Top Stories
-                </h2>
-
-                <ul className="mt-6 divide-y divide-white/30">
-                  {sidePosts.map((post) => (
-                    <ModernSideItem key={post._id} post={post} />
-                  ))}
-                </ul>
-              </aside>
+    <section
+      className="mt-[88px] border-neutral-200 border-t pt-[52px] pb-[72px]"
+      aria-label="Related articles"
+    >
+      <div className="grid grid-cols-1 gap-0 lg:grid-cols-[1fr_300px] lg:gap-x-14">
+        <div
+          className={cn(
+            "min-w-0",
+            sidePosts.length > 0 &&
+              "mb-10 border-neutral-200 border-b pb-10 lg:mb-0 lg:border-r lg:border-b-0 lg:pr-14 lg:pb-0",
+          )}
+        >
+          <div className="mb-[30px] flex items-baseline justify-between gap-4">
+            <h2 className={postRelatedModernSectionTitle}>{sectionTitle}</h2>
+            {trimmedCategory && categoryHref && (
+              <Link href={categoryHref} className={postRelatedModernViewAllLink}>
+                View all {trimmedCategory} →
+              </Link>
             )}
           </div>
+
+          <div className="grid grid-cols-1 gap-x-7 gap-y-8 sm:grid-cols-2 lg:grid-cols-3">
+            {gridPosts.map((post) => (
+              <ModernGridCard key={post._id} post={post} />
+            ))}
+          </div>
         </div>
-      </section>
-    </div>
+
+        {sidePosts.length > 0 && (
+          <aside className="min-w-0">
+            <div
+              className={cn(
+                "mb-1 border-neutral-900 border-b-2 pb-3.5",
+                postRelatedModernRailEyebrow,
+              )}
+            >
+              Top Stories
+            </div>
+            <div className="flex flex-col">
+              {sidePosts.map((post, index) => (
+                <ModernSideItem
+                  key={post._id}
+                  post={post}
+                  isLast={index === sidePosts.length - 1}
+                />
+              ))}
+            </div>
+          </aside>
+        )}
+      </div>
+    </section>
   );
 }
 
-function ModernSideItem({ post }: { post: ArticleSidebarPost }) {
+function ModernSideItem({
+  post,
+  isLast,
+}: {
+  post: ArticleSidebarPost;
+  isLast: boolean;
+}) {
   return (
-    <li className="py-4 first:pt-0 last:pb-0">
-      <Link href={post.href} className="group block min-w-0">
-        <p className="font-sans font-semibold text-[11px] text-sectionAccent uppercase tracking-wide">
-          {formatTopStoryTimestamp(post.date)}
-        </p>
-        <h3 className={postRelatedModernSideTitle}>
-          {post.title || "Untitled"}
-        </h3>
-      </Link>
-    </li>
+    <Link
+      href={post.href}
+      className={cn(
+        "group block py-[18px]",
+        !isLast && "border-neutral-200 border-b",
+      )}
+    >
+      <p className={cn(postRelatedModernRailDate, "mb-[7px]")}>
+        {formatTopStoryTimestamp(post.date)}
+      </p>
+      <h3 className={postRelatedModernSideTitle}>
+        {post.title || "Untitled"}
+      </h3>
+    </Link>
   );
 }
 
@@ -225,31 +242,40 @@ function ModernGridCard({ post }: { post: ArticleSidebarPost }) {
     post.title || "Article image",
     600,
   );
+  const categoryLabel = post.category?.title?.trim();
 
   return (
     <Link href={post.href} className="group flex h-full min-w-0 flex-col">
-      <div
-        className={`relative aspect-[4/3] w-full shrink-0 ${ARTICLE_IMAGE_FRAME_CLASS}`}
-      >
+      <div className="relative mb-3.5 h-[170px] w-full shrink-0 overflow-hidden bg-stone-50">
         {coverData?.src ? (
           <ImageRenderer
             src={coverData.src}
             alt={coverData.alt}
             width={600}
-            height={450}
+            height={340}
             fill
             quality={55}
-            sizes="(max-width: 640px) calc(100vw - 4rem), (max-width: 1024px) 50vw, 33vw"
+            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
             unoptimized={coverData.unoptimized}
             className="object-cover transition-opacity group-hover:opacity-90"
           />
         ) : (
-          <div className="flex size-full items-center justify-center rounded-lg bg-neutral-800">
-            <span className="text-neutral-400 text-xs">No image</span>
+          <div className="flex size-full items-center justify-center bg-stone-100">
+            <span className="font-sans text-neutral-400 text-xs">No image</span>
           </div>
         )}
       </div>
-      <h3 className={postRelatedModernCardTitle}>{post.title || "Untitled"}</h3>
+      {categoryLabel && (
+        <p className={cn(postRelatedModernCardCategory, "mb-[7px]")}>
+          {categoryLabel}
+        </p>
+      )}
+      <h3 className={cn(postRelatedModernCardTitle, "mb-2")}>
+        {post.title || "Untitled"}
+      </h3>
+      <span className={postRelatedModernCardReadTime}>
+        {post.readTime || 3} min read
+      </span>
     </Link>
   );
 }
@@ -273,7 +299,7 @@ function formatTopStoryTimestamp(value: string | undefined): string {
     return formatDistanceToNowStrict(parsed, {
       addSuffix: true,
       unit: "minute",
-    }).toUpperCase();
+    });
   }
 
   if (diffMs >= 0 && diffMs < oneDayMs) {
@@ -287,6 +313,5 @@ function formatTopStoryTimestamp(value: string | undefined): string {
   }
 
   return parsed
-    .toLocaleDateString("en-US", { month: "short", day: "numeric" })
-    .toUpperCase();
+    .toLocaleDateString("en-US", { month: "short", day: "numeric" });
 }

@@ -1,5 +1,8 @@
 import { homepageArticleTitleLink } from "./homepage-article-links";
 
+/** Category page header — tag links beside the category title (xl+) */
+export const categoryHeaderTagLink = `font-medium font-sans text-[15px] text-news-text capitalize leading-normal transition-colors hover:text-news-muted ${homepageArticleTitleLink}`;
+
 /** Category page — Latest Articles list item title */
 export const categoryLatestArticleTitle = `font-medium font-display text-xl text-news-text leading-snug tracking-normal ${homepageArticleTitleLink}`;
 
