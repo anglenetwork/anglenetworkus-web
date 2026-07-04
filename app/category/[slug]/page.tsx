@@ -9,7 +9,6 @@ import {
 } from "@/app/lib/article-family/metrics";
 import {
   buildCategoryFeaturedArticles,
-  buildCategoryHeadlineRowArticles,
   buildCategoryLatestArticles,
   buildCategoryMissedItArticles,
 } from "@/app/lib/category-page/layout-sections";
@@ -27,6 +26,7 @@ import {
   finalizePublicMetadata,
 } from "@/app/lib/seo/metadata-builders";
 import { trackCategoryView } from "@/app/lib/analytics/track-category-view";
+import { getCategoryTags } from "@/app/lib/category-page/get-category-tags";
 import { getTagsGlimpseData } from "@/app/lib/tags-glimpse/get-tags-glimpse-data";
 
 // Generate static params for SSG
@@ -85,7 +85,7 @@ export default async function CategoryPageRoute({
 }) {
   const { slug } = await params;
 
-  const [categoryData, posts, tagsGlimpse] = await Promise.all([
+  const [categoryData, posts, tagsGlimpse, categoryTags] = await Promise.all([
     sanityFetchStatic({
       query: `*[_type == "category" && slug.current == $slug][0]{name, slug}`,
       params: { slug },
@@ -95,6 +95,7 @@ export default async function CategoryPageRoute({
       params: { categorySlug: slug },
     }),
     getTagsGlimpseData(slug),
+    getCategoryTags(slug),
   ]);
 
   const postList = Array.isArray(posts) ? posts : [];
@@ -156,11 +157,6 @@ export default async function CategoryPageRoute({
   const n = postList.length;
   const hasPosts = n > 0;
 
-  const headlineRowArticles = buildCategoryHeadlineRowArticles(
-    postList,
-    transformPostToArticle,
-  );
-
   const missedItArticles = buildCategoryMissedItArticles(
     postList,
     transformPostToArticle,
@@ -189,9 +185,9 @@ export default async function CategoryPageRoute({
         hasPosts={hasPosts}
         latestArticles={latestArticles}
         mostReadArticles={mostReadArticles}
-        headlineRowArticles={headlineRowArticles}
         missedItArticles={missedItArticles}
         tagsGlimpse={tagsGlimpse ?? undefined}
+        categoryTags={categoryTags}
         featuredArticles={featuredArticles}
       />
     </>

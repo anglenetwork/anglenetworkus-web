@@ -23,7 +23,19 @@ export const categoryExclusiveBadge =
 export const categoryFeaturedDek =
   "mt-4 max-w-2xl font-sans text-base text-news-muted leading-relaxed";
 
-/** Category hero — "Also in {category}" text-only side list: kicker + title */
-export const categoryTextItemKicker =
-  "mb-2 block font-sans font-semibold text-[11px] text-news-primary uppercase tracking-wide";
-export const categoryTextItemTitle = `font-semibold font-display text-lg text-news-text leading-snug tracking-normal ${homepageArticleTitleLink}`;
+/** Category hero — main hero headline (24px base, 28px sm/tablet, 38px at xl+) */
+export const categoryHeroHeadline = `font-semibold font-display text-news-text text-[24px] leading-[1.14] tracking-[-0.5px] sm:text-[28px] xl:text-[38px] ${homepageArticleTitleLink}`;
+
+/** Category hero — main hero read time (12px base, 16px sm+) */
+export const categoryHeroReadTime =
+  "mt-3 font-sans text-news-muted text-xs uppercase tracking-wide sm:mt-4";
+
+/** Category hero — side list "feature" item (first side article): stacked headline + read time */
+export const categoryFeatureHeadline = `font-semibold font-display text-news-text text-[23px] leading-[1.26] tracking-[-0.3px] ${homepageArticleTitleLink}`;
+export const categoryFeatureReadTime =
+  "mt-3 font-sans text-news-muted text-[11px] uppercase tracking-wide";
+
+/** Category hero — side list "mini" items: title + read time */
+export const categoryTextItemTitle = `font-bold font-display text-[17px] text-news-text leading-[1.28] tracking-[-0.2px] ${homepageArticleTitleLink}`;
+export const categoryTextItemReadTime =
+  "mt-2.5 font-sans font-normal text-[11px] text-news-muted uppercase";

@@ -16,6 +16,7 @@ import { loadArticlePageSidebars } from "@/app/lib/article-family/sidebars";
 import { trackCategoryView } from "@/app/lib/analytics/track-category-view";
 import { EditorialArticleLayout } from "./article-family-editorial-layout";
 import { StandardArticleLayout } from "./article-family-standard-layout";
+import { PostArticleLayout } from "./article-family-post-layout";
 
 type ArticleFamilySidebarData = Awaited<
   ReturnType<typeof loadArticlePageSidebars>
@@ -28,10 +29,13 @@ type ArticleFamilyFooter =
 export default async function ArticleFamilyPage({
   article,
   footer,
+  tags = [],
 }: {
   article: ArticleFamily;
   /** Suggested tags + bottom module */
   footer?: ArticleFamilyFooter;
+  /** `post` type only — rendered inside the main column via PostArticleLayout */
+  tags?: Array<{ name: string; slug: string }>;
 }) {
   const [settings, sidebarData] = await Promise.all([
     sanityFetch({
@@ -58,6 +62,7 @@ export default async function ArticleFamilyPage({
 
   const showEditorialChrome =
     article._type === "opinion" || article._type === "analysis";
+  const isStandardPost = article._type === "post";
   const canonicalArticlePath = articleFamilyCanonicalHref(
     article._type,
     article.slug,
@@ -96,6 +101,15 @@ export default async function ArticleFamilyPage({
           <EditorialArticleLayout
             article={article}
             postBodyProps={postBodyProps}
+          />
+        ) : isStandardPost ? (
+          <PostArticleLayout
+            article={article}
+            postBodyProps={postBodyProps}
+            canonicalArticlePath={canonicalArticlePath}
+            popularReads={popularReads}
+            newsForYou={newsForYou}
+            tags={tags}
           />
         ) : (
           <StandardArticleLayout

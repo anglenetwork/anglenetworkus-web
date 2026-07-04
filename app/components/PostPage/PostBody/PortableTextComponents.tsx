@@ -19,6 +19,16 @@ import {
   regularPostBodyVideoCaption,
 } from "@/app/lib/typography/posts";
 import {
+  postArticleBodyBulletList,
+  postArticleBodyH2,
+  postArticleBodyH3,
+  postArticleBodyH4,
+  postArticleBodyNumberedList,
+  postArticleBodyParagraph,
+  postArticleQuote,
+  postArticleQuoteAttribution,
+} from "@/app/lib/typography/post-standard";
+import {
   formatImageCredit,
   formatImageLicense,
   normalizeImageMeta,
@@ -294,5 +304,95 @@ export const nonRegularPortableTextComponents: PortableTextComponents = {
         sizes: NON_REGULAR_POST_BODY_EDITORIAL_IMAGE_SIZES,
         captionClassName: NON_REGULAR_POST_IMAGE_CAPTION_CLASS,
       }),
+  },
+};
+
+/**
+ * Standard post redesign body components — scoped exclusively to `variant="post"` in
+ * PostBody. Shares image/link/embed handling with `portableTextComponents` but redesigns
+ * typography (paragraph/headings), and the pull quote (border-y + cite), to match the
+ * new editorial design without touching the shared `portableTextComponents` used elsewhere.
+ */
+export const postArticleBodyComponents: PortableTextComponents = {
+  types: {
+    ...portableTextComponents.types,
+    pullQuote: ({ value }: PortableTextComponentProps) => {
+      const quoteValue = asRecord(value);
+      const quote = asString(quoteValue.quote);
+      if (!quote) return null;
+
+      const attribution = asString(quoteValue.attribution);
+      const sourceLabel = asString(quoteValue.sourceLabel);
+
+      return (
+        <blockquote className="my-8 border-neutral-900 border-y py-7 text-left">
+          <p className={postArticleQuote}>{quote}</p>
+          {(attribution || sourceLabel) && (
+            <cite className={cn("mt-3.5 block", postArticleQuoteAttribution)}>
+              {attribution || ""}
+              {attribution && sourceLabel ? " — " : ""}
+              {sourceLabel || ""}
+            </cite>
+          )}
+        </blockquote>
+      );
+    },
+  },
+  marks: portableTextComponents.marks,
+  block: {
+    h1: ({ children }: PortableTextComponentProps) => (
+      <h1 className={cn(postArticleBodyH2, "mt-10 mb-4 text-left")}>
+        {children}
+      </h1>
+    ),
+    h2: ({ children }: PortableTextComponentProps) => (
+      <h2 className={cn(postArticleBodyH2, "mt-10 mb-4 text-left")}>
+        {children}
+      </h2>
+    ),
+    h3: ({ children }: PortableTextComponentProps) => (
+      <h3 className={cn(postArticleBodyH3, "mt-8 mb-3 text-left")}>
+        {children}
+      </h3>
+    ),
+    h4: ({ children }: PortableTextComponentProps) => (
+      <h4 className={cn(postArticleBodyH4, "mt-6 mb-2 text-left")}>
+        {children}
+      </h4>
+    ),
+    normal: ({ children }: PortableTextComponentProps) => (
+      <p className={cn(postArticleBodyParagraph, "mb-6 text-left")}>
+        {children}
+      </p>
+    ),
+    blockquote: ({ children }: PortableTextComponentProps) => (
+      <blockquote className="my-8 border-neutral-900 border-y py-7 text-left">
+        <div className={postArticleQuote}>{children}</div>
+      </blockquote>
+    ),
+  },
+  list: {
+    bullet: ({ children }: PortableTextComponentProps) => (
+      <ul
+        className={cn(
+          postArticleBodyBulletList,
+          "mb-6 space-y-2 pl-6 text-left",
+          "list-disc",
+        )}
+      >
+        {children}
+      </ul>
+    ),
+    number: ({ children }: PortableTextComponentProps) => (
+      <ol
+        className={cn(
+          postArticleBodyNumberedList,
+          "mb-6 space-y-2 pl-6 text-left",
+          "list-decimal",
+        )}
+      >
+        {children}
+      </ol>
+    ),
   },
 };

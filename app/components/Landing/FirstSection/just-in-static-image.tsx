@@ -20,7 +20,7 @@ export function JustInStaticImage({
   return (
     <div className="mb-3 block">
       <Link href={`/post/${postSlug}`}>
-        <div className="relative aspect-[16/9] w-full overflow-hidden rounded-sm bg-news-secondary md:aspect-auto md:h-60">
+        <div className="relative aspect-[16/9] w-full overflow-hidden rounded-sm bg-news-secondary md:aspect-auto md:h-64">
           <ImageRenderer
             src={image.src}
             alt={image.alt}

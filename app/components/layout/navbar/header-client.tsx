@@ -20,7 +20,6 @@ export function HeaderClient({
 }: HeaderProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [focusSearchOnOpen, setFocusSearchOnOpen] = useState(false);
-  const [headerOffset, setHeaderOffset] = useState(0);
   const headerRef = useRef<HTMLElement | null>(null);
   const lastHeightRef = useRef(0);
   const pathname = usePathname();
@@ -39,7 +38,6 @@ export function HeaderClient({
     const height = headerRef.current.getBoundingClientRect().height || 0;
     if (height === lastHeightRef.current) return;
     lastHeightRef.current = height;
-    setHeaderOffset(height);
     document.documentElement.style.setProperty(
       "--header-offset",
       `${height}px`,
@@ -88,7 +86,10 @@ export function HeaderClient({
     <>
       <header
         ref={headerRef}
-        className="sticky top-0 z-[100] h-[60px] w-full border-stone-200 border-b bg-stone-50"
+        className={cn(
+          "top-0 z-[100] h-[60px] w-full border-stone-200 border-b bg-stone-50",
+          isMenuOpen ? "hidden" : "sticky",
+        )}
       >
         <div className={cn(SITE_PAGE_WIDTH_HUB_CLASS, "h-full")}>
           <UnifiedNavbar
@@ -106,7 +107,6 @@ export function HeaderClient({
         <FullScreenMenu
           menuCategories={menuCategories}
           onClose={closeMenu}
-          headerOffset={headerOffset}
           focusSearchOnOpen={focusSearchOnOpen}
           onFocusSearchHandled={() => setFocusSearchOnOpen(false)}
         />

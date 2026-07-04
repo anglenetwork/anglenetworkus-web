@@ -1,5 +1,6 @@
 import "server-only";
 
+import { HOMEPAGE_JUST_IN_LIMIT } from "@/app/lib/homepage/first-section";
 import { sanityFetchStatic } from "@/sanity/lib/fetch";
 import {
   homepageHeroFrontlineQuery,
@@ -98,7 +99,11 @@ export async function loadHomepageHeroData() {
     usedHeroPostIds,
     1,
   );
-  const justInPosts = selectHeroPosts(justInPostsRaw, usedHeroPostIds, 5);
+  const justInPosts = selectHeroPosts(
+    justInPostsRaw,
+    usedHeroPostIds,
+    HOMEPAGE_JUST_IN_LIMIT,
+  );
   const frontlinePosts = selectHeroPosts(frontlinePostsRaw, usedHeroPostIds, 2);
   const { sideStories: rightRailSideStories, compactSideStories } =
     selectRightRailPosts(rightHeadlinePostsRaw, usedHeroPostIds);

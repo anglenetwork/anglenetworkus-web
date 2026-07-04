@@ -3,6 +3,7 @@
 import { Search } from "lucide-react";
 import { useRouter } from "next/navigation";
 import type { Ref } from "react";
+import { cn } from "@/lib/utils";
 
 interface SearchBarProps {
   placeholder?: string;
@@ -12,6 +13,7 @@ interface SearchBarProps {
   className?: string;
   inputRef?: Ref<HTMLInputElement>;
   inputId?: string;
+  variant?: "default" | "menu-xl";
 }
 
 export function SearchBar({
@@ -22,6 +24,7 @@ export function SearchBar({
   className = "",
   inputRef,
   inputId,
+  variant = "default",
 }: SearchBarProps) {
   const { push } = useRouter();
 
@@ -31,16 +34,13 @@ export function SearchBar({
     const query = formData.get("search") as string;
 
     if (query.trim()) {
-      // Close any open modals/menus first
       if (onClose) {
         onClose();
       }
 
-      // If custom onSubmit is provided, use it
       if (onSubmit) {
         onSubmit(query.trim());
       } else {
-        // Default behavior: navigate to search results page
         push(
           `/search?q=${encodeURIComponent(query.trim())}&sort=relevance&type=all&page=1`,
         );
@@ -48,9 +48,38 @@ export function SearchBar({
     }
   };
 
+  if (variant === "menu-xl") {
+    return (
+      <form
+        className={cn(
+          "flex w-full items-center gap-3.5 rounded-[10px] border border-border bg-white px-5 py-[15px] transition-[border-color] duration-150 focus-within:border-foreground",
+          className,
+        )}
+        role="search"
+        aria-label={ariaLabel}
+        onSubmit={handleSubmit}
+      >
+        <Search
+          className="size-5 shrink-0 text-muted-foreground"
+          strokeWidth={2}
+          aria-hidden
+        />
+        <input
+          ref={inputRef}
+          id={inputId}
+          type="search"
+          name="search"
+          placeholder={placeholder}
+          aria-label={ariaLabel}
+          className="min-w-0 flex-1 border-none bg-transparent font-sans text-base text-foreground outline-none placeholder:text-[#9A9A94]"
+        />
+      </form>
+    );
+  }
+
   return (
     <form
-      className={`relative w-full ${className}`}
+      className={cn("relative w-full", className)}
       role="search"
       aria-label={ariaLabel}
       onSubmit={handleSubmit}
@@ -62,7 +91,7 @@ export function SearchBar({
         name="search"
         placeholder={placeholder}
         aria-label={ariaLabel}
-        className="h-12 w-full rounded-lg bg-neutral-100 pr-16 pl-6 font-sans text-foreground text-sm transition-all placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+        className="h-12 w-full rounded-lg border border-border bg-white pr-16 pl-6 font-sans text-base text-foreground transition-all placeholder:text-[#9A9A94] focus:border-foreground focus:outline-none"
       />
       <button
         type="submit"

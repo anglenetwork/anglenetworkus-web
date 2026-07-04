@@ -27,7 +27,7 @@ export interface ArticleAuthor {
 export interface PostBodyProps {
   /** Public path for sharing (e.g. /opinion/slug). Defaults to /post/{slug} when omitted. */
   sharePath?: string;
-  variant?: "default" | "editorial";
+  variant?: "default" | "editorial" | "post";
   /** Cover/carousel sizing; defaults from variant (editorial → smaller non-regular hero). */
   mediaPresentation?: MediaPresentation;
   body?: unknown[] | null;
@@ -42,7 +42,11 @@ export interface PostBodyProps {
   insetPopularReads?: ArticleSidebarPost[];
 }
 
-export type MediaPresentation = "default" | "editorial" | "nonRegularCover";
+export type MediaPresentation =
+  | "default"
+  | "editorial"
+  | "nonRegularCover"
+  | "postStandard";
 
 export type PortableTextBlockValue = {
   [key: string]: unknown;

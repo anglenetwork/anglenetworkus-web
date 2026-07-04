@@ -1,21 +1,14 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
-import { SITE_PAGE_WIDTH_HUB_CLASS } from "@/app/components/layout/site-page-width";
 import type { NavMenuCategory } from "@/app/lib/nav/menu-columns";
-import { buildNavCategoryGrid } from "@/app/lib/nav/menu-columns";
-import {
-  FOOTER_CATEGORY_GRID_COLUMNS,
-  FOOTER_CATEGORY_GRID_ROWS,
-} from "@/app/lib/nav/footer-category-grid";
 import { FullScreenMenuBody } from "./full-screen-menu-body";
 import { FullScreenMenuFooter } from "./full-screen-menu-footer";
 
 interface FullScreenMenuProps {
   menuCategories: NavMenuCategory[];
   onClose: () => void;
-  headerOffset: number;
   focusSearchOnOpen?: boolean;
   onFocusSearchHandled?: () => void;
 }
@@ -23,7 +16,6 @@ interface FullScreenMenuProps {
 export function FullScreenMenu({
   menuCategories,
   onClose,
-  headerOffset,
   focusSearchOnOpen = false,
   onFocusSearchHandled,
 }: FullScreenMenuProps) {
@@ -35,15 +27,6 @@ export function FullScreenMenu({
   onFocusSearchHandledRef.current = onFocusSearchHandled;
 
   const [visible, setVisible] = useState(false);
-  const xlMenuRows = useMemo(
-    () =>
-      buildNavCategoryGrid(
-        menuCategories,
-        FOOTER_CATEGORY_GRID_COLUMNS,
-        FOOTER_CATEGORY_GRID_ROWS,
-      ),
-    [menuCategories],
-  );
 
   useEffect(() => {
     const frameId = requestAnimationFrame(() => setVisible(true));
@@ -92,15 +75,18 @@ export function FullScreenMenu({
       )}
       style={{ height: "100svh" }}
     >
-      <div
-        className="h-full max-h-[100svh] overflow-y-auto overscroll-contain"
-        style={{ paddingTop: `${headerOffset || 0}px` }}
-      >
-        <div className={cn(SITE_PAGE_WIDTH_HUB_CLASS, "md:py-6")}>
+      <div className="h-full max-h-[100svh] overflow-y-auto overscroll-contain pt-0 xl:pb-14">
+        <div
+          className={cn(
+            "mx-auto w-full max-w-[1400px]",
+            "px-5 pb-10 pt-7 max-[480px]:px-5 max-[480px]:pb-10 max-[480px]:pt-5",
+            "sm:px-10 sm:pb-14 sm:pt-7",
+            "xl:px-16 xl:pb-14 xl:pt-7",
+          )}
+        >
           <FullScreenMenuBody
             visible={visible}
             menuCategories={menuCategories}
-            xlMenuRows={xlMenuRows}
             onClose={onClose}
             searchInputRef={searchInputRef}
           />

@@ -1,18 +1,8 @@
 /** Posts used in the featured hero grid (center + side columns). */
 export const CATEGORY_FEATURED_COUNT = 5;
 
-/** Headline row directly under the featured hero. */
-const CATEGORY_HEADLINE_ROW_OFFSET = CATEGORY_FEATURED_COUNT;
-export const CATEGORY_HEADLINE_ROW_COUNT = 4;
-
-/** Title ticker in the category header (NewsTicker displays at most four). */
-const CATEGORY_TICKER_OFFSET =
-  CATEGORY_HEADLINE_ROW_OFFSET + CATEGORY_HEADLINE_ROW_COUNT;
-export const CATEGORY_TICKER_COUNT = 4;
-
-/** Image card row below the featured section. */
-const CATEGORY_MISSED_IT_OFFSET =
-  CATEGORY_TICKER_OFFSET + CATEGORY_TICKER_COUNT;
+/** Text headline row inside "More in {category}" (directly after the hero). */
+const CATEGORY_MISSED_IT_OFFSET = CATEGORY_FEATURED_COUNT;
 export const CATEGORY_MISSED_IT_COUNT = 4;
 
 /** First index for the paginated latest list below the hero modules. */
@@ -23,11 +13,6 @@ export type CategoryFeaturedArticles<T> = {
   leftColumn: T[];
   centerArticle: T;
   rightColumn: T[];
-};
-
-export type CategoryTickerPostSlice = {
-  tickerTitle: string;
-  slug: string;
 };
 
 function sliceWhenAvailable<T>(
@@ -51,34 +36,6 @@ export function buildCategoryFeaturedArticles<T, U>(
     leftColumn: postList.slice(1, 3).map(transform),
     rightColumn: postList.slice(3, CATEGORY_FEATURED_COUNT).map(transform),
   };
-}
-
-export function buildCategoryHeadlineRowArticles<T, U>(
-  postList: readonly T[],
-  transform: (post: T) => U,
-): U[] {
-  return sliceWhenAvailable(
-    postList,
-    CATEGORY_HEADLINE_ROW_OFFSET,
-    CATEGORY_HEADLINE_ROW_COUNT,
-  ).map(transform);
-}
-
-export function buildCategoryTickerPosts<
-  T extends {
-    tickerTitle?: string | null;
-    title?: string | null;
-    slug?: string | null;
-  },
->(postList: readonly T[]): CategoryTickerPostSlice[] {
-  return sliceWhenAvailable(
-    postList,
-    CATEGORY_TICKER_OFFSET,
-    CATEGORY_TICKER_COUNT,
-  ).map((post) => ({
-    tickerTitle: (post.tickerTitle || post.title || "Untitled").trim(),
-    slug: post.slug || "#",
-  }));
 }
 
 export function buildCategoryMissedItArticles<T, U>(

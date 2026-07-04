@@ -3,6 +3,7 @@ import {
   NON_REGULAR_POST_CONTENT_MAX_WIDTH_CLASS,
   NON_REGULAR_POST_HERO_WIDTH_CLASS,
   NON_REGULAR_POST_MEDIA_SECTION_CLASS,
+  POST_ARTICLE_BODY_COLUMN_CLASS,
   REGULAR_POST_BODY_COLUMN_CLASS,
 } from "./constants";
 import { cn } from "@/lib/utils";
@@ -15,6 +16,7 @@ import PostSelectedNews from "../PostSelectedNews";
 import {
   nonRegularPortableTextComponents,
   portableTextComponents,
+  postArticleBodyComponents,
 } from "./PortableTextComponents";
 import { splitBodyForInset } from "./split-body-for-inset";
 import type { PostBodyProps } from "./types";
@@ -59,11 +61,18 @@ export default function PostBody({
   ) : null;
 
   const coverPresentation =
-    mediaPresentation ?? (variant === "editorial" ? "editorial" : "default");
+    mediaPresentation ??
+    (variant === "editorial"
+      ? "editorial"
+      : variant === "post"
+        ? "postStandard"
+        : "default");
   const bodyComponents =
-    variant === "editorial" || coverPresentation === "nonRegularCover"
-      ? nonRegularPortableTextComponents
-      : portableTextComponents;
+    variant === "post"
+      ? postArticleBodyComponents
+      : variant === "editorial" || coverPresentation === "nonRegularCover"
+        ? nonRegularPortableTextComponents
+        : portableTextComponents;
   const useWideHero =
     variant === "editorial" || coverPresentation === "nonRegularCover";
 
@@ -122,6 +131,25 @@ export default function PostBody({
               />
             )}
           </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (variant === "post") {
+    return (
+      <div className="text-left antialiased">
+        {articleMedia}
+
+        <div className={POST_ARTICLE_BODY_COLUMN_CLASS}>
+          <PortableText value={firstBodySlice} components={bodyComponents} />
+          {popularReadsInset}
+          {secondBodySlice.length > 0 && (
+            <PortableText
+              value={secondBodySlice}
+              components={bodyComponents}
+            />
+          )}
         </div>
       </div>
     );

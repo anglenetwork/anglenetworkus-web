@@ -1,25 +1,20 @@
 import Link from "next/link";
 import { cn } from "@/lib/utils";
-import { ExcerptCreditCaption } from "@/app/helpers";
 import type { Article } from "./types";
 import { ImageRenderer } from "../ui/image-renderer";
 import {
   categoryFeaturedDek,
-  categoryFeaturedTitle,
+  categoryHeroHeadline,
+  categoryHeroReadTime,
 } from "@/app/lib/typography/second-section";
 import { ReadTimeLabel } from "@/app/components/ui/read-time-label";
 
 interface FeatureHeroProps {
   article: Article;
   variant?: "light" | "news" | "dark";
-  emphasizeTitleOnXl?: boolean;
 }
 
-export function FeatureHero({
-  article,
-  variant = "light",
-  emphasizeTitleOnXl = false,
-}: FeatureHeroProps) {
+export function FeatureHero({ article, variant = "light" }: FeatureHeroProps) {
   const href = article.href ?? `/post/${article.slug}`;
   const imageSrc =
     article.imageUrl ||
@@ -34,7 +29,7 @@ export function FeatureHero({
       >
         <div
           className={cn(
-            "relative aspect-[16/9] w-full overflow-hidden rounded-sm",
+            "relative aspect-[16/10] w-full overflow-hidden rounded-sm",
             "bg-news-secondary",
           )}
         >
@@ -51,38 +46,34 @@ export function FeatureHero({
           />
         </div>
       </Link>
-      <ExcerptCreditCaption
-        credit={article.imageCredit}
-        align="right"
-        variant="compact"
-        className={variant === "dark" ? "text-neutral-400" : undefined}
-      />
-      <Link href={href} className="group block">
-        <h2
-          className={cn(
-            "mt-4",
-            categoryFeaturedTitle[variant],
-            emphasizeTitleOnXl && "xl:text-2xl xl:leading-snug",
-          )}
-        >
-          {article.title}
-        </h2>
-      </Link>
+      <div className="relative max-sm:-mt-[30px] max-sm:mr-[15%] max-sm:bg-news-surface max-sm:pt-4 max-sm:pr-4">
+        <Link href={href} className="group block">
+          <h2
+            className={cn(
+              "mt-0 max-w-full sm:mt-[26px] xl:max-w-[94%]",
+              categoryHeroHeadline,
+            )}
+          >
+            {article.title}
+          </h2>
+        </Link>
+        <ReadTimeLabel
+          minutes={article.readTime}
+          variant={variant}
+          className={categoryHeroReadTime}
+        />
+      </div>
       {article.excerpt ? (
         <p
           className={cn(
             categoryFeaturedDek,
+            "hidden lg:block",
             variant === "dark" && "text-neutral-400",
           )}
         >
           {article.excerpt}
         </p>
       ) : null}
-      <ReadTimeLabel
-        minutes={article.readTime}
-        variant={variant}
-        className={variant === "news" ? "text-neutral-600" : undefined}
-      />
     </article>
   );
 }
