@@ -38,7 +38,7 @@ function TagIcymiHeading() {
 }
 
 function icymiColumnClassName() {
-  return "min-w-0 py-6 lg:py-0 lg:px-8";
+  return "min-w-0 py-6 lg:px-8 lg:pt-7 lg:pb-0";
 }
 
 function TagIcymiMobileRow({ item }: { item: TagIcymiItem }) {
