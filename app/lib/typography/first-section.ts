@@ -1,36 +1,37 @@
-import { homepageArticleTitleLink } from "./homepage-article-links";
+/** Homepage "Front" section — hover behavior: headline fades to ink-soft on hover. */
+const angleTitleHover = "transition-colors group-hover:text-angle-inkSoft";
 
-/** FirstSection — Just In lead story + More Top Headlines card titles (same size at all breakpoints) */
-export const firstSectionFeaturedStoryTitle = `font-medium font-display text-xl text-news-text leading-snug tracking-normal ${homepageArticleTitleLink}`;
+/** Single responsive lead headline above the Just In / Hero / Right rail grid. */
+export const leadHeadlineTitle = `mx-auto max-w-[900px] text-center font-display text-[36px] font-bold leading-[1.04] tracking-[-0.5px] text-angle-ink lg:text-[56px] lg:tracking-[-1.5px] ${angleTitleHover}`;
 
-/** FirstSection — More Top Headlines grid (md+, 2-up) */
-export const moreTopHeadlinesGridTitle = `font-semibold font-display text-base text-news-text leading-snug tracking-normal ${homepageArticleTitleLink}`;
+/** "JUST IN" kicker label next to the outlined red dot. */
+export const justInLabel =
+  "font-mono text-xs font-bold uppercase tracking-[0.12em] leading-none text-angle-ink";
 
-/** FirstSection — left rail: remaining Just In stories */
-export const justInSecondaryTitle = `font-semibold font-display text-lg text-news-text leading-snug tracking-normal ${homepageArticleTitleLink}`;
-
-/** FirstSection — Just In category label above story titles */
+/** Category tag above a Just In / right rail headline (e.g. "WORLD"). */
 export const justInCategoryLabel =
-  "mb-1.5 block font-sans text-[10.5px] font-bold uppercase tracking-[0.07em] text-news-primary";
+  "mb-2 block font-mono text-[11px] font-bold uppercase tracking-[0.08em] leading-none text-angle-ink";
 
-/** FirstSection — center: desktop main headline (lg+) */
-export const mainHeadlineDesktopTitle = `text-6xl font-bold text-news-text !leading-tight tracking-tight text-center font-display ${homepageArticleTitleLink}`;
+/** Just In list-item headlines (uniform size for every row, including the lead). */
+export const justInHeadline = `font-display text-[17px] font-semibold leading-[1.32] tracking-[-0.2px] text-angle-ink ${angleTitleHover}`;
 
-/** FirstSection — center: mobile/tablet main headline (below lg) */
-export const mainHeadlineMobileTitle = `text-2xl md:text-3xl lg:hidden font-bold text-news-text leading-snug tracking-normal mb-4 font-display text-start md:text-center ${homepageArticleTitleLink}`;
+/** Hero caption overlaid on the gradient at the bottom of the main image. */
+export const heroCaption =
+  "font-sans text-base font-medium leading-[1.45] text-white";
 
-/** FirstSection — center: main story excerpt overlay on hero image */
-export const mainStoryExcerpt =
-  "line-clamp-4 font-sans text-base font-medium leading-snug tracking-normal text-white md:text-base";
+/** Photo credit line under the hero image. */
+export const heroCredit =
+  "mt-2.5 text-right font-mono text-[11px] tracking-[0.015em] text-angle-inkSoft";
 
-/** FirstSection — center: More Top Headlines, mobile stacked rows */
-export const moreTopHeadlinesMobileTitle = `min-w-0 flex-1 font-display text-base font-semibold leading-snug tracking-tight text-news-text ${homepageArticleTitleLink}`;
+/** "More Top Headlines" 2-up grid headline under the hero. */
+export const belowHeadline = `mt-4 font-display text-lg font-semibold leading-[1.28] tracking-[-0.2px] text-angle-ink ${angleTitleHover}`;
 
-/** FirstSection — right rail: featured side story titles (big cards) */
-export const sideStoryTitle = `font-medium font-display text-xl text-news-text leading-snug tracking-normal ${homepageArticleTitleLink}`;
+/** Right rail featured story headline (image + headline). */
+export const rightFeatureHeadline = `mt-4 font-display text-[19px] font-semibold leading-[1.28] tracking-[-0.2px] text-angle-ink ${angleTitleHover}`;
 
-/** FirstSection — right rail: compact side story titles (image left, title right) */
-export const sideStoryCompactTitle = `min-w-0 flex-1 font-semibold font-display text-base text-news-text leading-snug tracking-normal ${homepageArticleTitleLink}`;
+/** Right rail compact mini-list headline. */
+export const rightMiniHeadline = `font-display text-[15px] font-semibold leading-[1.28] tracking-[-0.1px] text-angle-ink ${angleTitleHover}`;
 
-/** FirstSection — right rail: What Matters list item titles */
-const mostReadItemTitle = `text-news-text leading-tight font-display text-lg sm:text-base font-semibold tracking-normal ${homepageArticleTitleLink}`;
+/** "More {Category} news" / "More headlines" link label at the bottom of a column. */
+export const colMoreLabel =
+  "text-sm font-semibold text-angle-inkSoft transition-colors group-hover:text-angle-ink";

@@ -41,9 +41,9 @@ export function JustInImageCarousel({
   if (images.length === 0) return null;
 
   return (
-    <div className="mb-3 block">
+    <div className="mb-7 block">
       <Link href={`/post/${postSlug}`}>
-        <div className="relative aspect-[16/9] w-full overflow-hidden rounded-sm bg-news-secondary md:aspect-auto md:h-64">
+        <div className="relative aspect-[16/11] w-full overflow-hidden bg-angle-paper">
           {images.map((image, idx) => {
             if (!shouldRenderCarouselSlide(idx, currentIndex, images.length)) {
               return null;

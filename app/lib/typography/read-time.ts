@@ -5,7 +5,8 @@ export type ReadTimeLabelVariant =
   | "accent"
   | "muted"
   | "inline"
-  | "hero";
+  | "hero"
+  | "angle";
 
 const readTimeLabelVariants: Record<ReadTimeLabelVariant, string> = {
   default:
@@ -18,6 +19,7 @@ const readTimeLabelVariants: Record<ReadTimeLabelVariant, string> = {
     "mt-3 font-sans font-semibold text-muted-foreground text-xs uppercase tracking-wide",
   inline: "font-sans text-neutral-400 text-xs",
   hero: "font-normal font-sans text-xs text-white",
+  angle: "mt-2 font-mono text-[11px] text-angle-inkSoft",
 };
 
 export function formatReadTimeLabel(minutes?: number | null): string {
