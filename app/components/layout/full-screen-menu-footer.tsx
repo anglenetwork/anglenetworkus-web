@@ -10,7 +10,10 @@ import {
   xlMenuLegalLink,
 } from "@/app/lib/typography/full-screen-menu";
 import { siteSocialLinks } from "@/app/lib/site-social-links";
-import { MenuActionLinks, MenuStackedFooterLinks } from "./full-screen-menu-parts";
+import {
+  MenuActionLinks,
+  MenuStackedFooterLinks,
+} from "./full-screen-menu-parts";
 
 function XIcon({ className }: { className?: string }) {
   return (
@@ -32,7 +35,6 @@ const socialIcons = {
 } as const;
 
 interface FullScreenMenuFooterProps {
-  visible: boolean;
   onClose: () => void;
 }
 
@@ -60,23 +62,9 @@ function MenuSocialLinks({ className }: { className?: string }) {
   );
 }
 
-export function FullScreenMenuFooter({
-  visible,
-  onClose,
-}: FullScreenMenuFooterProps) {
-  const transitionClass = cn(
-    "transition-all duration-700 ease-out",
-    visible ? "translate-y-0 opacity-100" : "translate-y-8 opacity-0",
-  );
-
+export function FullScreenMenuFooter({ onClose }: FullScreenMenuFooterProps) {
   return (
-    <div
-      className={cn(
-        transitionClass,
-        "mt-6 pt-0 xl:mt-14 xl:border-border xl:border-t xl:pt-6",
-      )}
-      style={{ transitionDelay: visible ? "300ms" : "0ms" }}
-    >
+    <div className="mt-6 pt-0 xl:mt-14 xl:border-border xl:border-t xl:pt-6">
       <MenuActionLinks
         onClose={onClose}
         variant="xl"
@@ -86,13 +74,7 @@ export function FullScreenMenuFooter({
       <div className="xl:hidden">
         <MenuStackedFooterLinks onClose={onClose} />
 
-        <div
-          className={cn(
-            "mt-3 flex flex-col items-start gap-4",
-            transitionClass,
-          )}
-          style={{ transitionDelay: visible ? "400ms" : "0ms" }}
-        >
+        <div className="mt-3 flex flex-col items-start gap-4">
           <MenuSocialLinks />
 
           <div className="flex flex-wrap items-center gap-x-[18px] gap-y-2">
@@ -117,13 +99,7 @@ export function FullScreenMenuFooter({
         </div>
       </div>
 
-      <div
-        className={cn(
-          "hidden flex-wrap items-center justify-between gap-4 xl:flex",
-          transitionClass,
-        )}
-        style={{ transitionDelay: visible ? "400ms" : "0ms" }}
-      >
+      <div className="hidden flex-wrap items-center justify-between gap-4 xl:flex">
         <MenuSocialLinks />
         <div className="flex flex-wrap items-center gap-[18px]">
           <Link

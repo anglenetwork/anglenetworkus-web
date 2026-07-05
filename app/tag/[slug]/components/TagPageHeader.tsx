@@ -1,9 +1,6 @@
 import { SitePageWidth } from "@/app/components/layout/site-page-width";
 import { formatSectionDate } from "@/app/lib/format-section-date";
-import {
-  tagPageDateMeta,
-  tagPageTitle,
-} from "@/app/lib/typography/tag-page";
+import { tagPageDateMeta, tagPageTitle } from "@/app/lib/typography/tag-page";
 
 interface TagPageHeaderProps {
   tagTitle: string;

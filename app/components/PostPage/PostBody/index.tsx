@@ -145,10 +145,7 @@ export default function PostBody({
           <PortableText value={firstBodySlice} components={bodyComponents} />
           {popularReadsInset}
           {secondBodySlice.length > 0 && (
-            <PortableText
-              value={secondBodySlice}
-              components={bodyComponents}
-            />
+            <PortableText value={secondBodySlice} components={bodyComponents} />
           )}
         </div>
       </div>

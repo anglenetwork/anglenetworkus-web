@@ -59,7 +59,7 @@ export function MenuCategoryAccordion({
         <AccordionItem
           key={category.slug}
           value={category.slug}
-          className="border-0 border-b border-dotted border-border pb-0 last:border-b"
+          className="border-0 border-border border-b border-dotted pb-0 last:border-b"
         >
           <AccordionPrimitive.Header className="m-0 flex items-center gap-3 py-5">
             <Link
@@ -86,7 +86,7 @@ export function MenuCategoryAccordion({
               />
             </AccordionPrimitive.Trigger>
           </AccordionPrimitive.Header>
-          <AccordionContent className="pb-[18px] pl-1 pt-0.5">
+          <AccordionContent className="pt-0.5 pb-[18px] pl-1">
             {category.tags.length > 0 ? (
               <nav aria-label={`${category.name} tags`}>
                 <ul className="m-0 list-none p-0">

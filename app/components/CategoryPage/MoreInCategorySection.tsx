@@ -36,10 +36,7 @@ function MoreInCategoryHeading({ categoryName }: { categoryName: string }) {
   );
 }
 
-function moreTopBlockItemClassName(
-  index: number,
-  total: number,
-) {
+function moreTopBlockItemClassName(index: number, total: number) {
   return cn(
     "border-news-border py-6 xl:py-0",
     "xl:p-8",
@@ -109,7 +106,10 @@ function MoreInCategoryRegionMobileRow({ item }: { item: TagsGlimpseItem }) {
           href={tagHref}
           className="group flex min-w-0 items-center gap-2 rounded-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-news-primary focus-visible:outline-offset-2"
         >
-          <Slash className="size-[11px] shrink-0 text-news-text" strokeWidth={2.5} />
+          <Slash
+            className="size-[11px] shrink-0 text-news-text"
+            strokeWidth={2.5}
+          />
           <span className={moreInCategoryRegionLabel}>{tagTitle}</span>
         </Link>
         <Link
@@ -183,7 +183,10 @@ function MoreInCategoryRegionColumn({ item }: { item: TagsGlimpseItem }) {
           href={tagHref}
           className="group flex min-w-0 items-center gap-2 rounded-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-news-primary focus-visible:outline-offset-2"
         >
-          <Slash className="size-[11px] shrink-0 text-news-text" strokeWidth={2.5} />
+          <Slash
+            className="size-[11px] shrink-0 text-news-text"
+            strokeWidth={2.5}
+          />
           <span className={moreInCategoryRegionLabel}>{tagTitle}</span>
         </Link>
         <Link
@@ -302,10 +305,7 @@ export function MoreInCategorySection({
   }
 
   return (
-    <section
-      aria-label={`More in ${categoryName}`}
-      className="bg-news-surface"
-    >
+    <section aria-label={`More in ${categoryName}`} className="bg-news-surface">
       {hasHeadlines ? <MoreInCategoryTopRow articles={topArticles} /> : null}
 
       {hasTags ? (

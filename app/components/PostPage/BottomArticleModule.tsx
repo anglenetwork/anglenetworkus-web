@@ -172,7 +172,10 @@ function ModernRelatedArticles({
           <div className="mb-[30px] flex items-baseline justify-between gap-4">
             <h2 className={postRelatedModernSectionTitle}>{sectionTitle}</h2>
             {trimmedCategory && categoryHref && (
-              <Link href={categoryHref} className={postRelatedModernViewAllLink}>
+              <Link
+                href={categoryHref}
+                className={postRelatedModernViewAllLink}
+              >
                 View all {trimmedCategory} →
               </Link>
             )}
@@ -229,9 +232,7 @@ function ModernSideItem({
       <p className={cn(postRelatedModernRailDate, "mb-[7px]")}>
         {formatTopStoryTimestamp(post.date)}
       </p>
-      <h3 className={postRelatedModernSideTitle}>
-        {post.title || "Untitled"}
-      </h3>
+      <h3 className={postRelatedModernSideTitle}>{post.title || "Untitled"}</h3>
     </Link>
   );
 }
@@ -312,6 +313,5 @@ function formatTopStoryTimestamp(value: string | undefined): string {
       .toUpperCase();
   }
 
-  return parsed
-    .toLocaleDateString("en-US", { month: "short", day: "numeric" });
+  return parsed.toLocaleDateString("en-US", { month: "short", day: "numeric" });
 }

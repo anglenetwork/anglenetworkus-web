@@ -1,4 +1,7 @@
-import { getWikimediaThumbnail } from "@/lib/image-optimization";
+import {
+  getWikimediaThumbnail,
+  parseWikimediaCommonsFilePathFilename,
+} from "@/lib/image-optimization";
 import {
   formatImageCredit,
   formatImageLicense,
@@ -102,14 +105,23 @@ function resolveExternalEditorialImage(
   const externalPolicy = options.externalUnoptimized ?? "auto";
   const includeAttribution = options.includeAttribution ?? false;
   const listingWidth = options.maxWidth ?? 1200;
-  const src = isWikimediaUrl(externalUrl)
+  const mightBeWikimedia =
+    isWikimediaUrl(externalUrl) ||
+    parseWikimediaCommonsFilePathFilename(externalUrl) != null;
+  const src = mightBeWikimedia
     ? getWikimediaThumbnail(externalUrl.toString(), wikimediaWidth)
     : clampOptimizableExternalUrl(externalUrl, listingWidth).toString();
+
+  const isWikimediaResolved =
+    isWikimediaUrl(externalUrl) ||
+    src.includes("upload.wikimedia.org/wikipedia/commons/thumb/");
 
   const result: ResolvedEditorialImage = {
     src,
     alt: resolveAlt(input, image, options),
-    unoptimized: shouldUnoptimizeExternalUrl(externalUrl, externalPolicy),
+    unoptimized: isWikimediaResolved
+      ? true
+      : shouldUnoptimizeExternalUrl(externalUrl, externalPolicy),
   };
   return attachAttribution(result, input, includeAttribution);
 }

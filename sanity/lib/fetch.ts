@@ -6,6 +6,9 @@ import { liveSanityFetch, SanityLive } from "@/sanity/lib/live";
 
 export { SanityLive };
 
+/** Default Next.js Data Cache TTL for published Sanity reads. */
+const DEFAULT_SANITY_REVALIDATE_SECONDS = 60;
+
 /**
  * Fetch Sanity content in Server Components with live cache tags and draft-mode support.
  * Returns query data directly; use `liveSanityFetch` from `./live` when you need tags or source maps.
@@ -17,6 +20,7 @@ export async function sanityFetch<const QueryString extends string>({
   stega,
   tags,
   requestTag,
+  revalidate = DEFAULT_SANITY_REVALIDATE_SECONDS,
 }: {
   query: QueryString;
   params?: QueryParams | Promise<QueryParams>;
@@ -24,6 +28,8 @@ export async function sanityFetch<const QueryString extends string>({
   stega?: boolean;
   tags?: string[];
   requestTag?: string;
+  /** Next.js Data Cache TTL (seconds). Ignored for live/draft preview. */
+  revalidate?: number | false;
 }) {
   const [resolvedParams, { isEnabled: isPreview }] = await Promise.all([
     Promise.resolve(params),
@@ -47,6 +53,7 @@ export async function sanityFetch<const QueryString extends string>({
   return authenticatedClient.fetch(query, resolvedParams, {
     perspective: perspective ?? "published",
     stega: stega ?? false,
+    next: { revalidate },
     ...(requestTag ? { tag: requestTag } : {}),
   });
 }
@@ -60,17 +67,21 @@ export async function sanityFetchStatic<const QueryString extends string>({
   params = {},
   tag,
   requestTag,
+  revalidate = DEFAULT_SANITY_REVALIDATE_SECONDS,
 }: {
   query: QueryString;
   params?: QueryParams | Promise<QueryParams>;
   /** @deprecated Use `requestTag` — Sanity request-log label, not a Next.js cache tag. */
   tag?: string;
   requestTag?: string;
+  /** Next.js Data Cache TTL (seconds). */
+  revalidate?: number | false;
 }) {
   const resolvedParams = await params;
   return authenticatedClient.fetch(query, resolvedParams, {
     perspective: "published",
     stega: false,
+    next: { revalidate },
     ...((requestTag ?? tag) ? { tag: requestTag ?? tag } : {}),
   });
 }

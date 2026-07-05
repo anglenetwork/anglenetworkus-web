@@ -49,7 +49,8 @@ export const postTagPill =
   "font-display text-[12.5px] font-semibold text-neutral-700 border border-neutral-300 rounded-full px-4 py-[7px] transition-colors hover:border-neutral-900 hover:text-neutral-900";
 
 /** Author card */
-export const postAuthorCardName = "font-display text-[15px] font-bold text-neutral-900";
+export const postAuthorCardName =
+  "font-display text-[15px] font-bold text-neutral-900";
 export const postAuthorCardBio =
   "font-sans text-[13.5px] leading-relaxed text-neutral-500";
 
@@ -76,4 +77,5 @@ export const postNewsletterEyebrow =
   "font-display text-xs font-bold uppercase tracking-[0.07em] text-neutral-400";
 export const postNewsletterHeading =
   "font-display text-xl font-bold leading-[1.3] text-white";
-export const postNewsletterBody = "font-sans text-[13.5px] leading-relaxed text-neutral-300";
+export const postNewsletterBody =
+  "font-sans text-[13.5px] leading-relaxed text-neutral-300";

@@ -125,7 +125,7 @@ export function TagIcymiSection({ items }: TagIcymiSectionProps) {
 
   return (
     <section aria-label="In case you missed it" className="bg-news-surface">
-      <SitePageWidth className="pb-8 pt-8">
+      <SitePageWidth className="pt-8 pb-8">
         <TagIcymiHeading />
         <div
           aria-label="In case you missed it articles"

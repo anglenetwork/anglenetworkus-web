@@ -1,6 +1,7 @@
+import { Suspense } from "react";
 import { FirstSection } from "./components/Landing/FirstSection/firstSection";
-import EditorialRailsSection from "./components/article-family/EditorialRailsSection";
-import { HomepageBelowFoldLazy } from "./components/Landing/homepage-below-fold-lazy";
+import { HomepageBelowFoldData } from "./components/Landing/homepage-below-fold-data";
+import { HomepageBelowFoldFallback } from "./components/Landing/homepage-below-fold-fallback";
 import { HOMEPAGE_BELOW_FOLD_SECTION_GAP } from "./components/Landing/homepage-below-fold-spacing";
 import { JsonLdScript } from "./components/seo/json-ld-script";
 import nextDynamic from "next/dynamic";
@@ -19,10 +20,12 @@ import {
 } from "@/app/lib/seo/publisher";
 import { getPublicSiteUrl } from "@/app/lib/seo/site-url";
 import { resolveOpenGraphImage } from "@/sanity/lib/utils";
-import { loadHomepagePageData } from "@/app/lib/homepage/load-homepage-page-data";
+import { getHomepageCoverImage } from "@/app/lib/homepage/homepage-cover-image";
+import { loadHomepageHeroData } from "@/app/lib/homepage/load-homepage-hero-data";
+import { preloadHeroLcpImage } from "@/app/lib/homepage/preload-hero-lcp-image";
 import { SitePageWidth } from "@/app/components/layout/site-page-width";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 60;
 
 function PromoSectionPlaceholder() {
   return (
@@ -51,12 +54,10 @@ export async function generateMetadata() {
   );
 }
 
-const homepageOpinionRail = <EditorialRailsSection />;
-
 export default async function Page() {
-  const [settings, homepageData] = await Promise.all([
+  const [settings, hero] = await Promise.all([
     getCachedSettings(),
-    loadHomepagePageData(),
+    loadHomepageHeroData(),
   ]);
   const siteUrl = getPublicSiteUrl();
   const siteName = resolveSiteName(settings, demo.title);
@@ -76,15 +77,25 @@ export default async function Page() {
     organizationId: orgId,
   });
 
-  const {
-    hero,
-    secondSectionData,
-    thirdSectionData,
-    fourthSectionData,
-    fifthSection,
-    sixthSection,
-    seventhSectionData,
-  } = homepageData;
+  const mainHeadlinePost = (
+    Array.isArray(hero.mainHeadlinePosts) ? hero.mainHeadlinePosts[0] : null
+  ) as {
+    title?: string;
+    cover?: Parameters<typeof getHomepageCoverImage>[1];
+  } | null;
+  const heroLcpCover =
+    mainHeadlinePost?.cover != null
+      ? getHomepageCoverImage(
+          "heroMain",
+          mainHeadlinePost.cover,
+          mainHeadlinePost.title ?? "Main headline",
+        )
+      : null;
+
+  preloadHeroLcpImage({
+    src: heroLcpCover?.src,
+    unoptimized: heroLcpCover?.unoptimized ?? false,
+  });
 
   return (
     <>
@@ -100,26 +111,9 @@ export default async function Page() {
             sideStories={hero.rightRailSideStories as any}
             compactSideStories={hero.compactSideStories as any}
           />
-          <HomepageBelowFoldLazy
-            secondSection={{
-              variant: "news",
-              categoriesData: secondSectionData as any,
-            }}
-            thirdSection={{ articles: thirdSectionData }}
-            fourthSection={fourthSectionData}
-            fifthSection={fifthSection}
-            sixthSection={
-              sixthSection
-                ? {
-                    leftArticle: sixthSection.leftArticle as any,
-                    centerArticle: sixthSection.centerArticle as any,
-                    rightArticle: sixthSection.rightArticle as any,
-                  }
-                : null
-            }
-            seventhSection={{ categoriesData: seventhSectionData as any }}
-            opinion={homepageOpinionRail}
-          />
+          <Suspense fallback={<HomepageBelowFoldFallback />}>
+            <HomepageBelowFoldData />
+          </Suspense>
           {/* <PromoSection /> */}
         </div>
       </SitePageWidth>

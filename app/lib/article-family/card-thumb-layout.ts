@@ -18,7 +18,7 @@ export function getArticleFamilyCardThumbLayout(
       : layout === "rail"
         ? 180
         : layout === "heroTile"
-          ? 400
+          ? 600
           : 450;
 
   const thumbWrap =

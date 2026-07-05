@@ -1,7 +1,6 @@
 "use client";
 
 import type { RefObject } from "react";
-import { cn } from "@/lib/utils";
 import type { NavMenuCategory } from "@/app/lib/nav/menu-columns";
 import { SearchBar } from "../ui/search-bar";
 import {
@@ -11,14 +10,12 @@ import {
 } from "./full-screen-menu-parts";
 
 interface FullScreenMenuBodyProps {
-  visible: boolean;
   menuCategories: NavMenuCategory[];
   onClose: () => void;
   searchInputRef: RefObject<HTMLInputElement | null>;
 }
 
 export function FullScreenMenuBody({
-  visible,
   menuCategories,
   onClose,
   searchInputRef,
@@ -32,13 +29,7 @@ export function FullScreenMenuBody({
   };
 
   return (
-    <div
-      className={cn(
-        "transition-all duration-700 ease-out xl:pb-0",
-        visible ? "translate-y-0 opacity-100" : "translate-y-8 opacity-0",
-      )}
-      style={{ transitionDelay: visible ? "150ms" : "0ms" }}
-    >
+    <div className="xl:pb-0">
       <MenuTopbar onClose={onClose} />
 
       <div data-menu-state="open">

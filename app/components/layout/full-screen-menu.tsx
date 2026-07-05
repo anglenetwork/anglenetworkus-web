@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef } from "react";
 import { cn } from "@/lib/utils";
 import type { NavMenuCategory } from "@/app/lib/nav/menu-columns";
 import { FullScreenMenuBody } from "./full-screen-menu-body";
@@ -26,27 +26,24 @@ export function FullScreenMenu({
   onCloseRef.current = onClose;
   onFocusSearchHandledRef.current = onFocusSearchHandled;
 
-  const [visible, setVisible] = useState(false);
-
-  useEffect(() => {
-    const frameId = requestAnimationFrame(() => setVisible(true));
-
-    const handleEscKey = (event: KeyboardEvent) => {
-      if (event.key === "Escape") onCloseRef.current();
-    };
-
-    document.addEventListener("keydown", handleEscKey);
-
+  useLayoutEffect(() => {
     const sw = window.innerWidth - document.documentElement.clientWidth;
     document.body.style.overflow = "hidden";
     if (sw > 0) document.body.style.paddingRight = `${sw}px`;
 
     return () => {
-      cancelAnimationFrame(frameId);
-      document.removeEventListener("keydown", handleEscKey);
       document.body.style.overflow = "";
       document.body.style.paddingRight = "";
     };
+  }, []);
+
+  useEffect(() => {
+    const handleEscKey = (event: KeyboardEvent) => {
+      if (event.key === "Escape") onCloseRef.current();
+    };
+
+    document.addEventListener("keydown", handleEscKey);
+    return () => document.removeEventListener("keydown", handleEscKey);
   }, []);
 
   useEffect(() => {
@@ -68,10 +65,8 @@ export function FullScreenMenu({
       aria-label="Navigation menu"
       data-state="open"
       className={cn(
-        "fixed inset-0 z-40 m-0 size-full max-h-none max-w-none overflow-hidden border-0 bg-background p-0 transition-all duration-500 ease-in-out",
-        visible
-          ? "translate-y-0 opacity-100"
-          : "pointer-events-none translate-y-full opacity-0",
+        "fixed inset-0 z-[110] m-0 size-full max-h-none max-w-none overflow-hidden border-0 bg-background p-0",
+        "fade-in animate-in duration-200 motion-reduce:animate-none",
       )}
       style={{ height: "100svh" }}
     >
@@ -79,18 +74,17 @@ export function FullScreenMenu({
         <div
           className={cn(
             "mx-auto w-full max-w-[1400px]",
-            "px-5 pb-10 pt-7 max-[480px]:px-5 max-[480px]:pb-10 max-[480px]:pt-5",
-            "sm:px-10 sm:pb-14 sm:pt-7",
-            "xl:px-16 xl:pb-14 xl:pt-7",
+            "px-5 pt-7 pb-10 max-[480px]:px-5 max-[480px]:pt-5 max-[480px]:pb-10",
+            "sm:px-10 sm:pt-7 sm:pb-14",
+            "xl:px-16 xl:pt-7 xl:pb-14",
           )}
         >
           <FullScreenMenuBody
-            visible={visible}
             menuCategories={menuCategories}
             onClose={onClose}
             searchInputRef={searchInputRef}
           />
-          <FullScreenMenuFooter visible={visible} onClose={onClose} />
+          <FullScreenMenuFooter onClose={onClose} />
         </div>
       </div>
     </dialog>

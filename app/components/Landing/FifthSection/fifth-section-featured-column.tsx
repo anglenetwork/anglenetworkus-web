@@ -2,7 +2,7 @@ import Link from "next/link";
 import { cn } from "@/lib/utils";
 import type { ArticleFamilyCard } from "@/app/lib/article-family/types";
 import { ListingPhotoCredit } from "@/app/helpers";
-import { getCoverImage } from "@/sanity/lib/utils";
+import { getHomepageCoverImage } from "@/app/lib/homepage/homepage-cover-image";
 import { SectionHeader } from "../../ui/section-header";
 import { ImageRenderer } from "../../ui/image-renderer";
 import { fifthSectionFeaturedOverlayTitle } from "@/app/lib/typography/fifth-section";
@@ -16,8 +16,9 @@ function getImageData(
   cover: ArticleFamilyCard["cover"],
   fallbackTitle: string,
 ) {
-  return getCoverImage(
-    cover as Parameters<typeof getCoverImage>[0],
+  return getHomepageCoverImage(
+    "fifthFeatured",
+    cover as Parameters<typeof getHomepageCoverImage>[1],
     fallbackTitle,
   );
 }

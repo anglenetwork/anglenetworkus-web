@@ -69,6 +69,7 @@ export default async function RootLayout({
     <html lang="en">
       <head>
         <link rel="dns-prefetch" href="https://cdn.sanity.io" />
+        <link rel="dns-prefetch" href="https://images.unsplash.com" />
         <link rel="dns-prefetch" href="https://upload.wikimedia.org" />
         <link
           rel="alternate"
@@ -90,14 +91,14 @@ export default async function RootLayout({
           {isStudioRoute ? (
             children
           ) : (
-            <SiteShell>
+            <SiteShell pathname={pathname}>
               <main className="">{children}</main>
             </SiteShell>
           )}
         </section>
 
         {!isStudioRoute ? <SpeedInsights /> : null}
-        {!isStudioRoute && <SanityLive />}
+        {!isStudioRoute && isDraftMode ? <SanityLive /> : null}
       </body>
     </html>
   );

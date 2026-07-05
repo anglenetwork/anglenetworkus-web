@@ -60,6 +60,7 @@ export default function SixthSection({
             <FeaturedStoryColumn
               {...sixthSectionColumnProps(article)}
               variant={variant}
+              coverMaxWidth={640}
             />
           </article>
         ))}

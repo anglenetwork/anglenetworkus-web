@@ -10,9 +10,21 @@ export function clampOptimizableExternalUrl(url: URL, maxWidth: number): URL {
   }
 
   const next = new URL(url.toString());
-  next.searchParams.set("w", String(Math.max(1, Math.round(maxWidth))));
+  const clampedWidth = Math.max(1, Math.round(maxWidth));
+  next.searchParams.set("w", String(clampedWidth));
 
-  if (url.hostname === "images.unsplash.com" && !next.searchParams.has("q")) {
+  if (url.hostname === "images.unsplash.com") {
+    next.searchParams.set("q", next.searchParams.get("q") ?? "75");
+    if (!next.searchParams.has("auto")) {
+      next.searchParams.set("auto", "format");
+    }
+    if (!next.searchParams.has("fit")) {
+      next.searchParams.set("fit", "crop");
+    }
+    // Drop Unsplash ixlib params that fight our width clamp on direct fetches.
+    next.searchParams.delete("ixlib");
+    next.searchParams.delete("ixid");
+  } else if (!next.searchParams.has("q")) {
     next.searchParams.set("q", "80");
   }
 

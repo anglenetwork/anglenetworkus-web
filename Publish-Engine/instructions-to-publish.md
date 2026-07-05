@@ -258,6 +258,8 @@ Rules:
 
 Never use the source article image unless the user provides a separate approved image URL with clear reuse rights.
 
+**URL normalization (required):** When given an Unsplash or Wikimedia link, follow [`cover-image-urls.md`](cover-image-urls.md) before setting `cover.externalUrl`. Agents must not paste raw page, download, or FilePath URLs.
+
 Allowed sources:
 
 ```txt
@@ -346,6 +348,8 @@ cover.creditAuthor
 cover.creditSource
 cover.licenseOrRights
 ```
+
+See [`cover-image-urls.md`](cover-image-urls.md) for Unsplash/Wikimedia URL formats, forbidden patterns, and `mainHeadline` rules.
 
 Caption rules:
 

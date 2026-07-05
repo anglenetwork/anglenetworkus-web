@@ -10,11 +10,7 @@ interface FooterCategoriesGridProps {
   menuCategories: NavMenuCategory[];
 }
 
-function FooterCategoryColumn({
-  category,
-}: {
-  category: NavMenuCategory;
-}) {
+function FooterCategoryColumn({ category }: { category: NavMenuCategory }) {
   return (
     <section className="min-w-0">
       <Link

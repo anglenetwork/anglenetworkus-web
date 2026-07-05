@@ -21,25 +21,23 @@ export default function Error({
 
   return (
     <Card>
-        <CardHeader>
-          <CardTitle className={profileCardTitle}>
-            Something went wrong
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <p className={profileCardBody}>
-            An error happened while loading this profile section. Try again.
-          </p>
+      <CardHeader>
+        <CardTitle className={profileCardTitle}>Something went wrong</CardTitle>
+      </CardHeader>
+      <CardContent className="space-y-4">
+        <p className={profileCardBody}>
+          An error happened while loading this profile section. Try again.
+        </p>
 
-          <pre className="whitespace-pre-wrap rounded-md border bg-neutral-50 p-3 text-neutral-900 text-xs">
-            {error?.message}
-            {error?.digest ? `\n\nDigest: ${error.digest}` : ""}
-          </pre>
+        <pre className="whitespace-pre-wrap rounded-md border bg-neutral-50 p-3 text-neutral-900 text-xs">
+          {error?.message}
+          {error?.digest ? `\n\nDigest: ${error.digest}` : ""}
+        </pre>
 
-          <Button onClick={reset} className="font-sans">
-            Try again
-          </Button>
-        </CardContent>
-      </Card>
+        <Button onClick={reset} className="font-sans">
+          Try again
+        </Button>
+      </CardContent>
+    </Card>
   );
 }

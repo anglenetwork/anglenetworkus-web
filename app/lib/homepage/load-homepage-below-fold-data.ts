@@ -1,9 +1,10 @@
 import "server-only";
 
+import { enrichCoverMediaInTree } from "@/lib/editorial-image/enrich-cover-media";
 import { sanityFetchStatic } from "@/sanity/lib/fetch";
 import {
-  highlightedStoriesByCategoryQuery,
-  postsByCategoryStandardPostsLimitedQuery,
+  homepageFifthSectionBundleQuery,
+  homepageSixthSectionBundleQuery,
 } from "@/sanity/lib/queries";
 import { normalizeArticleFamilyCard } from "@/app/lib/article-family/normalize";
 import type { ArticleFamilyCard } from "@/app/lib/article-family/types";
@@ -39,35 +40,12 @@ function fifthSectionCardsForCategory(
 
 export async function loadHomepageBelowFoldData() {
   const [
-    sixthSectionLeftPosts,
-    sixthSectionCenterPosts,
-    sixthSectionRightPosts,
-  ] = await Promise.all([
-    sanityFetchStatic({
-      query: highlightedStoriesByCategoryQuery,
-      params: { categorySlug: "us" },
-    }),
-    sanityFetchStatic({
-      query: highlightedStoriesByCategoryQuery,
-      params: { categorySlug: "politics" },
-    }),
-    sanityFetchStatic({
-      query: highlightedStoriesByCategoryQuery,
-      params: { categorySlug: "business" },
-    }),
-  ]);
-
-  const sixthSectionLeftArticle = sixthSectionLeftPosts[0];
-  const sixthSectionCenterArticle = sixthSectionCenterPosts[0];
-  const sixthSectionRightArticle = sixthSectionRightPosts[0];
-
-  const [
     secondSectionData,
     thirdSectionData,
     fourthSectionData,
     seventhSectionData,
-    fifthSectionLeftRaw,
-    fifthSectionRightRaw,
+    sixthSectionBundle,
+    fifthSectionBundle,
   ] = await Promise.all([
     getSecondSectionData(
       ["tech", "business", "entertainment"],
@@ -77,35 +55,42 @@ export async function loadHomepageBelowFoldData() {
     getFourthSectionData(),
     getSeventhSectionData(),
     sanityFetchStatic({
-      query: postsByCategoryStandardPostsLimitedQuery,
+      query: homepageSixthSectionBundleQuery,
       params: {
-        categorySlug: HOMEPAGE_FIFTH_SECTION_CATEGORIES.left.slug,
-        limit: HOMEPAGE_FIFTH_SECTION_LEFT_FETCH_LIMIT,
+        leftSlug: "us",
+        centerSlug: "politics",
+        rightSlug: "business",
       },
-      tag: "homepage.fifth-section.left",
+      tag: "homepage.sixth-section.bundle",
     }),
     sanityFetchStatic({
-      query: postsByCategoryStandardPostsLimitedQuery,
+      query: homepageFifthSectionBundleQuery,
       params: {
-        categorySlug: HOMEPAGE_FIFTH_SECTION_CATEGORIES.right.slug,
-        limit: HOMEPAGE_FIFTH_SECTION_RIGHT_FETCH_LIMIT,
+        leftSlug: HOMEPAGE_FIFTH_SECTION_CATEGORIES.left.slug,
+        leftLimit: HOMEPAGE_FIFTH_SECTION_LEFT_FETCH_LIMIT,
+        rightSlug: HOMEPAGE_FIFTH_SECTION_CATEGORIES.right.slug,
+        rightLimit: HOMEPAGE_FIFTH_SECTION_RIGHT_FETCH_LIMIT,
       },
-      tag: "homepage.fifth-section.right",
+      tag: "homepage.fifth-section.bundle",
     }),
   ]);
 
+  const sixthSectionLeftArticle = sixthSectionBundle?.leftPost ?? null;
+  const sixthSectionCenterArticle = sixthSectionBundle?.centerPost ?? null;
+  const sixthSectionRightArticle = sixthSectionBundle?.rightPost ?? null;
+
   const fifthSectionLeftCards = fifthSectionCardsForCategory(
-    fifthSectionLeftRaw,
+    fifthSectionBundle?.leftPosts,
     HOMEPAGE_FIFTH_SECTION_CATEGORIES.left.slug,
     HOMEPAGE_FIFTH_SECTION_LEFT_FETCH_LIMIT,
   );
   const fifthSectionRightCards = fifthSectionCardsForCategory(
-    fifthSectionRightRaw,
+    fifthSectionBundle?.rightPosts,
     HOMEPAGE_FIFTH_SECTION_CATEGORIES.right.slug,
     HOMEPAGE_FIFTH_SECTION_RIGHT_FETCH_LIMIT,
   );
 
-  return {
+  return (await enrichCoverMediaInTree({
     secondSectionData,
     thirdSectionData,
     fourthSectionData,
@@ -126,5 +111,21 @@ export async function loadHomepageBelowFoldData() {
             rightArticle: sixthSectionRightArticle,
           }
         : null,
+  })) as {
+    secondSectionData: typeof secondSectionData;
+    thirdSectionData: typeof thirdSectionData;
+    fourthSectionData: typeof fourthSectionData;
+    seventhSectionData: typeof seventhSectionData;
+    fifthSection: {
+      leftColumnPosts: typeof fifthSectionLeftCards;
+      rightColumnPosts: typeof fifthSectionRightCards;
+      leftCategory: (typeof HOMEPAGE_FIFTH_SECTION_CATEGORIES)["left"];
+      rightCategory: (typeof HOMEPAGE_FIFTH_SECTION_CATEGORIES)["right"];
+    };
+    sixthSection: {
+      leftArticle: typeof sixthSectionLeftArticle;
+      centerArticle: typeof sixthSectionCenterArticle;
+      rightArticle: typeof sixthSectionRightArticle;
+    } | null;
   };
 }
