@@ -2,7 +2,7 @@
 
 import dynamic from "next/dynamic";
 import { DeferUntilNearViewport } from "@/app/components/ui/defer-until-near-viewport";
-import { BelowFoldSectionPlaceholder } from "./below-fold-placeholder";
+import { SecondSectionSkeleton } from "./below-fold-placeholder";
 import {
   HomepageBelowFoldSections,
   type HomepageBelowFoldSectionsProps,
@@ -14,20 +14,15 @@ const HomepageBelowFoldSectionsLazy = dynamic(
     import("./homepage-below-fold").then((mod) => ({
       default: mod.HomepageBelowFoldSections,
     })),
-  { ssr: false, loading: () => <BelowFoldSectionPlaceholder /> },
+  { ssr: false, loading: () => <SecondSectionSkeleton /> },
 );
 
 type HomepageBelowFoldLazyProps = HomepageBelowFoldSectionsProps;
 
-function belowFoldPlaceholder(hasSixthSection: boolean) {
+function belowFoldPlaceholder(_hasSixthSection: boolean) {
   return (
     <div className={HOMEPAGE_BELOW_FOLD_SECTION_GAP}>
-      <BelowFoldSectionPlaceholder />
-      <BelowFoldSectionPlaceholder />
-      <BelowFoldSectionPlaceholder />
-      <BelowFoldSectionPlaceholder />
-      {hasSixthSection ? <BelowFoldSectionPlaceholder /> : null}
-      <BelowFoldSectionPlaceholder />
+      <SecondSectionSkeleton />
     </div>
   );
 }

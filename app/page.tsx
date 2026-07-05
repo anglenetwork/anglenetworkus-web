@@ -99,8 +99,6 @@ export default async function Page() {
 
   return (
     <>
-      <JsonLdScript data={organizationLd} />
-      <JsonLdScript data={websiteLd} />
       <SitePageWidth className="bg-news-surface">
         <div className={`${HOMEPAGE_BELOW_FOLD_SECTION_GAP} pb-10 md:pb-14`}>
           <FirstSection
@@ -117,6 +115,8 @@ export default async function Page() {
           {/* <PromoSection /> */}
         </div>
       </SitePageWidth>
+      <JsonLdScript data={organizationLd} />
+      <JsonLdScript data={websiteLd} />
     </>
   );
 }

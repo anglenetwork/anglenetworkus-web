@@ -25,8 +25,8 @@ cover.licenseOrRights = "Unsplash License" or exact Commons license (e.g. "CC BY
 
 | Slot | `w` | `q` |
 |------|-----|-----|
-| **Main Headline** (`mainHeadline: true`) | `1200` | `80` |
-| Default cover / frontline / rails | `1200` | `80` |
+| **Main Headline** (`mainHeadline: true`) | `800` | `80` |
+| Default cover / frontline / rails | `800` | `80` |
 | Small listing / right rail thumb | `800` | `75` |
 
 Always include: `auto=format` and `fit=crop`.
@@ -40,7 +40,7 @@ https://images.unsplash.com/photo-{ID}?w={WIDTH}&q={Q}&auto=format&fit=crop
 **Example (main headline):**
 
 ```txt
-https://images.unsplash.com/photo-1737718714446-dc3fe9b5ab21?w=1200&q=80&auto=format&fit=crop
+https://images.unsplash.com/photo-1737718714446-dc3fe9b5ab21?w=800&q=80&auto=format&fit=crop
 ```
 
 ### Do not

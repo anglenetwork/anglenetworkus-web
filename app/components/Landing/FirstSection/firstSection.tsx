@@ -3,7 +3,7 @@ import { HOMEPAGE_JUST_IN_LIMIT } from "@/app/lib/homepage/first-section";
 import { CenterColumnLanding } from "./centerColumnLanding";
 import { RightColumnLanding } from "./rightColumnLanding";
 import Link from "next/link";
-import { mainHeadlineDesktopTitle } from "@/app/lib/typography/first-section";
+import { leadHeadlineTitle } from "@/app/lib/typography/first-section";
 
 interface Post {
   _id: string;
@@ -173,26 +173,25 @@ export function FirstSection({
   return (
     <main className="w-full">
       {mainStoryPost?.title && mainStoryPost?.slug && (
-        <div className="mx-auto mb-6 hidden max-w-6xl max-xl:mt-5 lg:block">
+        <header className="border-angle-ink border-b py-9 lg:py-14">
           <Link href={`/post/${mainStoryPost.slug}`} className="group block">
-            <h1 className={mainHeadlineDesktopTitle}>{mainStoryPost.title}</h1>
+            <h1 className={leadHeadlineTitle}>{mainStoryPost.title}</h1>
           </Link>
-        </div>
+        </header>
       )}
-      {/* Mobile order: Center, Left, Right */}
-      {/* Desktop order: Left, Center, Right */}
-      <div className="grid grid-cols-1 gap-0 lg:grid-cols-24">
-        <div className="order-2 lg:order-1 lg:col-span-6">
+      {/* Mobile order: Hero, Just In, Right rail — Desktop order: Just In, Hero, Right rail */}
+      <div className="grid grid-cols-1 items-stretch lg:grid-cols-[1fr_2.05fr_1fr]">
+        <div className="order-2 border-angle-hairline border-b lg:order-1 lg:border-r lg:border-b-0">
           <LeftColumnLanding justInNews={leftColumnJustIn} />
         </div>
-        <div className="order-1 lg:order-2 lg:col-span-12">
+        <div className="order-1 border-angle-hairline border-b lg:order-2 lg:border-r lg:border-b-0">
           <CenterColumnLanding
             mainStory={mainStoryPosts}
             relatedCategoryPosts={relatedPosts}
             moreTopHeadlines={moreTopHeadlinePosts}
           />
         </div>
-        <div className="order-3 lg:order-3 lg:col-span-6">
+        <div className="order-3 lg:order-3">
           <RightColumnLanding
             sideStories={rightColumnSideStories}
             compactStories={rightColumnCompactStories}

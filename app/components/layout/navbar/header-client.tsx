@@ -7,6 +7,7 @@ import { cn } from "@/lib/utils";
 import { SITE_PAGE_WIDTH_HUB_CLASS } from "@/app/components/layout/site-page-width";
 import { UnifiedNavbar } from "./unified-navbar";
 import { HeaderProps } from "./types";
+import { useMenuCategories } from "../site-shell/menu-categories-provider";
 
 const FullScreenMenu = dynamic(
   () =>
@@ -21,6 +22,7 @@ export function HeaderClient({
   menuCategories,
   showSubscriptions = false,
 }: HeaderProps) {
+  const resolvedMenuCategories = useMenuCategories(menuCategories);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [focusSearchOnOpen, setFocusSearchOnOpen] = useState(false);
   const headerRef = useRef<HTMLElement | null>(null);
@@ -105,7 +107,7 @@ export function HeaderClient({
 
       {isMenuOpen ? (
         <FullScreenMenu
-          menuCategories={menuCategories}
+          menuCategories={resolvedMenuCategories}
           onClose={closeMenu}
           focusSearchOnOpen={focusSearchOnOpen}
           onFocusSearchHandled={() => setFocusSearchOnOpen(false)}

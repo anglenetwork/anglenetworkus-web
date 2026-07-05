@@ -1,5 +1,6 @@
 import "server-only";
 
+import { cache } from "react";
 import { enrichCoverMediaInTree } from "@/lib/editorial-image/enrich-cover-media";
 import { HOMEPAGE_JUST_IN_LIMIT } from "@/app/lib/homepage/first-section";
 import { sanityFetchStatic } from "@/sanity/lib/fetch";
@@ -66,7 +67,7 @@ function selectRightRailPosts(
   };
 }
 
-export async function loadHomepageHeroData() {
+export const loadHomepageHeroData = cache(async () => {
   const heroBundle = await sanityFetchStatic({
     query: homepageHeroBundleQuery,
     tag: "homepage.hero.bundle",
@@ -123,4 +124,4 @@ export async function loadHomepageHeroData() {
     rightRailSideStories: typeof rightRailSideStories;
     compactSideStories: typeof compactSideStories;
   };
-}
+});

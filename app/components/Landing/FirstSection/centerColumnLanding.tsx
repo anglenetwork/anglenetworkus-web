@@ -1,16 +1,16 @@
 import Link from "next/link";
 import { cn } from "@/lib/utils";
-import { ListingPhotoCredit } from "@/app/helpers";
+import { formatImageCredit } from "@/sanity/lib/utils";
 import {
   getHomepageCoverImage,
   type HomepageCoverSlot,
 } from "@/app/lib/homepage/homepage-cover-image";
+import { HOMEPAGE_HERO_LCP_IMAGE } from "@/app/lib/homepage/hero-lcp-image";
 import { ImageRenderer } from "../../ui/image-renderer";
 import {
-  mainHeadlineMobileTitle,
-  mainStoryExcerpt,
-  moreTopHeadlinesGridTitle,
-  moreTopHeadlinesMobileTitle,
+  belowHeadline,
+  heroCaption,
+  heroCredit,
 } from "@/app/lib/typography/first-section";
 
 interface Post {
@@ -61,122 +61,84 @@ function getCover(
 
 export function CenterColumnLanding({
   mainStory,
-  relatedCategoryPosts,
   moreTopHeadlines,
 }: CenterColumnLandingProps) {
   return (
-    <div className="lg:px-6">
+    <div className="px-6 py-9 lg:px-8 lg:py-10">
       {/* Main Story */}
-      {mainStory.map((post) => (
-        <article key={post._id} className="mt-5 mb-8 lg:mt-0">
-          <Link href={`/post/${post.slug}`} className="group block">
-            <h1 className={mainHeadlineMobileTitle}>{post.title}</h1>
-          </Link>
+      {mainStory.map((post) => {
+        const { src, alt, unoptimized } = getCover(post);
+        const credit = formatImageCredit(post.cover);
 
-          {(() => {
-            const { src, alt, unoptimized } = getCover(post);
-            if (!src) return null;
-            return (
+        return (
+          <article key={post._id}>
+            {src ? (
               <>
-                <Link href={`/post/${post.slug}`} className="group block">
-                  <div className="mb-2">
-                    <div className="relative aspect-[5/6] w-full overflow-hidden rounded-sm bg-news-secondary md:aspect-auto md:h-[500px]">
+                <figure className="relative">
+                  <Link href={`/post/${post.slug}`} className="group block">
+                    <div className="relative aspect-[16/12.4] w-full overflow-hidden bg-angle-paper">
                       <ImageRenderer
                         src={src}
                         alt={alt}
-                        width={1000}
-                        height={563}
+                        width={HOMEPAGE_HERO_LCP_IMAGE.width}
+                        height={HOMEPAGE_HERO_LCP_IMAGE.height}
                         unoptimized={unoptimized}
-                        quality={70}
+                        quality={HOMEPAGE_HERO_LCP_IMAGE.quality}
                         priority
                         fetchPriority="high"
-                        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 720px"
+                        sizes={HOMEPAGE_HERO_LCP_IMAGE.sizes}
                         className="object-cover object-center"
                         fill
                       />
                       {post.excerpt && (
-                        <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent px-4 pt-12 pb-4 md:px-6 md:pt-16 md:pb-6">
-                          <p className={mainStoryExcerpt}>{post.excerpt}</p>
-                        </div>
+                        <figcaption
+                          className={cn(
+                            "absolute inset-x-0 bottom-0 w-full bg-gradient-to-t from-angle-ink/[0.88] to-transparent px-4 pt-14 pb-4 lg:px-6 lg:pt-16",
+                            heroCaption,
+                          )}
+                        >
+                          {post.excerpt}
+                        </figcaption>
                       )}
                     </div>
-                  </div>
-                </Link>
-                <ListingPhotoCredit cover={post.cover} align="right" />
+                  </Link>
+                </figure>
+                {credit ? <p className={heroCredit}>{credit}</p> : null}
               </>
-            );
-          })()}
-        </article>
-      ))}
+            ) : null}
+          </article>
+        );
+      })}
 
       {moreTopHeadlines.length > 0 ? (
-        <div className="mb-8 md:mb-0">
-          {/* Mobile: stacked rows — title left, thumb right */}
-          <div className="flex flex-col divide-y divide-dotted divide-news-border md:hidden">
-            {moreTopHeadlines.map((post) => {
-              const { src, alt, unoptimized } = getCover(post, "sectionThumb");
-              return (
-                <article key={post._id} className="py-4 first:pt-0 last:pb-0">
-                  <Link
-                    href={`/post/${post.slug}`}
-                    className="group flex items-start gap-3"
-                    aria-label={`Read article: ${post.title}`}
-                  >
-                    <h3 className={moreTopHeadlinesMobileTitle}>
-                      {post.title}
-                    </h3>
-                    {src ? (
-                      <div className="relative h-20 w-28 shrink-0 overflow-hidden rounded-sm bg-news-secondary">
-                        <ImageRenderer
-                          src={src}
-                          alt={alt}
-                          width={112}
-                          height={80}
-                          unoptimized={unoptimized}
-                          quality={55}
-                          sizes="112px"
-                          className="object-cover object-center"
-                          fill
-                        />
-                      </div>
-                    ) : null}
-                  </Link>
-                </article>
-              );
-            })}
-          </div>
-
-          <div className="hidden md:grid md:grid-cols-2 md:gap-8">
-            {moreTopHeadlines.map((post) => {
-              const { src, alt, unoptimized } = getCover(post, "heroRail");
-              return (
-                <article key={post._id}>
-                  {src ? (
-                    <Link href={`/post/${post.slug}`} className="group block">
-                      <div className="relative aspect-[16/9] w-full overflow-hidden rounded-sm bg-news-secondary">
-                        <ImageRenderer
-                          src={src}
-                          alt={alt}
-                          width={600}
-                          height={338}
-                          unoptimized={unoptimized}
-                          quality={55}
-                          sizes="(max-width: 1280px) 50vw, 360px"
-                          className="object-cover object-center"
-                          fill
-                        />
-                      </div>
-                    </Link>
-                  ) : null}
+        <div className="mt-9 grid grid-cols-1 gap-8 border-angle-hairline border-t pt-8 lg:grid-cols-2">
+          {moreTopHeadlines.map((post) => {
+            const { src, alt, unoptimized } = getCover(post, "heroRail");
+            return (
+              <article key={post._id}>
+                {src ? (
                   <Link href={`/post/${post.slug}`} className="group block">
-                    <h3 className={cn("mt-4", moreTopHeadlinesGridTitle)}>
-                      {post.title}
-                    </h3>
+                    <div className="relative aspect-[16/11] w-full overflow-hidden bg-angle-paper">
+                      <ImageRenderer
+                        src={src}
+                        alt={alt}
+                        width={600}
+                        height={413}
+                        unoptimized={unoptimized}
+                        quality={55}
+                        sizes="(max-width: 1280px) 50vw, 360px"
+                        className="object-cover object-center"
+                        fill
+                      />
+                    </div>
                   </Link>
-                </article>
-              );
-            })}
-          </div>
+                ) : null}
+                <Link href={`/post/${post.slug}`} className="group block">
+                  <h3 className={belowHeadline}>{post.title}</h3>
+                </Link>
+              </article>
+            );
+          })}
         </div>
       ) : null}
     </div>

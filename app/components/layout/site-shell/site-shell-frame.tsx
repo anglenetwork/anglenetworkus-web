@@ -6,6 +6,8 @@ import { LiveUpdatesTickerFallback } from "../live-updates-ticker-fallback";
 import { Footer } from "../footer";
 import { isSubscriptionVisible } from "@/lib/subscriptions/is-subscription-visible";
 import { DeferredLiveUpdatesTicker } from "./deferred-live-updates-ticker";
+import { DeferredShellFooter } from "./deferred-shell-footer";
+import { MenuCategoriesProvider } from "./menu-categories-provider";
 import type { SiteShellNav } from "./types";
 
 interface SiteShellFrameProps extends SiteShellNav {
@@ -33,8 +35,16 @@ export function SiteShellFrame({
     <LiveUpdatesTicker posts={tickerPosts ?? []} />
   );
 
-  return (
-    <div className="min-h-screen bg-white">
+  const footer = isHomepage ? (
+    <Suspense fallback={null}>
+      <DeferredShellFooter categories={categories} />
+    </Suspense>
+  ) : (
+    <Footer menuCategories={menuCategories} />
+  );
+
+  const shell = (
+    <>
       <HeaderClient
         categories={categories}
         menuCategories={menuCategories}
@@ -42,7 +52,19 @@ export function SiteShellFrame({
       />
       {ticker}
       {children}
-      <Footer menuCategories={menuCategories} />
+      {footer}
+    </>
+  );
+
+  return (
+    <div className="min-h-screen bg-white">
+      {isHomepage ? (
+        <MenuCategoriesProvider initialMenuCategories={menuCategories}>
+          {shell}
+        </MenuCategoriesProvider>
+      ) : (
+        shell
+      )}
     </div>
   );
 }

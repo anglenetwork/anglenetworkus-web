@@ -75,6 +75,20 @@
     -ms-overflow-style: none; /* IE and Edge */
     scrollbar-width: none; /* Firefox */
   }
+
+  /* Fine dashed rule used by the "Front" homepage section (Just In / right rail
+     mini list). Deliberately not Tailwind's `divide-dotted` — the mock uses a
+     thin 8px-repeating dash rather than rounded dots. */
+  .divider-dashed {
+    background-image: linear-gradient(
+      to right,
+      theme("colors.angle.inkSoft") 33%,
+      rgba(0, 0, 0, 0) 0%
+    );
+    background-position: top;
+    background-size: 8px 1.5px;
+    background-repeat: repeat-x;
+  }
 }
 
 /* Article title hover underline is applied via Tailwind utilities on `articleTitleLink`

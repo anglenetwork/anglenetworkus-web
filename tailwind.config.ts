@@ -95,6 +95,14 @@ const config: Config = {
           },
           secondary: colors.gray[800],
         },
+        angle: {
+          bg: "#FAFAF8",
+          ink: "#14181C",
+          inkSoft: "#5B6168",
+          hairline: "#DEDBD3",
+          red: "#C7371F",
+          paper: "#F2EFE7",
+        },
       },
       keyframes: {
         "accordion-down": {

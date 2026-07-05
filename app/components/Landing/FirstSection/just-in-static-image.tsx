@@ -18,9 +18,9 @@ export function JustInStaticImage({
   developingStory,
 }: JustInStaticImageProps) {
   return (
-    <div className="mb-3 block">
+    <div className="mb-7 block">
       <Link href={`/post/${postSlug}`}>
-        <div className="relative aspect-[16/9] w-full overflow-hidden rounded-sm bg-news-secondary md:aspect-auto md:h-64">
+        <div className="relative aspect-[16/11] w-full overflow-hidden bg-angle-paper">
           <ImageRenderer
             src={image.src}
             alt={image.alt}

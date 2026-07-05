@@ -6,11 +6,9 @@ import {
   newsTickerQuery,
 } from "@/sanity/lib/queries";
 import { buildNavCategories } from "@/app/lib/nav/category-order";
-import {
-  buildNavMenuCategories,
-  type NavTagWithCategory,
-} from "@/app/lib/nav/menu-columns";
+import { buildNavMenuCategories } from "@/app/lib/nav/menu-columns";
 import { SiteShellFrame } from "./site-shell-frame";
+import { mapNavTags } from "./map-nav-tags";
 import { mapTickerPosts } from "./map-ticker-posts";
 
 interface SiteShellProps {
@@ -29,23 +27,21 @@ function isHomepagePath(pathname: string): boolean {
 export async function SiteShell({ children, pathname = "" }: SiteShellProps) {
   const isHomepage = isHomepagePath(pathname);
 
-  const shellQueries: [
-    ReturnType<typeof sanityFetchStatic>,
-    ReturnType<typeof sanityFetchStatic>,
-    ReturnType<typeof sanityFetchStatic> | Promise<null>,
-  ] = [
+  const [categoriesData, tagsData, tickerData] = await Promise.all([
     sanityFetchStatic({ query: categoriesByViewsQuery }),
-    sanityFetchStatic({ query: navTagsWithCategoryQuery }),
+    isHomepage
+      ? Promise.resolve(null)
+      : sanityFetchStatic({ query: navTagsWithCategoryQuery }),
     isHomepage
       ? Promise.resolve(null)
       : sanityFetchStatic({ query: newsTickerQuery }),
-  ];
-
-  const [categoriesData, tagsData, tickerData] =
-    await Promise.all(shellQueries);
+  ]);
 
   const categories = buildNavCategories(categoriesData);
-  const tagRows = mapNavTags(tagsData);
+  const tagRows =
+    tagsData == null
+      ? []
+      : mapNavTags(tagsData as Parameters<typeof mapNavTags>[0]);
   const menuCategories = buildNavMenuCategories(categories, tagRows);
   const tickerPosts =
     tickerData == null ? undefined : mapTickerPosts(tickerData);
@@ -59,23 +55,5 @@ export async function SiteShell({ children, pathname = "" }: SiteShellProps) {
     >
       {children}
     </SiteShellFrame>
-  );
-}
-
-type NavTagRow = {
-  slug: string | null;
-  title: string | null;
-  categorySlug: string | null;
-};
-
-function mapNavTags(rows: NavTagRow[]): NavTagWithCategory[] {
-  return rows.filter(
-    (
-      tag,
-    ): tag is NavTagRow & {
-      slug: string;
-      title: string;
-      categorySlug: string;
-    } => tag.slug !== null && tag.title !== null && tag.categorySlug !== null,
   );
 }
