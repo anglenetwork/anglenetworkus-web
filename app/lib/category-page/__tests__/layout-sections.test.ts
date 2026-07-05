@@ -35,7 +35,9 @@ describe("category page layout sections", () => {
     const latest = buildCategoryLatestArticles(posts, (post) => post);
 
     expect(missedIt.map((post) => post.id)).toEqual([5, 6, 7, 8]);
-    expect(latest.map((post) => post.id)).toEqual([9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23]);
+    expect(latest.map((post) => post.id)).toEqual([
+      9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23,
+    ]);
   });
 
   it("returns empty latest list when all posts fit above it", () => {

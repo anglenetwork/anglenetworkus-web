@@ -93,6 +93,22 @@ describe("resolveEditorialImage", () => {
     expect(result?.unoptimized).toBe(false);
   });
 
+  it("adds Unsplash format params and strips ixlib when clamping", () => {
+    const result = resolveEditorialImage(
+      {
+        source: "external",
+        externalUrl:
+          "https://images.unsplash.com/photo-162?ixlib=rb-4.0.3&ixid=abc",
+      },
+      { fallbackAlt: "Fallback", maxWidth: 640, externalUnoptimized: "auto" },
+    );
+    expect(result?.src).toContain("w=640");
+    expect(result?.src).toContain("auto=format");
+    expect(result?.src).toContain("fit=crop");
+    expect(result?.src).not.toContain("ixlib=");
+    expect(result?.unoptimized).toBe(false);
+  });
+
   it("uses Wikimedia thumbnails and always unoptimizes", () => {
     const result = resolveEditorialImage(
       {
@@ -148,6 +164,22 @@ describe("resolveEditorialImage", () => {
     expect(result?.src).toBe(
       "https://upload.wikimedia.org/wikipedia/commons/thumb/0/07/Strait_of_Hormuz-svg-en.svg/1280px-Strait_of_Hormuz-svg-en.svg.png",
     );
+    expect(result?.unoptimized).toBe(true);
+  });
+
+  it("resolves Commons Special:FilePath links to snapped thumbnails", () => {
+    const result = resolveEditorialImage(
+      {
+        source: "external",
+        externalUrl:
+          "https://commons.wikimedia.org/wiki/Special:FilePath/%2820260628%29_Heatwave_Berlin_161124058.jpg",
+      },
+      { fallbackAlt: "Fallback", maxWidth: 800, externalUnoptimized: "auto" },
+    );
+    expect(result?.src).toContain(
+      "upload.wikimedia.org/wikipedia/commons/thumb/",
+    );
+    expect(result?.src).toContain("960px-");
     expect(result?.unoptimized).toBe(true);
   });
 

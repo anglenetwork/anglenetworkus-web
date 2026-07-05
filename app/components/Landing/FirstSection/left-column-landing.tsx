@@ -1,8 +1,8 @@
 import Link from "next/link";
 import type { SanityImageSource } from "@sanity/image-url/lib/types/types";
 import { HOMEPAGE_JUST_IN_LIMIT } from "@/app/lib/homepage/first-section";
+import { getHomepageCoverImage } from "@/app/lib/homepage/homepage-cover-image";
 import { resolveListingImage } from "@/lib/editorial-image";
-import { getCoverImage } from "@/sanity/lib/utils";
 import { SectionHeader } from "../../ui/section-header";
 import {
   firstSectionFeaturedStoryTitle,
@@ -43,7 +43,7 @@ interface Post {
 function listingImageFromGallery(
   galleryImage: GalleryImage,
 ): JustInCarouselImage | null {
-  const resolved = resolveListingImage(galleryImage, "Gallery image", 1200);
+  const resolved = resolveListingImage(galleryImage, "Gallery image", 640);
   if (!resolved) return null;
   return {
     src: resolved.src,
@@ -53,7 +53,11 @@ function listingImageFromGallery(
 }
 
 function carouselImagesForPost(post: Post): JustInCarouselImage[] {
-  const coverData = getCoverImage(post.cover, post.title || "Article image");
+  const coverData = getHomepageCoverImage(
+    "heroRail",
+    post.cover,
+    post.title || "Article image",
+  );
   const galleryImages =
     post.imageGallery && Array.isArray(post.imageGallery)
       ? post.imageGallery

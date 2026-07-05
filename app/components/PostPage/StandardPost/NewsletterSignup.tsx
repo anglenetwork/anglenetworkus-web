@@ -20,10 +20,7 @@ export default function NewsletterSignup() {
       <p className={`mt-2.5 mb-[18px] ${postNewsletterBody}`}>
         One email. No noise. Cancel anytime.
       </p>
-      <form
-        className="flex gap-2"
-        onSubmit={(event) => event.preventDefault()}
-      >
+      <form className="flex gap-2" onSubmit={(event) => event.preventDefault()}>
         <input
           type="email"
           required

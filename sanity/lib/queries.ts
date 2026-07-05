@@ -225,6 +225,45 @@ export const homepageHeroRelatedByCategoryQuery = defineQuery(`
   }
 `);
 
+/**
+ * Homepage hero bundle: fetches justIn / mainHeadline / frontline / rightHeadline
+ * in a single GROQ request instead of 4 separate calls.
+ * The related-by-category query stays as a follow-up because it depends on the
+ * resolved main story's category slug.
+ */
+export const homepageHeroBundleQuery = defineQuery(`
+  {
+    "justInPosts": *[
+      ${homepageJustInPostFilter}
+    ] | order(
+      ${homepagePublishedPostOrder}
+    )[0...${HOMEPAGE_JUST_IN_LIMIT}] {
+      ${postFieldsLightweight}
+    },
+    "mainHeadlinePosts": *[
+      ${homepageMainHeadlinePostFilter}
+    ] | order(
+      ${homepagePublishedPostOrder}
+    )[0...1] {
+      ${postFieldsLightweight}
+    },
+    "frontlinePosts": *[
+      ${homepageFrontlinePostFilter}
+    ] | order(
+      ${homepagePublishedPostOrder}
+    )[0...2] {
+      ${postFieldsLightweight}
+    },
+    "rightHeadlinePosts": *[
+      ${homepageRightHeadlinePostFilter}
+    ] | order(
+      ${homepagePublishedPostOrder}
+    )[0...10] {
+      ${postFieldsHeroRightRail}
+    }
+  }
+`);
+
 // Latest 4 overall (for "News for you")
 export const latestNews4Query = `
 *[
@@ -399,6 +438,35 @@ export const fourthSectionQuery = defineQuery(`
   }
 `);
 
+/**
+ * Homepage second section bundle: 1 featured + 1 secondary per category, for
+ * the 3 hardcoded second-section slugs. Returns a shape that mirrors the
+ * previous per-category call sites so the loader can group by input order.
+ * Trims to lightweight projection (no body/tags/seo).
+ */
+export const homepageSecondSectionBundleQuery = defineQuery(`
+  {
+    "slug0Posts": *[
+      ${homepagePublishedPostFilter} &&
+      category->slug.current == $slug0
+    ] | order(${homepagePublishedPostOrder}) [0...2] {
+      ${postFieldsLightweight}
+    },
+    "slug1Posts": *[
+      ${homepagePublishedPostFilter} &&
+      category->slug.current == $slug1
+    ] | order(${homepagePublishedPostOrder}) [0...2] {
+      ${postFieldsLightweight}
+    },
+    "slug2Posts": *[
+      ${homepagePublishedPostFilter} &&
+      category->slug.current == $slug2
+    ] | order(${homepagePublishedPostOrder}) [0...2] {
+      ${postFieldsLightweight}
+    }
+  }
+`);
+
 /** Homepage fourth section: Tech rail (2 featured + 4 secondary; right column is Latest feed). */
 export const homepageFourthSectionTechQuery = defineQuery(`
   *[
@@ -418,6 +486,52 @@ export const thirdLatestArticleQuery = defineQuery(`
   }
 `);
 
+/**
+ * Homepage seventh section bundle: the "third latest" article per category
+ * (offset [2...3]) for the 6 hardcoded featured-carousel slugs, in a single
+ * request. Trims to lightweight projection.
+ */
+export const homepageSeventhSectionBundleQuery = defineQuery(`
+  {
+    "slug0Third": *[
+      ${homepagePublishedPostFilter} &&
+      category->slug.current == $slug0
+    ] | order(${homepagePublishedPostOrder}) [2...3] {
+      ${postFieldsLightweight}
+    },
+    "slug1Third": *[
+      ${homepagePublishedPostFilter} &&
+      category->slug.current == $slug1
+    ] | order(${homepagePublishedPostOrder}) [2...3] {
+      ${postFieldsLightweight}
+    },
+    "slug2Third": *[
+      ${homepagePublishedPostFilter} &&
+      category->slug.current == $slug2
+    ] | order(${homepagePublishedPostOrder}) [2...3] {
+      ${postFieldsLightweight}
+    },
+    "slug3Third": *[
+      ${homepagePublishedPostFilter} &&
+      category->slug.current == $slug3
+    ] | order(${homepagePublishedPostOrder}) [2...3] {
+      ${postFieldsLightweight}
+    },
+    "slug4Third": *[
+      ${homepagePublishedPostFilter} &&
+      category->slug.current == $slug4
+    ] | order(${homepagePublishedPostOrder}) [2...3] {
+      ${postFieldsLightweight}
+    },
+    "slug5Third": *[
+      ${homepagePublishedPostFilter} &&
+      category->slug.current == $slug5
+    ] | order(${homepagePublishedPostOrder}) [2...3] {
+      ${postFieldsLightweight}
+    }
+  }
+`);
+
 /** Homepage ThirdSection: latest editorial doc per tag (Congress, AI, White House, Markets). */
 export const homepageThirdSectionByTagQuery = defineQuery(`
   *[
@@ -433,6 +547,26 @@ export const homepageThirdSectionByTagQuery = defineQuery(`
   }
 `);
 
+/**
+ * Homepage third section bundle: fetches a pool of recent editorial docs that
+ * match ANY of the target tags in one request. The loader performs the
+ * "first unused per tag, in tag order" dedup entirely in memory instead of
+ * making follow-up fetches on collision.
+ */
+export const homepageThirdSectionBundleQuery = defineQuery(`
+  *[
+    ${homepagePublishedEditorialFilter} &&
+    count(tags[@->slug.current in $tagSlugs]) > 0
+  ] | order(${homepagePublishedPostOrder}) [0...$poolSize] {
+    _id,
+    _type,
+    "title": coalesce(title, "Untitled"),
+    "slug": slug.current,
+    readTime,
+    "tagSlugs": tags[]->slug.current
+  }
+`);
+
 /** Homepage SixthSection: latest featured post per category (1 per column). */
 export const highlightedStoriesByCategoryQuery = defineQuery(`
   *[
@@ -440,6 +574,60 @@ export const highlightedStoriesByCategoryQuery = defineQuery(`
     category->slug.current == $categorySlug
   ] | order(${homepagePublishedPostOrder}) [0...1] {
     ${postFieldsHighlightedStories}
+  }
+`);
+
+/**
+ * Homepage sixth section bundle: latest featured post per category for the
+ * 3 hardcoded highlighted-stories columns (left/center/right), in one request.
+ */
+export const homepageSixthSectionBundleQuery = defineQuery(`
+  {
+    "leftPost": *[
+      ${homepagePublishedPostFilter} &&
+      category->slug.current == $leftSlug
+    ] | order(${homepagePublishedPostOrder}) [0] {
+      ${postFieldsHighlightedStories}
+    },
+    "centerPost": *[
+      ${homepagePublishedPostFilter} &&
+      category->slug.current == $centerSlug
+    ] | order(${homepagePublishedPostOrder}) [0] {
+      ${postFieldsHighlightedStories}
+    },
+    "rightPost": *[
+      ${homepagePublishedPostFilter} &&
+      category->slug.current == $rightSlug
+    ] | order(${homepagePublishedPostOrder}) [0] {
+      ${postFieldsHighlightedStories}
+    }
+  }
+`);
+
+/**
+ * Homepage fifth section bundle: left column (1 post) + right column (5 posts)
+ * for the two hardcoded fifth-section categories, in one request.
+ */
+export const homepageFifthSectionBundleQuery = defineQuery(`
+  {
+    "leftPosts": *[
+      _type == "post" &&
+      status == "published" &&
+      defined(publishedAt) && publishedAt <= now() &&
+      defined(slug.current) &&
+      category->slug.current == $leftSlug
+    ] | order(coalesce(publishedAt, _updatedAt) desc, _updatedAt desc) [0...$leftLimit] {
+      ${articleFamilyListFragment}
+    },
+    "rightPosts": *[
+      _type == "post" &&
+      status == "published" &&
+      defined(publishedAt) && publishedAt <= now() &&
+      defined(slug.current) &&
+      category->slug.current == $rightSlug
+    ] | order(coalesce(publishedAt, _updatedAt) desc, _updatedAt desc) [0...$rightLimit] {
+      ${articleFamilyListFragment}
+    }
   }
 `);
 

@@ -1,3 +1,4 @@
+import { createHash } from "node:crypto";
 import { isWikimediaHostname } from "@/lib/editorial-image/policy";
 
 /**
@@ -120,13 +121,67 @@ export function parseWikimediaCommonsUrl(
 }
 
 /** Build a canonical Commons /thumb/ URL for a source file at the given width. */
-function buildWikimediaThumbUrl(
+export function buildWikimediaThumbUrl(
   hash: string,
   filename: string,
   width: number,
 ): string {
   const thumbLeaf = buildWikimediaThumbLeaf(filename, width);
   return `https://upload.wikimedia.org/wikipedia/commons/thumb/${hash}/${filename}/${thumbLeaf}`;
+}
+
+/** Extract filename from a Commons Special:FilePath / Redirect URL. */
+export function parseWikimediaCommonsFilePathFilename(
+  url: string | URL,
+): string | null {
+  try {
+    const parsed = typeof url === "string" ? new URL(url) : url;
+    const host = parsed.hostname.replace(/^www\./, "");
+    if (host !== "commons.wikimedia.org") {
+      return null;
+    }
+
+    const filePathPrefix = "/wiki/Special:FilePath/";
+    const redirectPrefix = "/wiki/Special:Redirect/file/";
+    if (parsed.pathname.startsWith(filePathPrefix)) {
+      return decodeURIComponent(parsed.pathname.slice(filePathPrefix.length));
+    }
+    if (parsed.pathname.startsWith(redirectPrefix)) {
+      return decodeURIComponent(parsed.pathname.slice(redirectPrefix.length));
+    }
+    return null;
+  } catch {
+    return null;
+  }
+}
+
+/** MD5-based Commons storage path (`{hash[0]}/{hash[0..1]}/{filename}`). */
+export function wikimediaCommonsPathFromFilename(filename: string): {
+  hash: string;
+  pathFilename: string;
+} {
+  const normalized = filename.replace(/ /g, "_");
+  const md5 = createHash("md5").update(normalized).digest("hex");
+  return {
+    hash: md5[0]!,
+    pathFilename: `${md5.slice(0, 2)}/${filename}`,
+  };
+}
+
+/**
+ * Build a snapped /thumb/ URL from a
+ * `Special:FilePath/...` page links (not handled by upload.wikimedia.org parsing).
+ */
+export function getWikimediaThumbnailFromCommonsFilePathUrl(
+  originalUrl: string,
+  maxWidth: number = 1200,
+): string | null {
+  const filename = parseWikimediaCommonsFilePathFilename(originalUrl);
+  if (!filename) return null;
+
+  const { hash, pathFilename } = wikimediaCommonsPathFromFilename(filename);
+  const width = resolveWikimediaNewThumbWidth(filename, maxWidth);
+  return buildWikimediaThumbUrl(hash, pathFilename, width);
 }
 
 /**
@@ -138,6 +193,14 @@ export function getWikimediaThumbnail(
   maxWidth: number = 1200,
 ): string {
   try {
+    const filePathThumb = getWikimediaThumbnailFromCommonsFilePathUrl(
+      originalUrl,
+      maxWidth,
+    );
+    if (filePathThumb) {
+      return filePathThumb;
+    }
+
     const parsed = parseWikimediaCommonsUrl(originalUrl);
     if (!parsed) {
       return originalUrl;

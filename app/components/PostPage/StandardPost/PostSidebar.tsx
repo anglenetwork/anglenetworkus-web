@@ -93,7 +93,11 @@ function PopularReadItem({
       </span>
       <div className="min-w-0 flex-1">
         <h3 className={postSidebarRankedTitle}>{post.title}</h3>
-        <ReadTimeLabel minutes={post.readTime} variant="inline" className="mt-1.5" />
+        <ReadTimeLabel
+          minutes={post.readTime}
+          variant="inline"
+          className="mt-1.5"
+        />
       </div>
     </Link>
   );
@@ -133,7 +137,11 @@ function NewsForYouItem({ post }: { post: ArticleSidebarPost }) {
       )}
       <div className="min-w-0 flex-1">
         <h3 className={postSidebarThumbTitle}>{post.title}</h3>
-        <ReadTimeLabel minutes={post.readTime} variant="inline" className="mt-1.5" />
+        <ReadTimeLabel
+          minutes={post.readTime}
+          variant="inline"
+          className="mt-1.5"
+        />
       </div>
     </Link>
   );

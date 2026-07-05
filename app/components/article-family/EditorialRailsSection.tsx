@@ -3,7 +3,8 @@ import { cn } from "@/lib/utils";
 import { sanityFetchStatic } from "@/sanity/lib/fetch";
 import { opinionListQuery } from "@/sanity/lib/article-family-queries";
 import { normalizeArticleFamilyCard } from "@/app/lib/article-family/normalize";
-import { getCoverImage } from "@/sanity/lib/utils";
+import { enrichCoverMediaInTree } from "@/lib/editorial-image/enrich-cover-media";
+import { getHomepageCoverImage } from "@/app/lib/homepage/homepage-cover-image";
 import { SectionHeader } from "@/app/components/ui/section-header";
 import { ImageRenderer } from "@/app/components/ui/image-renderer";
 import type { ArticleFamilyCard } from "@/app/lib/article-family/types";
@@ -14,8 +15,9 @@ import {
 } from "@/app/lib/typography/read-time";
 
 function OpinionColumnCard({ article }: { article: ArticleFamilyCard }) {
-  const coverData = getCoverImage(
-    article.cover as Parameters<typeof getCoverImage>[0],
+  const coverData = getHomepageCoverImage(
+    "sectionThumb",
+    article.cover as Parameters<typeof getHomepageCoverImage>[1],
     article.title || "Article image",
   );
   const categoryLabel = article.category?.title?.toUpperCase() ?? "OPINION";
@@ -67,10 +69,12 @@ export default async function EditorialRailsSection() {
     params: { limit: 3 },
   });
 
-  const articles = (opinionRaw as unknown[])
-    .map((r) => normalizeArticleFamilyCard(r))
-    .filter((x): x is NonNullable<typeof x> => x != null)
-    .slice(0, 3);
+  const articles = (await enrichCoverMediaInTree(
+    (opinionRaw as unknown[])
+      .map((r) => normalizeArticleFamilyCard(r))
+      .filter((x): x is NonNullable<typeof x> => x != null)
+      .slice(0, 3),
+  )) as ArticleFamilyCard[];
 
   if (articles.length === 0) return null;
 

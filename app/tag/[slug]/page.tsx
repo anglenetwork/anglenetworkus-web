@@ -53,9 +53,7 @@ type RawTagPost = TagPost &
     views7d?: number | null;
   };
 
-function formatTagImageCredit(
-  cover: TagPost["cover"],
-): string | null {
+function formatTagImageCredit(cover: TagPost["cover"]): string | null {
   if (!cover) return null;
   const author = cover.creditAuthor?.trim();
   const source = cover.creditSource?.trim();
@@ -65,10 +63,7 @@ function formatTagImageCredit(
   return null;
 }
 
-function postToIcymiItem(
-  post: RawTagPost,
-  numberIndex: number,
-): TagIcymiItem {
+function postToIcymiItem(post: RawTagPost, numberIndex: number): TagIcymiItem {
   const coverData = getCoverImage(
     post.cover as Parameters<typeof getCoverImage>[0],
     post.title || "Article image",
@@ -265,9 +260,7 @@ export default async function TagPage({
           />
         ) : null}
 
-        {icymiItems.length > 0 ? (
-          <TagIcymiSection items={icymiItems} />
-        ) : null}
+        {icymiItems.length > 0 ? <TagIcymiSection items={icymiItems} /> : null}
 
         {latestPosts.length > 0 ? (
           <ShowMoreSection posts={latestPosts as any} tagTitle={tagTitle} />

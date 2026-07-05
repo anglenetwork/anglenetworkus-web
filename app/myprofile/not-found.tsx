@@ -9,17 +9,17 @@ import {
 export default function NotFound() {
   return (
     <Card>
-        <CardHeader>
-          <CardTitle className={profileCardTitle}>Page not found</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <p className={profileCardBody}>
-            This profile section doesn&apos;t exist.
-          </p>
-          <Button asChild className="font-sans">
-            <Link href="/myprofile/profile-details">Go to Profile</Link>
-          </Button>
-        </CardContent>
-      </Card>
+      <CardHeader>
+        <CardTitle className={profileCardTitle}>Page not found</CardTitle>
+      </CardHeader>
+      <CardContent className="space-y-4">
+        <p className={profileCardBody}>
+          This profile section doesn&apos;t exist.
+        </p>
+        <Button asChild className="font-sans">
+          <Link href="/myprofile/profile-details">Go to Profile</Link>
+        </Button>
+      </CardContent>
+    </Card>
   );
 }

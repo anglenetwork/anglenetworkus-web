@@ -63,7 +63,7 @@ export default function ShowMoreSection({
   };
 
   return (
-    <SitePageWidth className="pb-[90px] pt-8">
+    <SitePageWidth className="pt-8 pb-[90px]">
       <div className="mb-6 flex items-baseline gap-[18px]">
         <div className="flex items-center gap-[9px]">
           <Circle
@@ -164,7 +164,11 @@ function FullWidthArticle({
         <p className="mt-2 text-pretty font-sans text-base text-muted-foreground leading-relaxed">
           {description}
         </p>
-        <ReadTimeLabel minutes={readTimeMinutes} variant="muted" className="font-mono" />
+        <ReadTimeLabel
+          minutes={readTimeMinutes}
+          variant="muted"
+          className="font-mono"
+        />
       </div>
     </article>
   );

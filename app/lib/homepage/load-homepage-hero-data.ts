@@ -1,13 +1,11 @@
 import "server-only";
 
+import { enrichCoverMediaInTree } from "@/lib/editorial-image/enrich-cover-media";
 import { HOMEPAGE_JUST_IN_LIMIT } from "@/app/lib/homepage/first-section";
 import { sanityFetchStatic } from "@/sanity/lib/fetch";
 import {
-  homepageHeroFrontlineQuery,
-  homepageHeroJustInQuery,
-  homepageHeroMainHeadlineQuery,
+  homepageHeroBundleQuery,
   homepageHeroRelatedByCategoryQuery,
-  homepageHeroRightHeadlineQuery,
 } from "@/sanity/lib/queries";
 
 type HeroPostWithCategory = {
@@ -69,29 +67,15 @@ function selectRightRailPosts(
 }
 
 export async function loadHomepageHeroData() {
-  const [
-    justInPostsRaw,
-    mainHeadlinePostsRaw,
-    frontlinePostsRaw,
-    rightHeadlinePostsRaw,
-  ] = await Promise.all([
-    sanityFetchStatic({
-      query: homepageHeroJustInQuery,
-      tag: "homepage.hero.just-in",
-    }),
-    sanityFetchStatic({
-      query: homepageHeroMainHeadlineQuery,
-      tag: "homepage.hero.main-headline",
-    }),
-    sanityFetchStatic({
-      query: homepageHeroFrontlineQuery,
-      tag: "homepage.hero.frontline",
-    }),
-    sanityFetchStatic({
-      query: homepageHeroRightHeadlineQuery,
-      tag: "homepage.hero.right-headline",
-    }),
-  ]);
+  const heroBundle = await sanityFetchStatic({
+    query: homepageHeroBundleQuery,
+    tag: "homepage.hero.bundle",
+  });
+
+  const justInPostsRaw = heroBundle?.justInPosts ?? [];
+  const mainHeadlinePostsRaw = heroBundle?.mainHeadlinePosts ?? [];
+  const frontlinePostsRaw = heroBundle?.frontlinePosts ?? [];
+  const rightHeadlinePostsRaw = heroBundle?.rightHeadlinePosts ?? [];
 
   const usedHeroPostIds = new Set<string>();
   const mainHeadlinePosts = selectHeroPosts(
@@ -124,12 +108,19 @@ export async function loadHomepageHeroData() {
         })
       : [];
 
-  return {
+  return (await enrichCoverMediaInTree({
     justInPosts,
     mainHeadlinePosts,
     relatedCategoryPosts,
     frontlinePosts,
     rightRailSideStories,
     compactSideStories,
+  })) as {
+    justInPosts: typeof justInPosts;
+    mainHeadlinePosts: typeof mainHeadlinePosts;
+    relatedCategoryPosts: typeof relatedCategoryPosts;
+    frontlinePosts: typeof frontlinePosts;
+    rightRailSideStories: typeof rightRailSideStories;
+    compactSideStories: typeof compactSideStories;
   };
 }

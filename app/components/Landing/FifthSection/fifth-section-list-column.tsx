@@ -5,14 +5,15 @@ import { SectionHeader } from "../../ui/section-header";
 import { categorySecondaryRowTitle } from "@/app/lib/typography/second-section";
 import { ReadTimeLabel } from "@/app/components/ui/read-time-label";
 import { ImageRenderer } from "../../ui/image-renderer";
-import { getCoverImage } from "@/sanity/lib/utils";
+import { getHomepageCoverImage } from "@/app/lib/homepage/homepage-cover-image";
 
 function getImageData(
   cover: ArticleFamilyCard["cover"],
   fallbackTitle: string,
 ) {
-  return getCoverImage(
-    cover as Parameters<typeof getCoverImage>[0],
+  return getHomepageCoverImage(
+    "sectionThumb",
+    cover as Parameters<typeof getHomepageCoverImage>[1],
     fallbackTitle,
   );
 }

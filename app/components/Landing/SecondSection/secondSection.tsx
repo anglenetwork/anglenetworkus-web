@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { ListingPhotoCredit } from "@/app/helpers";
-import { getCoverImage } from "@/sanity/lib/utils";
+import { getHomepageCoverImage } from "@/app/lib/homepage/homepage-cover-image";
 import { SectionHeader } from "../../ui/section-header";
 import { ImageRenderer } from "../../ui/image-renderer";
 import {
@@ -56,7 +56,11 @@ function SecondSectionSecondaryRow({
 }) {
   if (!post.slug) return null;
 
-  const coverData = getCoverImage(post.cover, post.title || "Article image");
+  const coverData = getHomepageCoverImage(
+    "sectionThumb",
+    post.cover,
+    post.title || "Article image",
+  );
 
   return (
     <Link
@@ -133,7 +137,8 @@ export default function SecondSection({
               />
 
               {(() => {
-                const coverData = getCoverImage(
+                const coverData = getHomepageCoverImage(
+                  "sectionFeatured",
                   mainPost?.cover,
                   mainPost?.title || "Article image",
                 );

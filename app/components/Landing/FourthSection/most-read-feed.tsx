@@ -11,23 +11,14 @@ export type MostReadFeedItem = {
   readTimeMinutes: number | null;
 };
 
-export function MostReadFeed({
-  items,
-}: {
-  items: MostReadFeedItem[];
-}) {
+export function MostReadFeed({ items }: { items: MostReadFeedItem[] }) {
   if (items.length === 0) {
     return null;
   }
 
   return (
     <aside aria-label="Most read articles">
-      <SectionHeader
-        title="Most Read"
-        variant="dark"
-        accentStyle="modern"
-        
-      />
+      <SectionHeader title="Most Read" variant="dark" accentStyle="modern" />
 
       <ul className="flex flex-col divide-y divide-white/15">
         {items.map((item) => (

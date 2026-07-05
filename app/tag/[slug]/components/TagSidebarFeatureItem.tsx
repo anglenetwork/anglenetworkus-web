@@ -67,10 +67,7 @@ export function TagSidebarFeatureItem({
   );
 }
 
-function TagSidebarFeatureMobile({
-  post,
-  number,
-}: TagSidebarFeatureItemProps) {
+function TagSidebarFeatureMobile({ post, number }: TagSidebarFeatureItemProps) {
   const href = post.href;
   const imageSrc = post.imageUrl || "/placeholder.svg";
   const imageAlt = post.imageAlt?.trim() || post.title;

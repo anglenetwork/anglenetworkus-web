@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { cn } from "@/lib/utils";
-import { getCoverImage } from "@/sanity/lib/utils";
+import { getHomepageCoverImage } from "@/app/lib/homepage/homepage-cover-image";
 import { SectionHeader } from "../../ui/section-header";
 import { ImageRenderer } from "../../ui/image-renderer";
 import {
@@ -40,8 +40,9 @@ function featuredPostToCardItem(
 ): NewsCardRowItem | null {
   if (!article.slug) return null;
 
-  const coverData = getCoverImage(
-    article.cover as Parameters<typeof getCoverImage>[0],
+  const coverData = getHomepageCoverImage(
+    "sectionFeatured",
+    article.cover as Parameters<typeof getHomepageCoverImage>[1],
     article.title || "Article image",
   );
 
@@ -73,8 +74,9 @@ function FeaturedArticleCard({ article }: { article: FourthSectionTechPost }) {
 function SecondaryArticleRow({ article }: { article: FourthSectionTechPost }) {
   if (!article.slug) return null;
 
-  const coverData = getCoverImage(
-    article.cover as Parameters<typeof getCoverImage>[0],
+  const coverData = getHomepageCoverImage(
+    "sectionThumb",
+    article.cover as Parameters<typeof getHomepageCoverImage>[1],
     article.title || "Article image",
   );
 

@@ -1,7 +1,10 @@
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { ListingPhotoCredit } from "@/app/helpers";
-import { getCoverImage } from "@/sanity/lib/utils";
+import {
+  getHomepageCoverImage,
+  type HomepageCoverSlot,
+} from "@/app/lib/homepage/homepage-cover-image";
 import { ImageRenderer } from "../../ui/image-renderer";
 import {
   mainHeadlineMobileTitle,
@@ -36,12 +39,15 @@ interface CenterColumnLandingProps {
   moreTopHeadlines: Post[];
 }
 
-function getCover(post: Post): {
+function getCover(
+  post: Post,
+  slot: HomepageCoverSlot = "heroMain",
+): {
   src: string | null;
   alt: string;
   unoptimized: boolean;
 } {
-  const coverData = getCoverImage(post.cover, post.title);
+  const coverData = getHomepageCoverImage(slot, post.cover, post.title);
   if (!coverData) {
     return { src: null, alt: post.title, unoptimized: false };
   }
@@ -62,7 +68,7 @@ export function CenterColumnLanding({
     <div className="lg:px-6">
       {/* Main Story */}
       {mainStory.map((post) => (
-        <article key={post._id} className="mb-8 mt-5 lg:mt-0">
+        <article key={post._id} className="mt-5 mb-8 lg:mt-0">
           <Link href={`/post/${post.slug}`} className="group block">
             <h1 className={mainHeadlineMobileTitle}>{post.title}</h1>
           </Link>
@@ -108,7 +114,7 @@ export function CenterColumnLanding({
           {/* Mobile: stacked rows — title left, thumb right */}
           <div className="flex flex-col divide-y divide-dotted divide-news-border md:hidden">
             {moreTopHeadlines.map((post) => {
-              const { src, alt, unoptimized } = getCover(post);
+              const { src, alt, unoptimized } = getCover(post, "sectionThumb");
               return (
                 <article key={post._id} className="py-4 first:pt-0 last:pb-0">
                   <Link
@@ -142,7 +148,7 @@ export function CenterColumnLanding({
 
           <div className="hidden md:grid md:grid-cols-2 md:gap-8">
             {moreTopHeadlines.map((post) => {
-              const { src, alt, unoptimized } = getCover(post);
+              const { src, alt, unoptimized } = getCover(post, "heroRail");
               return (
                 <article key={post._id}>
                   {src ? (

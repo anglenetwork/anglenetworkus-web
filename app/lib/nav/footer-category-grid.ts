@@ -1,7 +1,4 @@
-import {
-  buildNavCategoryGrid,
-  type NavMenuCategory,
-} from "./menu-columns";
+import { buildNavCategoryGrid, type NavMenuCategory } from "./menu-columns";
 
 export const FOOTER_CATEGORY_GRID_COLUMNS = 5;
 export const FOOTER_CATEGORY_GRID_ROWS = 2;

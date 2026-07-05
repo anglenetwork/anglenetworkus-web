@@ -86,18 +86,19 @@ export default function PostArticleHeader({
                 className="object-cover"
               />
             ) : (
-              <span className="flex size-full items-center justify-center font-display text-sm font-semibold text-white">
+              <span className="flex size-full items-center justify-center font-display font-semibold text-sm text-white">
                 {authorInitial}
               </span>
             )}
           </span>
 
           <div className="min-w-0">
-            <p className="font-display text-sm font-semibold text-red-700">
+            <p className="font-display font-semibold text-red-700 text-sm">
               By {authorName}
             </p>
             <p className="mt-0.5 font-sans text-[13px] text-neutral-500">
-              {dateLabel} {formatArticleTimestamp(displayDate)} · {readTimeLabel}
+              {dateLabel} {formatArticleTimestamp(displayDate)} ·{" "}
+              {readTimeLabel}
             </p>
           </div>
         </div>

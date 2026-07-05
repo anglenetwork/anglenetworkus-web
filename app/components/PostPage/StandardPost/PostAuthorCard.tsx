@@ -9,8 +9,7 @@ import { authorAvatarUrl } from "../PostBody/media-utils";
 import { ImageRenderer } from "../../ui/image-renderer";
 import type { ArticleFamilyAuthor } from "@/app/lib/article-family/types";
 
-const AUTHOR_BIO_PLACEHOLDER =
-  "Author biography not yet available.";
+const AUTHOR_BIO_PLACEHOLDER = "Author biography not yet available.";
 
 interface PostAuthorCardProps {
   author?: ArticleFamilyAuthor | null;
@@ -23,9 +22,7 @@ export default function PostAuthorCard({ author }: PostAuthorCardProps) {
   const authorInitial = author.name.charAt(0).toUpperCase();
   const bioText = author.shortBio?.trim() || AUTHOR_BIO_PLACEHOLDER;
   const isPlaceholder = !author.shortBio?.trim();
-  const nameEl = (
-    <span className={postAuthorCardName}>{author.name}</span>
-  );
+  const nameEl = <span className={postAuthorCardName}>{author.name}</span>;
 
   return (
     <div
@@ -64,7 +61,7 @@ export default function PostAuthorCard({ author }: PostAuthorCardProps) {
         <p
           className={cn(
             postAuthorCardBio,
-            isPlaceholder && "italic text-neutral-400",
+            isPlaceholder && "text-neutral-400 italic",
           )}
         >
           {bioText}

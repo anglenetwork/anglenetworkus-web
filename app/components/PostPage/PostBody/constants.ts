@@ -82,7 +82,7 @@ export const POST_ARTICLE_BODY_MAX_WIDTH_CLASS = "max-w-[660px]";
 
 /** Standard post redesign — Portable Text body column, incl. drop-cap on the first paragraph */
 export const POST_ARTICLE_BODY_COLUMN_CLASS = cn(
-  "space-y-6 pt-10 font-body text-left",
+  "space-y-6 pt-10 text-left font-body",
   POST_ARTICLE_BODY_MAX_WIDTH_CLASS,
   "[&>p:first-of-type::first-letter]:float-left",
   "[&>p:first-of-type::first-letter]:mr-2",

@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { getCoverImage } from "@/sanity/lib/utils";
+import { getHomepageCoverImage } from "@/app/lib/homepage/homepage-cover-image";
 import { ImageRenderer } from "../../ui/image-renderer";
 import { ReadTimeLabel } from "@/app/components/ui/read-time-label";
 import {
@@ -34,7 +34,11 @@ export function RightColumnLanding({
     <div className="px-0 text-left md:px-4">
       <div className="flex flex-col gap-4">
         {sideStories.map((post) => {
-          const coverData = getCoverImage(post.cover, post.title);
+          const coverData = getHomepageCoverImage(
+            "heroSide",
+            post.cover,
+            post.title,
+          );
 
           return (
             <article key={post._id} className="space-y-3">
@@ -66,7 +70,11 @@ export function RightColumnLanding({
       {compactStories.length > 0 ? (
         <div className="mt-6 flex flex-col">
           {compactStories.map((post) => {
-            const coverData = getCoverImage(post.cover, post.title);
+            const coverData = getHomepageCoverImage(
+              "heroCompact",
+              post.cover,
+              post.title,
+            );
 
             return (
               <article key={post._id} className="py-4 first:pt-0 last:pb-0">

@@ -49,20 +49,6 @@ const DEFAULT_IMAGE_ASPECT_CLASS_NAME = "aspect-[16/9]";
 const featuredImageBaseClassName =
   "relative w-full overflow-hidden rounded-sm bg-news-secondary";
 
-function listingGalleryImage(galleryImage: FeaturedStoryGalleryImage): {
-  src: string;
-  alt: string;
-  unoptimized: boolean;
-} | null {
-  const resolved = resolveListingImage(galleryImage, "Gallery image", 900);
-  if (!resolved) return null;
-  return {
-    src: resolved.src,
-    alt: resolved.alt,
-    unoptimized: resolved.unoptimized,
-  };
-}
-
 function ArticleImageCarousel({
   coverImage,
   galleryImages,
@@ -145,15 +131,32 @@ function ArticleImageCarousel({
   );
 }
 
-function resolveArticleImages(article: FeaturedStoryArticle) {
+function resolveArticleImages(
+  article: FeaturedStoryArticle,
+  coverMaxWidth?: number,
+) {
   const coverData = getCoverImage(
     article.cover as Parameters<typeof getCoverImage>[0],
     article.title || "Featured article",
+    coverMaxWidth,
   );
+  const galleryMaxWidth = coverMaxWidth ?? 900;
   const galleryImagesData =
     article.imageGallery && Array.isArray(article.imageGallery)
       ? article.imageGallery
-          .map((img) => listingGalleryImage(img))
+          .map((img) => {
+            const resolved = resolveListingImage(
+              img,
+              "Gallery image",
+              galleryMaxWidth,
+            );
+            if (!resolved) return null;
+            return {
+              src: resolved.src,
+              alt: resolved.alt,
+              unoptimized: resolved.unoptimized,
+            };
+          })
           .filter(
             (img): img is { src: string; alt: string; unoptimized: boolean } =>
               img !== null,
@@ -227,6 +230,8 @@ export function FeaturedStoryColumn({
   imageSizes = DEFAULT_IMAGE_SIZES,
   headerLayout = "default",
   imageAspectClassName = DEFAULT_IMAGE_ASPECT_CLASS_NAME,
+  /** Caps external CDN width (e.g. homepage sixth section). */
+  coverMaxWidth,
 }: {
   headerTitle: string;
   headerHref?: string;
@@ -235,9 +240,10 @@ export function FeaturedStoryColumn({
   imageSizes?: string;
   headerLayout?: "default" | "title-with-more";
   imageAspectClassName?: string;
+  coverMaxWidth?: number;
 }) {
   const { coverData, galleryImagesData, hasGalleryImages } =
-    resolveArticleImages(article);
+    resolveArticleImages(article, coverMaxWidth);
   const articleHref = article.href ?? `/post/${article.slug}`;
 
   const header =

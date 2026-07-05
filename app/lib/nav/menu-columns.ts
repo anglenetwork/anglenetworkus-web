@@ -63,11 +63,7 @@ export function buildNavMenuCategories(
   return resolvedCategories.map((category) => ({
     slug: category.slug,
     name: category.name,
-    tags: tagsForCategory(
-      category.slug,
-      tagsByCategory,
-      useCanonicalFallback,
-    ),
+    tags: tagsForCategory(category.slug, tagsByCategory, useCanonicalFallback),
   }));
 }
 

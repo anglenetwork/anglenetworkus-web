@@ -82,4 +82,13 @@ describe("getWikimediaThumbnail", () => {
   it.each(wikimediaThumbnailCases)("$name", ({ input, maxWidth, expected }) => {
     expect(getWikimediaThumbnail(input, maxWidth)).toBe(expected);
   });
+
+  it("resolves Commons Special:FilePath URLs", () => {
+    const thumb = getWikimediaThumbnail(
+      "https://commons.wikimedia.org/wiki/Special:FilePath/%2820260628%29_Heatwave_Berlin_161124058.jpg",
+      800,
+    );
+    expect(thumb).toContain("upload.wikimedia.org/wikipedia/commons/thumb/");
+    expect(thumb).toContain("960px-");
+  });
 });
