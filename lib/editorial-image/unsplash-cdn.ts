@@ -33,6 +33,10 @@ const redirectToImagesUnsplash = unstable_cache(
 
 /** Resolve `unsplash.com/photos/.../download` links to a stable `images.unsplash.com` URL. */
 export async function canonicalizeUnsplashUrl(href: string): Promise<string> {
+  if (process.env.NODE_ENV === "development") {
+    return href;
+  }
+
   const url = normalizeExternalImageUrl(href);
   if (!url || !isUnsplashNonCdnHostname(url.hostname)) {
     return href;

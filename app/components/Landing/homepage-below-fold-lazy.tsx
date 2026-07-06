@@ -19,43 +19,13 @@ const HomepageBelowFoldSectionsLazy = dynamic(
 
 type HomepageBelowFoldLazyProps = HomepageBelowFoldSectionsProps;
 
-function belowFoldPlaceholder(_hasSixthSection: boolean) {
-  return (
-    <div className={HOMEPAGE_BELOW_FOLD_SECTION_GAP}>
-      <SecondSectionSkeleton />
-    </div>
-  );
-}
-
 /** Defers below-fold chunk download until the user scrolls near these sections. */
 export function HomepageBelowFoldLazy(props: HomepageBelowFoldLazyProps) {
-  const {
-    secondSection,
-    thirdSection,
-    fourthSection,
-    fifthSection,
-    sixthSection,
-    seventhSection,
-    opinion,
-  } = props;
-
   return (
-    <div className={HOMEPAGE_BELOW_FOLD_SECTION_GAP}>
-      <DeferUntilNearViewport
-        fallback={belowFoldPlaceholder(sixthSection != null)}
-      >
-        <div className={HOMEPAGE_BELOW_FOLD_SECTION_GAP}>
-          <HomepageBelowFoldSectionsLazy
-            secondSection={secondSection}
-            thirdSection={thirdSection}
-            fourthSection={fourthSection}
-            fifthSection={fifthSection}
-            sixthSection={sixthSection}
-            seventhSection={seventhSection}
-            opinion={opinion}
-          />
-        </div>
-      </DeferUntilNearViewport>
-    </div>
+    <DeferUntilNearViewport fallback={<SecondSectionSkeleton />}>
+      <div className={HOMEPAGE_BELOW_FOLD_SECTION_GAP}>
+        <HomepageBelowFoldSectionsLazy {...props} />
+      </div>
+    </DeferUntilNearViewport>
   );
 }

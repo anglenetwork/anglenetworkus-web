@@ -116,28 +116,13 @@ Published cover must have:
 
 ```txt
 alt
+caption
 licenseOrRights
 creditAuthor or creditSource
 valid source + image/externalUrl
 ```
 
-Do not use legacy cover fields:
-
-```txt
-cover.epigraph
-cover.creditProvider
-cover.creditSourceUrl
-cover.creditLicense
-cover.licenseUrl
-```
-
-Use instead:
-
-```txt
-cover.caption
-cover.creditSource
-cover.licenseOrRights
-```
+The same attribution fields apply to `editorialImage` and `galleryImageItem`.
 
 ---
 
@@ -300,25 +285,19 @@ mainHeadlineUntil
 frontlineUntil
 rightHeadlineUntil
 justInUntil
-cover.epigraph
-cover.creditProvider
-cover.creditSourceUrl
-cover.creditLicense
-cover.licenseUrl
 ```
 
-Replacements:
+Use current field names only:
 
 ```txt
-body replaces bodyTextOne/bodyRich/bodyBlocks
-publishedAt replaces date
-excerpt replaces dek
-cover.caption replaces cover.epigraph
-cover.creditSource replaces cover.creditProvider
-cover.licenseOrRights replaces cover.creditLicense
+body
+publishedAt
+excerpt
+cover.caption
+cover.creditAuthor
+cover.creditSource
+cover.licenseOrRights
 ```
-
-Legacy fields may still exist on old stored documents until manually unset.
 
 ---
 

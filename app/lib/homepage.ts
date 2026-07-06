@@ -20,7 +20,7 @@ const HOMEPAGE_THIRD_SECTION_DOC_TYPES = new Set<ArticleFamilyDocType>([
 /**
  * Pool size for the third-section bundle query. Needs to be large enough that
  * after dedup we can still find one unused article per configured tag.
- * With 4 tags in HOMEPAGE_THIRD_SECTION_TAGS, 20 gives generous headroom.
+ * With 3 tags in HOMEPAGE_THIRD_SECTION_TAGS, 20 gives generous headroom.
  */
 const HOMEPAGE_THIRD_SECTION_POOL_SIZE = 20;
 

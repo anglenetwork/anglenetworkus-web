@@ -1,5 +1,5 @@
-import { cn } from "@/lib/utils";
 import type { ArticleFamilyCard } from "@/app/lib/article-family/types";
+import { fifthSectionGridClassName } from "@/app/lib/homepage/fifth-section-grid";
 import { FifthSectionFeaturedColumn } from "./fifth-section-featured-column";
 import { FifthSectionListColumn } from "./fifth-section-list-column";
 
@@ -36,34 +36,39 @@ export default function FifthSection({
     return null;
   }
 
-  const divideClass =
-    variant === "dark" ? "divide-white/30" : "divide-news-border";
+  if (variant === "dark") {
+    return (
+      <main className="rounded-lg bg-news-secondary">
+        <div className="grid grid-cols-1 divide-y divide-dotted divide-white/30 lg:grid-cols-12 lg:divide-x lg:divide-y-0">
+          <FifthSectionFeaturedColumn
+            category={leftCategory}
+            mainArticle={mainArticle}
+            variant="dark"
+          />
+          <FifthSectionListColumn
+            category={rightCategory}
+            articles={rightForColumn}
+            variant="dark"
+          />
+        </div>
+      </main>
+    );
+  }
 
   return (
-    <main
-      className={cn(
-        "rounded-lg",
-        variant === "dark" ? "bg-news-secondary" : "bg-news-surface",
-      )}
-    >
-      <div
-        className={cn(
-          "grid grid-cols-1 divide-y divide-dotted lg:grid-cols-12 lg:divide-x lg:divide-y-0",
-          divideClass,
-        )}
-      >
+    <section aria-label="World and Politics">
+      <div className={fifthSectionGridClassName()}>
         <FifthSectionFeaturedColumn
           category={leftCategory}
           mainArticle={mainArticle}
-          variant={variant}
+          variant="news"
         />
         <FifthSectionListColumn
           category={rightCategory}
           articles={rightForColumn}
-          variant={variant}
-          divideClass={divideClass}
+          variant="news"
         />
       </div>
-    </main>
+    </section>
   );
 }

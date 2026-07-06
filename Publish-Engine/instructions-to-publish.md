@@ -55,11 +55,15 @@ views7d
 views30d
 *Rank
 *Until
-cover.epigraph
-cover.creditProvider
-cover.creditSourceUrl
-cover.creditLicense
-cover.licenseUrl
+```
+
+Image attribution on `cover`, `editorialImage`, and `galleryImageItem` must use exactly:
+
+```txt
+caption
+creditAuthor
+creditSource
+licenseOrRights
 ```
 
 ---
@@ -258,7 +262,47 @@ Rules:
 
 Never use the source article image unless the user provides a separate approved image URL with clear reuse rights.
 
-**URL normalization (required):** When given an Unsplash or Wikimedia link, follow [`cover-image-urls.md`](cover-image-urls.md) before setting `cover.externalUrl`. Agents must not paste raw page, download, or FilePath URLs.
+### Optimized external URLs (required)
+
+Store **production-ready image URLs** in Sanity. The site resizes and optimizes images at render time only when URLs are stored in the correct format. Raw page links, download links, and Wikimedia redirect URLs cause slow page loads and oversized downloads.
+
+**Apply the same normalization to every external image field:**
+
+```txt
+cover.externalUrl
+imageGallery[].externalUrl
+body[] where _type == "editorialImage" → externalUrl
+```
+
+**Before writing any `externalUrl` to Sanity**, normalize the link using [`cover-image-urls.md`](cover-image-urls.md). Never paste these as-is:
+
+```txt
+unsplash.com/photos/... or .../download     ← page or full-size redirect
+commons.wikimedia.org/wiki/Special:FilePath/...
+commons.wikimedia.org/wiki/File:...
+upload.wikimedia.org/.../thumb/...          ← pre-built thumb widths break
+ixlib=, ixid=, fm=, crop=, cs=, dl= on Unsplash URLs
+w above 800 on Unsplash URLs
+```
+
+**Write instead:**
+
+```txt
+Unsplash:  https://images.unsplash.com/photo-{ID}?w=800&q=80&auto=format&fit=crop
+Wikimedia: https://upload.wikimedia.org/wikipedia/commons/{1}/{2}/{Filename.ext}
+```
+
+Slot widths, quality values, examples, and `mainHeadline` rules: [`cover-image-urls.md`](cover-image-urls.md).
+
+**Pre-publish checklist** (from `cover-image-urls.md`):
+
+```txt
+[ ] externalUrl starts with https://images.unsplash.com/photo- OR https://upload.wikimedia.org/wikipedia/commons/
+[ ] Unsplash URL has exactly: w, q, auto=format, fit=crop
+[ ] No /download, no Special:FilePath, no /thumb/ in stored URL
+[ ] mainHeadline → Unsplash or Sanity asset only (not Wikimedia)
+[ ] creditAuthor, creditSource, licenseOrRights filled from source page (not invented)
+```
 
 Allowed sources:
 
@@ -349,7 +393,7 @@ cover.creditSource
 cover.licenseOrRights
 ```
 
-See [`cover-image-urls.md`](cover-image-urls.md) for Unsplash/Wikimedia URL formats, forbidden patterns, and `mainHeadline` rules.
+See [`cover-image-urls.md`](cover-image-urls.md) for full Unsplash/Wikimedia normalization steps, forbidden patterns, and `mainHeadline` rules.
 
 Caption rules:
 
@@ -392,7 +436,21 @@ After publishing, run:
   defined(bodyRich),
   defined(bodyBlocks),
   defined(date),
-  cover
+  cover{
+    source,
+    externalUrl,
+    alt,
+    caption,
+    creditAuthor,
+    creditSource,
+    licenseOrRights
+  },
+  "coverUrlOk": select(
+    cover.source == "asset" => true,
+    cover.externalUrl match "https://images.unsplash.com/photo-*?w=*&q=*&auto=format&fit=crop" => true,
+    cover.externalUrl match "https://upload.wikimedia.org/wikipedia/commons/*" && !(cover.externalUrl match "*/thumb/*") => true,
+    false
+  )
 }
 ```
 
@@ -406,7 +464,12 @@ defined(bodyTextOne) == false
 defined(bodyRich) == false
 defined(bodyBlocks) == false
 defined(date) == false
-cover has source, alt, licenseOrRights, and credit
+cover.source is defined
+cover.alt is defined
+cover.caption is defined
+cover.licenseOrRights is defined
+cover.creditAuthor or cover.creditSource is defined
+coverUrlOk == true (when cover.source is "external", externalUrl must be a normalized Unsplash or Wikimedia direct URL)
 tweetEmbedCount > 0 only when a tweet was requested or source-relevant
 tweetUrls are valid status URLs
 ```

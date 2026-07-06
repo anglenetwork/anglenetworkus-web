@@ -34,7 +34,7 @@ function blockText(block) {
     }
   }
 
-  parts.push(asText(block.caption ?? block.epigraph), asText(block.alt));
+  parts.push(asText(block.caption), asText(block.alt));
   return parts.filter(Boolean).join(" ");
 }
 

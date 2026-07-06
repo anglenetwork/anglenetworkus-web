@@ -1,33 +1,29 @@
 "use client";
 
 import { useRef } from "react";
-import { Button } from "@/components/ui/button";
+import Link from "next/link";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { SectionHeader } from "../../ui/section-header";
-import ArticleFamilyCard from "@/app/components/article-family/ArticleFamilyCard";
+import { cn } from "@/lib/utils";
+import { getHomepageCoverImage } from "@/app/lib/homepage/homepage-cover-image";
+import { sectionLeadImageClassName } from "@/app/lib/homepage/section-grid-cells";
+import {
+  featuredStoriesEyebrow,
+  featuredStoriesHeadline,
+  featuredStoriesHeading,
+} from "@/app/lib/typography/seventh-section";
 import { articleFamilyHref } from "@/app/lib/article-family/routes";
-import type { ArticleFamilyCard as CardModel } from "@/app/lib/article-family/types";
+import { ReadTimeLabel } from "@/app/components/ui/read-time-label";
+import { ImageRenderer } from "@/app/components/ui/image-renderer";
 
 interface Post {
   _id: string;
   title: string | null;
   slug: string | null;
-  excerpt?: string | null;
   cover?: {
     source?: "asset" | "external";
     externalUrl?: string | null;
-    image?: any;
+    image?: unknown;
     alt?: string | null;
-    imageSource?: string | null;
-  } | null;
-  date: string;
-  author?: {
-    name: string;
-    picture?: any;
-  } | null;
-  category?: {
-    title: string | null;
-    slug: string | null;
   } | null;
   readTime?: number | null;
 }
@@ -42,52 +38,57 @@ interface SeventhSectionProps {
   categoriesData?: CategoryData[];
 }
 
-function postToCard(post: Post, categoryLabel: string): CardModel {
-  const slug = post.slug || "";
-  const catTitle = post.category?.title?.trim() || categoryLabel;
-  const catSlug = post.category?.slug?.trim() || "news";
-  return {
-    _id: post._id,
-    _type: "post",
-    title: post.title || "Untitled",
-    tickerTitle: post.title || "Untitled",
-    excerpt: post.excerpt ?? null,
-    slug,
-    href: slug ? articleFamilyHref("post", slug) : "#",
-    cover: post.cover ?? null,
-    body: null,
-    author: post.author
-      ? { name: post.author.name, picture: post.author.picture }
-      : null,
-    publishedAt: post.date || null,
-    updatedAt: null,
-    date: post.date,
-    seo: null,
-    category: { title: catTitle, slug: catSlug },
-    tags: null,
-  };
-}
+const CAROUSEL_CARD_WIDTH = 280;
+const CAROUSEL_GAP = 24;
 
-function fallbackCard(): CardModel {
-  return {
-    _id: "fallback-1",
-    _type: "post",
-    title: "Sample Article Title",
-    tickerTitle: "Sample Article Title",
-    excerpt:
-      "This is a sample article description to test the component rendering.",
-    slug: "",
-    href: "#",
-    cover: null,
-    body: null,
-    author: { name: "Sample Author" },
-    publishedAt: null,
-    updatedAt: null,
-    date: new Date().toISOString(),
-    seo: null,
-    category: { title: "Sample Category", slug: "sample" },
-    tags: null,
-  };
+function FeaturedStoryCarouselCard({
+  categoryName,
+  post,
+}: {
+  categoryName: string;
+  post: Post;
+}) {
+  const href = articleFamilyHref("post", post.slug!);
+  const coverData = getHomepageCoverImage(
+    "sectionFeatured",
+    post.cover as Parameters<typeof getHomepageCoverImage>[1],
+    post.title || "Article image",
+  );
+
+  return (
+    <Link
+      href={href}
+      className="group block w-[280px] shrink-0 max-[520px]:w-[240px]"
+      aria-label={`Read article: ${post.title}`}
+    >
+      {coverData?.src ? (
+        <div className={sectionLeadImageClassName("3/4")}>
+          <ImageRenderer
+            src={coverData.src}
+            alt={coverData.alt}
+            width={525}
+            height={700}
+            fill
+            unoptimized={coverData.unoptimized}
+            sizes="280px"
+            className="object-cover object-center"
+          />
+        </div>
+      ) : (
+        <div
+          className={cn(sectionLeadImageClassName("3/4"), "bg-angle-paper")}
+          aria-hidden
+        />
+      )}
+      <p className={featuredStoriesEyebrow}>{categoryName}</p>
+      <h3 className={featuredStoriesHeadline}>{post.title}</h3>
+      <ReadTimeLabel
+        minutes={post.readTime}
+        variant="angle"
+        className="mt-2.5"
+      />
+    </Link>
+  );
 }
 
 export default function SeventhSection({
@@ -97,7 +98,7 @@ export default function SeventhSection({
 
   const rows =
     categoriesData?.flatMap((category) => {
-      if (!category.thirdArticle || !category.thirdArticle.slug) {
+      if (!category.thirdArticle?.slug || !category.thirdArticle.title) {
         return [];
       }
       return [
@@ -105,90 +106,64 @@ export default function SeventhSection({
           id: category.thirdArticle._id,
           categoryName: category.name || "Uncategorized",
           post: category.thirdArticle,
-          readTime: category.thirdArticle.readTime || 5,
         },
       ];
     }) ?? [];
 
-  const displayRows =
-    rows.length > 0
-      ? rows
-      : [
-          {
-            id: "fallback-1",
-            categoryName: "Sample Category",
-            post: null as Post | null,
-            readTime: 5,
-          },
-        ];
+  if (rows.length === 0) {
+    return null;
+  }
 
-  const scrollLeft = () => {
-    if (scrollContainerRef.current) {
-      scrollContainerRef.current.scrollBy({
-        left: -344,
-        behavior: "smooth",
-      });
-    }
+  const scrollByCards = (direction: -1 | 1) => {
+    scrollContainerRef.current?.scrollBy({
+      left: direction * (CAROUSEL_CARD_WIDTH + CAROUSEL_GAP),
+      behavior: "smooth",
+    });
   };
 
-  const scrollRight = () => {
-    if (scrollContainerRef.current) {
-      scrollContainerRef.current.scrollBy({
-        left: 344,
-        behavior: "smooth",
-      });
-    }
-  };
+  const scrollButtonClassName =
+    "absolute top-[calc(240px*2/3)] z-10 hidden size-9 -translate-y-1/2 items-center justify-center border border-angle-hairline bg-angle-bg text-angle-ink transition-colors hover:bg-angle-paper focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-angle-red md:top-[calc(280px*2/3)] md:flex";
 
   return (
-    <div className="bg-news-surface">
-      <SectionHeader
-        title="Featured Stories"
-        variant="news"
-        accentStyle="minimal"
-      />
+    <section aria-label="Featured Stories">
+      <div className="mb-9 flex items-baseline gap-[18px]">
+        <h2 className={featuredStoriesHeading}>Featured Stories</h2>
+        <div className="h-px flex-1 bg-angle-hairline" aria-hidden />
+      </div>
 
       <div className="relative">
-        <Button
-          variant="outline"
-          size="icon"
+        <button
+          type="button"
           aria-label="Scroll left"
-          className="absolute top-1/2 left-0 z-10 -translate-y-1/2 bg-news-surface shadow-lg hover:bg-news-background"
-          onClick={scrollLeft}
+          className={cn(scrollButtonClassName, "left-0 -translate-x-1/2")}
+          onClick={() => scrollByCards(-1)}
         >
-          <ChevronLeft className="size-4" />
-        </Button>
+          <ChevronLeft className="size-4" strokeWidth={2} aria-hidden />
+        </button>
 
-        <Button
-          variant="outline"
-          size="icon"
+        <button
+          type="button"
           aria-label="Scroll right"
-          className="absolute top-1/2 right-0 z-10 -translate-y-1/2 bg-news-surface shadow-lg hover:bg-news-background"
-          onClick={scrollRight}
+          className={cn(scrollButtonClassName, "right-0 translate-x-1/2")}
+          onClick={() => scrollByCards(1)}
         >
-          <ChevronRight className="size-4" />
-        </Button>
+          <ChevronRight className="size-4" strokeWidth={2} aria-hidden />
+        </button>
 
         <div
           ref={scrollContainerRef}
-          className="scrollbar-hide flex gap-6 overflow-x-auto px-12"
+          className="scrollbar-hide flex snap-x snap-mandatory gap-6 overflow-x-auto px-0 md:px-5"
         >
-          {displayRows.map((row) => {
-            const card = row.post
-              ? postToCard(row.post, row.categoryName)
-              : fallbackCard();
-            return (
-              <div key={row.id} className="w-[300px] flex-shrink-0">
-                <ArticleFamilyCard
-                  article={card}
-                  layout="heroTile"
-                  readTimeMinutes={row.readTime}
-                />
-              </div>
-            );
-          })}
+          {rows.map((row) => (
+            <div key={row.id} className="snap-start">
+              <FeaturedStoryCarouselCard
+                categoryName={row.categoryName}
+                post={row.post}
+              />
+            </div>
+          ))}
         </div>
       </div>
-    </div>
+    </section>
   );
 }

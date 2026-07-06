@@ -1,6 +1,6 @@
 # Cover image URLs (Unsplash & Wikimedia)
 
-Agent receives a photo URL. **Normalize before writing `cover.externalUrl`.** Never paste page links, download links, or HTML URLs as-is.
+Agent receives a photo URL. **Normalize before writing any `externalUrl`** (`cover`, `imageGallery`, or body `editorialImage`). Never paste page links, download links, or HTML URLs as-is.
 
 Always set:
 
