@@ -6,7 +6,6 @@ export const HOMEPAGE_THIRD_SECTION_TAGS = [
   { slug: "congress", title: "Congress" },
   { slug: "artificial-intelligence", title: "Artificial Intelligence" },
   { slug: "white-house", title: "White House" },
-  { slug: "markets", title: "Markets" },
 ] as const;
 
 export type HomepageThirdSectionTag =

@@ -67,8 +67,10 @@ export function HomepageBelowFoldSections({
 }: HomepageBelowFoldSectionsProps) {
   return (
     <>
-      <SecondSection {...secondSection} />
-      <ThirdSection {...thirdSection} />
+      <div>
+        <SecondSection {...secondSection} />
+        <ThirdSection {...thirdSection} />
+      </div>
       {fourthSection ? <FourthSection {...fourthSection} /> : null}
       <FifthSection {...fifthSection} />
       {opinion}

@@ -143,7 +143,6 @@ function toExternalCover(prev, nextUrl) {
     externalUrl: url,
     alt,
     ...(rest.caption ? { caption: rest.caption } : {}),
-    ...(rest.epigraph && !rest.caption ? { caption: rest.epigraph } : {}),
     ...(rest.creditAuthor ? { creditAuthor: rest.creditAuthor } : {}),
     ...cred,
   };

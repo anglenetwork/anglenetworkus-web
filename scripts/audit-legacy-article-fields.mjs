@@ -21,8 +21,6 @@ const checks = [
   { key: "rightHeadlineUntil", filter: "defined(rightHeadlineUntil)" },
   { key: "justInUntil", filter: "defined(justInUntil)" },
   { key: "breakingNewsUntil", filter: "defined(breakingNewsUntil)" },
-  { key: "coverEpigraph", filter: "defined(cover.epigraph)" },
-  { key: "coverCreditProvider", filter: "defined(cover.creditProvider)" },
   { key: "noBody", filter: "!defined(body) || count(body) == 0" },
   { key: "hasBody", filter: "defined(body) && count(body) > 0" },
   {
@@ -85,17 +83,6 @@ async function main() {
         mainHeadlineUntil, frontlineUntil, rightHeadlineUntil,
         justInUntil, breakingNewsUntil
       },
-      "coverLegacy": *[_type in $types && (
-        defined(cover.epigraph) || defined(cover.creditProvider)
-      )][0...10]{
-        _id, _type, "slug": slug.current, status,
-        "caption": cover.caption,
-        "epigraph": cover.epigraph,
-        "creditSource": cover.creditSource,
-        "creditProvider": cover.creditProvider
-      },
-      "coverLegacyEpigraphOnly": count(*[_type in $types && defined(cover.epigraph) && !defined(cover.caption)]),
-      "coverLegacyProviderOnly": count(*[_type in $types && defined(cover.creditProvider) && !defined(cover.creditSource)]),
       "bodyWithoutTextBlocks": *[_type in $types && defined(body) && count(body) > 0 && count(body[_type == "block"]) == 0][0...5]{
         _id, _type, "slug": slug.current, "bodyTypes": body[]._type
       },

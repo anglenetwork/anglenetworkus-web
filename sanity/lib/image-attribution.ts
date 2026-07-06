@@ -1,9 +1,7 @@
 export type ImageMetaInput = {
   caption?: string | null;
-  epigraph?: string | null;
   creditAuthor?: string | null;
   creditSource?: string | null;
-  creditProvider?: string | null;
   licenseOrRights?: string | null;
 };
 
@@ -12,7 +10,7 @@ function asImageMetaInput(raw: unknown): ImageMetaInput | null | undefined {
   return raw as ImageMetaInput;
 }
 
-/** Normalizes image caption/credit fields with legacy Sanity fallbacks. */
+/** Normalizes image caption/credit fields from Sanity image media objects. */
 export function normalizeImageMeta(raw: unknown): {
   caption: string | null;
   creditAuthor: string | null;
@@ -30,9 +28,9 @@ export function normalizeImageMeta(raw: unknown): {
   }
 
   return {
-    caption: meta.caption ?? meta.epigraph ?? null,
+    caption: meta.caption ?? null,
     creditAuthor: meta.creditAuthor ?? null,
-    creditSource: meta.creditSource ?? meta.creditProvider ?? null,
+    creditSource: meta.creditSource ?? null,
     licenseOrRights: meta.licenseOrRights?.trim() || null,
   };
 }

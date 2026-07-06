@@ -1,6 +1,27 @@
 import { articleTitleLink } from "./article-links";
 import { homepageArticleTitleLink } from "./homepage-article-links";
 
+/** Homepage "More Sections" — hover: headline fades to ink-soft. */
+const angleTitleHover = "transition-colors group-hover:text-angle-inkSoft";
+
+/** "More Sections" section heading with horizontal rule. */
+export const moreSectionsHeading =
+  "font-display text-[22px] font-bold tracking-[-0.3px] text-angle-ink";
+
+/** Category column label (e.g. TECH) with red dot prefix. */
+export const secCategoryLabel =
+  "mb-[22px] flex items-center gap-2 font-mono text-xs font-bold uppercase tracking-[0.12em] text-angle-ink before:size-[7px] before:shrink-0 before:rounded-full before:bg-angle-red before:content-['']";
+
+/** Lead story headline inside a category column. */
+export const secMainHeadline = `mt-4 font-display text-[21px] font-semibold leading-[1.28] tracking-[-0.3px] text-angle-ink ${angleTitleHover}`;
+
+/** Secondary row headline beneath the dashed divider. */
+export const secSubHeadline = `font-display text-base font-semibold leading-[1.3] tracking-[-0.2px] text-angle-ink ${angleTitleHover}`;
+
+/** Photo credit line under the lead image. */
+export const secPhotoCredit =
+  "mt-2.5 font-mono text-[10.5px] tracking-[0.02em] text-angle-inkSoft";
+
 /** SecondSection — category column: lead story title */
 export const categoryFeaturedTitle = {
   light: `font-semibold font-display text-xl text-neutral-900 leading-snug tracking-tight md:text-xl ${articleTitleLink}`,

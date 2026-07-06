@@ -113,10 +113,10 @@ describe("buildSearchText", () => {
 });
 
 describe("portableTextToPlainText", () => {
-  it("extracts child text and block epigraph/alt", () => {
+  it("extracts child text and block caption/alt", () => {
     const plain = portableTextToPlainText([
       { children: [{ text: "Lead paragraph." }] },
-      { epigraph: "Photo caption", alt: "Capitol dome" },
+      { caption: "Photo caption", alt: "Capitol dome" },
     ]);
     expect(plain).toContain("Lead paragraph.");
     expect(plain).toContain("Photo caption");

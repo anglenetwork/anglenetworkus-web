@@ -1,7 +1,7 @@
 import type { ClientPerspective, QueryParams } from "next-sanity";
 import { draftMode } from "next/headers";
 
-import { authenticatedClient } from "@/sanity/lib/authenticated-client";
+import { publishedClient } from "@/sanity/lib/authenticated-client";
 import { liveSanityFetch, SanityLive } from "@/sanity/lib/live";
 
 export { SanityLive };
@@ -50,7 +50,7 @@ export async function sanityFetch<const QueryString extends string>({
     return data;
   }
 
-  return authenticatedClient.fetch(query, resolvedParams, {
+  return publishedClient.fetch(query, resolvedParams, {
     perspective: perspective ?? "published",
     stega: stega ?? false,
     next: { revalidate },
@@ -78,7 +78,7 @@ export async function sanityFetchStatic<const QueryString extends string>({
   revalidate?: number | false;
 }) {
   const resolvedParams = await params;
-  return authenticatedClient.fetch(query, resolvedParams, {
+  return publishedClient.fetch(query, resolvedParams, {
     perspective: "published",
     stega: false,
     next: { revalidate },
