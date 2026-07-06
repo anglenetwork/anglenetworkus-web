@@ -120,12 +120,12 @@ Horizontal padding for homepage sections comes from `SitePageWidth` (`px-4 sm:px
 
 Vertical rhythm between homepage below-fold sections: `HOMEPAGE_BELOW_FOLD_SECTION_GAP` (`space-y-10` = 40px, `xl:space-y-12` = 48px at xl). **Do not** add section-level `pt-*` / `pb-*` for external gaps — that stacks with the parent and creates excessive “island” spacing.
 
-Paired sections grouped in `homepage-below-fold.tsx` use `HOMEPAGE_SECTION_PAIR_GAP` (`mt-10` = 40px) on the lower block only.
+Paired sections grouped in `homepage-below-fold.tsx` use `HOMEPAGE_SECTION_PAIR_GAP` (`max-lg:mt-6` = 24px, `lg:mt-10` = 40px) on the lower block only.
 
 Section-internal padding from mocks (content padding, not section separation):
 
 | Section | Notes |
 |---------|-------|
 | More Sections (Second) | No external pt/pb |
-| Trending (Third) | `mt-10` pair gap + strip `py-10` |
+| Trending (Third) | `max-lg:mt-6 lg:mt-10` pair gap + strip `max-lg:py-6 lg:py-10` |
 | Tech (Fourth) | Editorial cell `py-8` only |

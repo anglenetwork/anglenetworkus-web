@@ -1,80 +1,25 @@
 import Link from "next/link";
-import type { SanityImageSource } from "@sanity/image-url/lib/types/types";
 import { HOMEPAGE_JUST_IN_LIMIT } from "@/app/lib/homepage/first-section";
-import { getHomepageCoverImage } from "@/app/lib/homepage/homepage-cover-image";
-import { resolveListingImage } from "@/lib/editorial-image";
 import { ColMoreLink } from "./col-more-link";
 import {
   justInCategoryLabel,
   justInHeadline,
   justInLabel,
 } from "@/app/lib/typography/first-section";
-import type { JustInCarouselImage } from "./just-in-image-carousel";
 import { JustInCarouselLoader } from "./just-in-carousel-loader";
 import { JustInStaticImage } from "./just-in-static-image";
+import { carouselImagesForPost } from "./just-in-carousel-images";
+import type { JustInCarouselPost } from "./just-in-carousel-images";
 
-interface GalleryImage {
-  source?: "asset" | "external";
-  externalUrl?: string | null;
-  image?: SanityImageSource | null;
-  alt?: string | null;
-}
-
-interface Post {
+interface Post extends JustInCarouselPost {
   _id: string;
-  title: string;
   slug: string;
-  cover?: {
-    source?: "asset" | "external";
-    externalUrl?: string | null;
-    image?: SanityImageSource | null;
-    alt?: string | null;
-    imageSource?: string | null;
-  } | null;
-  imageGallery?: GalleryImage[] | null;
   breakingNews?: boolean | null;
   developingStory?: boolean | null;
   category?: {
     title: string | null;
     slug: string | null;
   } | null;
-}
-
-function listingImageFromGallery(
-  galleryImage: GalleryImage,
-): JustInCarouselImage | null {
-  const resolved = resolveListingImage(galleryImage, "Gallery image", 640);
-  if (!resolved) return null;
-  return {
-    src: resolved.src,
-    alt: resolved.alt,
-    unoptimized: resolved.unoptimized,
-  };
-}
-
-function carouselImagesForPost(post: Post): JustInCarouselImage[] {
-  const coverData = getHomepageCoverImage(
-    "heroRail",
-    post.cover,
-    post.title || "Article image",
-  );
-  const galleryImages =
-    post.imageGallery && Array.isArray(post.imageGallery)
-      ? post.imageGallery
-          .map((img) => listingImageFromGallery(img))
-          .filter((img): img is JustInCarouselImage => img !== null)
-      : [];
-
-  const images: JustInCarouselImage[] = [];
-  if (coverData?.src) {
-    images.push({
-      src: coverData.src,
-      alt: coverData.alt,
-      unoptimized: coverData.unoptimized,
-    });
-  }
-  images.push(...galleryImages);
-  return images;
 }
 
 interface LeftColumnLandingProps {

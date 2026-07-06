@@ -16,6 +16,9 @@ type JustInCarouselLoaderProps = {
   postSlug: string;
   breakingNews?: boolean | null;
   developingStory?: boolean | null;
+  imageAspectClassName?: string;
+  imageSizes?: string;
+  className?: string;
 };
 
 export function JustInCarouselLoader(props: JustInCarouselLoaderProps) {

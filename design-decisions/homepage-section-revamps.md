@@ -44,7 +44,7 @@ Record of Angle redesigns applied to below-fold homepage sections. Each entry ma
 
 **Component:** `app/components/Landing/ThirdSection/thirdSection.tsx`  
 **Typography:** `app/lib/typography/third-section.ts`  
-**Grid helper:** `section-grid-cells.ts` (no top border on inner grid)  
+**Grid helper:** `section-grid-cells.ts` — `sectionTrendingCellClassName` (no top border on inner grid)  
 **Config:** `HOMEPAGE_THIRD_SECTION_TAGS` trimmed to 3 tags (Congress, AI, White House)  
 **Data:** unchanged query shape — dedup loop reads config array
 
@@ -64,12 +64,12 @@ Record of Angle redesigns applied to below-fold homepage sections. Each entry ma
 | Separate tag link + article link | One link wrapping eyebrow + headline + meta |
 | Sans eyebrow in news-primary | `trendEyebrow` — mono red uppercase |
 | Dynamic column count (1–4) | Fixed 3-column intent |
-| `divide-dotted` | Shared `sectionGridCellClassName` |
+| `divide-dotted` | `sectionTrendingCellClassName` (borders only, no cell `py`) |
 
 ### Spacing
 
-- `mt-14` (56px) from SecondSection — grouped in `homepage-below-fold.tsx` so gap is internal, not `space-y-16`
-- Strip padding: `px-6 py-10 lg:px-12`
+- Pair gap from SecondSection: `max-lg:mt-6 lg:mt-10` (`HOMEPAGE_SECTION_PAIR_GAP`) — grouped in `homepage-below-fold.tsx`
+- Strip padding: `px-6 max-lg:py-6 lg:py-10 lg:px-12`
 
 ---
 
@@ -224,6 +224,42 @@ mostRead[0..4]                 →  Column 3 (Most Read)
 
 ---
 
+## FirstSection — Mobile front (below lg)
+
+**Component:** `app/components/Landing/FirstSection/mobile-front-landing.tsx`  
+**Typography:** `app/lib/typography/first-section.ts` (mobile tokens)  
+**Helper:** `app/components/Landing/FirstSection/just-in-carousel-images.ts`  
+**Data:** unchanged — same hero bundle props as desktop
+
+### Reference standard
+
+- Breakpoint: **`lg` (1024px)** — mobile stack `lg:hidden`; desktop header + 3-col grid `hidden lg:block` (unchanged)
+- Full-bleed 4:3 hero image (`-mx-4 sm:-mx-6` breakout from `SitePageWidth`)
+- Vertical feed (`px-5`) with dashed dividers between rows
+
+### Content order (mobile)
+
+1. Main story hero image (4:3)
+2. Lead text block — category kicker, 29px headline, read time
+3. `moreTopHeadlines[0..1]` — thumb rows (78×78)
+4. “Just in” section label + red dot
+5. `justInNews[0]` — breaking row (16/10.5 image + badge; carousel if gallery >1)
+6. `justInNews[1..4]` — thumb rows; optional `labels[0]` kicker with list icon
+7. `sideStories[0..1]` — feature rows (16/10.5 image, 21px headline)
+8. `compactStories[0..1]` — thumb rows
+
+`ColMoreLink` omitted on mobile (not in mock).
+
+### Changes made
+
+| Before | After |
+|--------|-------|
+| Desktop 3-col grid reshuffled with `order-*` below lg | Dedicated `MobileFrontLanding` surface |
+| Centered lead headline header on all viewports | Header hidden below lg; lead story in feed |
+| Shared column components on mobile | Columns render only at `lg+` |
+
+---
+
 ## Skeleton / loading
 
 `SecondSectionSkeleton` in `below-fold-placeholder.tsx` was updated to match SecondSection layout. FourthSection has no dedicated skeleton (below-fold lazy loader reuses second-section placeholder).
@@ -236,4 +272,4 @@ mostRead[0..4]                 →  Column 3 (Most Read)
 |---------|------|-------|
 | EditorialRailsSection | `article-family/EditorialRailsSection.tsx` | Opinion rails |
 
-FirstSection was previously revamp to Angle (`first-section.ts`, hairlines, divider-dashed on right rail).
+FirstSection desktop was previously revamp to Angle (`first-section.ts`, hairlines, divider-dashed on right rail). Mobile front added via `mobile-front-landing.tsx` (below `lg` only).

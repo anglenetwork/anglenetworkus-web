@@ -5,8 +5,8 @@ import { xlLeadImageFirstEdgeWidth } from "@/app/lib/homepage/section-grid-cells
 export function techGridClassName(className?: string) {
   return cn(
     "grid grid-cols-3 border-angle-ink border-t",
-    "max-[1100px]:grid-cols-2",
-    "max-[720px]:grid-cols-1",
+    "max-[1100px]:grid-cols-2 max-[1100px]:gap-x-8",
+    "max-[720px]:grid-cols-1 max-[720px]:gap-x-0",
     className,
   );
 }
@@ -18,7 +18,7 @@ export function techEditorialColumnClassName(className?: string) {
     "xl:pr-8 xl:pl-8 xl:first:pl-0",
     xlLeadImageFirstEdgeWidth,
     "max-[1100px]:border-angle-hairline max-[1100px]:not-first:border-t max-[1100px]:border-l-0 max-[1100px]:py-8 max-[1100px]:first:border-t-0 max-[1100px]:[&:nth-child(2)]:border-t-0",
-    "max-[1100px]:even:pr-0 max-[1100px]:even:pl-4 max-[1100px]:odd:pr-4 max-[1100px]:odd:pl-0",
+    "max-[1100px]:px-0",
     "max-[720px]:border-angle-hairline max-[720px]:border-t max-[720px]:px-0 max-[720px]:py-8 max-[720px]:first:border-t-0 max-[720px]:[&:nth-child(2)]:border-t",
     className,
   );
