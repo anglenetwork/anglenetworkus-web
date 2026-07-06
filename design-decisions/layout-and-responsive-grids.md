@@ -91,7 +91,7 @@ Category-only sections (Tech) use a linked mono label instead — no horizontal 
 ThirdSection (Trending) sits on `bg-angle-paper` with internal padding:
 
 ```
-mt-14 bg-angle-paper px-6 py-10 lg:px-12
+max-lg:mt-6 lg:mt-10 bg-angle-paper px-6 max-lg:py-6 lg:py-10 lg:px-12
 ```
 
 Grid inside has **no** top border (`withTopBorder: false`) because the strip is visually distinct from the white page.

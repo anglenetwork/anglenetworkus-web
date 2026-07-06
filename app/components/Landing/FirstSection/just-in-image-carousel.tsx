@@ -17,6 +17,9 @@ type JustInImageCarouselProps = {
   postSlug: string;
   breakingNews?: boolean | null;
   developingStory?: boolean | null;
+  imageAspectClassName?: string;
+  imageSizes?: string;
+  className?: string;
 };
 
 /** Client-only rotation for Just In hero when multiple images exist. */
@@ -25,6 +28,9 @@ export function JustInImageCarousel({
   postSlug,
   breakingNews,
   developingStory,
+  imageAspectClassName = "aspect-[16/11]",
+  imageSizes = "(max-width: 640px) 100vw, (max-width: 1024px) 100vw, 300px",
+  className = "mb-7 block",
 }: JustInImageCarouselProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
 
@@ -41,9 +47,11 @@ export function JustInImageCarousel({
   if (images.length === 0) return null;
 
   return (
-    <div className="mb-7 block">
+    <div className={className}>
       <Link href={`/post/${postSlug}`}>
-        <div className="relative aspect-[16/11] w-full overflow-hidden bg-angle-paper">
+        <div
+          className={`relative w-full overflow-hidden bg-angle-paper ${imageAspectClassName}`}
+        >
           {images.map((image, idx) => {
             if (!shouldRenderCarouselSlide(idx, currentIndex, images.length)) {
               return null;
@@ -59,7 +67,7 @@ export function JustInImageCarousel({
                 fill
                 unoptimized={image.unoptimized}
                 quality={55}
-                sizes="(max-width: 640px) 100vw, (max-width: 1024px) 100vw, 300px"
+                sizes={imageSizes}
                 className={`absolute inset-0 object-cover object-center transition-opacity duration-500 ${
                   idx === currentIndex ? "z-10 opacity-100" : "z-0 opacity-0"
                 }`}

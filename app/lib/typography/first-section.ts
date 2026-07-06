@@ -35,3 +35,28 @@ export const rightMiniHeadline = `font-display text-[15px] font-semibold leading
 /** "More {Category} news" / "More headlines" link label at the bottom of a column. */
 export const colMoreLabel =
   "text-sm font-semibold text-angle-inkSoft transition-colors group-hover:text-angle-ink";
+
+/** Mobile front — category kicker above lead headline (e.g. WORLD). */
+export const mobileItemKicker =
+  "mb-2.5 flex items-center gap-1.5 font-mono text-[11px] font-bold uppercase tracking-[0.09em] leading-none text-angle-ink";
+
+/** Mobile front — lead story headline beneath hero image. */
+export const mobileLeadHeadline = `font-display text-[29px] font-bold leading-[1.14] tracking-[-0.6px] text-angle-ink ${angleTitleHover}`;
+
+/** Mobile front — read time under the lead headline. */
+export const mobileLeadReadTime =
+  "font-mono text-xs font-bold tracking-[0.02em] text-angle-inkSoft";
+
+/** Mobile front — standard list row headline. */
+export const mobileItemHeadline = `mb-2.5 font-display text-[19px] font-bold leading-[1.26] tracking-[-0.3px] text-angle-ink ${angleTitleHover}`;
+
+/** Mobile front — feature row headline (right-rail features on mobile). */
+export const mobileFeatureHeadline = `mb-2.5 font-display text-[21px] font-bold leading-[1.26] tracking-[-0.3px] text-angle-ink ${angleTitleHover}`;
+
+/** Mobile front — read time line (list rows). */
+export const mobileItemTime =
+  "font-mono text-xs font-bold tracking-[0.02em] text-angle-inkSoft";
+
+/** Mobile front — "Just in" section divider label. */
+export const mobileSectionLabel =
+  "flex items-center gap-2.5 font-mono text-xs font-bold uppercase tracking-[0.11em] leading-none text-angle-ink";

@@ -2,6 +2,7 @@ import { LeftColumnLanding } from "./left-column-landing";
 import { HOMEPAGE_JUST_IN_LIMIT } from "@/app/lib/homepage/first-section";
 import { CenterColumnLanding } from "./centerColumnLanding";
 import { RightColumnLanding } from "./rightColumnLanding";
+import { MobileFrontLanding } from "./mobile-front-landing";
 import Link from "next/link";
 import { leadHeadlineTitle } from "@/app/lib/typography/first-section";
 
@@ -169,33 +170,60 @@ export function FirstSection({
     .slice(0, 2);
 
   const mainStoryPost = mainStoryPosts[0];
+  const rawMainStory = mainStory.find((post) => post.slug) ?? null;
+
+  const mobileMoreTopHeadlines = moreTopHeadlines
+    .filter((post): post is PostForLeftColumn => !!post.slug)
+    .slice(0, 2);
 
   return (
     <main className="w-full">
-      {mainStoryPost?.title && mainStoryPost?.slug && (
-        <header className="border-angle-ink border-b py-9 lg:py-14">
-          <Link href={`/post/${mainStoryPost.slug}`} className="group block">
-            <h1 className={leadHeadlineTitle}>{mainStoryPost.title}</h1>
-          </Link>
-        </header>
-      )}
-      {/* Mobile order: Hero, Just In, Right rail — Desktop order: Just In, Hero, Right rail */}
-      <div className="grid grid-cols-1 items-stretch lg:grid-cols-[1fr_2.05fr_1fr]">
-        <div className="order-2 border-angle-hairline border-b lg:order-1 lg:border-r lg:border-b-0">
-          <LeftColumnLanding justInNews={leftColumnJustIn} />
-        </div>
-        <div className="order-1 border-angle-hairline border-b lg:order-2 lg:border-r lg:border-b-0">
-          <CenterColumnLanding
-            mainStory={mainStoryPosts}
-            relatedCategoryPosts={relatedPosts}
-            moreTopHeadlines={moreTopHeadlinePosts}
-          />
-        </div>
-        <div className="order-3 lg:order-3">
-          <RightColumnLanding
-            sideStories={rightColumnSideStories}
-            compactStories={rightColumnCompactStories}
-          />
+      <MobileFrontLanding
+        className="lg:hidden"
+        mainStory={
+          rawMainStory?.slug
+            ? {
+                _id: rawMainStory._id,
+                title: rawMainStory.title,
+                slug: rawMainStory.slug,
+                excerpt: rawMainStory.excerpt,
+                readTime: rawMainStory.readTime,
+                category: rawMainStory.category,
+                cover: rawMainStory.cover,
+              }
+            : null
+        }
+        moreTopHeadlines={mobileMoreTopHeadlines}
+        justInNews={leftColumnJustIn}
+        sideStories={rightColumnSideStories}
+        compactStories={rightColumnCompactStories}
+      />
+
+      <div className="hidden lg:block">
+        {mainStoryPost?.title && mainStoryPost?.slug && (
+          <header className="border-angle-ink border-b py-9 lg:py-14">
+            <Link href={`/post/${mainStoryPost.slug}`} className="group block">
+              <h1 className={leadHeadlineTitle}>{mainStoryPost.title}</h1>
+            </Link>
+          </header>
+        )}
+        <div className="grid grid-cols-1 items-stretch lg:grid-cols-[1fr_2.05fr_1fr]">
+          <div className="border-angle-hairline border-b lg:border-r lg:border-b-0">
+            <LeftColumnLanding justInNews={leftColumnJustIn} />
+          </div>
+          <div className="border-angle-hairline border-b lg:border-r lg:border-b-0">
+            <CenterColumnLanding
+              mainStory={mainStoryPosts}
+              relatedCategoryPosts={relatedPosts}
+              moreTopHeadlines={moreTopHeadlinePosts}
+            />
+          </div>
+          <div>
+            <RightColumnLanding
+              sideStories={rightColumnSideStories}
+              compactStories={rightColumnCompactStories}
+            />
+          </div>
         </div>
       </div>
     </main>

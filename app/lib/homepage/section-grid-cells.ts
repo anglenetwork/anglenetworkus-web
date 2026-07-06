@@ -9,8 +9,8 @@ export function sectionGridClassName(options?: {
   return cn(
     "grid grid-cols-3",
     withTopBorder && "border-angle-ink border-t",
-    "max-[1000px]:grid-cols-2",
-    "max-[640px]:grid-cols-1",
+    "max-[1000px]:grid-cols-2 max-[1000px]:gap-x-8",
+    "max-[640px]:grid-cols-1 max-[640px]:gap-x-0",
     className,
   );
 }
@@ -38,6 +38,17 @@ export const xlLeadImageEdgeWidth =
 export const xlLeadImageFirstEdgeWidth =
   "xl:[&:first-child_.sec-lead-img]:w-[calc(100%-2rem)]";
 
+/** Text-only trending strip cells — borders only; vertical rhythm from section padding. */
+export function sectionTrendingCellClassName(className?: string) {
+  return cn(
+    "block min-w-0 not-first:border-angle-hairline not-first:border-l pr-8 pl-8 first:pl-0 last:pr-0",
+    "max-[1000px]:border-angle-hairline max-[1000px]:not-first:border-t max-[1000px]:border-l-0 max-[1000px]:first:border-t-0 max-[1000px]:[&:nth-child(2)]:border-t-0",
+    "max-[1000px]:px-0",
+    "max-[640px]:border-angle-hairline max-[640px]:border-t max-[640px]:px-0 max-[640px]:py-4 max-[640px]:first:border-t-0 max-[640px]:[&:nth-child(2)]:border-t",
+    className,
+  );
+}
+
 /** Per-cell borders and padding matching the Angle section mock. */
 export function sectionGridCellClassName(className?: string) {
   return cn(
@@ -45,7 +56,7 @@ export function sectionGridCellClassName(className?: string) {
     "xl:pr-8 xl:pl-8 xl:last:pr-0 xl:first:pl-0",
     xlLeadImageEdgeWidth,
     "max-[1000px]:border-angle-hairline max-[1000px]:not-first:border-t max-[1000px]:border-l-0 max-[1000px]:py-6 max-[1000px]:first:border-t-0 max-[1000px]:[&:nth-child(2)]:border-t-0",
-    "max-[1000px]:even:pr-0 max-[1000px]:even:pl-4 max-[1000px]:odd:pr-4 max-[1000px]:odd:pl-0",
+    "max-[1000px]:px-0",
     "max-[640px]:border-angle-hairline max-[640px]:border-t max-[640px]:px-0 max-[640px]:first:border-t-0 max-[640px]:[&:nth-child(2)]:border-t",
     className,
   );

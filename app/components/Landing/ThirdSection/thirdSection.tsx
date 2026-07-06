@@ -1,10 +1,13 @@
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import type { HomepageThirdSectionArticle } from "@/app/lib/homepage-third-section";
-import { HOMEPAGE_SECTION_PAIR_GAP } from "@/app/components/Landing/homepage-below-fold-spacing";
 import {
-  sectionGridCellClassName,
+  HOMEPAGE_LANDING_INSET_X,
+  HOMEPAGE_SECTION_PAIR_GAP,
+} from "@/app/components/Landing/homepage-below-fold-spacing";
+import {
   sectionGridClassName,
+  sectionTrendingCellClassName,
 } from "@/app/lib/homepage/section-grid-cells";
 import {
   trendEyebrow,
@@ -26,7 +29,8 @@ export default function ThirdSection({ articles }: ThirdSectionProps) {
       aria-label="Trending headlines"
       className={cn(
         HOMEPAGE_SECTION_PAIR_GAP,
-        "bg-angle-paper px-6 py-10 max-[1000px]:px-6 lg:px-12",
+        "bg-angle-paper max-lg:py-6 lg:px-12 lg:py-10",
+        HOMEPAGE_LANDING_INSET_X,
       )}
     >
       <div className={sectionGridClassName({ withTopBorder: false })}>
@@ -34,9 +38,7 @@ export default function ThirdSection({ articles }: ThirdSectionProps) {
           <Link
             key={article.tagSlug}
             href={article.href}
-            className={sectionGridCellClassName(
-              "block py-0 pr-8 pl-8 first:pl-0 last:pr-0 max-[1000px]:px-0",
-            )}
+            className={sectionTrendingCellClassName()}
             aria-label={`Read article: ${article.title}`}
           >
             <div className={trendEyebrow}>{article.tagTitle}</div>
