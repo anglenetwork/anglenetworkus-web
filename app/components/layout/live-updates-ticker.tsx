@@ -9,7 +9,7 @@ interface LiveUpdatesTickerProps {
 export function LiveUpdatesTicker({ posts }: LiveUpdatesTickerProps) {
   const newsItems = posts
     .filter((post) => post.tickerTitle && post.slug)
-    .slice(0, 5);
+    .slice(0, 6);
 
   if (newsItems.length === 0) {
     return null;
