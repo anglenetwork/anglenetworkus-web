@@ -29,7 +29,7 @@ export function PrivacyPolicySections01To05() {
             <strong>Email:</strong>{" "}
             <a
               href={`mailto:${contact.email}`}
-              className="text-blue-600 hover:underline"
+              className="text-news-primary hover:underline"
             >
               {contact.email}
             </a>
@@ -53,14 +53,14 @@ export function PrivacyPolicySections01To05() {
                   {config.dpo.contactForm ? (
                     <Link
                       href={config.dpo.contactForm}
-                      className="text-blue-600 hover:underline"
+                      className="text-news-primary hover:underline"
                     >
                       {config.dpo.email}
                     </Link>
                   ) : (
                     <a
                       href={`mailto:${config.dpo.email}`}
-                      className="text-blue-600 hover:underline"
+                      className="text-news-primary hover:underline"
                     >
                       {config.dpo.email}
                     </a>
@@ -160,7 +160,7 @@ export function PrivacyPolicySections01To05() {
               <strong>Payment info</strong> (if subscriptions/donations are
               offered): billing address and payment status.
               <br />
-              <em className="text-gray-600">
+              <em className="text-news-muted">
                 Note: Payment card details are typically handled by our payment
                 processor, not stored by us (depending on your setup).
               </em>

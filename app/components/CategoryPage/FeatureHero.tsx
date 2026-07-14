@@ -29,7 +29,7 @@ export function FeatureHero({ article, variant = "light" }: FeatureHeroProps) {
       >
         <div
           className={cn(
-            "relative aspect-[16/10] w-full overflow-hidden rounded-sm",
+            "relative aspect-[16/10] w-full overflow-hidden",
             "bg-news-secondary",
           )}
         >
@@ -46,11 +46,11 @@ export function FeatureHero({ article, variant = "light" }: FeatureHeroProps) {
           />
         </div>
       </Link>
-      <div className="relative max-sm:-mt-[30px] max-sm:mr-[15%] max-sm:bg-news-surface max-sm:pt-4 max-sm:pr-4">
+      <div className="relative max-sm:-mt-[30px] max-sm:mr-[15%] max-sm:bg-news-background max-sm:pt-4 max-sm:pr-4">
         <Link href={href} className="group block">
           <h2
             className={cn(
-              "mt-0 max-w-full sm:mt-[26px] xl:max-w-[94%]",
+              "mt-0 max-w-full sm:mt-[26px] lg:max-w-[94%]",
               categoryHeroHeadline,
             )}
           >
@@ -68,7 +68,7 @@ export function FeatureHero({ article, variant = "light" }: FeatureHeroProps) {
           className={cn(
             categoryFeaturedDek,
             "hidden lg:block",
-            variant === "dark" && "text-neutral-400",
+            variant === "dark" && "text-news-muted",
           )}
         >
           {article.excerpt}

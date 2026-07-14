@@ -65,7 +65,7 @@ function SidebarEyebrow({ label }: { label: string }) {
   return (
     <div
       className={cn(
-        "mb-1.5 flex items-center gap-1.5 border-neutral-900 border-b-2 pb-3.5",
+        "mb-1.5 flex items-center gap-1.5 border-news-text border-b-2 pb-3.5",
         postSidebarEyebrow,
       )}
     >
@@ -85,7 +85,7 @@ function PopularReadItem({
   return (
     <Link
       href={post.href}
-      className="group flex items-center gap-3.5 border-neutral-200 border-b py-4 first:pt-0"
+      className="group flex items-center gap-3.5 border-news-border border-b py-4 first:pt-0"
       aria-label={`Read article: ${post.title}`}
     >
       <span className={cn(postSidebarRankNumber, "w-8 shrink-0")}>
@@ -113,11 +113,11 @@ function NewsForYouItem({ post }: { post: ArticleSidebarPost }) {
   return (
     <Link
       href={post.href}
-      className="group flex items-start gap-3.5 border-neutral-200 border-b py-4 first:pt-0"
+      className="group flex items-start gap-3.5 border-news-border border-b py-4 first:pt-0"
       aria-label={`Read article: ${post.title}`}
     >
       {imgUrl ? (
-        <div className="relative size-[76px] shrink-0 overflow-hidden bg-neutral-100">
+        <div className="relative size-[76px] shrink-0 overflow-hidden bg-news-surface">
           <ImageRenderer
             src={imgUrl}
             alt={coverData?.alt || post.title || "Article image"}
@@ -131,7 +131,7 @@ function NewsForYouItem({ post }: { post: ArticleSidebarPost }) {
           />
         </div>
       ) : (
-        <div className="flex size-[76px] shrink-0 items-center justify-center bg-neutral-100 font-sans text-[10px] text-neutral-400">
+        <div className="flex size-[76px] shrink-0 items-center justify-center bg-news-surface font-sans text-[10px] text-news-muted">
           No Image
         </div>
       )}

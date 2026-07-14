@@ -38,7 +38,7 @@ export default function ArticleByline({
   const authorAvatar =
     showAvatar === "xl" ? (
       avatarUrl ? (
-        <span className={cn("relative bg-neutral-200", avatarClassName)}>
+        <span className={cn("relative bg-news-border", avatarClassName)}>
           <ImageRenderer
             src={avatarUrl}
             alt={authorName}
@@ -52,7 +52,7 @@ export default function ArticleByline({
       ) : (
         <span
           className={cn(
-            "flex items-center justify-center bg-neutral-900",
+            "flex items-center justify-center bg-news-text",
             regularPostAvatarInitial,
             avatarClassName,
             "hidden xl:flex",
@@ -69,7 +69,7 @@ export default function ArticleByline({
         <span className={ARTICLE_META_TIMESTAMP_CLASS}>
           {dateLabel} {formatArticleTimestamp(displayDate)}
         </span>
-        <span className="text-neutral-400" aria-hidden>
+        <span className="text-news-muted" aria-hidden>
           •
         </span>
         <span className={ARTICLE_META_SECONDARY_CLASS}>By</span>

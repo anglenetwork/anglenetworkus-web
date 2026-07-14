@@ -73,11 +73,11 @@ function ArticleImage({
   );
 
   if (!coverData?.src) {
-    return <div className={cn(className, "bg-neutral-950")} aria-hidden />;
+    return <div className={cn(className, "bg-news-secondary")} aria-hidden />;
   }
 
   return (
-    <div className={cn(className, "bg-neutral-950")}>
+    <div className={cn(className, "bg-news-secondary")}>
       <ImageRenderer
         src={coverData.src}
         alt={coverData.alt}
@@ -112,7 +112,7 @@ function AnalysisLeadCard({
           className="group block"
           aria-label={`Read article: ${article.title || featuredLabel}`}
         >
-          <div className="relative aspect-[16/9] w-full overflow-hidden rounded-sm bg-neutral-950 xl:aspect-[3/2]">
+          <div className="relative aspect-[16/9] w-full overflow-hidden rounded-sm bg-news-secondary xl:aspect-[3/2]">
             <ImageRenderer
               src={coverData.src}
               alt={coverData.alt}
@@ -217,7 +217,7 @@ function EditorialTwoColumnHero({
               "rounded-lg bg-news-surface lg:col-span-4",
             )}
           >
-            <h2 className="mb-6 font-bold font-display text-lg text-neutral-900 md:mb-8 md:text-xl">
+            <h2 className="mb-6 font-bold font-display text-lg text-news-text md:mb-8 md:text-xl">
               {sidebarTitle}
             </h2>
             <AnalysisListSection articles={sidebarArticles} variant="sidebar" />
@@ -280,7 +280,7 @@ function AnalysisIndexModule({
       ) : null}
       {showMoreSection ? (
         <section className="rounded-lg bg-background">
-          <h2 className="mb-4 font-bold font-display text-lg text-neutral-900 md:text-xl">
+          <h2 className="mb-4 font-bold font-display text-lg text-news-text md:text-xl">
             More Analysis
           </h2>
           <AnalysisMoreSection
@@ -347,24 +347,24 @@ export default function ArticleFamilyIndexPage({
   if (!variant) {
     return (
       <SitePageWidth className="py-10 md:py-14">
-        <header className="mb-10 border-neutral-200 border-b pb-6">
-          <h1 className="font-bold font-display text-3xl text-neutral-900 md:text-4xl">
+        <header className="mb-10 border-news-border border-b pb-6">
+          <h1 className="font-bold font-display text-3xl text-news-text md:text-4xl">
             {title}
           </h1>
           {description ? (
-            <p className="mt-2 font-sans text-neutral-600 text-sm md:text-base">
+            <p className="mt-2 font-sans text-news-muted text-sm md:text-base">
               {description}
             </p>
           ) : null}
           {total > 0 ? (
-            <p className="mt-3 font-sans text-neutral-500 text-xs">
+            <p className="mt-3 font-sans text-news-muted text-xs">
               Showing {startItem}–{endItem} of {total}
             </p>
           ) : null}
         </header>
 
         {articles.length === 0 ? (
-          <p className="py-12 text-center font-sans text-neutral-600">
+          <p className="py-12 text-center font-sans text-news-muted">
             No articles yet.
           </p>
         ) : (
@@ -386,24 +386,24 @@ export default function ArticleFamilyIndexPage({
           >
             <Link
               href={pageHref(basePath, safePage - 1)}
-              className={`rounded-lg border border-neutral-300 px-4 py-2 font-sans text-sm ${
+              className={`rounded-lg border border-news-border px-4 py-2 font-sans text-sm ${
                 safePage <= 1
                   ? "pointer-events-none opacity-40"
-                  : "hover:bg-neutral-50"
+                  : "hover:bg-news-surface"
               }`}
               aria-disabled={safePage <= 1}
             >
               Previous
             </Link>
-            <span className="font-sans text-neutral-600 text-sm">
+            <span className="font-sans text-news-muted text-sm">
               Page {safePage} of {totalPages}
             </span>
             <Link
               href={pageHref(basePath, safePage + 1)}
-              className={`rounded-lg border border-neutral-300 px-4 py-2 font-sans text-sm ${
+              className={`rounded-lg border border-news-border px-4 py-2 font-sans text-sm ${
                 safePage >= totalPages
                   ? "pointer-events-none opacity-40"
-                  : "hover:bg-neutral-50"
+                  : "hover:bg-news-surface"
               }`}
               aria-disabled={safePage >= totalPages}
             >
@@ -430,14 +430,14 @@ export default function ArticleFamilyIndexPage({
         {description &&
         variant !== "analysis" &&
         variant !== "editorial-list" ? (
-          <p className="-mt-5 max-w-2xl font-sans text-neutral-600 text-sm md:text-base">
+          <p className="-mt-5 max-w-2xl font-sans text-news-muted text-sm md:text-base">
             {description}
           </p>
         ) : null}
       </section>
 
       {articles.length === 0 ? (
-        <p className="py-12 text-center font-sans text-neutral-600">
+        <p className="py-12 text-center font-sans text-news-muted">
           No articles yet.
         </p>
       ) : variant === "editorial-list" && editorialList ? (

@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { ChevronDown, X } from "lucide-react";
+import { ChevronDown, UserRound, X } from "lucide-react";
 import { useEffect, useMemo, useReducer } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { cn } from "@/lib/utils";
@@ -30,7 +30,7 @@ export function MenuCloseButton({ onClose }: { onClose: () => void }) {
       type="button"
       onClick={onClose}
       aria-label="Close menu"
-      className="inline-flex size-10 shrink-0 items-center justify-center rounded-full bg-foreground text-background transition-colors duration-150 hover:bg-news-primary focus-visible:outline focus-visible:outline-2 focus-visible:outline-link focus-visible:outline-offset-[3px]"
+      className="inline-flex size-10 shrink-0 items-center justify-center rounded-full bg-foreground text-background transition-colors duration-150 hover:bg-news-primary focus-visible:outline focus-visible:outline-2 focus-visible:outline-news-primary focus-visible:outline-offset-[3px]"
     >
       <X className="size-[18px]" strokeWidth={2.4} aria-hidden />
     </button>
@@ -61,7 +61,7 @@ export function MenuCategoryAccordion({
           value={category.slug}
           className="border-0 border-border border-b border-dotted pb-0 last:border-b"
         >
-          <AccordionPrimitive.Header className="m-0 flex items-center gap-3 py-5">
+          <AccordionPrimitive.Header className="m-0 flex items-center gap-3 py-3">
             <Link
               href={`/category/${category.slug}`}
               onClick={onClose}
@@ -74,19 +74,19 @@ export function MenuCategoryAccordion({
             </Link>
             <AccordionPrimitive.Trigger
               className={cn(
-                "flex min-h-11 min-w-0 flex-1 items-center justify-end self-stretch p-0 hover:no-underline",
+                "flex min-w-0 flex-1 items-center justify-end self-stretch p-0 hover:no-underline",
                 "[&[data-state=open]>svg]:rotate-180",
               )}
             >
               <span className="sr-only">Show {category.name} tags</span>
               <ChevronDown
                 className="size-[18px] shrink-0 text-foreground transition-transform duration-200"
-                strokeWidth={2.2}
+                strokeWidth={2.5}
                 aria-hidden
               />
             </AccordionPrimitive.Trigger>
           </AccordionPrimitive.Header>
-          <AccordionContent className="pt-0.5 pb-[18px] pl-1">
+          <AccordionContent className="pt-0 pb-3 pl-1">
             {category.tags.length > 0 ? (
               <nav aria-label={`${category.name} tags`}>
                 <ul className="m-0 list-none p-0">
@@ -234,7 +234,7 @@ function menuAuthReducer(
 
 const initialMenuAuthState: MenuAuthState = { user: null, loading: true };
 
-const stackedFooterRowClass = "block py-3.5";
+const stackedFooterRowClass = "py-3.5";
 
 function MenuFooterAuthLink({
   onClose,
@@ -245,12 +245,17 @@ function MenuFooterAuthLink({
   loading: boolean;
   user: { id: string } | null;
 }) {
+  const authIcon = (
+    <UserRound className="size-[18px] shrink-0" strokeWidth={2.5} aria-hidden />
+  );
+
   if (loading) {
     return (
       <span
         className={cn(menuSignInLink, stackedFooterRowClass, "invisible")}
         aria-hidden
       >
+        {authIcon}
         Sign in
       </span>
     );
@@ -263,6 +268,7 @@ function MenuFooterAuthLink({
         onClick={onClose}
         className={cn(menuSignInLink, stackedFooterRowClass)}
       >
+        {authIcon}
         Account
       </Link>
     );
@@ -274,6 +280,7 @@ function MenuFooterAuthLink({
       onClick={onClose}
       className={cn(menuSignInLink, stackedFooterRowClass)}
     >
+      {authIcon}
       Sign in
     </Link>
   );
@@ -309,14 +316,14 @@ export function MenuStackedFooterLinks({ onClose }: { onClose: () => void }) {
       <Link
         href="/opinion"
         onClick={onClose}
-        className={cn(menuStackedActionLink, stackedFooterRowClass)}
+        className={cn(menuStackedActionLink, stackedFooterRowClass, "block")}
       >
         Opinion
       </Link>
       <Link
         href="/analysis"
         onClick={onClose}
-        className={cn(menuStackedActionLink, stackedFooterRowClass)}
+        className={cn(menuStackedActionLink, stackedFooterRowClass, "block")}
       >
         Analysis
       </Link>

@@ -64,7 +64,7 @@ export function buildProCardProps({
     plan: "Pro",
     price: currentPricing.professional.price,
     recommended: true,
-    backgroundColor: "bg-red-500",
+    backgroundColor: "bg-news-primary",
     periodLabel: billingYearly ? "/yearly" : "/month",
     discountText: billingYearly ? "10% off" : undefined,
     features: [
@@ -120,7 +120,7 @@ export function buildLifetimeCardProps({
           : "Upgrade to Lifetime",
     buttonVariant: tier === "lifetime" ? "current" : "default",
     disabled: tier === "lifetime" || checkoutLoading !== null,
-    borderColor: "border-red-500",
+    borderColor: "border-news-primary",
     onClick: tier !== "lifetime" ? () => handleCheckout("lifetime") : undefined,
   };
 }

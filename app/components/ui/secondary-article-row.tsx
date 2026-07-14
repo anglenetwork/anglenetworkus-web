@@ -31,7 +31,7 @@ export function SecondaryArticleRow({
         </div>
         <Link
           href={href}
-          className="relative h-20 w-28 shrink-0 overflow-hidden rounded-sm bg-neutral-950"
+          className="relative h-20 w-28 shrink-0 overflow-hidden rounded-sm bg-news-secondary"
           aria-label={`Read article: ${title}`}
         >
           <ImageRenderer

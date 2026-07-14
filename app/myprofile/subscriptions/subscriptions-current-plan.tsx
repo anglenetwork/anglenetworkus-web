@@ -132,7 +132,7 @@ export function SubscriptionsCurrentPlan({
                   {getCurrentPlanPeriod(originalTier, billingYearly)}
                 </span>
               </div>
-              <p className="mb-6 font-sans text-neutral-400 text-sm">
+              <p className="mb-6 font-sans text-news-muted text-sm">
                 Valid until{" "}
                 <span className={profileSubscriptionMetaValue}>
                   {validUntilText}
@@ -172,7 +172,7 @@ export function SubscriptionsCurrentPlan({
                         <AlertDialogCancel>Keep Subscription</AlertDialogCancel>
                         <AlertDialogAction
                           onClick={onCancel}
-                          className="bg-red-600 hover:bg-red-700"
+                          className="bg-news-primary hover:bg-news-primary-hover"
                         >
                           Cancel at Period End
                         </AlertDialogAction>

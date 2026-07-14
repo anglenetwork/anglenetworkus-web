@@ -107,7 +107,7 @@ export function buildArticleFamilyCardContext({
   ) : (
     <div
       className={cn(
-        "flex items-center justify-center rounded-lg bg-gray-200/80 font-sans text-[10px] text-gray-500",
+        "flex items-center justify-center rounded-lg bg-news-border/80 font-sans text-[10px] text-news-muted",
         thumbLayout.placeholderClass,
       )}
     >

@@ -5,7 +5,7 @@ import { cn } from "@/lib/utils";
 import { Category } from "./types";
 
 const categoryLinkClass =
-  "inline-flex shrink-0 items-center whitespace-nowrap px-[13px] py-[7px] font-sans text-[13px] font-semibold text-zinc-900 no-underline transition-colors duration-150 hover:underline";
+  "inline-flex shrink-0 items-center whitespace-nowrap px-[13px] py-[7px] font-sans text-[13px] font-semibold text-news-text no-underline transition-colors duration-150 hover:underline";
 
 interface CategoriesNavProps {
   categories: Category[];

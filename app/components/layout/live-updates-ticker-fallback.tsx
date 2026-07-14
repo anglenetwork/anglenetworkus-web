@@ -4,18 +4,18 @@ import { SITE_PAGE_WIDTH_HUB_CLASS } from "@/app/components/layout/site-page-wid
 export function LiveUpdatesTickerFallback() {
   return (
     <nav
-      aria-label="Live updates"
-      className="w-full border-stone-200 border-b bg-stone-50"
+      aria-label="Live"
+      className="w-full border-news-border border-b bg-news-background"
     >
       <div className={SITE_PAGE_WIDTH_HUB_CLASS}>
         <div className="scrollbar-hide flex items-center overflow-x-auto py-[9px]">
-          <div className="flex shrink-0 items-center gap-2 border-stone-200 border-r pr-5">
+          <div className="flex shrink-0 items-center gap-2 border-news-border border-r pr-5">
             <span
-              className="size-[7px] shrink-0 animate-ticker-pulse rounded-full bg-red-500"
+              className="size-[7px] shrink-0 animate-ticker-pulse rounded-full bg-news-primary"
               aria-hidden
             />
-            <span className="whitespace-nowrap font-bold font-sans text-[11px] text-red-500 uppercase tracking-[0.1em]">
-              Live Updates
+            <span className="whitespace-nowrap font-bold font-sans text-[11px] text-news-primary uppercase tracking-[0.1em]">
+              Live
             </span>
           </div>
         </div>

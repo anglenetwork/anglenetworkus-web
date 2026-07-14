@@ -13,7 +13,7 @@ function PricingCardPriceBlock({
   secondaryTextClass: string;
   accent: boolean;
 }) {
-  const discountClass = accent ? "text-red-200" : "text-emerald-600";
+  const discountClass = accent ? "text-news-primary-soft" : "text-emerald-600";
 
   if (price !== null) {
     return (

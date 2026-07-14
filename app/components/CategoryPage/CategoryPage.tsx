@@ -19,7 +19,7 @@ export function CategoryPage({
   featuredArticles,
 }: CategoryPageProps) {
   return (
-    <div className="min-h-screen bg-news-surface">
+    <div className="min-h-screen bg-news-background">
       <CategoryHeader
         categoryName={categoryName}
         categoryDescription={categoryDescription}
@@ -30,7 +30,7 @@ export function CategoryPage({
         <FeaturedArticlesSection featuredArticles={featuredArticles} />
       ) : null}
 
-      <SitePageWidth className="pt-14 pb-[90px]">
+      <SitePageWidth className="pt-14 pb-10 max-lg:pb-4">
         <MoreInCategorySection
           categoryName={categoryName}
           missedItArticles={missedItArticles}
@@ -39,7 +39,7 @@ export function CategoryPage({
       </SitePageWidth>
 
       <main>
-        <SitePageWidth className="py-12">
+        <SitePageWidth className="pt-8 pb-12 max-lg:pt-4">
           {!hasPosts ? (
             <CategoryArticlesEmptyState categoryName={categoryName} />
           ) : (
@@ -52,15 +52,15 @@ export function CategoryPage({
                 />
               </div>
 
-              <div className="hidden grid-cols-3 gap-12 lg:grid">
-                <div className="col-span-2">
+              <div className="hidden gap-12 lg:grid lg:grid-cols-[minmax(0,1.55fr)_minmax(0,1fr)] xl:grid-cols-3">
+                <div className="min-w-0 xl:col-span-2">
                   <LatestArticlesSection
                     layout="desktop"
                     latestArticles={latestArticles}
                   />
                 </div>
 
-                <aside className="col-span-1">
+                <aside className="min-w-0 xl:col-span-1">
                   <div className="sticky top-8">
                     <MostReadSection articles={mostReadArticles} />
                   </div>

@@ -68,7 +68,7 @@ export function PrivacySection06() {
             Use our <strong>Cookie Preferences / Consent Tool</strong>:{" "}
             <Link
               href={config.links.cookiePreferences}
-              className="text-blue-600 hover:underline"
+              className="text-news-primary hover:underline"
             >
               {config.links.cookiePreferences}
             </Link>

@@ -22,11 +22,11 @@ function ArticleImage({
   );
 
   if (!coverData?.src) {
-    return <div className={cn(className, "bg-neutral-950")} aria-hidden />;
+    return <div className={cn(className, "bg-news-secondary")} aria-hidden />;
   }
 
   return (
-    <div className={cn(className, "bg-neutral-950")}>
+    <div className={cn(className, "bg-news-secondary")}>
       <ImageRenderer
         src={coverData.src}
         alt={coverData.alt}
@@ -67,7 +67,7 @@ export function OpinionColumnCard({
         <ArticleImage
           article={article}
           className={cn(
-            "relative shrink-0 overflow-hidden rounded-sm bg-neutral-950",
+            "relative shrink-0 overflow-hidden rounded-sm bg-news-secondary",
             isFeatured ? "aspect-[16/9] w-full" : "h-20 w-28",
           )}
           sizes={isFeatured ? "(max-width: 1024px) 100vw, 33vw" : "112px"}

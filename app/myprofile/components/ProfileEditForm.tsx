@@ -24,7 +24,7 @@ import {
 const profileInputClassName = (hasError: boolean) =>
   cn(
     profileFormInput,
-    hasError && "border-red-500 focus-visible:border-red-500",
+    hasError && "border-news-primary focus-visible:border-news-primary",
   );
 
 interface ProfileEditFormProps {
@@ -171,7 +171,8 @@ export function ProfileEditForm({
       <div className="min-h-0 flex-1 space-y-8 overflow-y-auto p-1">
         <div>
           <Label htmlFor="firstName" className={profileFormLabel}>
-            First Name {requireNames && <span className="text-red-500">*</span>}
+            First Name{" "}
+            {requireNames && <span className="text-news-primary">*</span>}
           </Label>
           <Input
             id="firstName"
@@ -194,7 +195,8 @@ export function ProfileEditForm({
 
         <div>
           <Label htmlFor="lastName" className={profileFormLabel}>
-            Last Name {requireNames && <span className="text-red-500">*</span>}
+            Last Name{" "}
+            {requireNames && <span className="text-news-primary">*</span>}
           </Label>
           <Input
             id="lastName"
@@ -219,7 +221,7 @@ export function ProfileEditForm({
           <div>
             <Label htmlFor="dateOfBirth" className={profileFormLabel}>
               Date of Birth{" "}
-              {requireNames && <span className="text-red-500">*</span>}
+              {requireNames && <span className="text-news-primary">*</span>}
             </Label>
             <Input
               id="dateOfBirth"

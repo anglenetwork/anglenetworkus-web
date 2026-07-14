@@ -54,7 +54,7 @@ export default function PostSelectedNews({
                   <ReadTimeLabel minutes={post.readTime} />
                 </div>
                 {imgUrl ? (
-                  <div className="relative h-20 w-28 shrink-0 overflow-hidden rounded-sm bg-neutral-950">
+                  <div className="relative h-20 w-28 shrink-0 overflow-hidden rounded-sm bg-news-secondary">
                     <ImageRenderer
                       src={imgUrl}
                       alt={coverData?.alt || post.title || "Article image"}
@@ -68,7 +68,7 @@ export default function PostSelectedNews({
                     />
                   </div>
                 ) : (
-                  <div className="flex h-20 w-28 shrink-0 items-center justify-center rounded-sm bg-neutral-200 font-sans text-[10px] text-neutral-500">
+                  <div className="flex h-20 w-28 shrink-0 items-center justify-center rounded-sm bg-news-border font-sans text-[10px] text-news-muted">
                     No Image
                   </div>
                 )}

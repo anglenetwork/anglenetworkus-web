@@ -91,7 +91,7 @@ export const POST_ARTICLE_BODY_COLUMN_CLASS = cn(
   "[&>p:first-of-type::first-letter]:text-6xl",
   "[&>p:first-of-type::first-letter]:font-bold",
   "[&>p:first-of-type::first-letter]:leading-[0.8]",
-  "[&>p:first-of-type::first-letter]:text-neutral-900",
+  "[&>p:first-of-type::first-letter]:text-news-text",
 );
 
 /** Non-regular post — caption / credit under hero and in-body images */

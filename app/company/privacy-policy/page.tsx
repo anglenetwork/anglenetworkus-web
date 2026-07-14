@@ -18,7 +18,7 @@ export default function PrivacyPolicyPage() {
       <div className="mx-auto max-w-4xl">
         <h1 className="mb-6 font-bold font-display text-3xl">Privacy Policy</h1>
         <div className="prose prose-sm max-w-none font-sans text-sm">
-          <p className="mb-4 text-gray-600 text-sm">
+          <p className="mb-4 text-news-muted text-sm">
             Last updated: {privacyPolicyConfig.lastUpdated}
           </p>
           <PrivacyPolicyContent />

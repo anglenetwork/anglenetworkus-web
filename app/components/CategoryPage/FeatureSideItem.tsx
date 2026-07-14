@@ -49,7 +49,7 @@ function MiniRow({
       <Link
         href={href}
         className={cn(
-          "relative aspect-square w-full shrink-0 overflow-hidden rounded-sm",
+          "relative aspect-square w-full shrink-0 overflow-hidden",
           "bg-news-secondary",
         )}
         aria-label={`Read article: ${title}`}
@@ -79,7 +79,7 @@ export function FeatureSideItem({
     article.imageUrl ||
     "/placeholder.svg?height=200&width=300&query=news article";
   const imageAlt = article.imageAlt?.trim() || article.title;
-  const readTimeClassName = variant === "news" ? "text-neutral-600" : undefined;
+  const readTimeClassName = variant === "news" ? "text-news-muted" : undefined;
 
   if (layout === "mini") {
     return (
@@ -100,7 +100,7 @@ export function FeatureSideItem({
   if (layout === "feature") {
     return (
       <article className="group">
-        <div className="sm:hidden">
+        <div className="lg:hidden">
           <MiniRow
             href={href}
             title={article.title}
@@ -111,7 +111,7 @@ export function FeatureSideItem({
             variant={variant}
           />
         </div>
-        <div className="hidden sm:block">
+        <div className="hidden lg:block">
           <Link
             href={href}
             className="block"
@@ -119,7 +119,7 @@ export function FeatureSideItem({
           >
             <div
               className={cn(
-                "relative aspect-[16/11] w-full overflow-hidden rounded-sm",
+                "relative aspect-[16/11] w-full overflow-hidden",
                 "bg-news-secondary",
               )}
             >
@@ -157,7 +157,7 @@ export function FeatureSideItem({
           <Link
             href={href}
             className={cn(
-              "relative h-20 w-28 shrink-0 overflow-hidden rounded-sm",
+              "relative h-20 w-28 shrink-0 overflow-hidden",
               "bg-news-secondary",
             )}
             aria-label={`Read article: ${article.title}`}
@@ -199,7 +199,7 @@ export function FeatureSideItem({
       >
         <div
           className={cn(
-            "relative aspect-[4/3] w-full overflow-hidden rounded-sm",
+            "relative aspect-[4/3] w-full overflow-hidden",
             "bg-news-secondary",
           )}
         >

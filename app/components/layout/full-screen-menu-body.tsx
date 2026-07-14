@@ -33,7 +33,11 @@ export function FullScreenMenuBody({
       <MenuTopbar onClose={onClose} />
 
       <div data-menu-state="open">
-        <SearchBar {...searchProps} variant="menu-xl" className="mb-11" />
+        <SearchBar
+          {...searchProps}
+          variant="menu-xl"
+          className="mb-6 xl:mb-11"
+        />
       </div>
 
       <div className="xl:hidden">

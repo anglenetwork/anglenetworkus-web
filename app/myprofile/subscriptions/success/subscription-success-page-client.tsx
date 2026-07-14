@@ -103,7 +103,7 @@ function SubscriptionSuccessPageContent() {
   if (!sessionId) {
     return (
       <div className="pt-10 font-sans">
-        <div className="mb-8 rounded-lg border border-red-200 bg-red-50 p-6">
+        <div className="mb-8 rounded-lg border border-news-border bg-news-primary-soft p-6">
           <h2 className={profileAlertErrorTitle}>Error</h2>
           <p className={profileAlertErrorBody}>
             Missing session ID. Please try again.
@@ -119,7 +119,7 @@ function SubscriptionSuccessPageContent() {
   if (error) {
     return (
       <div className="pt-10 font-sans">
-        <div className="mb-8 rounded-lg border border-red-200 bg-red-50 p-6">
+        <div className="mb-8 rounded-lg border border-news-border bg-news-primary-soft p-6">
           <h2 className={profileAlertErrorTitle}>Error</h2>
           <p className={profileAlertErrorBody}>{error}</p>
           <Link href="/myprofile/subscriptions">
@@ -135,7 +135,7 @@ function SubscriptionSuccessPageContent() {
 
   return (
     <div className="pt-10 font-sans">
-      <div className="mb-8 w-full space-y-4 rounded-lg bg-gray-100 p-6">
+      <div className="mb-8 w-full space-y-4 rounded-lg bg-news-surface p-6">
         {loading ? (
           <div className={profileSubscriptionLoading}>Loading…</div>
         ) : isUpgraded ? (

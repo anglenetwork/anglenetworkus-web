@@ -30,9 +30,9 @@
     --chart-5: 27 87% 67%;
     --radius: 0.5rem;
     /* Editorial / article UI tokens */
-    --section-accent: 356 83% 41%;
-    --editorial-kicker: 200 80% 28%;
-    --text-link: 221 83% 53%;
+    --section-accent: 351 81% 49%;
+    --editorial-kicker: 351 81% 49%;
+    --text-news-primary: 351 81% 49%;
   }
 }
 
@@ -82,7 +82,7 @@
   .divider-dashed {
     background-image: linear-gradient(
       to right,
-      theme("colors.angle.inkSoft") 33%,
+      theme("colors.news.muted") 33%,
       rgba(0, 0, 0, 0) 0%
     );
     background-position: top;

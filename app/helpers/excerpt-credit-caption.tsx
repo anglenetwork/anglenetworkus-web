@@ -33,8 +33,8 @@ export function ExcerptCreditCaption({
     <p
       className={cn(
         isCompact
-          ? "mt-1 font-sans text-[10px] text-gray-500"
-          : "mt-3 font-sans text-neutral-600 text-sm leading-relaxed md:text-base",
+          ? "mt-1 font-sans text-[10px] text-news-muted"
+          : "mt-3 font-sans text-news-muted text-sm leading-relaxed md:text-base",
         align === "right" && "text-right",
         className,
       )}
@@ -43,13 +43,13 @@ export function ExcerptCreditCaption({
         <span className="font-normal tracking-normal">{excerptText}</span>
       ) : null}
       {excerptText && creditText ? (
-        <span className={isCompact ? "text-gray-500" : "text-neutral-500"}>
+        <span className={isCompact ? "text-news-muted" : "text-news-muted"}>
           {" "}
           -{" "}
         </span>
       ) : null}
       {creditText ? (
-        <span className={isCompact ? "" : "text-gray-500 text-sm"}>
+        <span className={isCompact ? "" : "text-news-muted text-sm"}>
           {creditText}
         </span>
       ) : null}

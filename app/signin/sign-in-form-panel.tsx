@@ -77,12 +77,12 @@ export function SignInFormPanel({
                     dispatch({ type: "set_email", email: e.target.value })
                   }
                   className={`w-full font-sans ${
-                    state.emailError ? "border-red-500" : ""
+                    state.emailError ? "border-news-primary" : ""
                   }`}
                   disabled={state.isSending || state.isGoogleLoading}
                 />
                 {state.emailError && (
-                  <p className="font-sans text-red-500 text-sm">
+                  <p className="font-sans text-news-primary text-sm">
                     {state.emailError}
                   </p>
                 )}

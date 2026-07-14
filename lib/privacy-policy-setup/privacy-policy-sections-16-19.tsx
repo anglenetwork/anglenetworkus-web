@@ -64,7 +64,7 @@ export function PrivacyPolicySections16To19() {
             <strong>Ethics Policy / Editorial Standards</strong> page:{" "}
             <Link
               href={config.links.ethicsPolicy}
-              className="text-blue-600 hover:underline"
+              className="text-news-primary hover:underline"
             >
               {config.links.ethicsPolicy}
             </Link>
@@ -102,7 +102,7 @@ export function PrivacyPolicySections16To19() {
             Email:{" "}
             <a
               href={`mailto:${contact.email}`}
-              className="text-blue-600 hover:underline"
+              className="text-news-primary hover:underline"
             >
               {contact.email}
             </a>
@@ -111,7 +111,7 @@ export function PrivacyPolicySections16To19() {
             Privacy Request Portal:{" "}
             <Link
               href={contact.portal}
-              className="text-blue-600 hover:underline"
+              className="text-news-primary hover:underline"
             >
               {contact.portal}
             </Link>
@@ -179,14 +179,14 @@ export function PrivacyPolicySections16To19() {
                 out via{" "}
                 <Link
                   href={config.links.doNotSellLink}
-                  className="text-blue-600 hover:underline"
+                  className="text-news-primary hover:underline"
                 >
                   {config.links.doNotSellLink}
                 </Link>{" "}
                 and{" "}
                 <Link
                   href={config.links.cookiePreferences}
-                  className="text-blue-600 hover:underline"
+                  className="text-news-primary hover:underline"
                 >
                   {config.links.cookiePreferences}
                 </Link>

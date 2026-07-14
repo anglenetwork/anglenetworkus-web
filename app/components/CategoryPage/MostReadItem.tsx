@@ -22,7 +22,7 @@ export function MostReadItem({
           href={article.href ?? `/post/${article.slug}`}
           className="mb-4 block"
         >
-          <div className="relative aspect-square w-full overflow-hidden rounded-sm bg-news-secondary">
+          <div className="relative aspect-square w-full overflow-hidden bg-news-secondary">
             <ImageRenderer
               src={article.imageUrl}
               alt={article.title}

@@ -1,5 +1,4 @@
 import type { Config } from "tailwindcss";
-import colors from "tailwindcss/colors";
 import typography from "@tailwindcss/typography";
 import tailwindcssAnimate from "tailwindcss-animate";
 
@@ -84,24 +83,25 @@ const config: Config = {
         editorialKicker: "hsl(var(--editorial-kicker))",
         link: "hsl(var(--text-link))",
         news: {
-          background: colors.stone[50],
-          surface: colors.white,
-          text: colors.gray[900],
-          muted: colors.gray[500],
-          border: colors.gray[200],
+          background: "#FFFFFF",
+          surface: "#FAFAFA",
+          text: "#111111",
+          muted: "#666666",
+          border: "#EAEAEA",
           primary: {
-            DEFAULT: colors.red[700],
-            soft: colors.red[100],
+            DEFAULT: "#E11937",
+            hover: "#C81430",
+            soft: "#FFF1F3",
           },
-          secondary: colors.gray[800],
+          secondary: "#FAFAFA",
         },
         angle: {
-          bg: "#FAFAF8",
-          ink: "#14181C",
-          inkSoft: "#5B6168",
-          hairline: "#DEDBD3",
-          red: "#C7371F",
-          paper: "#F2EFE7",
+          bg: "#FFFFFF",
+          ink: "#111111",
+          inkSoft: "#666666",
+          hairline: "#EAEAEA",
+          red: "#E11937",
+          paper: "#FAFAFA",
         },
       },
       keyframes: {

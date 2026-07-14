@@ -29,7 +29,7 @@ function LatestArticleItem({ article }: { article: Article }) {
         aria-label={`Read article: ${article.title}`}
       >
         {article.imageUrl ? (
-          <div className="relative size-20 shrink-0 overflow-hidden rounded-sm bg-news-secondary">
+          <div className="relative size-20 shrink-0 overflow-hidden bg-news-secondary">
             <ImageRenderer
               src={imageSrc}
               alt={article.imageAlt?.trim() || article.title}

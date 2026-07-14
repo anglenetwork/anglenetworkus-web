@@ -32,7 +32,7 @@ export default function StudioClient() {
       <button
         type="button"
         onClick={() => void signOutFromStudio()}
-        className="fixed bottom-16 left-4 z-50 rounded-md bg-red-600 px-4 py-2 font-medium font-sans text-sm text-white shadow-lg transition-colors hover:bg-red-700"
+        className="fixed bottom-16 left-4 z-50 rounded-md bg-news-primary px-4 py-2 font-medium font-sans text-sm text-white shadow-lg transition-colors hover:bg-news-primary-hover"
         aria-label="Sign out"
       >
         Sign Out

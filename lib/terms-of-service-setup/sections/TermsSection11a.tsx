@@ -71,7 +71,7 @@ export function TermsSection11a() {
             and also email a copy to{" "}
             <a
               href={`mailto:${contact.legalEmail}`}
-              className="text-blue-600 hover:underline"
+              className="text-news-primary hover:underline"
             >
               {contact.legalEmail}
             </a>

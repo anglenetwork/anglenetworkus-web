@@ -86,7 +86,7 @@ export function SearchMobileFilters({
                   <RadioGroupItem
                     value={value}
                     id={`search-type-${value}`}
-                    className="size-5 border-neutral-300 text-red-600 focus-visible:ring-red-600 data-[state=checked]:border-red-600 [&_svg]:fill-red-600"
+                    className="size-5 border-news-border text-news-primary focus-visible:ring-news-primary data-[state=checked]:border-news-primary [&_svg]:fill-news-primary"
                   />
                   <Label
                     htmlFor={`search-type-${value}`}
@@ -105,7 +105,7 @@ export function SearchMobileFilters({
           <div className="px-6 pt-6 pb-8">
             <Button
               type="button"
-              className="h-12 w-full rounded-lg bg-red-600 font-sans text-base text-white hover:bg-red-700"
+              className="h-12 w-full rounded-lg bg-news-primary font-sans text-base text-white hover:bg-news-primary-hover"
               onClick={onApplyTypeFilter}
             >
               Apply

@@ -29,7 +29,7 @@ export default function Error({
           An error happened while loading this profile section. Try again.
         </p>
 
-        <pre className="whitespace-pre-wrap rounded-md border bg-neutral-50 p-3 text-neutral-900 text-xs">
+        <pre className="whitespace-pre-wrap rounded-md border bg-news-surface p-3 text-news-text text-xs">
           {error?.message}
           {error?.digest ? `\n\nDigest: ${error.digest}` : ""}
         </pre>

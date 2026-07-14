@@ -27,11 +27,11 @@ export default function PostAuthorCard({ author }: PostAuthorCardProps) {
   return (
     <div
       className={cn(
-        "mt-3 flex gap-4 border border-neutral-200 bg-stone-50 p-[22px]",
+        "mt-3 flex gap-4 border border-news-border bg-news-background p-[22px]",
         POST_ARTICLE_BODY_MAX_WIDTH_CLASS,
       )}
     >
-      <span className="relative size-[52px] shrink-0 overflow-hidden rounded-full bg-neutral-900">
+      <span className="relative size-[52px] shrink-0 overflow-hidden rounded-full bg-news-text">
         {avatarUrl ? (
           <ImageRenderer
             src={avatarUrl}
@@ -61,7 +61,7 @@ export default function PostAuthorCard({ author }: PostAuthorCardProps) {
         <p
           className={cn(
             postAuthorCardBio,
-            isPlaceholder && "text-neutral-400 italic",
+            isPlaceholder && "text-news-muted italic",
           )}
         >
           {bioText}

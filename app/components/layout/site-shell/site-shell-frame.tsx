@@ -57,7 +57,7 @@ export function SiteShellFrame({
   );
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-news-background">
       {isHomepage ? (
         <MenuCategoriesProvider initialMenuCategories={menuCategories}>
           {shell}

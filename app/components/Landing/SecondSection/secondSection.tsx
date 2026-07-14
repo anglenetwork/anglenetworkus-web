@@ -10,7 +10,6 @@ import {
 import {
   categoryFeaturedTitle,
   categorySecondaryRowTitle,
-  moreSectionsHeading,
   secCategoryLabel,
   secMainHeadline,
   secPhotoCredit,
@@ -252,11 +251,6 @@ export default function SecondSection({
 
   return (
     <section aria-label="More sections">
-      <div className="mb-9 flex items-baseline gap-[18px]">
-        <h2 className={moreSectionsHeading}>More Sections</h2>
-        <div className="h-px flex-1 bg-angle-hairline" aria-hidden />
-      </div>
-
       <div className={sectionGridClassName()}>
         {validCategories.map((category) => {
           const [mainPost, secondPost] = category.posts;

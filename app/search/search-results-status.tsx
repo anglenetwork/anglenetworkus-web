@@ -29,7 +29,7 @@ export function SearchResultsStatus({
   return (
     <p className={searchResultsStatus}>
       {error ? (
-        <span className="font-medium text-red-600">
+        <span className="font-medium text-news-primary">
           Search could not be completed.
         </span>
       ) : isPending ? (

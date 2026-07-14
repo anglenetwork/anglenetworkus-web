@@ -17,8 +17,6 @@ function sideItemWrapperClassName(index: number) {
   return cn(
     index > 0 &&
       "mt-[18px] border-news-border border-t border-dotted pt-[18px] sm:mt-[22px] sm:pt-[22px]",
-    index === 0 &&
-      "max-sm:mt-[18px] max-sm:border-news-border max-sm:border-t max-sm:border-dotted max-sm:pt-[18px]",
   );
 }
 
@@ -56,10 +54,10 @@ export function FeaturedArticlesSection({
   ];
 
   return (
-    <section className="bg-news-surface">
+    <section className="bg-news-background">
       <SitePageWidth>
-        <div className="border-news-border border-b xl:hidden">
-          <div className="pt-[18px] pb-[20px] sm:border-news-border sm:border-b sm:pt-12 sm:pb-14">
+        <div className="border-news-border border-b lg:hidden">
+          <div className="pt-[18px] pb-[20px] sm:pt-12 sm:pb-14">
             <FeatureHero
               article={featuredArticles.centerArticle}
               variant={variant}
@@ -70,7 +68,7 @@ export function FeaturedArticlesSection({
           </div>
         </div>
 
-        <div className="hidden grid-cols-[1.7fr_1fr] divide-x divide-news-border border-news-border border-b xl:grid">
+        <div className="hidden grid-cols-[1.7fr_1fr] divide-x divide-news-border border-news-border border-b lg:grid">
           <div className="min-w-0 pt-12 pr-12 pb-14">
             <FeatureHero
               article={featuredArticles.centerArticle}

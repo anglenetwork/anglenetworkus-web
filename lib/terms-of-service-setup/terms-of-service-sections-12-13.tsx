@@ -194,7 +194,7 @@ export function TermsOfServiceSections12To13() {
           Questions about these Terms may be sent to:{" "}
           <a
             href={`mailto:${contact.legalEmail}`}
-            className="text-blue-600 hover:underline"
+            className="text-news-primary hover:underline"
           >
             {contact.legalEmail}
           </a>
@@ -207,7 +207,7 @@ export function TermsOfServiceSections12To13() {
           also email a copy to{" "}
           <a
             href={`mailto:${contact.legalEmail}`}
-            className="text-blue-600 hover:underline"
+            className="text-news-primary hover:underline"
           >
             {contact.legalEmail}
           </a>
@@ -224,7 +224,7 @@ export function TermsOfServiceSections12To13() {
           please visit{" "}
           <Link
             href={config.links.termsOfServiceUrl}
-            className="text-blue-600 hover:underline"
+            className="text-news-primary hover:underline"
           >
             {config.links.termsOfServiceUrl}
           </Link>{" "}

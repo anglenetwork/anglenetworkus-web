@@ -47,7 +47,7 @@ export function EditorialArticleLayout({
         {showAnalysisChrome && article.analysisFocus && (
           <p
             className={cn(
-              "mt-3 max-w-3xl border-neutral-300 border-l-4 bg-neutral-100 py-2 pl-4",
+              "mt-3 max-w-3xl border-news-border border-l-4 bg-news-surface py-2 pl-4",
               nonRegularPostAnalysisFocus,
             )}
           >
@@ -58,7 +58,7 @@ export function EditorialArticleLayout({
         {showOpinionChrome && article.disclosure && (
           <aside
             className={cn(
-              "mt-3 max-w-3xl border-neutral-300 border-l-4 bg-neutral-100 py-2 pl-4",
+              "mt-3 max-w-3xl border-news-border border-l-4 bg-news-surface py-2 pl-4",
               nonRegularPostDisclosure,
             )}
           >

@@ -5,7 +5,7 @@ import {
 } from "@/app/lib/homepage/section-grid-cells";
 
 function skeletonBar(className?: string) {
-  return cn("rounded-sm bg-stone-200", className);
+  return cn("rounded-sm bg-news-border", className);
 }
 
 function CategoryColumnSkeleton() {
@@ -42,7 +42,7 @@ export function SecondSectionSkeleton() {
     <section className="animate-pulse" aria-hidden aria-busy="true">
       <div className="mb-9 flex items-baseline gap-[18px]">
         <div className={skeletonBar("h-6 w-36")} />
-        <div className="h-px flex-1 bg-stone-200" />
+        <div className="h-px flex-1 bg-news-border" />
       </div>
       <div className={sectionGridClassName()}>
         <CategoryColumnSkeleton />

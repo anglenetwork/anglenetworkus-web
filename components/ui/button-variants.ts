@@ -16,7 +16,7 @@ export const buttonVariants = cva(
           "bg-secondary text-secondary-foreground shadow-sm hover:bg-secondary/80",
         ghost: "hover:bg-accent hover:text-accent-foreground",
         socialIcon:
-          "border-0 bg-white text-black shadow-sm hover:bg-neutral-50 focus-visible:ring-neutral-200",
+          "border-0 bg-white text-black shadow-sm hover:bg-news-surface focus-visible:ring-neutral-200",
         link: "font-sans text-primary underline-offset-4 hover:underline",
       },
       size: {

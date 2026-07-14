@@ -201,7 +201,7 @@ export function FirstSection({
 
       <div className="hidden lg:block">
         {mainStoryPost?.title && mainStoryPost?.slug && (
-          <header className="border-angle-ink border-b py-9 lg:py-14">
+          <header className="border-angle-ink border-b lg:pt-8 lg:pb-6 xl:pt-8 xl:pb-6">
             <Link href={`/post/${mainStoryPost.slug}`} className="group block">
               <h1 className={leadHeadlineTitle}>{mainStoryPost.title}</h1>
             </Link>

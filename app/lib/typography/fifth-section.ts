@@ -21,7 +21,7 @@ const angleTitleHover = "transition-colors group-hover:text-angle-inkSoft";
 
 /** Category column label (WORLD, POLITICS) with red dot prefix. */
 export const fifthCategoryLabel =
-  "mb-7 flex items-center gap-2 font-mono text-[13px] font-bold uppercase tracking-[0.12em] text-angle-ink before:size-[7px] before:shrink-0 before:rounded-full before:bg-angle-red before:content-['']";
+  "mb-7 flex items-center gap-2 font-sans text-[13px] font-bold uppercase tracking-[0.12em] text-angle-ink before:size-[7px] before:shrink-0 before:rounded-full before:bg-angle-red before:content-['']";
 
 /** Featured hero title on gradient overlay (World column). */
 export const fifthFeaturedOverlayTitle =
