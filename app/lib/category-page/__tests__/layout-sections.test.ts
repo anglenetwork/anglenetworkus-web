@@ -18,8 +18,8 @@ const posts = Array.from({ length: 24 }, (_, index) => ({
 describe("category page layout sections", () => {
   it("defines consecutive non-overlapping section offsets", () => {
     expect(CATEGORY_FEATURED_COUNT).toBe(5);
-    expect(CATEGORY_MISSED_IT_COUNT).toBe(4);
-    expect(CATEGORY_CONTENT_OFFSET).toBe(9);
+    expect(CATEGORY_MISSED_IT_COUNT).toBe(3);
+    expect(CATEGORY_CONTENT_OFFSET).toBe(8);
   });
 
   it("uses five featured slots with the newest post centered", () => {
@@ -34,24 +34,24 @@ describe("category page layout sections", () => {
     const missedIt = buildCategoryMissedItArticles(posts, (post) => post);
     const latest = buildCategoryLatestArticles(posts, (post) => post);
 
-    expect(missedIt.map((post) => post.id)).toEqual([5, 6, 7, 8]);
+    expect(missedIt.map((post) => post.id)).toEqual([5, 6, 7]);
     expect(latest.map((post) => post.id)).toEqual([
-      9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23,
+      8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23,
     ]);
   });
 
   it("returns empty latest list when all posts fit above it", () => {
     expect(
-      buildCategoryLatestArticles(posts.slice(0, 9), (post) => post),
+      buildCategoryLatestArticles(posts.slice(0, 8), (post) => post),
     ).toEqual([]);
   });
 
-  it("includes the fifth post in missed-it when only nine posts exist", () => {
+  it("includes the fifth post in missed-it when only eight posts exist", () => {
     const missedIt = buildCategoryMissedItArticles(
-      posts.slice(0, 9),
+      posts.slice(0, 8),
       (post) => post,
     );
 
-    expect(missedIt.map((post) => post.id)).toEqual([5, 6, 7, 8]);
+    expect(missedIt.map((post) => post.id)).toEqual([5, 6, 7]);
   });
 });

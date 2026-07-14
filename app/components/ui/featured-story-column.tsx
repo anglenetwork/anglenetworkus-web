@@ -179,7 +179,7 @@ function TitleWithMoreHeader({
   const focusClass =
     variant === "news"
       ? "focus-visible:outline-news-primary"
-      : "focus-visible:outline-red-600";
+      : "focus-visible:outline-news-primary";
 
   return (
     <div className="mb-6 flex items-center justify-between gap-4">
@@ -212,7 +212,7 @@ function TitleWithMoreHeader({
       >
         <span className={mostReadFeedSeeAllLink}>More</span>
         <span
-          className="flex size-4 items-center justify-center rounded-full bg-red-600 text-white"
+          className="flex size-4 items-center justify-center rounded-full bg-news-primary text-white"
           aria-hidden
         >
           <ArrowUpRight className="size-3 stroke-[2.5]" />

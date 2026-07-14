@@ -91,7 +91,7 @@ export function HeaderClient({
     <>
       <header
         ref={headerRef}
-        className="sticky top-0 z-[100] h-[60px] w-full border-stone-200 border-b bg-stone-50"
+        className="sticky top-0 z-[100] h-[60px] w-full border-news-border border-b bg-news-background"
       >
         <div className={cn(SITE_PAGE_WIDTH_HUB_CLASS, "h-full")}>
           <UnifiedNavbar

@@ -10,7 +10,7 @@ const angleTitleHover = "transition-colors group-hover:text-angle-inkSoft";
 
 /** Tech section category label (e.g. TECH) with red dot prefix. */
 export const techCategoryLabel =
-  "mb-7 flex items-center gap-2 font-mono text-[13px] font-bold uppercase tracking-[0.12em] text-angle-ink before:size-[7px] before:shrink-0 before:rounded-full before:bg-angle-red before:content-['']";
+  "mb-7 flex items-center gap-2 font-sans text-[13px] font-bold uppercase tracking-[0.12em] text-angle-ink before:size-[7px] before:shrink-0 before:rounded-full before:bg-angle-red before:content-['']";
 
 /** Tech column lead story headline. */
 export const techMainHeadline = `mt-5 mb-3 max-w-[96%] font-display text-2xl font-semibold leading-[1.26] tracking-[-0.3px] text-angle-ink max-[720px]:text-[21px] ${angleTitleHover}`;
@@ -23,7 +23,7 @@ export const techSubHeadline = `font-display text-[17px] font-semibold leading-[
 
 /** Most Read panel title with red dot. */
 export const mostReadTitle =
-  "mb-[26px] flex items-center gap-2.5 font-display text-[26px] font-bold tracking-[-0.4px] text-inherit before:size-2 before:shrink-0 before:rounded-full before:bg-angle-red before:content-[''] max-[520px]:text-[22px]";
+  "mb-[26px] flex items-center gap-2.5 font-sans text-[26px] font-bold tracking-[-0.4px] text-inherit before:size-2 before:shrink-0 before:rounded-full before:bg-angle-red before:content-[''] max-[520px]:text-[22px]";
 
 /** Most Read item headline — responsive dark/light panel. */
 export const mostReadHeadline = `font-display text-[17px] font-semibold leading-[1.32] tracking-[-0.2px] text-angle-bg transition-colors group-hover:text-angle-bg/65 max-[1100px]:text-angle-ink max-[1100px]:group-hover:text-angle-inkSoft`;

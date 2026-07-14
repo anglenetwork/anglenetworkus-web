@@ -11,7 +11,7 @@ export function ColMoreLink({ href, label }: ColMoreLinkProps) {
   return (
     <Link href={href} className="group mt-auto flex items-center gap-2.5 pt-6">
       <span className={colMoreLabel}>{label}</span>
-      <span className="flex size-[22px] shrink-0 items-center justify-center rounded-full bg-angle-red">
+      <span className="flex size-[22px] shrink-0 items-center justify-center rounded-full bg-news-primary">
         <svg
           viewBox="0 0 24 24"
           fill="none"

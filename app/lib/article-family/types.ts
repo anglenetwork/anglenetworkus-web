@@ -20,6 +20,8 @@ export type ArticleFamilyAuthor = {
   slug?: string | null;
   picture?: unknown;
   shortBio?: string | null;
+  /** Editorial role / title (e.g. "Global Health Columnist") */
+  title?: string | null;
 };
 
 /** Cover shape from GROQ (coverFieldsProjection) */

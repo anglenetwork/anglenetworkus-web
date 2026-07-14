@@ -102,7 +102,7 @@ export function TermsSection05() {
           from{" "}
           <a
             href={`mailto:${contact.permissionsEmail}`}
-            className="text-blue-600 hover:underline"
+            className="text-news-primary hover:underline"
           >
             {contact.permissionsEmail}
           </a>

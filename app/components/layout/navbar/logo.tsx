@@ -14,7 +14,7 @@ export function Wordmark({
   titleClassName,
   showDot = true,
 }: WordmarkProps) {
-  const textColor = theme === "light" ? "text-zinc-900" : "text-white";
+  const textColor = theme === "light" ? "text-news-text" : "text-white";
 
   return (
     <span
@@ -28,7 +28,7 @@ export function Wordmark({
       The Angle
       {showDot ? (
         <span
-          className="ml-px inline-block size-1.5 translate-y-[-6px] rounded-full bg-blue-600"
+          className="ml-px inline-block size-1.5 translate-y-[-6px] rounded-full bg-news-primary"
           aria-hidden
         />
       ) : null}

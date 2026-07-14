@@ -33,7 +33,7 @@ export function PrivacySection08() {
               <strong>Do Not Sell or Share My Personal Information:</strong>{" "}
               <Link
                 href={config.links.doNotSellLink}
-                className="text-blue-600 hover:underline"
+                className="text-news-primary hover:underline"
               >
                 {config.links.doNotSellLink}
               </Link>
@@ -42,7 +42,7 @@ export function PrivacySection08() {
               <strong>Privacy Choices / Cookie Preferences:</strong>{" "}
               <Link
                 href={config.links.cookiePreferences}
-                className="text-blue-600 hover:underline"
+                className="text-news-primary hover:underline"
               >
                 {config.links.cookiePreferences}
               </Link>

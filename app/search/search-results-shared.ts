@@ -22,8 +22,8 @@ export function desktopFilterLinkClass(isActive: boolean) {
     "rounded-lg font-sans",
     "xl:h-auto xl:min-h-0 xl:rounded-none xl:border-0 xl:bg-transparent xl:p-0 xl:text-base xl:shadow-none",
     isActive
-      ? "xl:font-semibold xl:text-red-600 xl:underline xl:underline-offset-4 hover:xl:bg-transparent hover:xl:text-red-600"
-      : "xl:font-normal xl:text-neutral-900 xl:no-underline xl:underline-offset-4 hover:xl:bg-transparent hover:xl:text-neutral-900 hover:xl:underline",
+      ? "xl:font-semibold xl:text-news-primary xl:underline xl:underline-offset-4 hover:xl:bg-transparent hover:xl:text-news-primary"
+      : "xl:font-normal xl:text-news-text xl:no-underline xl:underline-offset-4 hover:xl:bg-transparent hover:xl:text-news-text hover:xl:underline",
   );
 }
 

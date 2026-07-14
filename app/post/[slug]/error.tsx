@@ -8,7 +8,7 @@ export default function Error({ error }: { error: Error }) {
       <div className="mx-auto max-w-md px-4 text-center">
         <div className="mb-6">
           <svg
-            className="mx-auto size-16 text-gray-400"
+            className="mx-auto size-16 text-news-muted"
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"
@@ -22,11 +22,11 @@ export default function Error({ error }: { error: Error }) {
           </svg>
         </div>
 
-        <h1 className="mb-4 font-bold text-2xl text-gray-900">
+        <h1 className="mb-4 font-bold text-2xl text-news-text">
           Something went wrong
         </h1>
 
-        <p className="mb-6 text-gray-600">
+        <p className="mb-6 text-news-muted">
           {error.message ||
             "An unexpected error occurred while loading this post."}
         </p>
@@ -35,14 +35,14 @@ export default function Error({ error }: { error: Error }) {
           <button
             type="button"
             onClick={() => window.location.reload()}
-            className="w-full rounded-lg bg-blue-600 px-4 py-2 text-white transition-colors hover:bg-blue-700"
+            className="w-full rounded-lg bg-news-primary px-4 py-2 text-white transition-colors hover:bg-news-primary-hover"
           >
             Try again
           </button>
 
           <Link
             href="/"
-            className="block w-full rounded-lg bg-gray-100 px-4 py-2 text-gray-700 transition-colors hover:bg-gray-200"
+            className="block w-full rounded-lg bg-news-surface px-4 py-2 text-news-muted transition-colors hover:bg-news-border"
           >
             Back to The Angle
           </Link>

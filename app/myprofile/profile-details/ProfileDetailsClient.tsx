@@ -69,7 +69,7 @@ function ProfileFieldCard({ label, value, icon: Icon }: ProfileField) {
             {isEmpty ? "Not set" : value}
           </p>
         </div>
-        <Icon className="mt-0.5 size-5 shrink-0 text-neutral-300" aria-hidden />
+        <Icon className="mt-0.5 size-5 shrink-0 text-news-border" aria-hidden />
       </div>
     </Card>
   );
@@ -169,7 +169,7 @@ function ProfileDetailsClientContent({
           description="Manage your personal information"
         />
 
-        <Card className="border border-neutral-200 bg-gradient-to-br from-neutral-50 to-transparent p-6 xl:p-8">
+        <Card className="border border-news-border bg-gradient-to-br from-neutral-50 to-transparent p-6 xl:p-8">
           <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
             <div>
               <span className={profileSubscriptionEyebrow}>Account</span>
@@ -188,13 +188,13 @@ function ProfileDetailsClientContent({
           </div>
 
           {isProfileIncomplete && (
-            <div className="mb-6 rounded-lg border border-red-600/20 bg-red-600/5 px-4 py-3">
-              <p className="font-medium font-sans text-neutral-900 text-sm">
+            <div className="mb-6 rounded-lg border border-news-primary/20 bg-news-primary/5 px-4 py-3">
+              <p className="font-medium font-sans text-news-text text-sm">
                 Your profile is incomplete.{" "}
                 <button
                   type="button"
                   onClick={() => setShowEditModal(true)}
-                  className="font-semibold text-red-600 underline-offset-2 hover:underline"
+                  className="font-semibold text-news-primary underline-offset-2 hover:underline"
                 >
                   Add your details
                 </button>{" "}

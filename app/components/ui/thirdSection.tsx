@@ -13,7 +13,7 @@ import {
 
 export function ThirdSection() {
   return (
-    <div className="relative h-96 w-full overflow-hidden rounded-md bg-neutral-900">
+    <div className="relative h-96 w-full overflow-hidden rounded-md bg-news-text">
       <LazyBackgroundVideo videoSrc={PROMO_VIDEO_SRC} loadStrategy="viewport" />
 
       <div className="absolute inset-0 bg-black/50" />

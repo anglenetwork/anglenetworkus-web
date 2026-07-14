@@ -100,7 +100,7 @@ export function TermsSection06() {
           available on the Services or contact us at{" "}
           <a
             href={`mailto:${contact.legalEmail}`}
-            className="text-blue-600 hover:underline"
+            className="text-news-primary hover:underline"
           >
             {contact.legalEmail}
           </a>

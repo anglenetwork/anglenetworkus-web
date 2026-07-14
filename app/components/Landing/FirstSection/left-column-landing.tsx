@@ -1,11 +1,8 @@
 import Link from "next/link";
 import { HOMEPAGE_JUST_IN_LIMIT } from "@/app/lib/homepage/first-section";
 import { ColMoreLink } from "./col-more-link";
-import {
-  justInCategoryLabel,
-  justInHeadline,
-  justInLabel,
-} from "@/app/lib/typography/first-section";
+import { justInHeadline, justInLabel } from "@/app/lib/typography/first-section";
+import { ReadTimeLabel } from "@/app/components/ui/read-time-label";
 import { JustInCarouselLoader } from "./just-in-carousel-loader";
 import { JustInStaticImage } from "./just-in-static-image";
 import { carouselImagesForPost } from "./just-in-carousel-images";
@@ -14,6 +11,7 @@ import type { JustInCarouselPost } from "./just-in-carousel-images";
 interface Post extends JustInCarouselPost {
   _id: string;
   slug: string;
+  readTime?: number | null;
   breakingNews?: boolean | null;
   developingStory?: boolean | null;
   category?: {
@@ -76,12 +74,8 @@ export function LeftColumnLanding({ justInNews }: LeftColumnLandingProps) {
                   />
                 ) : null}
                 <Link href={`/post/${post.slug}`} className="group block">
-                  {post.category?.title ? (
-                    <span className={justInCategoryLabel}>
-                      {post.category.title}
-                    </span>
-                  ) : null}
                   <h3 className={justInHeadline}>{post.title}</h3>
+                  <ReadTimeLabel minutes={post.readTime} variant="angle" />
                 </Link>
               </article>
             );

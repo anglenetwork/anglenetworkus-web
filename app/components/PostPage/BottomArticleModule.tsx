@@ -101,8 +101,8 @@ function ClassicRelatedArticles({ posts }: { posts: ArticleSidebarPost[] }) {
                       );
                     }
                     return (
-                      <div className="flex size-full items-center justify-center bg-neutral-200">
-                        <span className="text-neutral-500">No Image</span>
+                      <div className="flex size-full items-center justify-center bg-news-border">
+                        <span className="text-news-muted">No Image</span>
                       </div>
                     );
                   })()}
@@ -128,7 +128,7 @@ function ClassicRelatedArticles({ posts }: { posts: ArticleSidebarPost[] }) {
                     </h3>
                   </Link>
                   {index < arr.length - 1 && (
-                    <div className="border-neutral-200 border-b" />
+                    <div className="border-news-border border-b" />
                   )}
                 </div>
               ))}
@@ -158,7 +158,7 @@ function ModernRelatedArticles({
 
   return (
     <section
-      className="mt-[88px] border-neutral-200 border-t pt-[52px] pb-[72px]"
+      className="mt-[88px] border-news-border border-t pt-[52px] pb-[72px]"
       aria-label="Related articles"
     >
       <div className="grid grid-cols-1 gap-0 lg:grid-cols-[1fr_300px] lg:gap-x-14">
@@ -166,7 +166,7 @@ function ModernRelatedArticles({
           className={cn(
             "min-w-0",
             sidePosts.length > 0 &&
-              "mb-10 border-neutral-200 border-b pb-10 lg:mb-0 lg:border-r lg:border-b-0 lg:pr-14 lg:pb-0",
+              "mb-10 border-news-border border-b pb-10 lg:mb-0 lg:border-r lg:border-b-0 lg:pr-14 lg:pb-0",
           )}
         >
           <div className="mb-[30px] flex items-baseline justify-between gap-4">
@@ -192,7 +192,7 @@ function ModernRelatedArticles({
           <aside className="min-w-0">
             <div
               className={cn(
-                "mb-1 border-neutral-900 border-b-2 pb-3.5",
+                "mb-1 border-news-text border-b-2 pb-3.5",
                 postRelatedModernRailEyebrow,
               )}
             >
@@ -226,7 +226,7 @@ function ModernSideItem({
       href={post.href}
       className={cn(
         "group block py-[18px]",
-        !isLast && "border-neutral-200 border-b",
+        !isLast && "border-news-border border-b",
       )}
     >
       <p className={cn(postRelatedModernRailDate, "mb-[7px]")}>
@@ -247,7 +247,7 @@ function ModernGridCard({ post }: { post: ArticleSidebarPost }) {
 
   return (
     <Link href={post.href} className="group flex h-full min-w-0 flex-col">
-      <div className="relative mb-3.5 h-[170px] w-full shrink-0 overflow-hidden bg-stone-50">
+      <div className="relative mb-3.5 h-[170px] w-full shrink-0 overflow-hidden bg-news-background">
         {coverData?.src ? (
           <ImageRenderer
             src={coverData.src}
@@ -261,8 +261,8 @@ function ModernGridCard({ post }: { post: ArticleSidebarPost }) {
             className="object-cover transition-opacity group-hover:opacity-90"
           />
         ) : (
-          <div className="flex size-full items-center justify-center bg-stone-100">
-            <span className="font-sans text-neutral-400 text-xs">No image</span>
+          <div className="flex size-full items-center justify-center bg-news-surface">
+            <span className="font-sans text-news-muted text-xs">No image</span>
           </div>
         )}
       </div>

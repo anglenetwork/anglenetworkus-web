@@ -3,7 +3,7 @@ export const CATEGORY_FEATURED_COUNT = 5;
 
 /** Text headline row inside "More in {category}" (directly after the hero). */
 const CATEGORY_MISSED_IT_OFFSET = CATEGORY_FEATURED_COUNT;
-export const CATEGORY_MISSED_IT_COUNT = 4;
+export const CATEGORY_MISSED_IT_COUNT = 3;
 
 /** First index for the paginated latest list below the hero modules. */
 export const CATEGORY_CONTENT_OFFSET =

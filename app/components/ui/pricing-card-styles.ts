@@ -15,22 +15,24 @@ export function resolvePricingCardStyles({
     : recommended
       ? "bg-emerald-500 border-0"
       : borderColor
-        ? `bg-gray-50 border-2 ${borderColor}`
-        : "bg-gray-50 border border-gray-200";
+        ? `bg-news-surface border-2 ${borderColor}`
+        : "bg-news-surface border border-news-border";
 
   const textClass =
-    hasCustomBackground || recommended ? "text-white" : "text-gray-900";
+    hasCustomBackground || recommended ? "text-white" : "text-news-text";
   const secondaryTextClass =
-    hasCustomBackground || recommended ? "text-red-100" : "text-gray-600";
+    hasCustomBackground || recommended
+      ? "text-news-primary-soft"
+      : "text-news-muted";
 
   let buttonClass: string;
   if (buttonVariant === "current") {
     buttonClass =
-      "border border-gray-300 bg-white text-gray-900 hover:bg-gray-50";
+      "border border-news-border bg-white text-news-text hover:bg-news-surface";
   } else if (hasCustomBackground || recommended) {
-    buttonClass = "bg-white text-red-600 hover:bg-gray-50 border-0";
+    buttonClass = "bg-white text-news-primary hover:bg-news-surface border-0";
   } else {
-    buttonClass = "bg-gray-200 text-gray-900 hover:bg-gray-300 border-0";
+    buttonClass = "bg-news-border text-news-text hover:bg-news-border border-0";
   }
 
   return {

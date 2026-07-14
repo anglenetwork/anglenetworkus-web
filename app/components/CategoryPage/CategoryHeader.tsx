@@ -16,8 +16,8 @@ export function CategoryHeader({
   categoryTags,
 }: CategoryHeaderProps) {
   return (
-    <header className="border-news-text border-b bg-news-surface">
-      <SitePageWidth className="flex flex-col gap-4 pt-[26px] pb-[18px] sm:pt-16 sm:pb-7 xl:flex-row xl:items-baseline xl:justify-between xl:pt-7">
+    <header className="border-news-text border-b bg-news-background">
+      <SitePageWidth className="flex flex-col gap-4 pt-[26px] pb-[18px] sm:pb-7 xl:flex-row xl:items-baseline xl:justify-between xl:pt-7">
         <div className="max-sm:contents sm:flex sm:min-w-0 sm:items-baseline sm:gap-x-6">
           <h1 className="shrink-0 font-bold font-display text-[38px] text-news-text capitalize leading-none tracking-[-2px] sm:text-[52px] xl:text-[72px]">
             {categoryName}
@@ -39,7 +39,7 @@ export function CategoryHeader({
             </nav>
           ) : null}
         </div>
-        <p className="font-sans text-news-muted text-xs uppercase tracking-wide">
+        <p className="hidden font-sans text-news-muted text-xs uppercase tracking-wide xl:block">
           {formatSectionDate(new Date())}
         </p>
       </SitePageWidth>

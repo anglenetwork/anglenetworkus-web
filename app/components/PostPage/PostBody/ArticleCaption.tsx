@@ -65,7 +65,7 @@ export default function ArticleCaption({
       )}
       {showAltLine && (
         <p
-          className="font-sans text-[12px] text-neutral-400 sm:text-xs"
+          className="font-sans text-[12px] text-news-muted sm:text-xs"
           aria-hidden="true"
         >
           {alt}

@@ -29,7 +29,7 @@ function ArticleFamilyHeroTile({
   return (
     <article className="group">
       <Link href={article.href} className="block">
-        <div className="relative h-[400px] w-full cursor-pointer overflow-hidden rounded-lg bg-neutral-950 transition-opacity duration-200 hover:opacity-90">
+        <div className="relative h-[400px] w-full cursor-pointer overflow-hidden rounded-lg bg-news-secondary transition-opacity duration-200 hover:opacity-90">
           <div className="absolute inset-0">
             <ImageRenderer
               src={imgUrl || "/placeholder.svg"}
@@ -157,7 +157,7 @@ function ArticleFamilyDefaultCard({
         <div className="flex-shrink-0">{thumbnail}</div>
         <div className="min-w-0 flex-1">
           {kickerMode === "editorial" ? (
-            <p className="mb-1 font-bold font-sans text-[10px] text-editorialKicker uppercase tracking-wide">
+            <p className="mb-1 font-bold font-sans text-[10px] text-news-primary uppercase tracking-wide">
               {editorialK}
             </p>
           ) : (
@@ -168,7 +168,7 @@ function ArticleFamilyDefaultCard({
               )}
             >
               {label && (
-                <span className="font-bold text-[10px] text-sectionAccent uppercase tracking-wider">
+                <span className="font-bold text-[10px] text-news-primary uppercase tracking-wider">
                   {label}
                 </span>
               )}

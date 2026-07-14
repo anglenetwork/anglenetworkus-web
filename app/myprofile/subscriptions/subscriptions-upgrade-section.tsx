@@ -61,7 +61,7 @@ export function SubscriptionsUpgradeSection({
                 {nextTierInfo.period}
               </span>
             </div>
-            <p className="mb-6 font-sans text-neutral-400 text-sm">
+            <p className="mb-6 font-sans text-news-muted text-sm">
               {nextTierInfo.description}
             </p>
             <Button

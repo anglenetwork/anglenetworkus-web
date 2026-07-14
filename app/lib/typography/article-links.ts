@@ -9,4 +9,4 @@ export const articleTitleLink =
 
 /** Linked SectionHeader title (category index, opinion index, etc.) */
 export const sectionHeaderLink =
-  "cursor-pointer transition-colors group-hover:text-red-600 hover:text-red-600 dark:group-hover:text-red-400 dark:hover:text-red-400";
+  "cursor-pointer transition-colors group-hover:text-news-primary-hover hover:text-news-primary-hover group-hover:text-news-primary-hover hover:text-news-primary-hover";

@@ -7,7 +7,7 @@ import type { User } from "@supabase/supabase-js";
 import { cn } from "@/lib/utils";
 
 const authLinkClass =
-  "shrink-0 font-sans text-[13px] font-semibold text-zinc-900 no-underline transition-colors duration-150 hover:text-blue-600";
+  "shrink-0 font-sans text-[13px] font-semibold text-news-text no-underline transition-colors duration-150 hover:text-news-primary";
 
 type AuthState = { user: User | null; loading: boolean };
 

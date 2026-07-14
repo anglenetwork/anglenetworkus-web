@@ -52,7 +52,7 @@ export function SearchBar({
     return (
       <form
         className={cn(
-          "flex w-full items-center gap-3.5 rounded-[10px] border border-border bg-white px-5 py-[15px] transition-[border-color] duration-150 focus-within:border-foreground",
+          "flex w-full items-center gap-3.5 rounded-[10px] border border-border bg-news-background px-5 py-[15px] transition-[border-color] duration-150 focus-within:border-foreground",
           className,
         )}
         role="search"
@@ -71,7 +71,7 @@ export function SearchBar({
           name="search"
           placeholder={placeholder}
           aria-label={ariaLabel}
-          className="min-w-0 flex-1 border-none bg-transparent font-sans text-base text-foreground outline-none placeholder:text-[#9A9A94]"
+          className="min-w-0 flex-1 border-none bg-transparent font-sans text-base text-foreground outline-none placeholder:text-news-muted"
         />
       </form>
     );
@@ -91,14 +91,14 @@ export function SearchBar({
         name="search"
         placeholder={placeholder}
         aria-label={ariaLabel}
-        className="h-12 w-full rounded-lg border border-border bg-white pr-16 pl-6 font-sans text-base text-foreground transition-all placeholder:text-[#9A9A94] focus:border-foreground focus:outline-none"
+        className="h-12 w-full rounded-lg border border-border bg-news-background pr-16 pl-6 font-sans text-base text-foreground transition-all placeholder:text-news-muted focus:border-foreground focus:outline-none"
       />
       <button
         type="submit"
         className="absolute top-1/2 right-3 flex size-12 -translate-y-1/2 items-center justify-center rounded-lg transition-colors"
         aria-label="Search"
       >
-        <Search className="size-6 text-neutral-600" strokeWidth={2.5} />
+        <Search className="size-6 text-news-muted" strokeWidth={2.5} />
       </button>
     </form>
   );

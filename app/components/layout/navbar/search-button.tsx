@@ -35,7 +35,7 @@ export function SearchButton({ onClick, className }: SearchButtonProps) {
       onClick={onClick}
       aria-label="Open search menu"
       className={cn(
-        "flex size-9 shrink-0 items-center justify-center rounded-full text-gray-600 transition-colors duration-150 hover:bg-stone-100 hover:text-zinc-900",
+        "flex size-9 shrink-0 items-center justify-center rounded-full text-news-muted transition-colors duration-150 hover:bg-news-surface hover:text-news-text",
         className,
       )}
     >

@@ -6,11 +6,11 @@ export const leadHeadlineTitle = `mx-auto max-w-[900px] text-center font-display
 
 /** "JUST IN" kicker label next to the outlined red dot. */
 export const justInLabel =
-  "font-mono text-xs font-bold uppercase tracking-[0.12em] leading-none text-angle-ink";
+  "font-sans text-xs font-bold uppercase tracking-[0.12em] leading-none text-angle-ink";
 
 /** Category tag above a Just In / right rail headline (e.g. "WORLD"). */
 export const justInCategoryLabel =
-  "mb-2 block font-mono text-[11px] font-bold uppercase tracking-[0.08em] leading-none text-angle-ink";
+  "mb-2 block font-sans text-[11px] font-bold uppercase tracking-[0.08em] leading-none text-angle-ink";
 
 /** Just In list-item headlines (uniform size for every row, including the lead). */
 export const justInHeadline = `font-display text-[17px] font-semibold leading-[1.32] tracking-[-0.2px] text-angle-ink ${angleTitleHover}`;
@@ -38,7 +38,7 @@ export const colMoreLabel =
 
 /** Mobile front — category kicker above lead headline (e.g. WORLD). */
 export const mobileItemKicker =
-  "mb-2.5 flex items-center gap-1.5 font-mono text-[11px] font-bold uppercase tracking-[0.09em] leading-none text-angle-ink";
+  "mb-2.5 flex items-center gap-1.5 font-sans text-[11px] font-bold uppercase tracking-[0.09em] leading-none text-angle-ink";
 
 /** Mobile front — lead story headline beneath hero image. */
 export const mobileLeadHeadline = `font-display text-[29px] font-bold leading-[1.14] tracking-[-0.6px] text-angle-ink ${angleTitleHover}`;
@@ -59,4 +59,4 @@ export const mobileItemTime =
 
 /** Mobile front — "Just in" section divider label. */
 export const mobileSectionLabel =
-  "flex items-center gap-2.5 font-mono text-xs font-bold uppercase tracking-[0.11em] leading-none text-angle-ink";
+  "flex items-center gap-2.5 font-sans text-xs font-bold uppercase tracking-[0.11em] leading-none text-angle-ink";

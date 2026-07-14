@@ -37,10 +37,10 @@ export default function PricingPage() {
     <SitePageWidth className="pt-10 pb-20 font-sans">
       {/* Header Section */}
       <div className="mb-12 text-center">
-        <h1 className="mb-4 font-bold text-4xl text-gray-900 md:text-5xl">
+        <h1 className="mb-4 font-bold text-4xl text-news-text md:text-5xl">
           Choose Your Plan
         </h1>
-        <p className="mx-auto max-w-2xl text-gray-600 text-lg">
+        <p className="mx-auto max-w-2xl text-lg text-news-muted">
           Select the perfect plan for your needs. Upgrade or downgrade at any
           time.
         </p>
@@ -54,7 +54,7 @@ export default function PricingPage() {
       {/* Error Message */}
       {error ? (
         <div className="mx-auto mb-6 max-w-4xl">
-          <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-red-700">
+          <div className="rounded-lg border border-news-border bg-news-primary-soft px-4 py-3 text-news-primary-hover">
             {error}
           </div>
         </div>

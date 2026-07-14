@@ -52,7 +52,7 @@ function MenuSocialLinks({ className }: { className?: string }) {
             target="_blank"
             rel="noopener noreferrer"
             aria-label={social.label}
-            className="inline-flex rounded-lg p-1.5 text-foreground transition-[background,color] duration-150 hover:bg-news-primary/10 hover:text-news-primary focus-visible:outline focus-visible:outline-2 focus-visible:outline-link focus-visible:outline-offset-2"
+            className="inline-flex rounded-lg p-1.5 text-foreground transition-[background,color] duration-150 hover:bg-news-primary/10 hover:text-news-primary focus-visible:outline focus-visible:outline-2 focus-visible:outline-news-primary focus-visible:outline-offset-2"
           >
             <Icon className="size-5" />
           </a>

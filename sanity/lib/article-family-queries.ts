@@ -53,7 +53,8 @@ const articleFamilyAuthor = `
       "name": coalesce(author->name, "Anonymous"),
       "slug": author->slug.current,
       "picture": author->picture,
-      "shortBio": author->shortBio
+      "shortBio": author->shortBio,
+      "title": author->title
     }
   )
 `;

@@ -29,7 +29,7 @@ export function PrivacySection09() {
             <strong>Update preferences</strong>:{" "}
             <Link
               href={config.links.accountPreferences}
-              className="text-blue-600 hover:underline"
+              className="text-news-primary hover:underline"
             >
               {config.links.accountPreferences}
             </Link>
@@ -38,7 +38,7 @@ export function PrivacySection09() {
             <strong>Delete your account</strong>:{" "}
             <Link
               href={config.links.accountDeletion}
-              className="text-blue-600 hover:underline"
+              className="text-news-primary hover:underline"
             >
               {config.links.accountDeletion}
             </Link>
@@ -47,7 +47,7 @@ export function PrivacySection09() {
             <strong>Cookie preferences</strong>:{" "}
             <Link
               href={config.links.cookiePreferences}
-              className="text-blue-600 hover:underline"
+              className="text-news-primary hover:underline"
             >
               {config.links.cookiePreferences}
             </Link>
@@ -97,7 +97,7 @@ export function PrivacySection09() {
             Privacy Request Portal:{" "}
             <Link
               href={contact.portal}
-              className="text-blue-600 hover:underline"
+              className="text-news-primary hover:underline"
             >
               {contact.portal}
             </Link>
@@ -106,7 +106,7 @@ export function PrivacySection09() {
             Email:{" "}
             <a
               href={`mailto:${contact.email}`}
-              className="text-blue-600 hover:underline"
+              className="text-news-primary hover:underline"
             >
               {contact.email}
             </a>
@@ -135,7 +135,7 @@ export function PrivacySection09() {
           If we deny your request, you may appeal by contacting{" "}
           <a
             href={`mailto:${config.links.appealsEmail}`}
-            className="text-blue-600 hover:underline"
+            className="text-news-primary hover:underline"
           >
             {config.links.appealsEmail}
           </a>{" "}

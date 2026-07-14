@@ -1,5 +1,6 @@
 export * from "./article-links";
 export * from "./article-family-card";
+export * from "./editorial-rails";
 export * from "./first-section";
 export * from "./second-section";
 export * from "./fifth-section";

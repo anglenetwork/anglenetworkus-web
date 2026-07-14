@@ -12,7 +12,7 @@ import {
  */
 export default function NewsletterSignup() {
   return (
-    <div className="bg-neutral-900 p-[26px_22px]">
+    <div className="bg-news-text p-[26px_22px]">
       <p className={postNewsletterEyebrow}>The Morning Briefing</p>
       <h3 className={postNewsletterHeading}>
         The day&apos;s essential stories, before 7am.
@@ -26,11 +26,11 @@ export default function NewsletterSignup() {
           required
           placeholder="Your email"
           aria-label="Email address"
-          className="min-w-0 flex-1 border border-neutral-700 bg-neutral-800 px-3 py-2.5 font-sans text-[13.5px] text-white placeholder:text-neutral-500 focus:outline-none focus-visible:ring-1 focus-visible:ring-white"
+          className="min-w-0 flex-1 border border-news-muted bg-news-text px-3 py-2.5 font-sans text-[13.5px] text-white placeholder:text-news-muted focus:outline-none focus-visible:ring-1 focus-visible:ring-white"
         />
         <button
           type="submit"
-          className="shrink-0 bg-white px-4 py-2.5 font-display font-semibold text-[13.5px] text-neutral-900 transition-opacity hover:opacity-90"
+          className="shrink-0 bg-white px-4 py-2.5 font-display font-semibold text-[13.5px] text-news-text transition-opacity hover:opacity-90"
         >
           Sign up
         </button>

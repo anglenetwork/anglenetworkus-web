@@ -6,7 +6,7 @@ import { SearchResultsLoadingSkeleton } from "./search-results-list";
 function SearchResultsFallback() {
   return (
     <div className="animate-pulse">
-      <div className="mb-8 h-12 rounded-lg bg-gray-200" />
+      <div className="mb-8 h-12 rounded-lg bg-news-border" />
       <SearchResultsLoadingSkeleton />
     </div>
   );

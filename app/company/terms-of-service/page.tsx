@@ -20,10 +20,10 @@ export default function TermsOfServicePage() {
           Terms of Service
         </h1>
         <div className="prose prose-sm max-w-none font-sans text-sm">
-          <p className="mb-4 text-gray-600 text-sm">
+          <p className="mb-4 text-news-muted text-sm">
             Effective Date: {termsOfServiceConfig.effectiveDate}
           </p>
-          <p className="mb-4 text-gray-600 text-sm">
+          <p className="mb-4 text-news-muted text-sm">
             Last updated: {termsOfServiceConfig.lastUpdated}
           </p>
           <TermsOfServiceContent />

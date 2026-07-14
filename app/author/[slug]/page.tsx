@@ -106,24 +106,24 @@ export default async function AuthorPage({
       <JsonLdScript data={personLd} />
       <JsonLdScript data={breadcrumbLd} />
       <SitePageWidth className="py-10 md:py-14">
-        <header className="mb-10 border-neutral-200 border-b pb-6">
-          <h1 className="font-bold font-display text-3xl text-neutral-900 md:text-4xl">
+        <header className="mb-10 border-news-border border-b pb-6">
+          <h1 className="font-bold font-display text-3xl text-news-text md:text-4xl">
             {author.name}
           </h1>
           {author.title ? (
-            <p className="mt-1 font-sans text-neutral-600 text-sm md:text-base">
+            <p className="mt-1 font-sans text-news-muted text-sm md:text-base">
               {author.title}
             </p>
           ) : null}
           {description ? (
-            <p className="mt-4 font-sans text-neutral-700 text-sm leading-relaxed md:text-base">
+            <p className="mt-4 font-sans text-news-muted text-sm leading-relaxed md:text-base">
               {description}
             </p>
           ) : null}
         </header>
 
         {articles.length === 0 ? (
-          <p className="py-12 text-center font-sans text-neutral-600">
+          <p className="py-12 text-center font-sans text-news-muted">
             No published articles yet.
           </p>
         ) : (

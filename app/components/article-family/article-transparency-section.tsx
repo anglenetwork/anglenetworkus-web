@@ -21,7 +21,7 @@ export function ArticleTransparencySection({
   return (
     <section
       className={cn(
-        "not-prose mt-10 border-neutral-200 border-t pt-8",
+        "not-prose mt-10 border-news-border border-t pt-8",
         className,
       )}
       aria-labelledby="transparency-heading"

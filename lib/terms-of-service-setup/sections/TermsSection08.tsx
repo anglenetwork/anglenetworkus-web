@@ -41,7 +41,7 @@ export function TermsSection08() {
           If you believe that content on the Services infringes your copyright,
           please send a written notice to our Designated Agent at:
         </p>
-        <div className="mb-4 border-gray-300 border-l-4 pl-4">
+        <div className="mb-4 border-news-border border-l-4 pl-4">
           <p>
             <strong>Designated Agent:</strong>{" "}
             {config.dmca.agentName || "[Full Name / Title]"}
@@ -58,7 +58,7 @@ export function TermsSection08() {
             <strong>Email:</strong>{" "}
             <a
               href={`mailto:${contact.dmcaEmail}`}
-              className="text-blue-600 hover:underline"
+              className="text-news-primary hover:underline"
             >
               {contact.dmcaEmail}
             </a>
@@ -69,7 +69,7 @@ export function TermsSection08() {
             </p>
           )}
         </div>
-        <p className="mb-4 text-gray-600 text-sm italic">
+        <p className="mb-4 text-news-muted text-sm italic">
           Note: Only DMCA notices should be sent to the Designated Agent. Other
           inquiries may not receive a response.
         </p>
@@ -199,7 +199,7 @@ export function TermsSection08() {
           contact us at{" "}
           <a
             href={`mailto:${contact.legalEmail}`}
-            className="text-blue-600 hover:underline"
+            className="text-news-primary hover:underline"
           >
             {contact.legalEmail}
           </a>{" "}

@@ -23,14 +23,14 @@ export function AnalysisAuthorLine({
     <p
       className={cn(
         "flex items-center gap-2 font-sans text-xs",
-        isOverlay ? "text-white/80" : "text-neutral-600",
+        isOverlay ? "text-white/80" : "text-news-muted",
       )}
     >
       {avatarUrl ? (
         <span
           className={cn(
             "relative size-6 shrink-0 overflow-hidden rounded-full",
-            isOverlay ? "bg-white/20" : "bg-neutral-300",
+            isOverlay ? "bg-white/20" : "bg-news-border",
           )}
         >
           <ImageRenderer
@@ -47,7 +47,7 @@ export function AnalysisAuthorLine({
         <span
           className={cn(
             "flex size-6 shrink-0 items-center justify-center rounded-full font-sans text-[10px] text-white",
-            isOverlay ? "bg-white/20" : "bg-neutral-900",
+            isOverlay ? "bg-white/20" : "bg-news-text",
           )}
         >
           {initial}
@@ -58,7 +58,7 @@ export function AnalysisAuthorLine({
         <span
           className={cn(
             "font-semibold italic",
-            isOverlay ? "text-white" : "text-neutral-900",
+            isOverlay ? "text-white" : "text-news-text",
           )}
         >
           {authorName}
@@ -83,11 +83,11 @@ function AnalysisArticleImage({
   );
 
   if (!coverData?.src) {
-    return <div className={cn(className, "bg-neutral-950")} aria-hidden />;
+    return <div className={cn(className, "bg-news-secondary")} aria-hidden />;
   }
 
   return (
-    <div className={cn(className, "bg-neutral-950")}>
+    <div className={cn(className, "bg-news-secondary")}>
       <ImageRenderer
         src={coverData.src}
         alt={coverData.alt}
@@ -130,7 +130,7 @@ function AnalysisRowCard({
           {article.title || "Untitled"}
         </h3>
         {!isSidebar && article.excerpt ? (
-          <p className="line-clamp-2 font-sans text-neutral-600 text-sm leading-relaxed">
+          <p className="line-clamp-2 font-sans text-news-muted text-sm leading-relaxed">
             {article.excerpt}
           </p>
         ) : null}

@@ -40,12 +40,12 @@ function SectionHeaderIconElement({
       className={cn(
         "size-3.5 shrink-0",
         icon === "circle-small"
-          ? "text-red-600"
+          ? "text-news-primary"
           : variant === "dark"
             ? "text-white"
             : variant === "news"
               ? "text-news-text"
-              : "text-neutral-900",
+              : "text-news-text",
       )}
       strokeWidth={3}
       aria-hidden
@@ -72,7 +72,7 @@ function SectionHeaderLinkWrapper({
           "group block rounded-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2",
           variant === "news"
             ? "focus-visible:outline-news-primary"
-            : "focus-visible:outline-red-600",
+            : "focus-visible:outline-news-primary",
         )}
       >
         {children}

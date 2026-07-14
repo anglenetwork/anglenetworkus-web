@@ -18,15 +18,15 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 export function SearchResultsLoadingSkeleton() {
   return (
     <div className="animate-pulse space-y-8">
-      <div className="mb-4 h-6 w-1/3 rounded bg-gray-200" />
+      <div className="mb-4 h-6 w-1/3 rounded bg-news-border" />
       <div className="space-y-8">
         {[1, 2, 3].map((i) => (
           <div key={i} className="flex gap-6 pb-8">
-            <div className="h-32 w-40 shrink-0 rounded-lg bg-gray-200" />
+            <div className="h-32 w-40 shrink-0 rounded-lg bg-news-border" />
             <div className="flex-1 space-y-3">
-              <div className="h-6 w-3/4 rounded bg-gray-200" />
-              <div className="h-4 w-1/4 rounded bg-gray-200" />
-              <div className="h-4 w-full rounded bg-gray-200" />
+              <div className="h-6 w-3/4 rounded bg-news-border" />
+              <div className="h-4 w-1/4 rounded bg-news-border" />
+              <div className="h-4 w-full rounded bg-news-border" />
             </div>
           </div>
         ))}

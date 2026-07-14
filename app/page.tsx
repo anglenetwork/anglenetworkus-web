@@ -99,7 +99,7 @@ export default async function Page() {
 
   return (
     <>
-      <SitePageWidth className="bg-news-surface">
+      <SitePageWidth className="bg-news-background">
         <div className={`${HOMEPAGE_BELOW_FOLD_SECTION_GAP} pb-10 md:pb-14`}>
           <FirstSection
             justInNews={hero.justInPosts as any}

@@ -16,7 +16,7 @@ function TypeBadge({ children }: { children: ReactNode }) {
   return (
     <span
       className={cn(
-        "mb-2 inline-block rounded-sm border border-neutral-300 bg-neutral-100 px-2 py-0.5 text-neutral-800",
+        "mb-2 inline-block rounded-sm border border-news-border bg-news-surface px-2 py-0.5 text-news-text",
         nonRegularPostTypeBadge,
       )}
     >
@@ -70,7 +70,7 @@ export function StandardArticleLayout({
             )}
 
             {showSponsoredChrome && article.sponsorAttribution?.disclosure && (
-              <div className="rounded-md border border-neutral-300 bg-neutral-50 p-4 text-neutral-800 text-sm leading-relaxed">
+              <div className="rounded-md border border-news-border bg-news-surface p-4 text-news-text text-sm leading-relaxed">
                 {article.sponsorAttribution.disclosure}
               </div>
             )}
@@ -97,7 +97,7 @@ export function StandardArticleLayout({
             {showAnalysisChrome && article.analysisFocus && (
               <p
                 className={cn(
-                  "mt-3 border-neutral-400 border-l-4 pl-3",
+                  "mt-3 border-news-border border-l-4 pl-3",
                   nonRegularPostAnalysisFocus,
                 )}
               >
@@ -106,7 +106,7 @@ export function StandardArticleLayout({
             )}
 
             {showOpinionChrome && article.disclosure && (
-              <aside className="rounded-md bg-neutral-100 px-4 py-3">
+              <aside className="rounded-md bg-news-surface px-4 py-3">
                 <p className={nonRegularPostDisclosure}>{article.disclosure}</p>
               </aside>
             )}

@@ -5,7 +5,6 @@ import { ImageRenderer } from "@/app/components/ui/image-renderer";
 import { ReadTimeLabel } from "@/app/components/ui/read-time-label";
 import type { TagsGlimpseItem } from "@/app/components/tags-glimpse";
 import {
-  moreInCategoryCredit,
   moreInCategoryHeading,
   moreInCategoryMeta,
   moreInCategoryRegionHeadline,
@@ -13,7 +12,8 @@ import {
   moreInCategoryRegionMore,
   moreInCategoryTopHeadline,
 } from "@/app/lib/typography/category-page";
-import { formatImageCredit, getCoverImage } from "@/sanity/lib/utils";
+import { getCoverImage } from "@/sanity/lib/utils";
+import { CATEGORY_MISSED_IT_COUNT } from "@/app/lib/category-page/layout-sections";
 import type { Article } from "./types";
 
 const REGION_IMAGE_SIZES = "(max-width: 1023px) 80px, 25vw";
@@ -36,13 +36,11 @@ function MoreInCategoryHeading({ categoryName }: { categoryName: string }) {
   );
 }
 
-function moreTopBlockItemClassName(index: number, total: number) {
+function moreTopBlockItemClassName(index: number) {
   return cn(
-    "border-news-border py-6 xl:py-0",
-    "xl:p-8",
-    "xl:border-l",
-    index === 0 && "xl:border-l-0 xl:pl-0",
-    index === total - 1 && "xl:pr-0",
+    "border-news-border px-6 py-6",
+    "xl:border-l xl:px-8 xl:py-8",
+    index === 0 && "xl:border-l-0",
   );
 }
 
@@ -51,37 +49,60 @@ function moreRegionBlockItemClassName() {
 }
 
 function MoreInCategoryTopRow({ articles }: { articles: Article[] }) {
-  const items = articles.slice(0, 4);
+  const items = articles.slice(0, CATEGORY_MISSED_IT_COUNT);
   if (items.length === 0) return null;
 
   return (
     <div
       aria-label="More headlines"
-      className="border-news-border border-t border-b"
+      className="bg-news-surface max-lg:-mx-4 sm:max-lg:-mx-6"
     >
-      <div className="grid grid-cols-1 divide-y divide-news-border xl:grid-cols-4 xl:divide-y-0">
+      <div className="grid grid-cols-1 divide-y divide-news-border xl:grid-cols-3 xl:divide-y-0">
         {items.map((article, index) => {
           const href = article.href ?? `/post/${article.slug}`;
+          const imageSrc = article.imageUrl;
 
           return (
             <article
               key={article.id}
-              className={moreTopBlockItemClassName(index, items.length)}
+              className={moreTopBlockItemClassName(index)}
             >
-              <Link
-                href={href}
-                className="group block"
-                aria-label={`Read article: ${article.title}`}
-              >
-                <h3 className={cn("mb-3.5", moreInCategoryTopHeadline)}>
-                  {article.title}
-                </h3>
-              </Link>
-              <ReadTimeLabel
-                minutes={article.readTime}
-                variant="news"
-                className={cn(moreInCategoryMeta, "mt-0")}
-              />
+              <div className="flex items-start gap-3">
+                <div className="min-w-0 flex-1">
+                  <Link
+                    href={href}
+                    className="group block"
+                    aria-label={`Read article: ${article.title}`}
+                  >
+                    <h3 className={moreInCategoryTopHeadline}>
+                      {article.title}
+                    </h3>
+                  </Link>
+                  <ReadTimeLabel
+                    minutes={article.readTime}
+                    variant="news"
+                    className={cn(moreInCategoryMeta, "mt-2.5")}
+                  />
+                </div>
+                {imageSrc ? (
+                  <Link
+                    href={href}
+                    className="relative size-20 shrink-0 overflow-hidden bg-news-secondary"
+                    aria-label={`Read article: ${article.title}`}
+                  >
+                    <ImageRenderer
+                      src={imageSrc}
+                      alt={article.imageAlt?.trim() || article.title}
+                      width={80}
+                      height={80}
+                      fill
+                      sizes="80px"
+                      unoptimized={article.imageUnoptimized}
+                      className="object-cover object-center"
+                    />
+                  </Link>
+                ) : null}
+              </div>
             </article>
           );
         })}
@@ -117,7 +138,9 @@ function MoreInCategoryRegionMobileRow({ item }: { item: TagsGlimpseItem }) {
           className="group/more flex shrink-0 items-center gap-2 rounded-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-news-primary focus-visible:outline-offset-2"
           aria-label={`More from ${tagTitle}`}
         >
-          <span className={moreInCategoryRegionMore}>More</span>
+          <span className={cn(moreInCategoryRegionMore, "max-lg:inline lg:hidden")}>
+            More
+          </span>
           <span
             className="flex size-5 items-center justify-center rounded-full bg-news-primary text-white"
             aria-hidden
@@ -133,7 +156,7 @@ function MoreInCategoryRegionMobileRow({ item }: { item: TagsGlimpseItem }) {
         aria-label={`Read article: ${article.title}`}
       >
         {coverData?.src ? (
-          <div className="relative size-20 shrink-0 overflow-hidden rounded-sm bg-news-secondary">
+          <div className="relative size-20 shrink-0 overflow-hidden bg-news-secondary">
             <ImageRenderer
               src={coverData.src}
               alt={coverData.alt}
@@ -174,7 +197,6 @@ function MoreInCategoryRegionColumn({ item }: { item: TagsGlimpseItem }) {
     article.cover as Parameters<typeof getCoverImage>[0],
     article.title || "Article image",
   );
-  const credit = formatImageCredit(article.cover);
 
   return (
     <>
@@ -191,10 +213,9 @@ function MoreInCategoryRegionColumn({ item }: { item: TagsGlimpseItem }) {
         </Link>
         <Link
           href={tagHref}
-          className="group/more flex shrink-0 items-center gap-2 rounded-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-news-primary focus-visible:outline-offset-2"
+          className="group/more flex shrink-0 items-center rounded-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-news-primary focus-visible:outline-offset-2"
           aria-label={`More from ${tagTitle}`}
         >
-          <span className={moreInCategoryRegionMore}>More</span>
           <span
             className="flex size-5 items-center justify-center rounded-full bg-news-primary text-white"
             aria-hidden
@@ -210,7 +231,7 @@ function MoreInCategoryRegionColumn({ item }: { item: TagsGlimpseItem }) {
           className="group block w-full min-w-0"
           aria-label={`Read article: ${article.title}`}
         >
-          <div className="relative aspect-square w-full min-w-0 overflow-hidden rounded-sm bg-news-secondary">
+          <div className="relative aspect-square w-full min-w-0 overflow-hidden bg-news-secondary">
             <ImageRenderer
               src={coverData.src}
               alt={coverData.alt}
@@ -224,8 +245,6 @@ function MoreInCategoryRegionColumn({ item }: { item: TagsGlimpseItem }) {
           </div>
         </Link>
       ) : null}
-
-      {credit ? <p className={moreInCategoryCredit}>{credit}</p> : null}
 
       <Link href={articleHref} className="group block">
         <h3
@@ -305,7 +324,7 @@ export function MoreInCategorySection({
   }
 
   return (
-    <section aria-label={`More in ${categoryName}`} className="bg-news-surface">
+    <section aria-label={`More in ${categoryName}`}>
       {hasHeadlines ? <MoreInCategoryTopRow articles={topArticles} /> : null}
 
       {hasTags ? (

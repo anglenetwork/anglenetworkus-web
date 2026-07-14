@@ -34,7 +34,7 @@ export function PrivacySection10() {
             at{" "}
             <a
               href={`mailto:${contact.email}`}
-              className="text-blue-600 hover:underline"
+              className="text-news-primary hover:underline"
             >
               {contact.email}
             </a>{" "}

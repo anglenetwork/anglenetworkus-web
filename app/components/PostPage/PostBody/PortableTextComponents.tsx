@@ -169,7 +169,7 @@ export const portableTextComponents: PortableTextComponents = {
       const sourceLabel = asString(quoteValue.sourceLabel);
 
       return (
-        <blockquote className="my-10 border-neutral-300 border-l-2 pl-4 text-left md:my-12 md:pl-6">
+        <blockquote className="my-10 border-news-border border-l-2 pl-4 text-left md:my-12 md:pl-6">
           <p className={regularPostBodyQuote}>{quote}</p>
           {(attribution || sourceLabel) && (
             <footer className={`mt-3 ${regularPostBodyQuoteAttribution}`}>
@@ -186,7 +186,7 @@ export const portableTextComponents: PortableTextComponents = {
       if (dividerValue.style === "spacer") {
         return <div className="my-8 h-8" aria-hidden="true" />;
       }
-      return <hr className="my-10 border-neutral-200" />;
+      return <hr className="my-10 border-news-border" />;
     },
     videoEmbed: ({ value }: PortableTextComponentProps) => {
       const videoValue = asRecord(value);
@@ -265,7 +265,7 @@ export const portableTextComponents: PortableTextComponents = {
       </p>
     ),
     blockquote: ({ children }: PortableTextComponentProps) => (
-      <blockquote className="my-10 border-neutral-200 border-l-2 pl-4 text-left md:my-12 md:pl-6">
+      <blockquote className="my-10 border-news-border border-l-2 pl-4 text-left md:my-12 md:pl-6">
         <div className={regularPostBodyQuote}>{children}</div>
       </blockquote>
     ),
@@ -325,7 +325,7 @@ export const postArticleBodyComponents: PortableTextComponents = {
       const sourceLabel = asString(quoteValue.sourceLabel);
 
       return (
-        <blockquote className="my-8 border-neutral-900 border-y py-7 text-left">
+        <blockquote className="my-8 border-news-text border-y py-7 text-left">
           <p className={postArticleQuote}>{quote}</p>
           {(attribution || sourceLabel) && (
             <cite className={cn("mt-3.5 block", postArticleQuoteAttribution)}>
@@ -366,7 +366,7 @@ export const postArticleBodyComponents: PortableTextComponents = {
       </p>
     ),
     blockquote: ({ children }: PortableTextComponentProps) => (
-      <blockquote className="my-8 border-neutral-900 border-y py-7 text-left">
+      <blockquote className="my-8 border-news-text border-y py-7 text-left">
         <div className={postArticleQuote}>{children}</div>
       </blockquote>
     ),

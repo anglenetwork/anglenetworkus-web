@@ -45,7 +45,7 @@ export function ArticleFeaturedThreeRow({
     <section
       aria-label={ariaLabel}
       className={cn(
-        "rounded-lg bg-neutral-100 px-4 py-6 md:px-6 md:py-8",
+        "rounded-lg bg-news-surface px-4 py-6 md:px-6 md:py-8",
         className,
       )}
     >

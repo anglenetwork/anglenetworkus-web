@@ -51,7 +51,7 @@ describe("ExcerptCreditCaption", () => {
       />,
     );
     const line = container.querySelector("p");
-    expect(line).toHaveClass("text-[10px]", "text-gray-500", "text-right");
+    expect(line).toHaveClass("text-[10px]", "text-news-muted", "text-right");
     expect(line).toHaveTextContent("Photo: Jane Doe");
   });
 });

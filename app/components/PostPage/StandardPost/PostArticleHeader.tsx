@@ -56,7 +56,7 @@ export default function PostArticleHeader({
           )}
         >
           <span
-            className="size-[7px] shrink-0 rounded-full bg-red-600"
+            className="size-[7px] shrink-0 rounded-full bg-news-primary"
             aria-hidden
           />
           <span className="group-hover:underline">{category.title}</span>
@@ -70,11 +70,11 @@ export default function PostArticleHeader({
       <div
         className={cn(
           REGULAR_POST_BYLINE_ROW_CLASS,
-          "border-neutral-200 border-t pt-5",
+          "border-news-border border-t pt-5",
         )}
       >
         <div className="flex flex-wrap items-center gap-3">
-          <span className="relative size-[38px] shrink-0 overflow-hidden rounded-full bg-neutral-900">
+          <span className="relative size-[38px] shrink-0 overflow-hidden rounded-full bg-news-text">
             {avatarUrl ? (
               <ImageRenderer
                 src={avatarUrl}
@@ -93,10 +93,10 @@ export default function PostArticleHeader({
           </span>
 
           <div className="min-w-0">
-            <p className="font-display font-semibold text-red-700 text-sm">
+            <p className="font-display font-semibold text-news-primary-hover text-sm">
               By {authorName}
             </p>
-            <p className="mt-0.5 font-sans text-[13px] text-neutral-500">
+            <p className="mt-0.5 font-sans text-[13px] text-news-muted">
               {dateLabel} {formatArticleTimestamp(displayDate)} ·{" "}
               {readTimeLabel}
             </p>

@@ -81,6 +81,8 @@ const nextConfig: NextConfig = {
   },
 
   experimental: {
+    // Reduces Turbopack memory growth in long dev sessions (dev-only).
+    turbopackServerFastRefresh: false,
     // Optimize bundle splitting for small shared deps.
     optimizePackageImports: [
       "lucide-react",

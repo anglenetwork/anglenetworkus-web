@@ -30,7 +30,7 @@ export function ArticleCardSearchMetadata({
         </p>
       ) : null}
       {showAnalysisFocus ? (
-        <p className="mb-1 line-clamp-2 text-neutral-600 text-xs">
+        <p className="mb-1 line-clamp-2 text-news-muted text-xs">
           {article.analysisFocus}
         </p>
       ) : null}
@@ -59,7 +59,7 @@ export function ArticleCardDefaultMetadata({
       {showAnalysisFocus ? (
         <p
           className={cn(
-            "mb-1 line-clamp-2 text-neutral-600 text-xs",
+            "mb-1 line-clamp-2 text-news-muted text-xs",
             hidePostTypeBadgeOnMobile && "max-md:hidden",
           )}
         >
@@ -67,7 +67,7 @@ export function ArticleCardDefaultMetadata({
         </p>
       ) : null}
       {showDate && dateStr ? (
-        <p className="mt-1 font-sans text-neutral-500 text-xs">{dateStr}</p>
+        <p className="mt-1 font-sans text-news-muted text-xs">{dateStr}</p>
       ) : null}
     </>
   );

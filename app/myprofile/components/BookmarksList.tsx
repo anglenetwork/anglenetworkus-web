@@ -70,7 +70,7 @@ function BookmarkCard({
   const href = bookmarkHref(bookmark);
 
   return (
-    <Card className="border border-border/60 bg-card/50 p-4 transition-colors hover:border-neutral-300">
+    <Card className="border border-border/60 bg-card/50 p-4 transition-colors hover:border-news-border">
       <div className="flex gap-4">
         <Link href={href} className="shrink-0">
           {bookmark.article_cover ? (
@@ -89,7 +89,7 @@ function BookmarkCard({
               />
             </div>
           ) : (
-            <div className="size-16 rounded-md bg-neutral-100 xl:size-20" />
+            <div className="size-16 rounded-md bg-news-surface xl:size-20" />
           )}
         </Link>
 
@@ -108,7 +108,7 @@ function BookmarkCard({
                 <span>{formatDate(bookmark.article_date)}</span>
               )}
               {bookmark.article_date && (
-                <span className="mx-1.5 text-neutral-300">·</span>
+                <span className="mx-1.5 text-news-border">·</span>
               )}
               <span>Saved {formatDate(bookmark.created_at)}</span>
             </p>
@@ -245,7 +245,7 @@ export function BookmarksList({
                 <option value="oldest-articles">Oldest articles</option>
               </select>
               <ChevronDown
-                className="pointer-events-none absolute top-1/2 right-2.5 size-4 -translate-y-1/2 text-neutral-400"
+                className="pointer-events-none absolute top-1/2 right-2.5 size-4 -translate-y-1/2 text-news-muted"
                 aria-hidden
               />
             </div>
@@ -256,7 +256,7 @@ export function BookmarksList({
       {isEmpty ? (
         <div className="flex flex-col items-center py-12 text-center">
           <Bookmark
-            className="mb-4 size-10 text-neutral-300"
+            className="mb-4 size-10 text-news-border"
             strokeWidth={1.5}
             aria-hidden
           />
