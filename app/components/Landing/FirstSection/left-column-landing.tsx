@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { HOMEPAGE_JUST_IN_LIMIT } from "@/app/lib/homepage/first-section";
-import { ColMoreLink } from "./col-more-link";
 import { justInHeadline, justInLabel } from "@/app/lib/typography/first-section";
 import { ReadTimeLabel } from "@/app/components/ui/read-time-label";
 import { JustInCarouselLoader } from "./just-in-carousel-loader";
@@ -26,11 +25,6 @@ interface LeftColumnLandingProps {
 
 export function LeftColumnLanding({ justInNews }: LeftColumnLandingProps) {
   const articles = justInNews.slice(0, HOMEPAGE_JUST_IN_LIMIT);
-  const leadCategory = articles[0]?.category;
-  const moreHref = leadCategory?.slug ? `/category/${leadCategory.slug}` : null;
-  const moreLabel = leadCategory?.title
-    ? `More ${leadCategory.title} news`
-    : null;
 
   return (
     <div className="flex h-full flex-col px-6 py-9 lg:py-10 lg:pr-8 lg:pl-0">
@@ -82,10 +76,6 @@ export function LeftColumnLanding({ justInNews }: LeftColumnLandingProps) {
           })}
         </div>
       </div>
-
-      {moreHref && moreLabel ? (
-        <ColMoreLink href={moreHref} label={moreLabel} />
-      ) : null}
     </div>
   );
 }

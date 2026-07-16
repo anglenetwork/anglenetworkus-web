@@ -14,8 +14,8 @@ import {
   editorialFeaturedHeadline,
   editorialFeaturedKicker,
   editorialFeaturedQuote,
+  editorialFeaturedStamp,
   editorialRailByline,
-  editorialRailKicker,
   editorialRailTitle,
 } from "@/app/lib/typography/editorial-rails";
 
@@ -35,11 +35,13 @@ function OpinionFeaturedLead({ article }: { article: ArticleFamilyCard }) {
     <article className="pb-8 md:pb-10">
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1.85fr_1fr] lg:items-center lg:gap-10">
         <div className="min-w-0">
-          <div className="mb-4 flex items-baseline gap-3 md:mb-5">
-            <span className={editorialFeaturedQuote} aria-hidden="true">
-              “
-            </span>
-            <p className={editorialFeaturedKicker}>Opinion</p>
+          <div className="mb-5 md:mb-6">
+            <div className={editorialFeaturedStamp}>
+              <span className={editorialFeaturedQuote} aria-hidden="true">
+                “
+              </span>
+              <p className={editorialFeaturedKicker}>OPINION</p>
+            </div>
           </div>
 
           <h2 className={cn(editorialFeaturedHeadline, "mb-4 md:mb-5")}>
@@ -62,7 +64,7 @@ function OpinionFeaturedLead({ article }: { article: ArticleFamilyCard }) {
         {coverData?.src ? (
           <Link
             href={article.href}
-            className="relative aspect-[4/3] w-full max-w-md overflow-hidden rounded-sm bg-news-secondary lg:ml-auto lg:aspect-[5/4] lg:max-w-none"
+            className="relative aspect-[4/3] w-full max-w-md overflow-hidden bg-news-secondary lg:ml-auto lg:aspect-[5/4] lg:max-w-none"
             aria-label={`Read article: ${article.title}`}
           >
             <ImageRenderer
@@ -86,7 +88,6 @@ function OpinionColumnCard({ article }: { article: ArticleFamilyCard }) {
     article.cover as Parameters<typeof getHomepageCoverImage>[1],
     article.title || "Article image",
   );
-  const categoryLabel = article.category?.title?.toUpperCase() ?? "OPINION";
   const authorName = article.author?.name?.trim();
   const readTimeLabel = formatReadTimeLabel(article.readTime);
 
@@ -94,7 +95,6 @@ function OpinionColumnCard({ article }: { article: ArticleFamilyCard }) {
     <article className="py-6 first:pt-0 last:pb-0 lg:px-6 lg:py-0">
       <div className="flex items-start gap-3">
         <div className="flex min-w-0 flex-1 flex-col gap-2">
-          <p className={editorialRailKicker}>{categoryLabel}</p>
           <h3 className={editorialRailTitle}>
             <Link href={article.href}>{article.title}</Link>
           </h3>
@@ -107,7 +107,7 @@ function OpinionColumnCard({ article }: { article: ArticleFamilyCard }) {
         {coverData?.src ? (
           <Link
             href={article.href}
-            className="relative h-20 w-28 shrink-0 overflow-hidden rounded-sm bg-news-secondary"
+            className="relative h-20 w-28 shrink-0 overflow-hidden bg-news-secondary"
             aria-label={`Read article: ${article.title}`}
           >
             <ImageRenderer
@@ -147,12 +147,12 @@ export default async function EditorialRailsSection() {
 
   return (
     <section>
-      <div className="rounded-lg bg-news-surface px-4 py-6 md:px-6 md:py-8">
+      <div className="bg-black px-4 py-6 md:px-6 md:py-8">
         <OpinionFeaturedLead article={featured} />
 
         {rail.length > 0 ? (
-          <div className="border-t border-news-text/50 pt-6 md:pt-8">
-            <div className="grid grid-cols-1 divide-y divide-news-text/50 lg:grid-cols-3 lg:divide-x lg:divide-y-0">
+          <div className="border-t border-white/40 pt-6 md:pt-8">
+            <div className="grid grid-cols-1 divide-y divide-white/40 lg:grid-cols-3 lg:divide-x lg:divide-y-0">
               {rail.map((article) => (
                 <OpinionColumnCard key={article._id} article={article} />
               ))}

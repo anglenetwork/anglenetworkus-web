@@ -48,7 +48,7 @@ function TagIcymiMobileRow({ item }: { item: TagIcymiItem }) {
       className="group flex items-start gap-3"
       aria-label={`Read article: ${item.title}`}
     >
-      <div className="relative size-20 shrink-0 overflow-hidden rounded-sm bg-news-secondary">
+      <div className="relative size-20 shrink-0 overflow-hidden bg-news-secondary">
         <ImageRenderer
           src={item.imageUrl || "/placeholder.svg"}
           alt={item.imageAlt?.trim() || item.title}
@@ -129,7 +129,7 @@ export function TagIcymiSection({ items }: TagIcymiSectionProps) {
         <TagIcymiHeading />
         <div
           aria-label="In case you missed it articles"
-          className="mt-6 grid grid-cols-1 divide-y divide-news-border border-news-border border-t lg:grid-cols-4 lg:divide-x lg:divide-y-0"
+          className="mt-4 grid grid-cols-1 divide-y divide-news-border border-news-border lg:grid-cols-4 lg:divide-x lg:divide-y-0"
         >
           {items.map((item) => (
             <article key={item.id} className={icymiColumnClassName()}>

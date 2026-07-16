@@ -48,7 +48,7 @@ export const tagShowMoreTitle = `font-medium font-display text-xl text-news-text
 
 /** Tag page — ICYMI square image frame (full column width, matches More in category). */
 export const tagIcymiImageFrame =
-  "relative aspect-square w-full min-w-0 overflow-hidden rounded-sm bg-news-secondary";
+  "relative aspect-square w-full min-w-0 overflow-hidden bg-news-secondary";
 
 export const TAG_ICYMI_IMAGE_SIZES = "(max-width: 1023px) 80px, 25vw";
 export const TAG_ICYMI_DESKTOP_IMAGE_SIZE = 400;
@@ -56,4 +56,4 @@ export const TAG_ICYMI_MOBILE_IMAGE_SIZE = 80;
 
 /** Tag page — fixed square thumbnail (latest list rows). */
 export const tagLatestRowImageFrame =
-  "relative size-24 shrink-0 overflow-hidden rounded-sm bg-news-secondary";
+  "relative size-24 shrink-0 overflow-hidden bg-news-secondary";
