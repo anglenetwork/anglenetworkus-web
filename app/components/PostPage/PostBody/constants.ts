@@ -69,20 +69,20 @@ export const ARTICLE_MEDIA_CLASSES = {
   },
   /** Standard post redesign — hero sits inside the (narrower) main column, not full-bleed. */
   postStandard: {
-    figure: "mt-7 mb-0 text-left",
+    figure: "mt-2 mb-0 text-left lg:mt-4",
     wrapper:
-      "relative w-full h-[280px] overflow-hidden rounded-lg md:h-[440px]",
+      "relative w-full h-[224px] overflow-hidden md:h-[352px] lg:h-[440px]",
     image: "object-cover object-center",
     sizes: "(max-width: 768px) 100vw, (max-width: 1280px) 66vw, 800px",
   },
 } as const;
 
-/** Standard post redesign — article body measure (matches the design's 660px column) */
-export const POST_ARTICLE_BODY_MAX_WIDTH_CLASS = "max-w-[660px]";
+/** Standard post redesign — article body measure (660px + 20%) */
+export const POST_ARTICLE_BODY_MAX_WIDTH_CLASS = "max-w-[792px]";
 
 /** Standard post redesign — Portable Text body column, incl. drop-cap on the first paragraph */
 export const POST_ARTICLE_BODY_COLUMN_CLASS = cn(
-  "space-y-6 pt-10 text-left font-body",
+  "space-y-6 pt-6 text-left font-body lg:pt-10",
   POST_ARTICLE_BODY_MAX_WIDTH_CLASS,
   "[&>p:first-of-type::first-letter]:float-left",
   "[&>p:first-of-type::first-letter]:mr-2",

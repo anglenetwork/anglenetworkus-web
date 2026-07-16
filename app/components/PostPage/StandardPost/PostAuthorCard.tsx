@@ -27,7 +27,7 @@ export default function PostAuthorCard({ author }: PostAuthorCardProps) {
   return (
     <div
       className={cn(
-        "mt-3 flex gap-4 border border-news-border bg-news-background p-[22px]",
+        "mt-3 mb-8 flex gap-4 border border-news-border bg-news-background p-[22px] lg:mb-0",
         POST_ARTICLE_BODY_MAX_WIDTH_CLASS,
       )}
     >

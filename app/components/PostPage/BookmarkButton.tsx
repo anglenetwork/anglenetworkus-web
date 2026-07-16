@@ -6,6 +6,7 @@ interface BookmarkButtonProps {
   articleSlug: string;
   articleTitle?: string;
   variant?: "default" | "compact";
+  className?: string;
 }
 
 export default async function BookmarkButton({
@@ -13,6 +14,7 @@ export default async function BookmarkButton({
   articleSlug,
   articleTitle,
   variant = "default",
+  className,
 }: BookmarkButtonProps) {
   const { bookmarked } = await getBookmarkStatus(articleId);
 
@@ -23,6 +25,7 @@ export default async function BookmarkButton({
       articleTitle={articleTitle}
       initialBookmarked={bookmarked}
       variant={variant}
+      className={className}
     />
   );
 }

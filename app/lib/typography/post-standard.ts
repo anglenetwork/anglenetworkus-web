@@ -4,17 +4,17 @@ import { articleTitleLink } from "./article-links";
 // Scoped exclusively to the `post` document type (see article-family-post-layout.tsx).
 // Kept separate from `posts.ts` / `post-page.ts` so the shared `sponsored` layout is untouched.
 
-/** Header — category kicker (dot + uppercase label) */
+/** Header — category kicker (uppercase label, no accent dot) */
 export const postArticleKicker =
-  "font-display text-xs font-bold uppercase tracking-[0.08em] text-news-primary";
+  "font-sans text-xs font-bold uppercase tracking-[0.08em] text-news-text";
 
 /** Header — h1 headline */
 export const postArticleTitle =
-  "font-display text-3xl font-bold leading-[1.1] tracking-tight text-news-text sm:text-4xl md:text-[46px] md:leading-[1.08]";
+  "font-display text-xl font-bold leading-[1.2] tracking-tight text-news-text sm:text-2xl md:text-3xl lg:text-4xl lg:leading-[1.35]";
 
-/** Header — italic serif dek */
+/** Header — dek / excerpt */
 export const postArticleDek =
-  "font-body text-lg italic leading-relaxed text-news-muted md:text-lg";
+  "font-sans text-sm leading-relaxed text-news-muted lg:text-base";
 
 /** Body — paragraph copy (drop cap applied via wrapper selector, see PostBody/index.tsx) */
 export const postArticleBodyParagraph =
@@ -70,7 +70,7 @@ export const postSidebarReadTime =
 
 /** Sidebar — rank number (01, 02, ...) */
 export const postSidebarRankNumber =
-  "font-display text-[28px] font-bold leading-none text-news-border";
+  "font-display text-[28px] font-bold leading-none text-news-primary";
 
 /** Newsletter box (dark, presentational) */
 export const postNewsletterEyebrow =

@@ -13,6 +13,7 @@ interface BookmarkButtonClientProps {
   articleTitle?: string;
   initialBookmarked: boolean;
   variant?: "default" | "compact";
+  className?: string;
 }
 
 function withTimeout<T>(
@@ -37,6 +38,7 @@ export default function BookmarkButtonClient({
   articleTitle,
   initialBookmarked,
   variant = "default",
+  className,
 }: BookmarkButtonClientProps) {
   const { push } = useRouter();
 
@@ -105,6 +107,7 @@ export default function BookmarkButtonClient({
     isCompact ? "size-6 rounded-sm shadow-none" : "size-10 rounded-full",
     isBookmarked ? "text-yellow-500" : "text-black",
     isToggling && "opacity-60",
+    className,
   );
   const iconClass = isCompact ? "size-3" : "size-5";
 
