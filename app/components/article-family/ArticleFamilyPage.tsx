@@ -80,6 +80,7 @@ export default async function ArticleFamilyPage({
     updatedAt: article.updatedAt || null,
     slug: article.slug || undefined,
     articleId: article._id,
+    readTime: article.readTime,
     insetPopularReads: popularReads,
   };
 
@@ -96,7 +97,9 @@ export default async function ArticleFamilyPage({
 
       <ArticleViewTracker articleId={article._id} articleType={article._type} />
 
-      <SitePageWidth className="py-4">
+      <SitePageWidth
+        className={isStandardPost ? "pt-2 pb-4 lg:pt-2 lg:pb-4" : "py-4"}
+      >
         {showEditorialChrome ? (
           <EditorialArticleLayout
             article={article}

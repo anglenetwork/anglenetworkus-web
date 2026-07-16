@@ -35,7 +35,7 @@ function OpinionFeaturedLead({ article }: { article: ArticleFamilyCard }) {
     <article className="pb-8 md:pb-10">
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1.85fr_1fr] lg:items-center lg:gap-10">
         <div className="min-w-0">
-          <div className="mb-4 flex items-center gap-2.5 md:mb-5">
+          <div className="mb-4 flex items-baseline gap-3 md:mb-5">
             <span className={editorialFeaturedQuote} aria-hidden="true">
               “
             </span>

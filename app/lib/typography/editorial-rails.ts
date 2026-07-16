@@ -1,12 +1,12 @@
 import { homepageArticleTitleLink } from "./homepage-article-links";
 
-/** Featured opinion lead — red quote + OPINION kicker row */
+/** Featured opinion lead — wire-style OPINION kicker */
 export const editorialFeaturedKicker =
-  "font-sans text-xs font-bold uppercase tracking-[0.12em] text-news-primary";
+  "font-mono text-sm font-bold uppercase tracking-[0.18em] text-news-primary md:text-base";
 
 /** Featured opinion lead — decorative opening quote */
 export const editorialFeaturedQuote =
-  "font-display text-2xl font-bold leading-none text-news-primary";
+  "font-mono text-3xl font-bold leading-none text-news-primary md:text-4xl";
 
 /** Featured opinion lead — large impact headline */
 export const editorialFeaturedHeadline = `max-w-3xl font-display text-3xl font-bold leading-[1.12] tracking-[-0.02em] text-news-text md:text-4xl ${homepageArticleTitleLink}`;

@@ -39,6 +39,7 @@ export interface PostBodyProps {
   updatedAt?: string | null;
   slug?: string;
   articleId?: string;
+  readTime?: number | null;
   insetPopularReads?: ArticleSidebarPost[];
 }
 

@@ -31,7 +31,7 @@ export function PostArticleLayout({
   tags,
 }: PostArticleLayoutProps) {
   return (
-    <article className="mt-4 lg:mt-8">
+    <article className="mt-1 lg:mt-4">
       <div className="grid grid-cols-1 gap-0 lg:grid-cols-12 lg:gap-16">
         <div className="col-span-1 lg:col-span-8">
           <PostArticleHeader

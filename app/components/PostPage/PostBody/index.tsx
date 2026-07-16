@@ -13,6 +13,7 @@ import ArticleActions from "./ArticleActions";
 import ArticleByline from "./ArticleByline";
 import ArticleMedia from "./ArticleMedia";
 import PostSelectedNews from "../PostSelectedNews";
+import PostArticleByline from "../StandardPost/PostArticleByline";
 import {
   nonRegularPortableTextComponents,
   portableTextComponents,
@@ -34,6 +35,7 @@ export default function PostBody({
   updatedAt,
   slug,
   articleId,
+  readTime,
   insetPopularReads,
 }: PostBodyProps) {
   const shareUrl = sharePath ?? (slug ? `/post/${slug}` : "");
@@ -140,6 +142,18 @@ export default function PostBody({
     return (
       <div className="text-left antialiased">
         {articleMedia}
+
+        <PostArticleByline
+          className="mt-4 mb-2 lg:hidden"
+          date={date}
+          updatedAt={updatedAt}
+          author={author}
+          readTime={readTime}
+          slug={slug}
+          articleId={articleId}
+          title={title}
+          sharePath={sharePath}
+        />
 
         <div className={POST_ARTICLE_BODY_COLUMN_CLASS}>
           <PortableText value={firstBodySlice} components={bodyComponents} />
