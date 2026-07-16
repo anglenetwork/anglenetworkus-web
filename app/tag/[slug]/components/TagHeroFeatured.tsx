@@ -26,7 +26,7 @@ export function TagHeroFeatured({ post }: TagHeroFeaturedProps) {
       >
         <div
           className={cn(
-            "relative aspect-[16/10] w-full overflow-hidden rounded-sm",
+            "relative aspect-[16/10] w-full overflow-hidden",
             "bg-news-secondary",
           )}
         >

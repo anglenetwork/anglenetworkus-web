@@ -32,10 +32,6 @@ export const rightFeatureHeadline = `mt-4 font-display text-[19px] font-semibold
 /** Right rail compact mini-list headline. */
 export const rightMiniHeadline = `font-display text-[15px] font-semibold leading-[1.28] tracking-[-0.1px] text-angle-ink ${angleTitleHover}`;
 
-/** "More {Category} news" / "More headlines" link label at the bottom of a column. */
-export const colMoreLabel =
-  "text-sm font-semibold text-angle-inkSoft transition-colors group-hover:text-angle-ink";
-
 /** Mobile front — category kicker above lead headline (e.g. WORLD). */
 export const mobileItemKicker =
   "mb-2.5 flex items-center gap-1.5 font-sans text-[11px] font-bold uppercase tracking-[0.09em] leading-none text-angle-ink";

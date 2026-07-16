@@ -2,7 +2,6 @@ import Link from "next/link";
 import { getHomepageCoverImage } from "@/app/lib/homepage/homepage-cover-image";
 import { ImageRenderer } from "../../ui/image-renderer";
 import { ReadTimeLabel } from "@/app/components/ui/read-time-label";
-import { ColMoreLink } from "./col-more-link";
 import {
   rightFeatureHeadline,
   rightMiniHeadline,
@@ -111,10 +110,6 @@ export function RightColumnLanding({
           </div>
         ) : null}
       </div>
-
-      {sideStories.length > 0 || compactStories.length > 0 ? (
-        <ColMoreLink href="/latest" label="More headlines" />
-      ) : null}
     </div>
   );
 }

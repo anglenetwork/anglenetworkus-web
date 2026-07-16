@@ -38,7 +38,7 @@ export function TagSidebarFeatureItem({
         >
           <div
             className={cn(
-              "relative aspect-[16/11] w-full overflow-hidden rounded-sm",
+              "relative aspect-[16/11] w-full overflow-hidden",
               "bg-news-secondary",
             )}
           >
@@ -77,7 +77,7 @@ function TagSidebarFeatureMobile({ post, number }: TagSidebarFeatureItemProps) {
       <Link
         href={href}
         className={cn(
-          "relative size-[76px] shrink-0 overflow-hidden rounded-sm",
+          "relative size-[76px] shrink-0 overflow-hidden",
           "bg-news-secondary",
         )}
         aria-label={`Read article: ${post.title}`}
