@@ -9,10 +9,12 @@ cover._type = "coverMedia"
 cover.source = "external"
 cover.alt = required
 cover.caption = required (one clear sentence)
-cover.creditAuthor = photographer or author name
-cover.creditSource = "Unsplash" or "Wikimedia Commons"
+cover.creditAuthor = photographer or author name from the source photo page
+cover.creditSource = "Unsplash" or "Wikimedia Commons" (or exact institution on the source page)
 cover.licenseOrRights = "Unsplash License" or exact Commons license (e.g. "CC BY-SA 4.0")
 ```
+
+Extract epigraph fields from the source image URL / photo page. Do not invent credits. Do not mention image styling, collage treatments, or visual effects in caption, alt, or credit fields — see [`instructions-to-publish.md`](instructions-to-publish.md) and [`image-styling.md`](image-styling.md).
 
 ---
 
