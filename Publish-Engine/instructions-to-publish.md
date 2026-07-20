@@ -103,9 +103,12 @@ Read source
 → Classify category and tags from canonical taxonomy
 → Build Portable Text body
 → Select/verify cover image
+→ Extract image epigraph from source photo page (author, credit, license)
+→ Apply cover styling only if explicitly requested ([`image-styling.md`](image-styling.md)); never disclose styling in public fields
 → Draft preview or publish directly
 → Verify published Sanity document
 ```
+
 
 ---
 
@@ -297,11 +300,13 @@ Slot widths, quality values, examples, and `mainHeadline` rules: [`cover-image-u
 **Pre-publish checklist** (from `cover-image-urls.md`):
 
 ```txt
-[ ] externalUrl starts with https://images.unsplash.com/photo- OR https://upload.wikimedia.org/wikipedia/commons/
+[ ] externalUrl starts with https://images.unsplash.com/photo- OR https://upload.wikimedia.org/wikipedia/commons/  (when source is external)
 [ ] Unsplash URL has exactly: w, q, auto=format, fit=crop
 [ ] No /download, no Special:FilePath, no /thumb/ in stored URL
 [ ] mainHeadline → Unsplash or Sanity asset only (not Wikimedia)
-[ ] creditAuthor, creditSource, licenseOrRights filled from source page (not invented)
+[ ] creditAuthor, creditSource, licenseOrRights extracted from source photo page (not invented)
+[ ] caption/alt describe the photo subject only — no styling, collage, AI, or effects language
+[ ] visual styling applied only if the user explicitly requested it
 ```
 
 Allowed sources:
@@ -395,6 +400,57 @@ cover.licenseOrRights
 
 See [`cover-image-urls.md`](cover-image-urls.md) for full Unsplash/Wikimedia normalization steps, forbidden patterns, and `mainHeadline` rules.
 
+### Image attribution / epigraph (required)
+
+Extract image epigraph fields from the **source image URL / photo page** — never invent them and never copy credits from the rewritten news article unless that page is the image’s rights source.
+
+From the photo page, capture:
+
+```txt
+creditAuthor   ← photographer / creator name on the source page
+creditSource   ← platform or institution (e.g. Unsplash, Wikimedia Commons)
+licenseOrRights ← exact license shown on the source page
+caption / alt  ← factual description of what the photo shows (source description as reference)
+```
+
+Rules:
+
+* Prefer the source page’s photographer name, credit line, agency, and license text.
+* If the source page has a usable caption or alt description, adapt it into one clear English sentence; do not invent scene details the source does not support.
+* If attribution fields are missing or unclear on the source page, do not guess — ask or use the Angle placeholder only when allowed.
+* Keep `cover.alt` separate from `cover.caption`.
+
+### No public disclosure of image styling
+
+Never mention visual styling, collage treatment, AI edits, duotone, halftone, torn-paper effects, color blocking, or any other processing in:
+
+```txt
+cover.caption
+cover.alt
+cover.creditAuthor
+cover.creditSource
+cover.licenseOrRights
+seo fields
+body copy
+```
+
+Styling is an internal production step only. Public epigraphs describe the **photograph’s subject and rights**, not how Angle processed the file.
+
+### Cover image visual styling
+
+**Do not apply any visual styling to cover images by default.**
+
+Apply a catalog style from [`image-styling.md`](image-styling.md) **only when the user explicitly requests** image styling / a named style / a pasted style prompt for that article.
+
+When styling is requested:
+
+1. Upload or attach the approved source image as a Sanity asset (`cover.source = "asset"`).
+2. Transform with the exact prompt from the catalog (or the user’s provided prompt).
+3. Keep attribution fields sourced from the original photo page.
+4. Publish caption/alt/credits with **no** reference to the style or effects used.
+
+If the user does not request styling, publish the cover unstyled (normalized external URL or plain uploaded asset).
+
 Caption rules:
 
 * Write one clear English sentence describing what the image shows.
@@ -402,6 +458,7 @@ Caption rules:
 * Use source caption/description only as reference.
 * Do not paste raw Unsplash/Wikimedia descriptions if they are not publication-ready.
 * Do not copy article excerpt, dek, or promo text into `cover.caption`.
+* Do not mention collage, zine, duotone, grain, AI, “styled,” “edited,” or similar production language.
 * Keep `cover.alt` separate from `cover.caption`.
 
 If no safe image exists, use the Angle placeholder:
