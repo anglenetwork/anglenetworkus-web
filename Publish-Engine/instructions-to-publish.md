@@ -3,6 +3,8 @@
 Operational playbook for the Angle publishing assistant.
 Schema details, field shapes, taxonomy refs, and forbidden fields live in [`sanity-schema-reference.md`](sanity-schema-reference.md).
 
+**Agents / automations:** start from [`agent-runtime.md`](agent-runtime.md) (always-on brief). Open this playbook only for edge cases or when the brief is insufficient.
+
 ---
 
 ## Role
