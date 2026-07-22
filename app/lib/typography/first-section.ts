@@ -2,7 +2,7 @@
 const angleTitleHover = "transition-colors group-hover:text-angle-inkSoft";
 
 /** Single responsive lead headline above the Just In / Hero / Right rail grid. */
-export const leadHeadlineTitle = `mx-auto max-w-[900px] text-center font-display text-[36px] font-bold leading-[1.04] tracking-[-0.5px] text-angle-ink lg:text-[56px] lg:tracking-[-1.5px] ${angleTitleHover}`;
+export const leadHeadlineTitle = `mx-auto max-w-[900px] text-center font-display text-[36px] font-bold leading-[1.04] tracking-[-0.5px] text-angle-ink lg:text-[48px] lg:tracking-[-1.5px] ${angleTitleHover}`;
 
 /** "JUST IN" kicker label next to the outlined red dot. */
 export const justInLabel =
