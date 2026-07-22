@@ -10,7 +10,7 @@ export const postArticleKicker =
 
 /** Header — h1 headline */
 export const postArticleTitle =
-  "font-display text-xl font-bold leading-[1.2] tracking-tight text-news-text sm:text-2xl md:text-3xl lg:text-4xl lg:leading-[1.35]";
+  "font-display text-2xl font-bold leading-[1.2] tracking-tight text-news-text sm:text-2xl md:text-3xl lg:text-4xl lg:leading-[1.35]";
 
 /** Header — dek / excerpt */
 export const postArticleDek =
